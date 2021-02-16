@@ -1,0 +1,25 @@
+{
+  "_comment": "This config is used only for VSCode intellisense. For working with TypeScript uses babel preset into webpack",
+
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictBindCallApply":true,
+    "strictFunctionTypes":true,
+    "strictPropertyInitialization":true,
+    "baseUrl": "./app/src/",
+    "paths": {
+      "@library.blocks/*": ["components/library.blocks/*"],
+      "@common.blocks/*": ["components/common.blocks/*"],
+      "@thematic/*": ["components/thematic/*"],
+      "@experiments/*": ["components/experimental/*"],
+      "@images/*": ["assets/pictures/images/*"],
+      "@contents/*": ["assets/pictures/contents/*"],
+      "@utils/*": ["utils/*"]
+    }
+  }
+}
