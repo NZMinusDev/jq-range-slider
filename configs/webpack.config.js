@@ -187,7 +187,7 @@ const webpackPlugins = () => {
       },
     }),
     new MiniCssExtractPlugin({
-      //FIXME: can't use styles/[name]/[name] cause of MediaQueryPlugin interpolation bug
+      // FIXME: can't use styles/[name]/[name] cause of MediaQueryPlugin interpolation bug
       filename: hashedFileName("styles/[name]/style", "css"),
     }),
     // FIXME: make it works before MediaQueryPlugin for extracting wrapped content
@@ -372,7 +372,7 @@ const cssLoaders = (extraLoader) => {
 const jsLoaders = (extraPreset) => {
   const babelOptions = {
     presets: ["@babel/preset-env"],
-    plugins: ["@babel/plugin-proposal-class-properties", "transform-jsbi-to-bigint"],
+    plugins: ["@babel/plugin-proposal-class-properties"],
     cacheDirectory: "./app/cache/webpack__babel",
   };
 
@@ -501,6 +501,7 @@ module.exports = smp.wrap({
     rules: [
       {
         test: /\.pug$/,
+        exclude: /.*\.view\.pug/,
         use: templatesLoaders(),
       },
       {
