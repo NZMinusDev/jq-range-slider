@@ -1,3 +1,14 @@
+export interface MVPModel<State> {
+  getState(): Promise<State>;
+  setState(state?: Partial<State>): Promise<this>;
+  whenStateIsChanged(callback: (state: State) => void): void;
+}
+export interface MVPView<Options> extends Plugin, EventManagerMixin {
+  getOptions(): Options;
+  setOptions(options?: Partial<Options>): this;
+  remove(): void;
+}
+
 export interface Plugin {
   readonly dom: { self: HTMLElement };
 }
@@ -83,7 +94,7 @@ export abstract class PluginDecorator {
  * btn.addEventListener('mouseup', menu);
  */
 export abstract class EventHandler {
-  handleEvent(event: Event) {
+  protected handleEvent(event: Event) {
     // mousedown -> onMousedown
     let method = "on" + event.type[0].toUpperCase() + event.type.slice(1);
     this[method](event);
@@ -117,35 +128,37 @@ export function checkDelegatingEvents(
  * class Jumpable {
  *  jump() {}
  * }
- * 
+ *
  * class Duckable {
  *   duck() {}
  * }
- * 
+ *
  * // Including the base
  * class Sprite {
  *   x = 0;
  *   y = 0;
  * }
- * 
+ *
  * // Then you create an interface which merges
  * // the expected mixins with the same name as your base
  * interface Sprite extends Jumpable, Duckable {}
  * // Apply the mixins into the base class via the JS at runtime
  * applyMixins(Sprite, [Jumpable, Duckable]);
- * 
+ *
  * let player = new Sprite();
  * player.jump();
  * console.log(player.x, player.y);
  */
-export function applyMixins<DC extends new (...args:unknown[]) => unknown, MC extends new (...args:unknown[]) => unknown>(derivedConstructor: DC, mixinConstructors: MC[]) {
+export function applyMixins<
+  DC extends new (...args: unknown[]) => unknown,
+  MC extends new (...args: unknown[]) => unknown
+>(derivedConstructor: DC, mixinConstructors: MC[]) {
   mixinConstructors.forEach((baseConstructor) => {
     Object.getOwnPropertyNames(baseConstructor.prototype).forEach((name) => {
       Object.defineProperty(
         derivedConstructor.prototype,
         name,
-        Object.getOwnPropertyDescriptor(baseConstructor.prototype, name) ||
-          Object.create(null)
+        Object.getOwnPropertyDescriptor(baseConstructor.prototype, name) || Object.create(null)
       );
     });
   });
@@ -155,12 +168,12 @@ export function applyMixins<DC extends new (...args:unknown[]) => unknown, MC ex
  * Add events processing inside class without inheritances
  * @example
  * class Menu { // create class with using methods of mixin
- *   choose(value) { this.trigger("select", value); } 
- * } 
+ *   choose(value) { this.trigger("select", value); }
+ * }
  * applyMixins(Menu, EventManagerMixin);// add mixin
  *
  * interface Menu extends Menu, EventManagerMixin {}
- * 
+ *
  * let menu = new Menu();
  *
  * menu.on("select", value => alert(`The selected value: ${value}`));
@@ -170,7 +183,7 @@ export class EventManagerMixin {
   #eventHandlers;
 
   // Subscribe to the event
-  on(eventName: string, handler: (item: unknown) => unknown) {
+  on(eventName: string, handler: (...args: unknown[]) => void) {
     if (!this.#eventHandlers) this.#eventHandlers = {};
     if (!this.#eventHandlers[eventName]) {
       this.#eventHandlers[eventName] = [];
@@ -178,7 +191,7 @@ export class EventManagerMixin {
     this.#eventHandlers[eventName].push(handler);
   }
   // Cancel subscribe
-  off(eventName: string, handler: (item: unknown) => unknown) {
+  off(eventName: string, handler: (...args: unknown[]) => void) {
     let handlers = this.#eventHandlers && this.#eventHandlers[eventName];
     if (!handlers) return;
     for (let i = 0; i < handlers.length; i++) {
@@ -195,4 +208,4 @@ export class EventManagerMixin {
     // calling the handlers
     this.#eventHandlers[eventName].forEach((handler) => handler.apply(this, args));
   }
-};
+}
