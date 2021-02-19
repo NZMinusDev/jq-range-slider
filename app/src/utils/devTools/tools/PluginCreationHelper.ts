@@ -1,11 +1,12 @@
 export interface MVPModel<State> {
-  getState(): Promise<State>;
+  getState(): Promise<Required<State>>;
   setState(state?: Partial<State>): Promise<this>;
-  whenStateIsChanged(callback: (state: State) => void): void;
+  whenStateIsChanged(callback: (state: Required<State>) => void): void;
 }
 export interface MVPView<Options> extends Plugin, EventManagerMixin {
-  getOptions(): Options;
+  getOptions(): Required<Options>;
   setOptions(options?: Partial<Options>): this;
+
   remove(): void;
 }
 

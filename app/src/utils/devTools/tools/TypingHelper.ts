@@ -45,6 +45,26 @@ export type Unpacked<T> = T extends (infer U)[]
   : T extends Promise<infer U>
   ? U
   : T;
+/**
+ * @example
+ * type test = {
+ *   param: number;
+ *   param2: number[];
+ *   param3: () => void;
+ *   param4?: string[][];
+ *   param5: { p1: string; p2: number };
+ * };
+ * let test: ArrayPacked<test> = {
+ *   param: [1, 2],
+ *   param2: [
+ *     [1, 2],
+ *     [1, 4],
+ *   ],
+ *   param3: [() => {}, () => {}, () => {}],
+ *   param5: [{ p1: "p1", p2: 0 }],
+ * };
+ */
+export type ArrayPacked<T> = { [K in keyof T]: Array<T[K]> };
 
 /**
  * @example
