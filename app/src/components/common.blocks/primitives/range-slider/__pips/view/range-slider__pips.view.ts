@@ -14,13 +14,26 @@ export default interface RangeSliderPipsView extends MVPView<PipsOptions> {
   setFormatterOption(formatter?: PipsOptions["formatter"]): this;
 }
 
-export default class RangeSliderPipsView {}
+export default class RangeSliderPipsView {
+  constructor(
+    private container: HTMLElement,
+    private _options: PipsOptions = {
+      mode: "range",
+      amount: 2,
+      density: 3,
+      formatter: {
+        to: (value: number) => value.toString(),
+        from: (value: string) => +parseFloat(value).toFixed(2),
+      },
+    }
+  ) {}
+}
 
 export type PipsOptions = {
-  mode: Mode;
-  amount: number;
-  density: number;
-  formatter: Formatter;
+  mode?: Mode;
+  amount?: number;
+  density?: number;
+  formatter?: Formatter;
 };
 
 type Mode = "range" | "count";
