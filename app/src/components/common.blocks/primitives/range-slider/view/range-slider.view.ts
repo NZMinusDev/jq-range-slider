@@ -44,21 +44,36 @@ export default interface RangeSliderView extends MVPView<RangeSliderOptions> {
   whenIsEnded(callback: eventHandler): void;
 }
 
+export type RangeSliderOptions = {
+  start?: Array<ThumbOptions["start"]>;
+  range?: TrackOptions["range"];
+  step?: RangeOptions["step"] | Array<RangeOptions["step"]>;
+  connect?: Array<RangeOptions["isConnected"]>;
+  orientation?: TrackOptions["orientation"];
+  padding?: TrackOptions["padding"];
+  animate?: TrackOptions["animate"];
+  formatter?: Formatter;
+  tooltips?: Array<TooltipOptions["formatter"] | boolean>;
+  pips?: Omit<PipsOptions, "formatter">;
+};
+
+export const DEFAULT_OPTIONS = {} as Required<RangeSliderOptions>;
+
 export default class RangeSliderView {
   readonly dom: { self: HTMLElement };
 
-  private trackView: RangeSliderTrackView;
-  private rangesViews: Array<RangeSliderRangeView>;
-  private thumbsViews: Array<RangeSliderThumbView>;
-  private tooltipsViews: Array<RangeSliderTooltipView> | undefined;
-  private pipsView: RangeSliderPipsView | undefined;
+  private _trackView: RangeSliderTrackView;
+  private _rangesViews: Array<RangeSliderRangeView>;
+  private _thumbsViews: Array<RangeSliderThumbView>;
+  private _tooltipsViews: Array<RangeSliderTooltipView> | undefined;
+  private _pipsView: RangeSliderPipsView | undefined;
 
   constructor(container: HTMLElement, private _options: RangeSliderOptions = {}) {
     this.dom = { self: container };
 
-    this.trackView = this._initTrackView(this._toTrackOptions());
-    this.rangesViews = this._initRangesViews(this._toRangesOptions());
-    this.thumbsViews = this._initThumbsViews(this._toThumbsOptions());
+    this._trackView = this._initTrackView(this._toTrackOptions());
+    this._rangesViews = this._initRangesViews(this._toRangesOptions());
+    this._thumbsViews = this._initThumbsViews(this._toThumbsOptions());
 
     if (this._options.tooltips) this._initTooltipsViews(this._toTooltipsOptions());
     if (this._options.pips) this._initPipsView(this._toPipsOptions());
@@ -69,14 +84,16 @@ export default class RangeSliderView {
       orientation: this._options.orientation,
       padding: this._options.padding,
       range: this._options.range,
-      step: this._options.step,
       animate: this._options.animate,
     };
   }
   private _toRangesOptions(): Array<RangeOptions> {
     const rangesOptions: Array<RangeOptions> = [];
-    this._options.connect?.forEach((isConnected) => {
-      rangesOptions.push({ isConnected });
+    this._options.connect?.forEach((isConnected, index) => {
+      rangesOptions.push({
+        isConnected,
+        step: Array.isArray(this._options.step) ? this._options.step[index] : this._options.step,
+      });
     });
 
     return rangesOptions;
@@ -109,33 +126,33 @@ export default class RangeSliderView {
   }
 
   private _synchronizeWithTrackViewOptions() {
-    if (this.trackView) {
-      Object.assign(this._options, this.trackView.getOptions());
+    if (this._trackView) {
+      Object.assign(this._options, this._trackView.getOptions());
     }
   }
   private _synchronizeWithRangesOptions() {
-    if (this.rangesViews) {
+    if (this._rangesViews) {
       this._options.connect = [];
 
-      this.rangesViews.forEach((rangeView) => {
+      this._rangesViews.forEach((rangeView) => {
         this._options.connect?.push(rangeView.getConnectOption());
       });
     }
   }
   private _synchronizeWithThumbsOptions() {
-    if (this.thumbsViews) {
+    if (this._thumbsViews) {
       this._options.start = [];
 
-      this.thumbsViews.forEach((thumbView) => {
+      this._thumbsViews.forEach((thumbView) => {
         this._options.start?.push(thumbView.getStartOption());
       });
     }
   }
   private _synchronizeWithTooltipsOptions() {
-    if (this.tooltipsViews) {
+    if (this._tooltipsViews) {
       this._options.tooltips = [];
 
-      this.tooltipsViews.forEach((tooltipView) => {
+      this._tooltipsViews.forEach((tooltipView) => {
         const tooltipViewOptions = tooltipView.getOptions();
         this._options.tooltips?.push(
           tooltipViewOptions.isHidden ? tooltipViewOptions.formatter : tooltipViewOptions.isHidden
@@ -144,8 +161,8 @@ export default class RangeSliderView {
     }
   }
   private _synchronizeWithPipsOptions() {
-    if (this.pipsView) {
-      const pipsViewOptions = this.pipsView.getOptions();
+    if (this._pipsView) {
+      const pipsViewOptions = this._pipsView.getOptions();
       delete (pipsViewOptions as PipsOptions)["formatter"];
 
       this._options.pips = pipsViewOptions;
@@ -155,47 +172,47 @@ export default class RangeSliderView {
   private _initTrackView(options: TrackOptions): RangeSliderTrackView {
     const container = document.createElement("div");
 
-    this.trackView = new RangeSliderTrackView(container, options);
+    this._trackView = new RangeSliderTrackView(container, options);
     this._synchronizeWithTrackViewOptions();
 
     this.dom.self.append(container);
 
-    return this.trackView;
+    return this._trackView;
   }
   private _initRangesViews(options: Array<RangeOptions>): Array<RangeSliderRangeView> {
-    this.rangesViews = [];
+    this._rangesViews = [];
 
     options.forEach((rangeOptions) => {
       const container = document.createElement("div");
 
-      this.rangesViews.push(new RangeSliderRangeView(container, rangeOptions));
+      this._rangesViews.push(new RangeSliderRangeView(container, rangeOptions));
 
       this.dom.self.append(container);
     });
 
     this._synchronizeWithRangesOptions();
 
-    return this.rangesViews;
+    return this._rangesViews;
   }
   private _initThumbsViews(options: Array<ThumbOptions>): Array<RangeSliderThumbView> {
-    this.thumbsViews = [];
+    this._thumbsViews = [];
 
     options.forEach((thumbOptions) => {
       const container = document.createElement("div");
 
-      this.thumbsViews.push(new RangeSliderThumbView(container, thumbOptions));
+      this._thumbsViews.push(new RangeSliderThumbView(container, thumbOptions));
 
       this.dom.self.append(container);
     });
 
     this._synchronizeWithThumbsOptions();
 
-    return this.thumbsViews;
+    return this._thumbsViews;
   }
   private async _initTooltipsViews(
     options: Array<TooltipOptions>
   ): Promise<Array<RangeSliderTooltipView>> {
-    this.tooltipsViews = [];
+    this._tooltipsViews = [];
 
     let RangeSliderTooltipViewModule = await import(
       "./../__tooltip/view/range-slider__tooltip.view"
@@ -204,41 +221,30 @@ export default class RangeSliderView {
     options.forEach((tooltipOptions) => {
       const container = document.createElement("div");
 
-      this.tooltipsViews!.push(new RangeSliderTooltipViewModule.default(container, tooltipOptions));
+      this._tooltipsViews!.push(
+        new RangeSliderTooltipViewModule.default(container, tooltipOptions)
+      );
 
       this.dom.self.append(container);
     });
 
     this._synchronizeWithTooltipsOptions();
 
-    return this.tooltipsViews;
+    return this._tooltipsViews;
   }
   private async _initPipsView(options: PipsOptions): Promise<RangeSliderPipsView> {
     const container = document.createElement("div");
 
     const RangeSliderPipsViewModule = await import("./../__pips/view/range-slider__pips.view");
 
-    this.pipsView = new RangeSliderPipsViewModule.default(container, options);
+    this._pipsView = new RangeSliderPipsViewModule.default(container, options);
     this._synchronizeWithPipsOptions();
 
     this.dom.self.append(container);
 
-    return this.pipsView;
+    return this._pipsView;
   }
 }
-
-export type RangeSliderOptions = {
-  start?: Array<ThumbOptions["start"]>;
-  range?: TrackOptions["range"];
-  step?: TrackOptions["step"];
-  connect?: Array<RangeOptions["isConnected"]>;
-  orientation?: TrackOptions["orientation"];
-  padding?: TrackOptions["padding"];
-  animate?: TrackOptions["animate"];
-  formatter?: Formatter;
-  tooltips?: Array<TooltipOptions["formatter"] | boolean>;
-  pips?: Omit<PipsOptions, "formatter">;
-};
 
 interface eventHandler {
   (values: Array<number>, isTapped: boolean): void;
