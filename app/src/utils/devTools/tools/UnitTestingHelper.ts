@@ -1,117 +1,49 @@
-interface TestInitOptions<V, O> {
-  invalidOptions?: O[];
-  partialOptions?: O[];
-  fullOptions?: O[];
-  nameOfOptionsProperty?: NameOfOptionsProperty;
-  expectValidProperties?: (parts: { viewOptions: Required<O>; passedOptions: O; view: V }) => void;
-}
-export function testInit<V, O>(
-  View: { new (container: HTMLElement, options?: O): V },
-  DEFAULT_OPTIONS: Required<O>,
-  {
-    invalidOptions = [],
-    partialOptions = [],
-    fullOptions = [],
-    nameOfOptionsProperty = "_options",
-    expectValidProperties = ({ viewOptions, passedOptions, view }) => {
-      expect(1).toBe(1);
-    },
-  }: TestInitOptions<V, O> = {}
-): void {
-  const CONTAINER_TAG = "div";
+import { eachDeep } from "./ObjectHelper";
 
-  let view: V;
-  let viewOptions: Required<O>;
-  let passedOptions: O;
-
-  describe("init", () => {
-    describe("with undefined options", () => {
-      beforeEach(() => {
-        view = new View(document.createElement(CONTAINER_TAG));
-        viewOptions = (view as any)[`${nameOfOptionsProperty}`];
-      });
-
-      checkViewProperties();
-    });
-
-    describe("with empty options", () => {
-      beforeEach(() => {
-        view = new View(document.createElement(CONTAINER_TAG), (passedOptions = {} as O));
-        viewOptions = (view as any)[`${nameOfOptionsProperty}`];
-      });
-
-      checkViewProperties();
-    });
-
-    invalidOptions.forEach((invalidOptions, index) => {
-      describe(`with ${index + 1} invalid options`, () => {
-        beforeEach(() => {
-          view = new View(document.createElement(CONTAINER_TAG), (passedOptions = invalidOptions));
-          viewOptions = (view as any)[`${nameOfOptionsProperty}`];
-        });
-
-        checkViewProperties();
-      });
-    });
-
-    partialOptions.forEach((partialOptions, index) => {
-      describe(`with ${index + 1} partial options`, () => {
-        beforeEach(() => {
-          view = new View(document.createElement(CONTAINER_TAG), (passedOptions = partialOptions));
-          viewOptions = (view as any)[`${nameOfOptionsProperty}`];
-        });
-
-        checkViewProperties();
-      });
-    });
-
-    describe("with the same as default options", () => {
-      beforeEach(() => {
-        view = new View(document.createElement(CONTAINER_TAG), (passedOptions = DEFAULT_OPTIONS));
-        viewOptions = (view as any)[`${nameOfOptionsProperty}`];
-      });
-
-      checkViewProperties();
-    });
-
-    fullOptions.forEach((fullOptions, index) => {
-      describe(`with ${index + 1} full valid options: `, () => {
-        beforeEach(() => {
-          view = new View(document.createElement(CONTAINER_TAG), (passedOptions = fullOptions));
-          viewOptions = (view as any)[`${nameOfOptionsProperty}`];
-        });
-
-        checkViewProperties();
-      });
-    });
-
-    function checkViewProperties(): void {
-      test("all properties are defined", () => {
-        (function testPropertiesAreDefined(object: object) {
-          for (const key in object) {
-            if (Object.prototype.hasOwnProperty.call(object, key)) {
-              expect(object[key]).toBeDefined();
-
-              if (object[key] instanceof Object) {
-                testPropertiesAreDefined(object[key]);
-              }
-            }
-          }
-        })(view as any);
-      });
-
-      test("properties should be correct", () => {
-        expectValidProperties({ viewOptions, passedOptions, view });
-      });
-
-      test("correct user's options should be applied", () => {
-        if (Object.is(passedOptions, partialOptions) || Object.is(passedOptions, fullOptions)) {
-          for (const optionName in passedOptions) {
-            expect(view[nameOfOptionsProperty][optionName]).toEqual(passedOptions[optionName]);
-          }
-        }
-      });
-    }
+/**
+ * Testing(expect non undefined bounded(by instancePropsExpecter) properties) of arguments of constructor by creating the instance with argsOfCreator
+ * @param Creator A Class or Function
+ * @param argsOfCreator default arguments for constructor
+ * @param instancePropsExpecter callback with expect calls
+ */
+export function testInitDEFAULT_OPTIONS<
+  TCreator extends new (...args: TCreatorArgs) => TInstance,
+  TCreatorArgs extends unknown[],
+  TInstance extends object
+>(
+  Creator: TCreator,
+  argsOfCreator: TCreatorArgs,
+  instancePropsExpecter: InstancePropsExpecter<TCreatorArgs, TInstance>
+) {
+  describe("DEFAULT_OPTIONS", () => {
+    expectValidInstanceProps(argsOfCreator, instancePropsExpecter, new Creator(...argsOfCreator));
   });
 }
-type NameOfOptionsProperty = string;
+
+export type InstancePropsExpecter<TArgs extends unknown[], TInstance> = (parts: {
+  passedArgs: TArgs;
+  instance: TInstance;
+}) => void;
+
+function expectValidInstanceProps<
+  TInstance,
+  TCreatorArgs extends unknown[],
+  TMethodArgs extends unknown[]
+>(
+  passedArgs: TCreatorArgs | TMethodArgs,
+  expecter: InstancePropsExpecter<TCreatorArgs | TMethodArgs, TInstance>,
+  instance: TInstance
+): void {
+  test("instance's properties should be defined", () => {
+    eachDeep(instance, ({ value }) => {
+      expect(value).toBeDefined();
+    });
+  });
+
+  test("instance's properties should be bounded", () => {
+    expecter({
+      passedArgs,
+      instance,
+    });
+  });
+}
