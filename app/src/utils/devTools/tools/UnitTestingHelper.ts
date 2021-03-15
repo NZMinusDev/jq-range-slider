@@ -195,6 +195,13 @@ export function testSetter<
   });
 }
 
+export type DifferentArguments<TArgs extends unknown[]> = {
+  validRequiredArguments?: RequiredTupleValues<TArgs>[];
+  invalidRequiredArguments?: RequiredTupleValues<TArgs>[];
+  invalidOptionalArguments?: OptionalTupleValues<TArgs>[];
+  partialOptionalArguments?: OptionalTupleValues<TArgs>[];
+  fullOptionalArguments?: OptionalTupleValues<TArgs>[];
+};
 export type InstancePropsExpecter<TArgs extends unknown[], TInstance> = (parts: {
   passedArgs: TArgs;
   instance: TInstance;
@@ -305,13 +312,6 @@ function runMethodOfInstanceWithDifferentArguments<
     }
   });
 }
-type DifferentArguments<TArgs extends unknown[]> = {
-  validRequiredArguments?: RequiredTupleValues<TArgs>[];
-  invalidRequiredArguments?: RequiredTupleValues<TArgs>[];
-  invalidOptionalArguments?: OptionalTupleValues<TArgs>[];
-  partialOptionalArguments?: OptionalTupleValues<TArgs>[];
-  fullOptionalArguments?: OptionalTupleValues<TArgs>[];
-};
 type MethodOfInstanceToTest<
   TMethod extends (...args: TMethodArgs) => unknown,
   TMethodArgs extends unknown[],

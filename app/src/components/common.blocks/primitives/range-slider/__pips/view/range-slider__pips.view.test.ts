@@ -6,6 +6,7 @@ import {
   testInitDEFAULT_OPTIONS,
   testGetter,
   testSetter,
+  DifferentArguments,
 } from "@utils/devTools/tools/UnitTestingHelper";
 import { collapsingParseInt } from "@utils/devTools/tools/ParserHelper";
 
@@ -26,6 +27,23 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   expect(formatterMock).toHaveReturned();
 };
 
+const differentOptionsArg: DifferentArguments<Parameters<
+  typeof RangeSliderPipsView.prototype.setOptions
+>> = {
+  invalidOptionalArguments: [[{ amount: -2, density: 5.5543 }], [{ amount: 4.89, density: -5 }]],
+  partialOptionalArguments: [[{ mode: "count", amount: 3 }]],
+  fullOptionalArguments: [
+    [
+      {
+        mode: "count",
+        amount: 4,
+        density: 6,
+        formatter: (value: number) => `${value.toString()}$`,
+      },
+    ],
+  ],
+};
+
 testInitDEFAULT_OPTIONS(
   RangeSliderPipsView,
   [document.createElement("div"), DEFAULT_OPTIONS],
@@ -36,18 +54,9 @@ testInit({
   Creator: RangeSliderPipsView,
   differentConstructorArgs: {
     validRequiredArguments: [[document.createElement("div")]],
-    invalidOptionalArguments: [[{ amount: -2, density: 5.5543 }], [{ amount: 4.89, density: -5 }]],
-    partialOptionalArguments: [[{ mode: "count", amount: 3 }]],
-    fullOptionalArguments: [
-      [
-        {
-          mode: "count",
-          amount: 4,
-          density: 6,
-          formatter: (value: number) => `${value.toString()}$`,
-        },
-      ],
-    ],
+    ...(differentOptionsArg as DifferentArguments<
+      ConstructorParameters<typeof RangeSliderPipsView>
+    >),
   },
   instancePropsExpecter: viewPropertiesExpecter,
   propsToSet: new Map().set("dom.self", 0).set("_options", 1),
@@ -78,23 +87,7 @@ testSetter({
   methodOfInstanceToTest: {
     methodReference: RangeSliderPipsView.prototype.setOptions,
     expecter: ({ mock, passedArgs, instance }) => {},
-    differentArguments: {
-      invalidOptionalArguments: [
-        [{ amount: -2, density: 5.5543 }],
-        [{ amount: 4.89, density: -5 }],
-      ],
-      partialOptionalArguments: [[{ amount: 3, density: 1 }]],
-      fullOptionalArguments: [
-        [
-          {
-            mode: "count",
-            amount: 4,
-            density: 6,
-            formatter: (value: number) => `${value.toString()}$`,
-          },
-        ],
-      ],
-    },
+    differentArguments: differentOptionsArg,
   },
   propsToSet: new Map().set("_options", 0),
   resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
