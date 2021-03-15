@@ -33,6 +33,9 @@ export function keyMap(object: object, mapFn: (key: string) => string) {
  * // array of a union type: (string | number)[]
  * let modelYear = pluck(taxi, ["model", "year"]);
  */
-export function pluck<T, K extends keyof T>(object: T, propertyNames: K[]): T[K][] {
+export function pluck<TObject extends object, TObjectKey extends keyof TObject>(
+  object: TObject,
+  propertyNames: TObjectKey[]
+): TObject[TObjectKey][] {
   return propertyNames.map((propertyName) => object[propertyName]);
 }

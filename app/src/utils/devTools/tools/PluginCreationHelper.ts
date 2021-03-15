@@ -151,9 +151,9 @@ export function checkDelegatingEvents(
  * console.log(player.x, player.y);
  */
 export function applyMixins<
-  DC extends new (...args: unknown[]) => unknown,
-  MC extends new (...args: unknown[]) => unknown
->(derivedConstructor: DC, mixinConstructors: MC[]) {
+  TDerivedConstructor extends new (...args: unknown[]) => unknown,
+  TMixinConstructors extends new (...args: unknown[]) => unknown
+>(derivedConstructor: TDerivedConstructor, mixinConstructors: TMixinConstructors[]) {
   mixinConstructors.forEach((baseConstructor) => {
     Object.getOwnPropertyNames(baseConstructor.prototype).forEach((name) => {
       Object.defineProperty(
