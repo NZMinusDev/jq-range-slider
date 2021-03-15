@@ -54,6 +54,58 @@ export function testInit<
   });
 }
 
+/**
+ * Testing(expect non undefined bounded(by instancePropsExpecter) properties of instance. Calls toHaveReturnedWith expecter for the method, returned value is expected be cloned)
+ * @param Creator A Class or Function
+ * @param constructorArgs arguments to pass to constructor
+ * @param instancePropsExpecter callback with expect calls for instance state
+ * @param methodOfInstanceToTest data about tested method
+ */
+export function testGetter<
+  TCreator extends new (...args: TCreatorArgs) => TInstance,
+  TCreatorArgs extends unknown[],
+  TMethod extends (args: any) => any,
+  TInstance extends object
+>({
+  Creator,
+  constructorArgs,
+  instancePropsExpecter,
+  methodOfInstanceToTest,
+}: {
+  Creator: TCreator;
+  constructorArgs: TCreatorArgs;
+  instancePropsExpecter: InstancePropsExpecter<TCreatorArgs, TInstance>;
+  methodOfInstanceToTest: MethodOfInstanceToTest<TMethod, Parameters<TMethod>, TInstance>;
+}) {
+  function defaultGetterExpecterDecorator(
+    expecter: InstanceMethodExpecter<Parameters<TMethod>, TInstance>
+  ): InstanceMethodExpecter<Parameters<TMethod>, TInstance> {
+    return function ({ mock, passedArgs, instance }) {
+      if (methodOfInstanceToTest.returns) {
+        expect(mock).toHaveReturnedWith(
+          resolveLongBracketNotation(methodOfInstanceToTest.returns, instance)
+        );
+      }
+
+      expecter({ mock, passedArgs, instance });
+    };
+  }
+
+  methodOfInstanceToTest.expecter = defaultGetterExpecterDecorator(methodOfInstanceToTest.expecter);
+
+  runMethodOfInstanceWithDifferentArguments({
+    Creator,
+    differentConstructorArgs: { validRequiredArguments: [constructorArgs] } as DifferentArguments<
+      TCreatorArgs
+    >,
+    instancePropsExpecter: instancePropsExpecter as InstancePropsExpecter<
+      TCreatorArgs | Parameters<TMethod>,
+      TInstance
+    >,
+    methodOfInstanceToTest,
+  });
+}
+
 export type InstancePropsExpecter<TArgs extends unknown[], TInstance> = (parts: {
   passedArgs: TArgs;
   instance: TInstance;
