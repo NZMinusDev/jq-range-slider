@@ -1,72 +1,185 @@
-import RangeSliderTrackView, { DEFAULT_OPTIONS, TrackOptions } from "./range-slider__track.view";
+import RangeSliderTrackView, { DEFAULT_OPTIONS } from "./range-slider__track.view";
 
-import { testInit } from "@utils/devTools/tools/UnitTestingHelper";
+import {
+  InstancePropsExpecter,
+  testInit,
+  testInitDEFAULT_OPTIONS,
+  testGetter,
+  testSetter,
+  DifferentArguments,
+} from "@utils/devTools/tools/UnitTestingHelper";
+import { collapsingParseFloat, getPrecision } from "@utils/devTools/tools/ParserHelper";
 
-testInit(RangeSliderTrackView, DEFAULT_OPTIONS, {
-  invalidOptions: [
-    { padding: -10, range: { min: -10, max: -15 } },
-    { padding: Infinity, range: { min: Infinity, max: Infinity } },
-    { padding: [5, -2], range: { min: 10, max: 5 } },
-    { range: { "50%": -66 } },
-    { range: { "50%": Infinity } },
-    { range: { "60%": 200, "30%": 500 } },
-    { range: { "101%": 10 } },
-    { range: { 101: 10 } },
-    { range: { "5%hgf": 10 } },
-    { range: { "str5%hgf": 10 } },
-  ],
-  partialOptions: [{ padding: 10, range: { min: 0, max: 100000 } }],
-  fullOptions: [
-    {
-      orientation: "vertical",
-      padding: 5,
-      range: {
-        min: 5000,
-        "25%": 10000,
-        "66%": 145000,
-        max: 150000,
-      },
-      animate: (timeFraction: number) => Math.pow(timeFraction, 3),
-    },
-  ],
-  expectValidProperties({ viewOptions }) {
-    let paddings: [number, number];
-    if (!Array.isArray(viewOptions.padding)) {
-      paddings = [viewOptions.padding, viewOptions.padding];
-    } else {
-      paddings = [...viewOptions.padding];
+const viewPropertiesExpecter: InstancePropsExpecter<
+  ConstructorParameters<typeof RangeSliderTrackView>,
+  RangeSliderTrackView
+> = function ({ instance }) {
+  const keysOfIntervals = Object.keys(instance["_options"].intervals).sort((a, b) => {
+    if (a === "min" || b === "max") {
+      return -1;
     }
-    paddings.forEach((padding) => {
-      expect(padding).toBeGreaterThanOrEqual(0);
-      expect(padding).toBeLessThanOrEqual(50);
-    });
+    if (a === "max" || b === "min") {
+      return 1;
+    }
+    return collapsingParseFloat(a) - collapsingParseFloat(b);
+  });
+  let parsedKey;
 
-    Object.keys(viewOptions.range)
-      .sort((a, b) => {
-        if (a === "min" || b === "max") {
-          return -1;
-        }
-        if (a === "max" || b === "min") {
-          return 1;
-        }
-        return parseFloat(a) - parseFloat(b);
-      })
-      .forEach((key, index, keys) => {
-        if (key !== "min" && key !== "max") {
-          expect(parseInt(key)).toBeGreaterThan(0);
-          expect(parseInt(key)).toBeLessThan(100);
-        }
+  expect(instance["_options"].steps.length).toBe(keysOfIntervals.length - 1);
 
-        expect(viewOptions.range[key]).toBeGreaterThanOrEqual(0);
-        expect(viewOptions.range[key]).toBeLessThanOrEqual(Number.MAX_VALUE);
+  expect(instance["_options"].intervals.min).toBeLessThan(instance["_options"].intervals.max);
+  expect(instance["_options"].intervals.min).toBeGreaterThanOrEqual(Number.MIN_SAFE_INTEGER);
+  expect(instance["_options"].intervals.max).toBeLessThanOrEqual(Number.MAX_SAFE_INTEGER);
+  keysOfIntervals.forEach((key, index, keys) => {
+    parsedKey = collapsingParseFloat(key);
 
-        if (index > 0) {
-          expect(viewOptions.range[key]).toBeGreaterThanOrEqual(
-            viewOptions.range[keys[index - 1]] as number
-          );
-        }
-      });
+    if (key !== "min" && key !== "max") {
+      expect(key).toBe(`${parsedKey}%`);
+      expect(parsedKey).toBeGreaterThan(0);
+      expect(parsedKey).toBeLessThan(100);
+      expect(getPrecision(parsedKey)).toBeLessThanOrEqual(2);
+    }
 
-    expect(jest.fn(viewOptions.animate)(10)).toHaveReturned();
+    expect(getPrecision(instance["_options"].intervals[key])).toBeLessThanOrEqual(2);
+
+    if (index > 0) {
+      expect(instance["_options"].intervals[key]).toBeGreaterThanOrEqual(
+        instance["_options"].intervals[keys[index - 1]]
+      );
+    }
+
+    if (index < instance["_options"].steps.length && instance["_options"].steps[index] !== "none") {
+      expect(instance["_options"].steps[index]).toBeGreaterThan(0);
+      expect(instance["_options"].steps[index]).toBeLessThanOrEqual(
+        Math.abs(
+          instance["_options"].intervals[key] -
+            instance["_options"].intervals[keysOfIntervals[index + 1]]
+        )
+      );
+      expect(getPrecision(instance["_options"].steps[index] as number)).toBeLessThanOrEqual(2);
+    }
+  });
+
+  instance["_options"].padding.forEach((pad) => {
+    expect(pad).toBeLessThanOrEqual(
+      +Math.abs(
+        (instance["_options"].intervals[keysOfIntervals[keysOfIntervals.length - 1]] -
+          instance["_options"].intervals[keysOfIntervals[0]]) /
+          2
+      ).toFixed(2)
+    );
+    expect(getPrecision(pad)).toBeLessThanOrEqual(2);
+  });
+};
+
+const differentOptionsArg: DifferentArguments<Parameters<
+  typeof RangeSliderTrackView.prototype.setOptions
+>> = {
+  invalidOptionalArguments: [
+    [{ intervals: { min: 100, max: 100 } }],
+    [{ intervals: { min: 100, max: 99 } }],
+    [{ intervals: { min: -100, max: -110 } }],
+    [{ intervals: { min: Number.MIN_SAFE_INTEGER - 1, max: Number.MAX_SAFE_INTEGER + 1 } }],
+    [{ intervals: { min: -100, max: 100, 50: 50 } }],
+    [{ intervals: { min: -100, max: 100, "0%": 50 } }],
+    [{ intervals: { min: -100, max: 100, "-1%": 50 } }],
+    [{ intervals: { min: -100, max: 100, "100%": 50 } }],
+    [{ intervals: { min: -100, max: 100, "101%": 50 } }],
+    [{ intervals: { min: -100, max: 100, "50.23436123%": 50 } }],
+    [{ intervals: { min: -100, max: 100, "str5dsa%hgf": 50 } }],
+    [{ intervals: { min: -100.4532543, max: 100.897987, "50%": 50.74563 } }],
+    [{ intervals: { min: 100, max: -100, "25%": 50, "50%": 10, "75%": -50 } }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [] }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [10] }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [10, 15, 20, 1, 5] }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [-10, 0] }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [300, 500] }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [5.543543, 10.54876] }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, padding: -10 }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, padding: 249 }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, padding: 10.76589645 }],
+  ],
+  partialOptionalArguments: [[{ padding: [10.5, 15.04] }]],
+  fullOptionalArguments: [
+    [
+      {
+        orientation: "vertical",
+        intervals: { min: -999, max: 999, "25%": -900, "75%": 0 },
+        steps: [1, 100, 11],
+        padding: [10, 5],
+      },
+    ],
+  ],
+};
+
+testInitDEFAULT_OPTIONS(
+  RangeSliderTrackView,
+  [document.createElement("div"), DEFAULT_OPTIONS],
+  viewPropertiesExpecter
+);
+
+testInit({
+  Creator: RangeSliderTrackView,
+  differentConstructorArgs: {
+    validRequiredArguments: [[document.createElement("div")]],
+    ...(differentOptionsArg as DifferentArguments<
+      ConstructorParameters<typeof RangeSliderTrackView>
+    >),
   },
+  instancePropsExpecter: viewPropertiesExpecter,
+  propsToSet: new Map().set("dom.self", 0).set("_options", 1),
+});
+describe("init", () => {
+  describe("with steps, padding, options aren't array", () => {
+    test("the instance's options should be correct arrays", () => {
+      const sliderOptions = (new RangeSliderTrackView(document.createElement("div"), {
+        intervals: { min: -200, max: 200, "50%": -100 },
+        steps: 2,
+        padding: 20,
+      }) as any)._options as typeof DEFAULT_OPTIONS;
+
+      expect(sliderOptions.steps).toStrictEqual([2, 2]);
+      expect(sliderOptions.padding).toStrictEqual([20, 20]);
+    });
+  });
+});
+
+testGetter({
+  Creator: RangeSliderTrackView,
+  constructorArgs: [document.createElement("div")],
+  instancePropsExpecter: viewPropertiesExpecter,
+  methodOfInstanceToTest: {
+    methodReference: RangeSliderTrackView.prototype.getOptions,
+    expecter: ({ mock, passedArgs, instance }) => {},
+    returns: "_options",
+  },
+});
+testSetter({
+  Creator: RangeSliderTrackView,
+  constructorArgs: [document.createElement("div")],
+  instancePropsExpecter: viewPropertiesExpecter,
+  methodOfInstanceToTest: {
+    methodReference: RangeSliderTrackView.prototype.setOptions,
+    expecter: ({ mock, passedArgs, instance }) => {},
+    differentArguments: differentOptionsArg,
+  },
+  propsToSet: new Map().set("_options", 0),
+  resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
+});
+describe("setOptions", () => {
+  describe("with steps, padding options aren't array", () => {
+    test("the instance's options should be correct arrays", () => {
+      const sliderOptions = (new RangeSliderTrackView(document.createElement("div"), {
+        intervals: { min: -2000, max: 2000, "50%": -1000, "75%": 1800 },
+        steps: [10, 15, 20],
+        padding: [30, 45],
+      }).setOptions({
+        steps: 2,
+        padding: 20,
+      }) as any)._options as typeof DEFAULT_OPTIONS;
+
+      expect(sliderOptions.steps).toStrictEqual([2, 2, 2]);
+      expect(sliderOptions.padding).toStrictEqual([20, 20]);
+    });
+  });
 });
