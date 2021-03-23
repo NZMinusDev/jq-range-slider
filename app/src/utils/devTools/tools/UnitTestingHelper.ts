@@ -1,8 +1,7 @@
 import { OptionalTupleValues, RequiredTupleValues } from "./TypingHelper";
 import { eachDeep, resolveLongBracketNotation } from "./ObjectHelper";
 import { isReferenceType } from "./TypeOf";
-import cloneDeep from "lodash-es/cloneDeep";
-import isPlainObject from "lodash-es/isPlainObject";
+import { cloneDeep, isPlainObject } from "lodash-es";
 
 /**
  * Testing(expect non undefined bounded(by instancePropsExpecter) properties) of arguments of constructor by creating the instance with argsOfCreator

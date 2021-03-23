@@ -35,9 +35,9 @@ export function curry(func: (...args: unknown[]) => unknown) {
  *   return a+b+c;
  * };
  *
- * console.log(test1 === clone(test1)); // false
- * console.log(test1(1,1,1) === clone(test1)(1,1,1)); // true
- * console.log(clone(test1)(1,1,1)); // 3
+ * console.log(test1 === cloneFunction(test1)); // false
+ * console.log(test1(1,1,1) === cloneFunction(test1)(1,1,1)); // true
+ * console.log(cloneFunction(test1)(1,1,1)); // 3
  */
 export function cloneFunction<TFuncArgs extends unknown[], TFuncReturn>(
   func: GenericFunc<TFuncArgs, TFuncReturn> | any

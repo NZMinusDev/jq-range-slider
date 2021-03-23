@@ -11,5 +11,5 @@ export interface RangeSliderModel extends MVPModel<RangeSliderState> {
 }
 
 export type RangeSliderState = {
-  thumbsValues: Array<ThumbState["value"]>;
+  thumbsValues: ThumbState["value"][];
 };

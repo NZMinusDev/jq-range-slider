@@ -1,7 +1,4 @@
-import cloneDeep from "lodash-es/cloneDeep";
-import isPlainObject from "lodash-es/isPlainObject";
-import { cloneFunction } from "./FunctionsConvertingHelper";
-import { isReferenceType } from "./TypeOf";
+import { isPlainObject } from "lodash-es";
 
 /**
  *
@@ -76,27 +73,6 @@ export function eachDeep<TSubject>(
       eachDeep(value, fn, deepPath);
     }
   });
-}
-
-/**
- * Clones deep including functions
- * @param obj object for cloning
- */
-export function cloneAllDeep<TObject extends object>(obj: TObject): TObject {
-  const clonedObj = {};
-  eachDeep(obj, ({ value, key }) => {
-    if (isReferenceType(value)) {
-      if (typeof value === "function") {
-        clonedObj[key] = cloneFunction(value);
-      } else {
-        clonedObj[key] = cloneDeep(value);
-      }
-    } else {
-      clonedObj[key] = value;
-    }
-  });
-
-  return clonedObj as TObject;
 }
 
 /**

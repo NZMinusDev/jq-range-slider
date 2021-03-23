@@ -54,7 +54,7 @@ export type Unpacked<TType> = TType extends (infer TUnpacked)[]
  *   param5: [{ p1: "p1", p2: 0 }],
  * };
  */
-export type ArrayPacked<TObject extends object> = { [TKey in keyof TObject]: Array<TObject[TKey]> };
+export type ArrayPacked<TObject extends object> = { [TKey in keyof TObject]: TObject[TKey][] };
 
 /**
  * @example

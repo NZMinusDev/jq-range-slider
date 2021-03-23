@@ -2,10 +2,10 @@ import { RangeSliderModel } from "./models/range-slider.decl.model";
 import RangeSliderView, { RangeSliderOptions } from "./view/range-slider.view";
 
 export default class RangeSlider {
-  private view;
+  protected view;
 
   constructor(
-    private model: RangeSliderModel,
+    protected model: RangeSliderModel,
     container: HTMLElement,
     rangeSliderOptions?: Partial<RangeSliderOptions>
   ) {
