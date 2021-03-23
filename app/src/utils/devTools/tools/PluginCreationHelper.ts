@@ -1,29 +1,131 @@
+import { defaultsDeep } from "lodash-es";
+
+export interface Plugin {
+  readonly dom: { self: HTMLElement };
+}
+
+/**
+ * Add events processing inside class without inheritances
+ * @example
+ * class Menu { // create class with using methods of mixin
+ *   choose(value) { this.trigger("select", value); }
+ * }
+ * applyMixins(Menu, EventManagerMixin);// add mixin
+ *
+ * interface Menu extends Menu, EventManagerMixin {}
+ *
+ * let menu = new Menu();
+ *
+ * menu.on("select", value => alert(`The selected value: ${value}`));
+ * menu.choose("123"); // 123
+ */
+export class EventManagerMixin {
+  #eventHandlers;
+
+  // Subscribe to the event
+  on(eventName: string, handler: (...args: unknown[]) => void) {
+    if (!this.#eventHandlers) this.#eventHandlers = {};
+    if (!this.#eventHandlers[eventName]) {
+      this.#eventHandlers[eventName] = [];
+    }
+    this.#eventHandlers[eventName].push(handler);
+  }
+  // Cancel subscribe
+  off(eventName: string, handler: (...args: unknown[]) => void) {
+    let handlers = this.#eventHandlers && this.#eventHandlers[eventName];
+    if (!handlers) return;
+    for (let i = 0; i < handlers.length; i++) {
+      if (handlers[i] === handler) {
+        handlers.splice(i--, 1);
+      }
+    }
+  }
+  // Generate the event with the specified name and data
+  trigger(eventName: string, ...args: unknown[]) {
+    if (!this.#eventHandlers || !this.#eventHandlers[eventName]) {
+      return; // no handlers
+    }
+    // calling the handlers
+    this.#eventHandlers[eventName].forEach((handler) => handler.apply(this, args));
+  }
+}
+
+export abstract class MVPView<OptionsToGet, OptionsToSet>
+  extends EventManagerMixin
+  implements Plugin {
+  readonly dom: { self: HTMLElement };
+
+  protected _options: OptionsToGet;
+
+  constructor(container: HTMLElement, DEFAULT_OPTIONS: OptionsToGet, options?: OptionsToSet) {
+    super();
+
+    this.dom = { self: container };
+
+    this._options = defaultsDeep({}, options, DEFAULT_OPTIONS);
+
+    this._fixOptions();
+  }
+
+  getOptions(): OptionsToGet {
+    const options = {};
+    let getOptionMethodName;
+    Object.keys(this._options).forEach((optionKey) => {
+      getOptionMethodName = `get${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
+      if (this[getOptionMethodName]) options[optionKey] = this[getOptionMethodName]();
+    });
+
+    return options as OptionsToGet;
+  }
+
+  setOptions(options?: OptionsToSet) {
+    let setOptionMethodName;
+
+    const optionsToForEach = options === undefined ? this._options : options;
+    let valueToPass;
+
+    Object.entries(optionsToForEach).forEach(([optionKey, optionValue]) => {
+      setOptionMethodName = `set${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
+      valueToPass = options === undefined ? undefined : optionValue;
+
+      if (this[setOptionMethodName]) {
+        this[setOptionMethodName](valueToPass);
+      }
+    });
+
+    return this;
+  }
+
+  remove() {
+    this.dom.self.remove();
+  }
+
+  protected _fixOptions() {
+    let fixOptionMethodName;
+    Object.keys(this._options).forEach((option) => {
+      fixOptionMethodName = `_fix${option[0].toUpperCase() + option.slice(1)}Option`;
+      if (this[fixOptionMethodName]) this[fixOptionMethodName]();
+    });
+  }
+}
+
 export interface MVPModel<State> {
   getState(): Promise<Required<State>>;
   setState(state?: Partial<State>): Promise<this>;
   whenStateIsChanged(callback: (state: Required<State>) => void): void;
 }
-export interface MVPView<Options> extends Plugin, EventManagerMixin {
-  getOptions(): Required<Options>;
-  setOptions(options?: Partial<Options>): this;
 
-  remove(): void;
-}
-
-export interface Plugin {
-  readonly dom: { self: HTMLElement };
-}
 export interface ListenersByPlugin {
-  currentTarget: HTMLElement | Array<HTMLElement>;
+  currentTarget: HTMLElement | HTMLElement[];
   eventType: keyof HTMLElementEventMap;
   listener(this: Element, ev: HTMLElementEventMap[keyof HTMLElementEventMap]): unknown;
   options?: boolean | AddEventListenerOptions;
 }
 export abstract class PluginDecorator {
   protected plugin: Plugin;
-  protected listeners: Array<ListenersByPlugin>;
+  protected listeners: ListenersByPlugin[];
 
-  constructor(plugin: Plugin, listeners: Array<ListenersByPlugin>, modifierName: string) {
+  constructor(plugin: Plugin, listeners: ListenersByPlugin[], modifierName: string) {
     this.plugin = plugin;
     this.listeners = listeners;
 
@@ -163,50 +265,4 @@ export function applyMixins<
       );
     });
   });
-}
-
-/**
- * Add events processing inside class without inheritances
- * @example
- * class Menu { // create class with using methods of mixin
- *   choose(value) { this.trigger("select", value); }
- * }
- * applyMixins(Menu, EventManagerMixin);// add mixin
- *
- * interface Menu extends Menu, EventManagerMixin {}
- *
- * let menu = new Menu();
- *
- * menu.on("select", value => alert(`The selected value: ${value}`));
- * menu.choose("123"); // 123
- */
-export class EventManagerMixin {
-  #eventHandlers;
-
-  // Subscribe to the event
-  on(eventName: string, handler: (...args: unknown[]) => void) {
-    if (!this.#eventHandlers) this.#eventHandlers = {};
-    if (!this.#eventHandlers[eventName]) {
-      this.#eventHandlers[eventName] = [];
-    }
-    this.#eventHandlers[eventName].push(handler);
-  }
-  // Cancel subscribe
-  off(eventName: string, handler: (...args: unknown[]) => void) {
-    let handlers = this.#eventHandlers && this.#eventHandlers[eventName];
-    if (!handlers) return;
-    for (let i = 0; i < handlers.length; i++) {
-      if (handlers[i] === handler) {
-        handlers.splice(i--, 1);
-      }
-    }
-  }
-  // Generate the event with the specified name and data
-  trigger(eventName: string, ...args: unknown[]) {
-    if (!this.#eventHandlers || !this.#eventHandlers[eventName]) {
-      return; // no handlers
-    }
-    // calling the handlers
-    this.#eventHandlers[eventName].forEach((handler) => handler.apply(this, args));
-  }
 }
