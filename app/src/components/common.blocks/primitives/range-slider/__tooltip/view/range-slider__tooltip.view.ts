@@ -2,34 +2,45 @@ import template from "./range-slider__tooltip.view.pug";
 import "./range-slider__tooltip.scss";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
-import defaultsDeep from "lodash-es/defaultsDeep";
 
-export default interface RangeSliderTooltipView extends MVPView<TooltipOptions> {
+export default interface RangeSliderTooltipView {
   getFormatterOption(): TooltipOptions["formatter"];
+  getIsHiddenOption(): TooltipOptions["isHidden"];
   setFormatterOption(formatter?: TooltipOptions["formatter"]): this;
-  getFormatterOption(): TooltipOptions["isHidden"];
-  setFormatterOption(isHidden?: TooltipOptions["isHidden"]): this;
+  setIsHiddenOption(isHidden?: TooltipOptions["isHidden"]): this;
 }
 
 export type TooltipOptions = { formatter?: Formatter; isHidden?: boolean };
 
 export const DEFAULT_OPTIONS: Required<TooltipOptions> = {
-  formatter: {
-    to: (value: number) => value.toLocaleString(),
-    from: (value: string) => +parseFloat(value.replace(/[^0-9-.]/g, "")).toFixed(2),
-  },
+  formatter: (value: number) => value.toFixed(2).toLocaleString(),
   isHidden: false,
 };
 
-export default class RangeSliderTooltipView {
-  readonly dom: { self: HTMLElement };
-
-  private _options: Required<TooltipOptions>;
-
+export default class RangeSliderTooltipView
+  extends MVPView<Required<TooltipOptions>, TooltipOptions>
+  implements RangeSliderTooltipView {
   constructor(container: HTMLElement, options: TooltipOptions = DEFAULT_OPTIONS) {
-    this.dom = { self: container };
-    this._options = defaultsDeep(options, DEFAULT_OPTIONS);
+    super(container, DEFAULT_OPTIONS, options);
+  }
+
+  getFormatterOption() {
+    return this._options.formatter;
+  }
+  getIsHiddenOption() {
+    return this._options.isHidden;
+  }
+
+  setFormatterOption(formatter: TooltipOptions["formatter"] = DEFAULT_OPTIONS.formatter) {
+    this._options.formatter = formatter;
+
+    return this;
+  }
+  setIsHiddenOption(isHidden: TooltipOptions["isHidden"] = DEFAULT_OPTIONS.isHidden) {
+    this._options.isHidden = isHidden;
+
+    return this;
   }
 }
 
-type Formatter = { to: (value: number) => string; from: (value: string) => number };
+type Formatter = (value: number) => string;
