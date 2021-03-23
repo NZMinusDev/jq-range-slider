@@ -2,107 +2,211 @@ import template from "./range-slider__track.view.pug";
 import "./range-slider__track.scss";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
-import defaultsDeep from "lodash-es/defaultsDeep";
+import { collapsingParseFloat } from "@utils/devTools/tools/ParserHelper";
 
-export default interface RangeSliderTrackView extends MVPView<TrackOptions> {
-  getOrientationOption(): TrackOptions["orientation"];
-  getPaddingOption(): TrackOptions["padding"];
-  getRangeOption(): TrackOptions["range"];
-  getAnimateOption(): TrackOptions["animate"];
+export default interface RangeSliderTrackView {
+  getOrientationOption(): FixedTrackOptions["orientation"];
+  getIntervalsOption(): FixedTrackOptions["intervals"];
+  getStepsOption(): FixedTrackOptions["steps"];
+  getPaddingOption(): FixedTrackOptions["padding"];
   setOrientationOption(orientation?: TrackOptions["orientation"]): this;
+  setIntervalsOption(intervals?: TrackOptions["intervals"]): this;
+  setStepsOption(steps?: TrackOptions["steps"]): this;
   setPaddingOption(padding?: TrackOptions["padding"]): this;
-  setRangeOption(range?: TrackOptions["range"]): this;
-  setAnimateOption(animate?: TrackOptions["animate"]): this;
 }
 
 export type TrackOptions = {
   orientation?: "horizontal" | "vertical";
+  intervals?: { min: number; max: number; [key: string]: number };
+  steps?: "none" | number | ("none" | number)[];
   padding?: number | [number, number];
-  range?: {
-    min?: number;
-    max?: number;
-    [key: string]: number | undefined;
-  };
-
-  animate?: (timeFraction: number) => number;
+};
+export type FixedTrackOptions = {
+  orientation: Required<TrackOptions>["orientation"];
+  intervals: Required<TrackOptions>["intervals"];
+  steps: ("none" | number)[];
+  padding: [number, number];
 };
 
-export const DEFAULT_OPTIONS: Required<TrackOptions> = {
+export const DEFAULT_OPTIONS: FixedTrackOptions = {
   orientation: "horizontal",
-  padding: 0,
-  range: {
-    min: 0,
-    max: 10000,
-  },
-  animate: (timeFraction: number) => Math.pow(timeFraction, 2),
+  intervals: { min: -100, max: 100 },
+  steps: ["none"],
+  padding: [0, 0],
 };
 
-export default class RangeSliderTrackView {
-  readonly dom: { self: HTMLElement };
-
-  private _options: Required<TrackOptions>;
-
+const CALCULATION_PRECISION = 2;
+export default class RangeSliderTrackView
+  extends MVPView<FixedTrackOptions, TrackOptions>
+  implements RangeSliderTrackView {
   constructor(container: HTMLElement, options: TrackOptions = DEFAULT_OPTIONS) {
-    this.dom = { self: container };
-    this._options = defaultsDeep(options, DEFAULT_OPTIONS);
-
-    this._fixOptions();
+    super(container, DEFAULT_OPTIONS, options);
   }
 
-  private _fixOptions(): void {
-    let fixOptionMethodName;
-    Object.keys(this._options).forEach((option) => {
-      fixOptionMethodName = `_fix${option[0].toUpperCase() + option.slice(1)}Option`;
-      if (this[fixOptionMethodName]) this[fixOptionMethodName]();
+  getOrientationOption() {
+    return this._options.orientation;
+  }
+  getIntervalsOption() {
+    return Object.assign({}, this._options.intervals);
+  }
+  getStepsOption() {
+    return ([] as FixedTrackOptions["steps"]).concat(this._options.steps);
+  }
+  getPaddingOption() {
+    return ([] as number[]).concat(this._options.padding) as FixedTrackOptions["padding"];
+  }
+
+  setOrientationOption(orientation: TrackOptions["orientation"] = DEFAULT_OPTIONS.orientation) {
+    this._options.orientation = orientation;
+
+    return this;
+  }
+  setIntervalsOption(intervals: TrackOptions["intervals"] = DEFAULT_OPTIONS.intervals) {
+    this._options.intervals = Object.assign({}, intervals);
+
+    this._fixIntervalsOption()._fixStepsOption()._fixPaddingOption();
+
+    return this;
+  }
+  setStepsOption(steps: TrackOptions["steps"] = DEFAULT_OPTIONS.steps) {
+    this._options.steps = Array.isArray(steps)
+      ? ([] as FixedTrackOptions["steps"]).concat(steps)
+      : this._options.steps.fill(steps);
+
+    this._fixStepsOption();
+
+    return this;
+  }
+  setPaddingOption(padding: TrackOptions["padding"] = DEFAULT_OPTIONS.padding) {
+    this._options.padding = Array.isArray(padding)
+      ? (([] as number[]).concat(padding) as FixedTrackOptions["padding"])
+      : this._options.padding.fill(padding);
+
+    this._fixPaddingOption();
+
+    return this;
+  }
+
+  protected _fixIntervalsOption() {
+    const intervalsKeys = this._getSortedKeysOfIntervalsOption();
+    const intervalsValues = Object.values(this._options.intervals);
+    intervalsValues.sort((a, b) => {
+      return a - b;
     });
+
+    const entries: [string, number][] = [];
+    intervalsKeys.forEach((key, index) => {
+      entries[index] = [key, intervalsValues[index]];
+    });
+    this._options.intervals = Object.fromEntries(entries) as FixedTrackOptions["intervals"];
+
+    Object.entries(this._options.intervals).forEach(([key, val]) => {
+      let validKey: string | undefined;
+
+      if (!(key === "min" || key === "max")) {
+        let parsedKey = collapsingParseFloat(key);
+
+        delete this._options.intervals[key];
+        if (parsedKey > 0 && parsedKey < 100) {
+          validKey = `${parsedKey}%`;
+          this._options.intervals[`${parsedKey}%`] = val;
+        }
+      } else {
+        validKey = key;
+      }
+
+      if (validKey) {
+        if (val > Number.MAX_SAFE_INTEGER) {
+          this._options.intervals[validKey] = Number.MAX_SAFE_INTEGER;
+        }
+        if (val < Number.MIN_SAFE_INTEGER) {
+          this._options.intervals[validKey] = Number.MIN_SAFE_INTEGER;
+        }
+
+        this._options.intervals[validKey] = +this._options.intervals[validKey].toFixed(
+          CALCULATION_PRECISION
+        );
+      }
+    });
+
+    if (this._options.intervals.min === this._options.intervals.max) {
+      this._options.intervals.max++;
+    }
+
+    return this;
   }
-  private _fixPaddingOption() {
+  protected _fixStepsOption() {
+    if (!Array.isArray(this._options.steps)) {
+      const steps = new Array(Object.keys(this._options.intervals).length - 1);
+      this._options.steps = steps.fill(this._options.steps);
+    } else {
+      while (this._options.steps.length < Object.keys(this._options.intervals).length - 1) {
+        this._options.steps.push(DEFAULT_OPTIONS.steps[0]);
+      }
+      while (this._options.steps.length > Object.keys(this._options.intervals).length - 1) {
+        this._options.steps.pop();
+      }
+    }
+
+    const intervalsKeys = this._getSortedKeysOfIntervalsOption();
+    this._options.steps = this._options.steps.map((step, index) => {
+      const roundedStep = typeof step === "number" ? +step.toFixed(CALCULATION_PRECISION) : step;
+      const maxStep = +Math.abs(
+        this._options.intervals[intervalsKeys[index]] -
+          this._options.intervals[intervalsKeys[index + 1]]
+      ).toFixed(CALCULATION_PRECISION);
+
+      if (roundedStep !== "none") {
+        if (roundedStep > maxStep) {
+          return maxStep;
+        }
+
+        if (roundedStep <= 0) {
+          return DEFAULT_OPTIONS.steps[0];
+        } else {
+          return roundedStep;
+        }
+      } else {
+        return step;
+      }
+    });
+
+    return this;
+  }
+  protected _fixPaddingOption() {
     if (!Array.isArray(this._options.padding)) {
       this._options.padding = [this._options.padding, this._options.padding];
     }
-    this._options.padding.forEach((padding, index) => {
-      if (padding < 0) this._options.padding[index] = 0;
-      if (padding > 50) this._options.padding[index] = 50;
-    });
+
+    const intervalsKeys = this._getSortedKeysOfIntervalsOption();
+    this._options.padding = this._options.padding.map((padding, index) => {
+      const maxPad = +Math.abs(
+        (this._options.intervals[intervalsKeys[intervalsKeys.length - 1]] -
+          this._options.intervals[intervalsKeys[0]]) /
+          2
+      ).toFixed(CALCULATION_PRECISION);
+
+      if (padding < 0) return 0;
+      if (padding > maxPad) return maxPad;
+
+      return +this._options.padding[index].toFixed(CALCULATION_PRECISION);
+    }) as FixedTrackOptions["padding"];
+
+    return this;
   }
-  private _fixRangeOption() {
-    const rangeKeys = Object.keys(this._options.range).sort((a, b) => {
+
+  protected _getSortedKeysOfIntervalsOption() {
+    const intervalsKeys = Object.keys(this._options.intervals);
+    intervalsKeys.sort((a, b) => {
       if (a === "min" || b === "max") {
         return -1;
       }
       if (a === "max" || b === "min") {
         return 1;
       }
-      return parseFloat(a) - parseFloat(b);
+      return collapsingParseFloat(a) - collapsingParseFloat(b);
     });
-    let parsedKey: number;
-    rangeKeys.forEach((key, index, keys) => {
-      if (!(key === "min" || key === "max")) {
-        parsedKey = parseFloat(key);
-        if (typeof key !== "number" && parsedKey > 0 && parsedKey < 100) {
-          this._options.range[`${parsedKey}%`] = this._options.range[key];
-        }
-        delete this._options.range[key];
-        key = `${parsedKey}%`;
-      }
 
-      if ((this._options.range[key] as number) < 0) {
-        this._options.range[key] = 0;
-      }
-      if ((this._options.range[key] as number) > Number.MAX_VALUE) {
-        this._options.range[key] = Number.MAX_VALUE;
-      }
-
-      let buf;
-      if (index > 0) {
-        if (
-          (this._options.range[key] as number) < (this._options.range[keys[index - 1]] as number)
-        ) {
-          buf = this._options.range[key];
-          this._options.range[key] = this._options.range[keys[index - 1]];
-          this._options.range[keys[index - 1]] = buf;
-        }
-      }
-    });
+    return intervalsKeys;
   }
 }
