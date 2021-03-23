@@ -74,15 +74,7 @@ testGetter({
 });
 testSetter({
   Creator: RangeSliderPipsView,
-  constructorArgs: [
-    document.createElement("div"),
-    {
-      mode: "count",
-      amount: 5,
-      density: 3,
-      formatter: (value: number) => `${value.toString()}%$`,
-    },
-  ],
+  constructorArgs: [document.createElement("div")],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderPipsView.prototype.setOptions,
