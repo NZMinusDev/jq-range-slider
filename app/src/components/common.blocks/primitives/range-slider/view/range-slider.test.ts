@@ -8,6 +8,7 @@ import {
   testSetter,
   DifferentArguments,
 } from "@utils/devTools/tools/UnitTestingHelper";
+import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderView>,
@@ -43,6 +44,53 @@ const viewPropertiesExpecter: InstancePropsExpecter<
       );
     }
   });
+
+  switch (instance["_options"].pips.mode) {
+    case "intervals": {
+      expect(instance["_options"].pips.values).toStrictEqual(
+        Object.values(instance["_options"].intervals).sort(ascending)
+      );
+      break;
+    }
+    case "count": {
+      expect(instance["_options"].pips.values).toBeGreaterThanOrEqual(0);
+
+      const shift = +(
+        (instance["_options"].intervals.max - instance["_options"].intervals.min) /
+        ((instance["_options"].pips.values as number) - 1)
+      ).toFixed(2);
+      let accumulator = instance["_options"].intervals.min;
+      instance["_pipsView"]["_options"].values.forEach((value) => {
+        expect(value).toBe(accumulator);
+        accumulator += shift;
+      });
+      break;
+    }
+    case "positions": {
+      expect(instance["_options"].pips.values).toStrictEqual(
+        (instance["_options"].pips.values as number[]).filter((value) => value >= 0 && value <= 100)
+      );
+
+      const perPercent = +(
+        (instance["_options"].intervals.max - instance["_options"].intervals.min) /
+        100
+      ).toFixed(2);
+      expect(instance["_pipsView"]["_options"].values).toStrictEqual(
+        (instance["_options"].pips.values as number[]).map((value) => value * perPercent)
+      );
+      break;
+    }
+    case "values": {
+      expect(instance["_options"].pips.values).toStrictEqual(
+        (instance["_options"].pips.values as number[]).filter(
+          (value) =>
+            value >= instance["_options"].intervals.min &&
+            value <= instance["_options"].intervals.max
+        )
+      );
+      break;
+    }
+  }
 
   const formatterMock = jest.fn(instance["_options"].formatter);
   formatterMock(10);
@@ -85,11 +133,24 @@ const differentOptionsArg: DifferentArguments<Parameters<
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [-101] }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [101] }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [50, -50, -75, 0, 10] }],
+    [{ pips: { mode: "intervals", values: 5 } }],
+    [{ pips: { mode: "intervals", values: [0, 0, -10, 50, -99] } }],
+    [{ pips: { mode: "count", values: -3 } }],
+    [{ pips: { mode: "count", values: [0, 50, 100] } }],
+    [{ pips: { mode: "positions", values: 10 } }],
+    [{ pips: { mode: "positions", values: [-50, -1, 0, 99, 100, 101] } }],
+    [{ pips: { mode: "values", values: 2 } }],
+    [
+      {
+        intervals: { min: -100, max: 100, "50%": 50 },
+        pips: { mode: "values", values: [-101, -100, 50, 99, 101] },
+      },
+    ],
   ],
   partialOptionalArguments: [
     [
       {
-        intervals: { min: -100, max: 100, "50%": 50 },
+        intervals: { min: -100, max: 100, "50%": 25 },
         start: [0, 75],
         steps: [10, 5],
         connect: [true, false, true],
@@ -109,7 +170,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
         padding: [10, 5],
         formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
         tooltips: [true, (number: number) => `${number.toFixed(4).toLocaleString()}%`],
-        pips: { mode: "count", amount: 4, density: 5 },
+        pips: { mode: "count", values: 4, density: 5 },
         animate: (timeFraction: number) => timeFraction ** 3,
       },
     ],

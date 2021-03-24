@@ -1,0 +1,12 @@
+.content-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-container > *:not(:first-child) {
+  margin-top: 2em;
+}
+
+.range-slider__pips-demo {
+  width: 100%;
+}

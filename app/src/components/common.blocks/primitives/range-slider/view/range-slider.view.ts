@@ -1,4 +1,3 @@
-import template from "./range-slider.view.pug";
 import "./range-slider.scss";
 
 import RangeSliderTrackView, {
@@ -68,7 +67,7 @@ export type RangeSliderOptions = {
   padding?: TrackOptions["padding"];
   formatter?: Formatter;
   tooltips?: boolean | (NonNullable<TooltipOptions["formatter"]> | boolean)[];
-  pips?: Omit<PipsOptions, "formatter">;
+  pips?: Omit<PipsOptions, "formatter" | "values"> & { mode?: Mode; values?: number | number[] };
   animate?: (timeFraction: number) => number;
 };
 export type FixedRangeSliderOptions = {
@@ -93,10 +92,16 @@ export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   padding: TRACK_DEFAULT_OPTIONS.padding,
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
   tooltips: [true],
-  pips: PIPS_DEFAULT_OPTIONS,
+  pips: {
+    mode: "intervals",
+    values: Object.values(TRACK_DEFAULT_OPTIONS.intervals),
+    density: PIPS_DEFAULT_OPTIONS.density,
+    isHidden: PIPS_DEFAULT_OPTIONS.isHidden,
+  },
   animate: (timeFraction: number) => timeFraction ** 2,
 };
 
+const VALUES_CALCULATION_PRECISION = 2;
 export default class RangeSliderView
   extends MVPView<FixedRangeSliderOptions, RangeSliderOptions>
   implements RangeSliderView {
@@ -107,7 +112,18 @@ export default class RangeSliderView
   protected _pipsView: RangeSliderPipsView;
 
   constructor(container: HTMLElement, options: RangeSliderOptions = DEFAULT_OPTIONS) {
-    super(container, DEFAULT_OPTIONS, options);
+    super(container, DEFAULT_OPTIONS, options, [
+      "intervals",
+      "start",
+      "steps",
+      "connect",
+      "orientation",
+      "padding",
+      "formatter",
+      "tooltips",
+      "pips",
+      "animate",
+    ]);
 
     this._trackView = this._initTrackView(this._toTrackOptions());
     this._rangesViews = this._initRangesViews(this._toRangesOptions());
@@ -141,7 +157,7 @@ export default class RangeSliderView
     return ([] as (boolean | Formatter)[]).concat(this._options.tooltips);
   }
   getPipsOption() {
-    return Object.assign({}, this._options.pips);
+    return defaultsDeep({}, this._options.pips);
   }
   getAnimateOption() {
     return this._options.animate;
@@ -152,7 +168,9 @@ export default class RangeSliderView
 
     this._synchronizeWithTrackViewOptions(true)
       ._fixStartOption()
-      ._synchronizeWithThumbsOptions(true);
+      ._fixPipsOption()
+      ._synchronizeWithThumbsOptions(true)
+      ._synchronizeWithPipsOptions(true);
 
     return this;
   }
@@ -205,7 +223,9 @@ export default class RangeSliderView
   setFormatterOption(formatter: RangeSliderOptions["formatter"] = DEFAULT_OPTIONS.formatter) {
     this._options.formatter = formatter;
 
-    this._fixTooltipsOption()._synchronizeWithTooltipsOptions(true);
+    this._fixTooltipsOption()
+      ._synchronizeWithTooltipsOptions(true)
+      ._synchronizeWithPipsOptions(true);
 
     return this;
   }
@@ -221,7 +241,7 @@ export default class RangeSliderView
   setPipsOption(pips: RangeSliderOptions["pips"] = DEFAULT_OPTIONS.pips) {
     this._options.pips = defaultsDeep({}, pips, this._options.pips);
 
-    this._synchronizeWithPipsOptions(true);
+    this._fixPipsOption()._synchronizeWithPipsOptions(true);
 
     return this;
   }
@@ -297,6 +317,39 @@ export default class RangeSliderView
 
     return this;
   }
+  protected _fixPipsOption() {
+    switch (this._options.pips.mode) {
+      case "intervals": {
+        this._options.pips.values = Object.values(this._options.intervals);
+        break;
+      }
+      case "count": {
+        this._options.pips.values = Array.isArray(this._options.pips.values)
+          ? this._options.pips.values.length
+          : this._options.pips.values < 0
+          ? 0
+          : this._options.pips.values;
+        break;
+      }
+      case "positions": {
+        this._options.pips.values = Array.isArray(this._options.pips.values)
+          ? this._options.pips.values.filter((value) => value >= 0 && value <= 100)
+          : [0, 25, 50, 75, 100];
+        break;
+      }
+      case "values": {
+        this._options.pips.values = Array.isArray(this._options.pips.values)
+          ? this._options.pips.values.filter(
+              (value) =>
+                value >= this._options.intervals.min && value <= this._options.intervals.max
+            )
+          : ([] as number[]).concat(DEFAULT_OPTIONS.pips.values);
+        break;
+      }
+    }
+
+    return this;
+  }
 
   protected _toTrackOptions(): FixedTrackOptions {
     return {
@@ -335,10 +388,41 @@ export default class RangeSliderView
 
     return tooltipsOptions;
   }
-  protected _toPipsOptions(): Required<PipsOptions> {
+  protected _toPipsOptions() {
     let pipsOptions: Required<PipsOptions>;
+
     const formatter = this._options.formatter;
-    pipsOptions = Object.assign({ formatter }, this._options.pips);
+    const { isHidden, density } = this._options.pips;
+    let values = Array.isArray(this._options.pips.values) ? this._options.pips.values : [];
+
+    switch (this._options.pips.mode) {
+      case "count": {
+        const shift = +(
+          (this._options.intervals.max - this._options.intervals.min) /
+          ((this._options.pips.values as number) - 1)
+        ).toFixed(VALUES_CALCULATION_PRECISION);
+
+        let accumulator = this._options.intervals.min;
+        for (let index = 0; index < this._options.pips.values; index++) {
+          values.push(accumulator);
+          accumulator += shift;
+        }
+
+        break;
+      }
+      case "positions": {
+        const perPercent = +(
+          (this._options.intervals.max - this._options.intervals.min) /
+          100
+        ).toFixed(VALUES_CALCULATION_PRECISION);
+
+        values = values.map((value) => value * perPercent);
+
+        break;
+      }
+    }
+
+    pipsOptions = Object.assign({ formatter }, { isHidden, values, density, formatter });
 
     return pipsOptions;
   }
@@ -402,11 +486,24 @@ export default class RangeSliderView
     if (shouldSet) {
       this._pipsView.setOptions(this._toPipsOptions());
     }
-    const { mode, amount, density } = this._pipsView.getOptions();
+    const { isHidden, values, density } = this._pipsView.getOptions();
 
-    this._options.pips.mode = mode;
-    this._options.pips.amount = amount;
-    this._options.pips.density = density;
+    this._options.pips = { mode: this._options.pips.mode, isHidden, values, density };
+
+    switch (this._options.pips.mode) {
+      case "count": {
+        this._options.pips.values = values.length;
+        break;
+      }
+      case "positions": {
+        const perPercent = +(
+          (this._options.intervals.max - this._options.intervals.min) /
+          100
+        ).toFixed(VALUES_CALCULATION_PRECISION);
+
+        this._options.pips.values = values.map((value) => value / perPercent);
+      }
+    }
 
     return this;
   }
@@ -517,3 +614,4 @@ interface eventHandler {
   (values: number[], isTapped: boolean): void;
 }
 type Formatter = (value: number) => string;
+type Mode = "intervals" | "count" | "positions" | "values";

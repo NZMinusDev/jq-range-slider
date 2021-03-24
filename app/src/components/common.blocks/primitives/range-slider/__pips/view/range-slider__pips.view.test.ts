@@ -8,14 +8,16 @@ import {
   testSetter,
   DifferentArguments,
 } from "@utils/devTools/tools/UnitTestingHelper";
-import { collapsingParseInt } from "@utils/devTools/tools/ParserHelper";
+import { collapsingParseInt, getPrecision } from "@utils/devTools/tools/ParserHelper";
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderPipsView>,
   RangeSliderPipsView
 > = function ({ instance }) {
-  expect(instance["_options"].amount).toBeGreaterThanOrEqual(2);
-  expect(instance["_options"].amount).toEqual(collapsingParseInt(`${instance["_options"].amount}`));
+  instance["_options"].values.forEach((value, index, self) => {
+    if (index > 0) expect(value > self[index - 1]);
+    expect(getPrecision(value)).toBeLessThanOrEqual(2);
+  });
 
   expect(instance["_options"].density).toBeGreaterThanOrEqual(0);
   expect(instance["_options"].density).toEqual(
@@ -30,14 +32,17 @@ const viewPropertiesExpecter: InstancePropsExpecter<
 const differentOptionsArg: DifferentArguments<Parameters<
   typeof RangeSliderPipsView.prototype.setOptions
 >> = {
-  invalidOptionalArguments: [[{ amount: -2, density: 5.5543 }], [{ amount: 4.89, density: -5 }]],
-  partialOptionalArguments: [[{ mode: "count", amount: 3 }]],
+  invalidOptionalArguments: [
+    [{ values: [0, -100, 100, 20, -1000], density: -5 }],
+    [{ values: [20.543543, 300.5811], density: 5.5543 }],
+  ],
+  partialOptionalArguments: [[{ values: [-100, 0, 100] }]],
   fullOptionalArguments: [
     [
       {
-        mode: "count",
-        amount: 4,
-        density: 6,
+        isHidden: true,
+        values: [-200, 0, 10, 100],
+        density: 2,
         formatter: (value: number) => `${value.toString()}$`,
       },
     ],

@@ -1,2 +1,25 @@
 .range-slider__pips {
+  position: relative;
+  padding-top: 1em;
+}
+
+.range-slider__pips-value {
+  width: 2px;
+  height: 10px;
+  position: absolute;
+  background: burlywood;
+
+  &:after {
+    content: attr(data-formatted-value);
+    display: inline-block;
+    transform: translate(-50%, 50%);
+    color: grey;
+  }
+}
+
+.range-slider__pips-marker {
+  width: 2px;
+  height: 5px;
+  position: absolute;
+  background: burlywood;
 }
