@@ -1,4 +1,3 @@
-import template from "./range-slider__range.view.pug";
 import "./range-slider__range.scss";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";

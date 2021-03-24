@@ -1,4 +1,3 @@
-import template from "./range-slider__track.view.pug";
 import "./range-slider__track.scss";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
@@ -180,10 +179,10 @@ export default class RangeSliderTrackView
 
     const intervalsKeys = this._getSortedKeysOfIntervalsOption();
     this._options.padding = this._options.padding.map((padding, index) => {
-      const maxPad = +Math.abs(
+      const maxPad = +(
         (this._options.intervals[intervalsKeys[intervalsKeys.length - 1]] -
           this._options.intervals[intervalsKeys[0]]) /
-          2
+        2
       ).toFixed(CALCULATION_PRECISION);
 
       if (padding < 0) return 0;
