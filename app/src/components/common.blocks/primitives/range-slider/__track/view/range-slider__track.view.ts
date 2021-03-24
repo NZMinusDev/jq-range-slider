@@ -39,7 +39,7 @@ export default class RangeSliderTrackView
   extends MVPView<FixedTrackOptions, TrackOptions>
   implements RangeSliderTrackView {
   constructor(container: HTMLElement, options: TrackOptions = DEFAULT_OPTIONS) {
-    super(container, DEFAULT_OPTIONS, options);
+    super(container, DEFAULT_OPTIONS, options, ["orientation", "intervals", "steps", "padding"]);
   }
 
   getOrientationOption() {

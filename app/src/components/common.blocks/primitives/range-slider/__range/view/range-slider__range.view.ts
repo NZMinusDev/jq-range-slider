@@ -19,7 +19,7 @@ export default class RangeSliderRangeView
   extends MVPView<Required<RangeOptions>, RangeOptions>
   implements RangeSliderRangeView {
   constructor(container: HTMLElement, options: RangeOptions = DEFAULT_OPTIONS) {
-    super(container, DEFAULT_OPTIONS, options);
+    super(container, DEFAULT_OPTIONS, options, ["isConnected"]);
   }
 
   getIsConnectedOption() {

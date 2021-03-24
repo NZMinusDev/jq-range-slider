@@ -50,14 +50,19 @@ export class EventManagerMixin {
   }
 }
 
-export abstract class MVPView<OptionsToGet, OptionsToSet>
+export abstract class MVPView<OptionsToGet extends object, OptionsToSet extends object>
   extends EventManagerMixin
   implements Plugin {
   readonly dom: { self: HTMLElement };
 
   protected _options: OptionsToGet;
 
-  constructor(container: HTMLElement, DEFAULT_OPTIONS: OptionsToGet, options?: OptionsToSet) {
+  constructor(
+    container: HTMLElement,
+    DEFAULT_OPTIONS: OptionsToGet,
+    options: OptionsToSet,
+    protected theOrderOfIteratingThroughTheOptions: Extract<keyof OptionsToGet, string>[]
+  ) {
     super();
 
     this.dom = { self: container };
@@ -68,9 +73,9 @@ export abstract class MVPView<OptionsToGet, OptionsToSet>
   }
 
   getOptions(): OptionsToGet {
-    const options = {};
+    const options: any = {};
     let getOptionMethodName;
-    Object.keys(this._options).forEach((optionKey) => {
+    this.theOrderOfIteratingThroughTheOptions.forEach((optionKey) => {
       getOptionMethodName = `get${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
       if (this[getOptionMethodName]) options[optionKey] = this[getOptionMethodName]();
     });
@@ -79,33 +84,56 @@ export abstract class MVPView<OptionsToGet, OptionsToSet>
   }
 
   setOptions(options?: OptionsToSet) {
-    let setOptionMethodName;
-
     const optionsToForEach = options === undefined ? this._options : options;
+
+    let setOptionMethodName;
     let valueToPass;
+    Object.entries(optionsToForEach)
+      .sort(
+        ([a], [b]) =>
+          this.theOrderOfIteratingThroughTheOptions.indexOf(
+            a as Extract<keyof OptionsToGet, string>
+          ) -
+          this.theOrderOfIteratingThroughTheOptions.indexOf(
+            b as Extract<keyof OptionsToGet, string>
+          )
+      )
+      .forEach(([optionKey, optionValue]) => {
+        setOptionMethodName = `set${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
+        valueToPass = options === undefined ? undefined : optionValue;
 
-    Object.entries(optionsToForEach).forEach(([optionKey, optionValue]) => {
-      setOptionMethodName = `set${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
-      valueToPass = options === undefined ? undefined : optionValue;
-
-      if (this[setOptionMethodName]) {
-        this[setOptionMethodName](valueToPass);
-      }
-    });
+        if (this[setOptionMethodName]) {
+          this[setOptionMethodName](valueToPass);
+        }
+      });
 
     return this;
   }
 
   remove() {
     this.dom.self.remove();
+
+    return this;
   }
 
   protected _fixOptions() {
     let fixOptionMethodName;
-    Object.keys(this._options).forEach((option) => {
+    this.theOrderOfIteratingThroughTheOptions.forEach((option) => {
       fixOptionMethodName = `_fix${option[0].toUpperCase() + option.slice(1)}Option`;
       if (this[fixOptionMethodName]) this[fixOptionMethodName]();
     });
+
+    return this;
+  }
+
+  protected _render() {
+    let renderOptionMethodName;
+    this.theOrderOfIteratingThroughTheOptions.forEach((option) => {
+      renderOptionMethodName = `_render${option[0].toUpperCase() + option.slice(1)}Option`;
+      if (this[renderOptionMethodName]) this[renderOptionMethodName]();
+    });
+
+    return this;
   }
 }
 

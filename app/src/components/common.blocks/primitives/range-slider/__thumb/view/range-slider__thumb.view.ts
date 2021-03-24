@@ -20,7 +20,7 @@ export default class RangeSliderThumbView
   protected _id: number;
 
   constructor(container: HTMLElement, options: ThumbOptions = DEFAULT_OPTIONS) {
-    super(container, DEFAULT_OPTIONS, options);
+    super(container, DEFAULT_OPTIONS, options, ["start"]);
 
     this._id = new Date().getTime();
   }
