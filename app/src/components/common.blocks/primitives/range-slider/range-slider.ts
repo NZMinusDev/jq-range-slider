@@ -1,8 +1,8 @@
 import { RangeSliderModel } from "./models/range-slider.decl.model";
-import RangeSliderView, { RangeSliderOptions } from "./view/range-slider.view";
+import RangeSliderView from "./view/range-slider.view";
 
 export default class RangeSlider {
-  readonly view;
+  readonly view: RangeSliderView;
 
   constructor(
     readonly model: RangeSliderModel,
