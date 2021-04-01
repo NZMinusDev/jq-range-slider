@@ -1,2 +1,18 @@
 .range-slider__range {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  will-change: transform;
+  transform-origin: 0 0;
+  transform-style: flat;
+  background: tomato;
+  transition: opacity;
+  opacity: 0;
+}
+
+.range-slider__range_isConnected {
+  opacity: 1;
 }

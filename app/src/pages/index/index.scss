@@ -3,8 +3,8 @@
   flex-direction: column;
 }
 
-.content-container > *:not(:first-child) {
-  margin-top: 2em;
+.content-container > * {
+  margin-top: 20em;
 }
 
 .range-slider__pips-demo {

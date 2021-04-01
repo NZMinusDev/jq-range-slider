@@ -7,7 +7,7 @@ import RangeSliderPresenter from "./range-slider";
     // this is jq collection
     const presenters: RangeSliderPresenter[] = [];
     this.each(function () {
-      presenters.push(new RangeSliderPresenter(rangeSliderModel, [this, viewOptions]));
+      presenters.push(new RangeSliderPresenter(rangeSliderModel, [viewOptions], this));
       // this is html
     });
 

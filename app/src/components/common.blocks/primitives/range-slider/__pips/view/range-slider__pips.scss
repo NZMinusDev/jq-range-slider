@@ -1,25 +1,29 @@
 .range-slider__pips {
   position: relative;
-  padding-top: 1em;
+  padding-top: 0.5em;
+  color: grey;
+}
+.range-slider__pips_isHidden {
+  display: none;
 }
 
-.range-slider__pips-value {
+.range-slider__pips-value,
+.range-slider__pips-marker {
   width: 2px;
-  height: 10px;
   position: absolute;
   background: burlywood;
+}
+.range-slider__pips-value {
+  height: 10px;
 
   &:after {
     content: attr(data-formatted-value);
     display: inline-block;
     transform: translate(-50%, 50%);
-    color: grey;
+    white-space: nowrap;
+    text-align: center;
   }
 }
-
 .range-slider__pips-marker {
-  width: 2px;
   height: 5px;
-  position: absolute;
-  background: burlywood;
 }

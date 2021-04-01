@@ -15,14 +15,17 @@ import RangeSliderThumbView, {
 } from "./../__thumb/view/range-slider__thumb.view";
 import RangeSliderTooltipView, {
   TooltipOptions,
+  TooltipState,
 } from "./../__tooltip/view/range-slider__tooltip.view";
 import RangeSliderPipsView, {
   DEFAULT_OPTIONS as PIPS_DEFAULT_OPTIONS,
   PipsOptions,
 } from "./../__pips/view/range-slider__pips.view";
 
-import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { defaultsDeep } from "lodash-es";
+import { html, render, TemplateResult } from "lit-html";
+
+import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
 
 export default interface RangeSliderView {
@@ -63,7 +66,7 @@ export type RangeSliderOptions = {
   start?: ThumbOptions["start"] | NonNullable<ThumbOptions["start"]>[];
   steps?: TrackOptions["steps"];
   connect?: NonNullable<RangeOptions["isConnected"]> | Required<RangeOptions>["isConnected"][];
-  orientation?: TrackOptions["orientation"];
+  orientation?: "horizontal" | "vertical";
   padding?: TrackOptions["padding"];
   formatter?: Formatter;
   tooltips?: boolean | (NonNullable<TooltipOptions["formatter"]> | boolean)[];
@@ -82,13 +85,16 @@ export type FixedRangeSliderOptions = {
   pips: NonNullable<Required<RangeSliderOptions["pips"]>>;
   animate: Required<RangeSliderOptions>["animate"];
 };
+export type RangeSliderState = {
+  values: number[];
+};
 
 export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,
   start: [THUMB_DEFAULT_OPTIONS.start],
   steps: TRACK_DEFAULT_OPTIONS.steps,
   connect: [RANGE_DEFAULT_OPTIONS.isConnected, RANGE_DEFAULT_OPTIONS.isConnected],
-  orientation: TRACK_DEFAULT_OPTIONS.orientation,
+  orientation: "horizontal",
   padding: TRACK_DEFAULT_OPTIONS.padding,
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
   tooltips: [true],
@@ -100,36 +106,34 @@ export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   },
   animate: (timeFraction: number) => timeFraction ** 2,
 };
+export const DEFAULT_STATE: RangeSliderState = {
+  values: DEFAULT_OPTIONS.start,
+};
 
 const VALUES_CALCULATION_PRECISION = 2;
 export default class RangeSliderView
-  extends MVPView<FixedRangeSliderOptions, RangeSliderOptions>
+  extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, SubViews>
   implements RangeSliderView {
-  protected _trackView: RangeSliderTrackView;
-  protected _rangesViews: RangeSliderRangeView[];
-  protected _thumbsViews: RangeSliderThumbView[];
-  protected _tooltipsViews: RangeSliderTooltipView[];
-  protected _pipsView: RangeSliderPipsView;
-
-  constructor(container: HTMLElement, options: RangeSliderOptions = DEFAULT_OPTIONS) {
-    super(container, DEFAULT_OPTIONS, options, [
-      "intervals",
-      "start",
-      "steps",
-      "connect",
-      "orientation",
-      "padding",
-      "formatter",
-      "tooltips",
-      "pips",
-      "animate",
-    ]);
-
-    this._trackView = this._initTrackView(this._toTrackOptions());
-    this._rangesViews = this._initRangesViews(this._toRangesOptions());
-    this._thumbsViews = this._initThumbsViews(this._toThumbsOptions());
-    this._tooltipsViews = this._initTooltipsViews(this._toTooltipsOptions());
-    this._pipsView = this._initPipsView(this._toPipsOptions());
+  constructor(
+    options: RangeSliderOptions = DEFAULT_OPTIONS,
+    state: RangeSliderState = DEFAULT_STATE
+  ) {
+    super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
+      theOrderOfIteratingThroughTheOptions: [
+        "intervals",
+        "start",
+        "steps",
+        "connect",
+        "orientation",
+        "padding",
+        "formatter",
+        "tooltips",
+        "pips",
+        "animate",
+      ],
+      theOrderOfIteratingThroughTheState: ["values"],
+      theOrderOfIteratingThroughTheSubViews: ["track", "ranges", "thumbs", "tooltips", "pips"],
+    });
   }
 
   getIntervalsOption() {
@@ -181,6 +185,7 @@ export default class RangeSliderView
 
     this._fixStartOption()
       ._synchronizeWithThumbsOptions(true)
+      ._fixValuesState()
       ._fixConnectOption()
       ._synchronizeWithRangesOptions(true)
       ._fixTooltipsOption()
@@ -208,8 +213,6 @@ export default class RangeSliderView
     orientation: RangeSliderOptions["orientation"] = DEFAULT_OPTIONS.orientation
   ) {
     this._options.orientation = orientation;
-
-    this._synchronizeWithTrackViewOptions(true);
 
     return this;
   }
@@ -250,20 +253,6 @@ export default class RangeSliderView
 
     return this;
   }
-
-  // remove() {
-  //   this._trackView.remove();
-  //   this._rangesViews.forEach((rangeView) => {
-  //     rangeView.remove();
-  //   });
-  //   this._thumbsViews.forEach((thumbView) => {
-  //     thumbView.remove();
-  //   });
-  //   this._tooltipsViews.forEach((tooltipView) => {
-  //     tooltipView.remove();
-  //   });
-  //   this._pipsView.remove();
-  // }
 
   protected _fixStartOption() {
     this._options.start = Array.isArray(this._options.start)
@@ -351,9 +340,14 @@ export default class RangeSliderView
     return this;
   }
 
+  protected _fixValuesState() {
+    this._state.values = ([] as number[]).concat(this._options.start);
+
+    return this;
+  }
+
   protected _toTrackOptions(): FixedTrackOptions {
     return {
-      orientation: this._options.orientation,
       intervals: this._options.intervals,
       steps: this._options.steps,
       padding: this._options.padding,
@@ -427,13 +421,26 @@ export default class RangeSliderView
     return pipsOptions;
   }
 
+  //FIXME:
+  protected _toTooltipsState() {
+    const tooltipsState: TooltipState[] = [];
+
+    this._options.tooltips.forEach((tooltip, index) => {
+      tooltipsState.push({
+        value: this._state.values[index],
+        translate: [0, 0],
+      });
+    });
+
+    return tooltipsState;
+  }
+
   protected _synchronizeWithTrackViewOptions(shouldSet: boolean = false) {
     if (shouldSet) {
-      this._trackView.setOptions(this._toTrackOptions());
+      this._subViews.trackView.setOptions(this._toTrackOptions());
     }
-    const { orientation, intervals, steps, padding } = this._trackView.getOptions();
+    const { intervals, steps, padding } = this._subViews.trackView.getOptions();
 
-    this._options.orientation = orientation;
     this._options.intervals = intervals;
     this._options.steps = steps;
     this._options.padding = padding;
@@ -442,9 +449,9 @@ export default class RangeSliderView
   }
   protected _synchronizeWithRangesOptions(shouldSet: boolean = false) {
     if (shouldSet) {
-      this._initRangesViews(this._toRangesOptions());
+      this._initRangesView(this._toRangesOptions());
     } else {
-      this._rangesViews.forEach((rangeView, index) => {
+      this._subViews.rangesView.forEach((rangeView, index) => {
         const { isConnected } = rangeView.getOptions();
 
         this._options.connect[index] = isConnected;
@@ -455,9 +462,9 @@ export default class RangeSliderView
   }
   protected _synchronizeWithThumbsOptions(shouldSet: boolean = false) {
     if (shouldSet) {
-      this._initThumbsViews(this._toThumbsOptions());
+      this._initThumbsView(this._toThumbsOptions());
     } else {
-      this._thumbsViews.forEach((thumbView, index) => {
+      this._subViews.thumbsView.forEach((thumbView, index) => {
         const { start } = thumbView.getOptions();
 
         this._options.start[index] = start;
@@ -467,9 +474,9 @@ export default class RangeSliderView
   }
   protected _synchronizeWithTooltipsOptions(shouldSet: boolean = false) {
     if (shouldSet) {
-      this._initTooltipsViews(this._toTooltipsOptions());
+      this._initTooltipsView(this._toTooltipsOptions(), this._toTooltipsState());
     } else {
-      this._tooltipsViews.forEach((tooltipView, index) => {
+      this._subViews.tooltipsView.forEach((tooltipView, index) => {
         const { formatter, isHidden } = tooltipView.getOptions();
 
         this._options.tooltips[index] = isHidden
@@ -484,9 +491,9 @@ export default class RangeSliderView
   }
   protected _synchronizeWithPipsOptions(shouldSet: boolean = false) {
     if (shouldSet) {
-      this._pipsView.setOptions(this._toPipsOptions());
+      this._subViews.pipsView.setOptions(this._toPipsOptions());
     }
-    const { isHidden, values, density } = this._pipsView.getOptions();
+    const { isHidden, values, density } = this._subViews.pipsView.getOptions();
 
     this._options.pips = { mode: this._options.pips.mode, isHidden, values, density };
 
@@ -509,104 +516,110 @@ export default class RangeSliderView
   }
 
   protected _initTrackView(options: TrackOptions): RangeSliderTrackView {
-    const container = document.createElement("div");
-
-    this._trackView = new RangeSliderTrackView(container, options);
-
-    this.dom.self.append(container);
+    this._subViews.trackView = new RangeSliderTrackView(options);
 
     this._synchronizeWithTrackViewOptions();
 
-    return this._trackView;
+    return this._subViews.trackView;
   }
-  protected _initRangesViews(options: RangeOptions[]): RangeSliderRangeView[] {
-    if (!this._rangesViews) {
-      this._rangesViews = [];
+  protected _initRangesView(options: RangeOptions[]): RangeSliderRangeView[] {
+    if (!this._subViews.rangesView) {
+      this._subViews.rangesView = [];
     }
 
-    while (this._rangesViews.length > options.length) {
-      this._rangesViews[this._rangesViews.length - 1].remove();
-      this._rangesViews.pop();
+    while (this._subViews.rangesView.length > options.length) {
+      this._subViews.rangesView.pop();
     }
-    this._rangesViews.forEach((rangeView, index) => {
+    this._subViews.rangesView.forEach((rangeView, index) => {
       rangeView.setOptions(options[index]);
     });
-    while (this._rangesViews.length < options.length) {
-      const container = document.createElement("div");
-
-      this._rangesViews.push(
-        new RangeSliderRangeView(container, options[this._rangesViews.length])
+    while (this._subViews.rangesView.length < options.length) {
+      this._subViews.rangesView.push(
+        new RangeSliderRangeView(options[this._subViews.rangesView.length])
       );
-
-      this.dom.self.append(container);
     }
 
     this._synchronizeWithRangesOptions();
 
-    return this._rangesViews;
+    return this._subViews.rangesView;
   }
-  protected _initThumbsViews(options: ThumbOptions[]): RangeSliderThumbView[] {
-    if (!this._thumbsViews) {
-      this._thumbsViews = [];
+  protected _initThumbsView(options: ThumbOptions[]): RangeSliderThumbView[] {
+    if (!this._subViews.thumbsView) {
+      this._subViews.thumbsView = [];
     }
 
-    while (this._thumbsViews.length > options.length) {
-      this._thumbsViews[this._thumbsViews.length - 1].remove();
-      this._thumbsViews.pop();
+    while (this._subViews.thumbsView.length > options.length) {
+      this._subViews.thumbsView.pop();
     }
-    this._thumbsViews.forEach((thumbView, index) => {
+    this._subViews.thumbsView.forEach((thumbView, index) => {
       thumbView.setOptions(options[index]);
     });
-    while (this._thumbsViews.length < options.length) {
-      const container = document.createElement("div");
-
-      this._thumbsViews.push(
-        new RangeSliderThumbView(container, options[this._thumbsViews.length])
+    while (this._subViews.thumbsView.length < options.length) {
+      this._subViews.thumbsView.push(
+        new RangeSliderThumbView(options[this._subViews.thumbsView.length])
       );
-
-      this.dom.self.append(container);
     }
 
     this._synchronizeWithThumbsOptions();
 
-    return this._thumbsViews;
+    return this._subViews.thumbsView;
   }
-  protected _initTooltipsViews(options: TooltipOptions[]): RangeSliderTooltipView[] {
-    if (!this._tooltipsViews) {
-      this._tooltipsViews = [];
+  protected _initTooltipsView(
+    options: TooltipOptions[],
+    state: TooltipState[]
+  ): RangeSliderTooltipView[] {
+    if (!this._subViews.tooltipsView) {
+      this._subViews.tooltipsView = [];
     }
 
-    while (this._tooltipsViews.length > options.length) {
-      this._tooltipsViews[this._tooltipsViews.length - 1].remove();
-      this._tooltipsViews.pop();
+    while (this._subViews.tooltipsView.length > options.length) {
+      this._subViews.tooltipsView.pop();
     }
-    this._tooltipsViews.forEach((tooltipView, index) => {
-      tooltipView.setOptions(options[index]);
+    this._subViews.tooltipsView.forEach((tooltipView, index) => {
+      tooltipView.setOptions(options[index]).setState(state[index]);
     });
-    while (this._tooltipsViews.length < options.length) {
-      const container = document.createElement("div");
-
-      this._tooltipsViews.push(
-        new RangeSliderTooltipView(container, options[this._tooltipsViews.length])
+    while (this._subViews.tooltipsView.length < options.length) {
+      this._subViews.tooltipsView.push(
+        new RangeSliderTooltipView(
+          options[this._subViews.tooltipsView.length],
+          state[this._subViews.tooltipsView.length]
+        )
       );
-
-      this.dom.self.append(container);
     }
 
     this._synchronizeWithTooltipsOptions();
 
-    return this._tooltipsViews;
+    return this._subViews.tooltipsView;
   }
   protected _initPipsView(options: PipsOptions): RangeSliderPipsView {
-    const container = document.createElement("div");
-
-    this._pipsView = new RangeSliderPipsView(container, options);
-
-    this.dom.self.append(container);
+    this._subViews.pipsView = new RangeSliderPipsView(options);
 
     this._synchronizeWithPipsOptions();
 
-    return this._pipsView;
+    return this._subViews.pipsView;
+  }
+
+  protected _render(container?: HTMLElement | DocumentFragment) {
+    let template = () => html`<div class="range-slider_orientation-${this._options.orientation}">
+      ${this._subViews.trackView.render()(
+        ([] as TemplateResult[]).concat(
+          this._subViews.rangesView.map((view) => view.render()()),
+          this._subViews.thumbsView.map((view, index) =>
+            view.render()(this._subViews.tooltipsView[index].render()())
+          )
+        )
+      )}
+      ${this._subViews.pipsView.render()()}
+    </div>`;
+
+    if (
+      this._subViews.thumbsView.length === this._subViews.tooltipsView.length &&
+      this._subViews.thumbsView.length === this._subViews.rangesView.length - 1
+    ) {
+      render(template(), (this.dom.container = container ?? this.dom.container));
+    }
+
+    return template;
   }
 }
 
@@ -615,3 +628,11 @@ interface eventHandler {
 }
 type Formatter = (value: number) => string;
 type Mode = "intervals" | "count" | "positions" | "values";
+
+type SubViews = {
+  trackView: RangeSliderTrackView;
+  rangesView: RangeSliderRangeView[];
+  thumbsView: RangeSliderThumbView[];
+  tooltipsView: RangeSliderTooltipView[];
+  pipsView: RangeSliderPipsView;
+};

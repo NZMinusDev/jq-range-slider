@@ -6,8 +6,10 @@ export default class RangeSlider {
 
   constructor(
     readonly model: RangeSliderModel,
-    viewParameters: ConstructorParameters<typeof RangeSliderView>
+    viewParameters: ConstructorParameters<typeof RangeSliderView>,
+    container: HTMLElement
   ) {
     this.view = new RangeSliderView(...viewParameters);
+    this.view.render(container);
   }
 }

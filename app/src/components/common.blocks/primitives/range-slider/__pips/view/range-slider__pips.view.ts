@@ -1,16 +1,14 @@
 import "./range-slider__pips.scss";
 
+import { html, render, TemplateResult } from "lit-html";
+import { ClassInfo, classMap } from "lit-html/directives/class-map.js";
+import { StyleInfo, styleMap } from "lit-html/directives/style-map.js";
+
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { collapsingParseInt, collapsingParseFloat } from "@utils/devTools/tools/ParserHelper";
 import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
 
 export default interface RangeSliderPipsView {
-  readonly dom: {
-    self: HTMLElement;
-    markers: HTMLCollectionOf<HTMLDivElement>;
-    values: HTMLCollectionOf<HTMLDivElement>;
-  };
-
   getIsHiddenOption(): PipsOptions["isHidden"];
   getValuesOption(): PipsOptions["values"];
   getDensityOption(): PipsOptions["density"];
@@ -27,6 +25,7 @@ export type PipsOptions = {
   density?: number;
   formatter?: Formatter;
 };
+export type PipsState = {};
 
 export const DEFAULT_OPTIONS: Required<PipsOptions> = {
   isHidden: false,
@@ -34,16 +33,17 @@ export const DEFAULT_OPTIONS: Required<PipsOptions> = {
   density: 1,
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
 };
+export const DEFAULT_STATE: PipsState = {};
 
 const VALUES_CALCULATION_PRECISION = 2;
 const RENDER_CALCULATION_PRECISION = 4;
 export default class RangeSliderPipsView
-  extends MVPView<Required<PipsOptions>, PipsOptions>
+  extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
   implements RangeSliderPipsView {
-  constructor(container: HTMLElement, options: PipsOptions = DEFAULT_OPTIONS) {
-    super(container, DEFAULT_OPTIONS, options, ["isHidden", "values", "density", "formatter"]);
-
-    this._render();
+  constructor(options: PipsOptions = DEFAULT_OPTIONS, state: PipsState = DEFAULT_STATE) {
+    super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
+      theOrderOfIteratingThroughTheOptions: ["isHidden", "values", "density", "formatter"],
+    });
   }
 
   getIsHiddenOption() {
@@ -62,26 +62,22 @@ export default class RangeSliderPipsView
   setIsHiddenOption(isHidden: PipsOptions["isHidden"] = DEFAULT_OPTIONS.isHidden) {
     this._options.isHidden = isHidden;
 
-    this._renderIsHiddenOption();
-
     return this;
   }
   setValuesOption(values: PipsOptions["values"] = DEFAULT_OPTIONS.values) {
     this._options.values = ([] as number[]).concat(values);
-    this._fixValuesOption()._renderValuesOption();
+    this._fixValuesOption();
 
     return this;
   }
   setDensityOption(density: PipsOptions["density"] = DEFAULT_OPTIONS.density) {
     this._options.density = density;
-    this._fixDensityOption()._renderDensityOption();
+    this._fixDensityOption();
 
     return this;
   }
   setFormatterOption(formatter: PipsOptions["formatter"] = DEFAULT_OPTIONS.formatter) {
     this._options.formatter = formatter;
-
-    this._renderFormatterOption();
 
     return this;
   }
@@ -101,94 +97,67 @@ export default class RangeSliderPipsView
     return this;
   }
 
-  protected _renderIsHiddenOption() {
-    this.dom.self.classList.add("range-slider__pips");
+  protected _render(container?: HTMLElement | DocumentFragment) {
+    const pipsContainerClasses: ClassInfo = {
+      "range-slider__pips": true,
+      "range-slider__pips_isHidden": this._options.isHidden,
+    };
 
-    if (this._options.isHidden) {
-      this.dom.self.classList.add("range-slider__pips_isHidden");
-    } else {
-      this.dom.self.classList.remove("range-slider__pips_isHidden");
-    }
+    const valueClasses: ClassInfo = { "range-slider__pips-value": true };
+    const markerClasses: ClassInfo = { "range-slider__pips-marker": true };
+    let valueStyles: StyleInfo;
+    let markerStyles: StyleInfo;
 
-    return this;
-  }
-  protected _renderValuesOption() {
-    if (this.dom.values) {
-      Array.from(this.dom.values).forEach((value) => {
-        value.remove();
-      });
-    }
-
-    const TEMPLATE = document.createElement("div");
-    TEMPLATE.classList.add("range-slider__pips-value");
+    /**values */
     const size = this._options.values[this._options.values.length - 1] - this._options.values[0];
-
-    let elem: HTMLDivElement;
     let valuePosition = 0;
     let rangeShift = 0;
-    this._options.values.forEach((value, index, values) => {
-      elem = TEMPLATE.cloneNode() as HTMLDivElement;
+    let rangeBetweenValues = 0;
 
-      elem.style.left = `${(valuePosition += rangeShift)}%`;
-      elem.dataset.value = `${value}`;
+    /**density */
+    const rangeBetweenMarkers = +(1 / this._options.density).toFixed(RENDER_CALCULATION_PRECISION);
+    let amountOfMarkers: number;
+    let previousValueStyles: StyleInfo;
+    let markerPosition = 0;
 
-      this.dom.self.append(elem);
-
+    let markers: TemplateResult[];
+    let pips = this._options.values.map((value, index, values) => {
+      /**values */
+      valueStyles = { left: `${(valuePosition += rangeShift)}%` };
       rangeShift = +(((values[index + 1] - value) / size) * 100).toFixed(
         RENDER_CALCULATION_PRECISION
       );
-    });
-
-    this.dom.values = this.dom.self.getElementsByClassName(
-      "range-slider__pips-value"
-    ) as HTMLCollectionOf<HTMLDivElement>;
-
-    return this;
-  }
-  protected _renderDensityOption() {
-    if (this.dom.markers) {
-      Array.from(this.dom.markers).forEach((marker) => {
-        marker.remove();
-      });
-    }
-
-    const TEMPLATE = document.createElement("div");
-    TEMPLATE.classList.add("range-slider__pips-marker");
-    const rangeBetweenMarkers = +(1 / this._options.density).toFixed(RENDER_CALCULATION_PRECISION);
-
-    let elem: HTMLDivElement;
-    let markerPosition = 0;
-    let rangeBetweenValues = 0;
-    let amountOfMarkers: number;
-    Array.from(this.dom.values).forEach((value, index, values) => {
-      if (values[index + 1]) {
+      /**density */
+      markers = [];
+      if (index > 0) {
         rangeBetweenValues =
-          Number.parseFloat(values[index + 1].style.left) - Number.parseFloat(value.style.left);
+          Number.parseFloat(valueStyles.left) - Number.parseFloat(previousValueStyles.left);
         amountOfMarkers = Math.floor(rangeBetweenValues * this._options.density);
+
         for (let j = 0; j < amountOfMarkers; j++) {
-          elem = TEMPLATE.cloneNode() as HTMLDivElement;
-
-          elem.style.left = `${(markerPosition += rangeBetweenMarkers)}%`;
-
-          this.dom.self.append(elem);
+          markerStyles = { left: `${(markerPosition += rangeBetweenMarkers)}%` };
+          markers.push(html`<div
+            class=${classMap(markerClasses)}
+            style=${styleMap(markerStyles)}
+          ></div>`);
         }
       }
+      previousValueStyles = valueStyles;
+
+      return html`<div
+          class=${classMap(valueClasses)}
+          style=${styleMap(valueStyles)}
+          data-value=${value}
+          data-formatted-value="${this._options.formatter(this._options.values[index])}"
+        ></div>
+        ${markers}`;
     });
 
-    this.dom.markers = this.dom.self.getElementsByClassName(
-      "range-slider__pips-marker"
-    ) as HTMLCollectionOf<HTMLDivElement>;
+    const template = () => html`<div class=${classMap(pipsContainerClasses)}>${pips}</div>`;
 
-    return this;
-  }
-  protected _renderFormatterOption() {
-    Array.from(this.dom.values).forEach((value, index) => {
-      if (this._options.values[index]) {
-        value.dataset.formattedValue = this._options.formatter(this._options.values[index]);
-      }
-    });
+    render(template, (this.dom.container = container ?? this.dom.container));
 
-    return this;
+    return template;
   }
 }
 

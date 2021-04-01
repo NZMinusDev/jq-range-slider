@@ -1,2 +1,30 @@
 .range-slider__tooltip {
+  $triangleSize: 5px;
+
+  position: absolute;
+  top: calc(-100% - #{$triangleSize * 2});
+  z-index: 1;
+  padding: 1ex;
+  border-radius: 4px;
+  color: white;
+  text-align: center;
+  line-height: 100%;
+  background-color: black;
+  user-select: none;
+  cursor: initial;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -$triangleSize;
+    border-width: $triangleSize;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+  }
+}
+
+.range-slider__tooltip_isHidden {
+  display: none;
 }

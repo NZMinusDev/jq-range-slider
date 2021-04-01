@@ -1,2 +1,31 @@
 .range-slider__thumb {
+  $bgColor: black;
+
+  height: 200%;
+  width: 2em;
+  position: relative;
+  top: -50%;
+  z-index: 2;
+  display: inline-flex;
+  justify-content: space-evenly;
+  align-items: center;
+  backface-visibility: hidden;
+  background-color: $bgColor;
+  box-shadow: 0 0 0 0;
+  transition: box-shadow 0.1s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 0 0 0.5em rgba($color: $bgColor, $alpha: 0.1);
+  }
+  &:active {
+    box-shadow: 0 0 0 0.75em rgba($color: $bgColor, $alpha: 0.2);
+  }
+
+  &:before,
+  &:after {
+    content: "";
+    height: 75%;
+    width: 1px;
+    background: white;
+  }
 }

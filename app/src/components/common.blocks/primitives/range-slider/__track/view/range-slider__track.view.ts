@@ -1,50 +1,48 @@
 import "./range-slider__track.scss";
 
+import { html, render, TemplateResult } from "lit-html";
+
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { collapsingParseFloat } from "@utils/devTools/tools/ParserHelper";
 
 export default interface RangeSliderTrackView {
-  getOrientationOption(): FixedTrackOptions["orientation"];
   getIntervalsOption(): FixedTrackOptions["intervals"];
   getStepsOption(): FixedTrackOptions["steps"];
   getPaddingOption(): FixedTrackOptions["padding"];
-  setOrientationOption(orientation?: TrackOptions["orientation"]): this;
   setIntervalsOption(intervals?: TrackOptions["intervals"]): this;
   setStepsOption(steps?: TrackOptions["steps"]): this;
   setPaddingOption(padding?: TrackOptions["padding"]): this;
 }
 
 export type TrackOptions = {
-  orientation?: "horizontal" | "vertical";
   intervals?: { min: number; max: number; [key: string]: number };
   steps?: "none" | number | ("none" | number)[];
   padding?: number | [number, number];
 };
 export type FixedTrackOptions = {
-  orientation: Required<TrackOptions>["orientation"];
   intervals: Required<TrackOptions>["intervals"];
   steps: ("none" | number)[];
   padding: [number, number];
 };
+export type TrackState = {};
 
 export const DEFAULT_OPTIONS: FixedTrackOptions = {
-  orientation: "horizontal",
   intervals: { min: -100, max: 100 },
   steps: ["none"],
   padding: [0, 0],
 };
+export const DEFAULT_STATE: TrackState = {};
 
 const CALCULATION_PRECISION = 2;
 export default class RangeSliderTrackView
-  extends MVPView<FixedTrackOptions, TrackOptions>
+  extends MVPView<FixedTrackOptions, TrackOptions, TrackState>
   implements RangeSliderTrackView {
-  constructor(container: HTMLElement, options: TrackOptions = DEFAULT_OPTIONS) {
-    super(container, DEFAULT_OPTIONS, options, ["orientation", "intervals", "steps", "padding"]);
+  constructor(options: TrackOptions = DEFAULT_OPTIONS, state: TrackState = DEFAULT_STATE) {
+    super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
+      theOrderOfIteratingThroughTheOptions: ["intervals", "steps", "padding"],
+    });
   }
 
-  getOrientationOption() {
-    return this._options.orientation;
-  }
   getIntervalsOption() {
     return Object.assign({}, this._options.intervals);
   }
@@ -55,11 +53,6 @@ export default class RangeSliderTrackView
     return ([] as number[]).concat(this._options.padding) as FixedTrackOptions["padding"];
   }
 
-  setOrientationOption(orientation: TrackOptions["orientation"] = DEFAULT_OPTIONS.orientation) {
-    this._options.orientation = orientation;
-
-    return this;
-  }
   setIntervalsOption(intervals: TrackOptions["intervals"] = DEFAULT_OPTIONS.intervals) {
     this._options.intervals = Object.assign({}, intervals);
 
@@ -207,5 +200,14 @@ export default class RangeSliderTrackView
     });
 
     return intervalsKeys;
+  }
+
+  protected _render(container?: HTMLElement | DocumentFragment) {
+    const template = (innerHTML: TemplateResult | TemplateResult[]) =>
+      html`<div class="range-slider__track">${innerHTML}</div>`;
+
+    render(template, (this.dom.container = container ?? this.dom.container));
+
+    return template;
   }
 }

@@ -1,5 +1,7 @@
 import "./range-slider__thumb.scss";
 
+import { html, render, TemplateResult } from "lit-html";
+
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 
 export default interface RangeSliderThumbView {
@@ -9,18 +11,22 @@ export default interface RangeSliderThumbView {
 }
 
 export type ThumbOptions = { start?: number };
+export type ThumbState = {};
 
 export const DEFAULT_OPTIONS: Required<ThumbOptions> = {
   start: 0,
 };
+export const DEFAULT_STATE: ThumbState = {};
 
 export default class RangeSliderThumbView
-  extends MVPView<Required<ThumbOptions>, ThumbOptions>
+  extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
   implements RangeSliderThumbView {
   protected _id: number;
 
-  constructor(container: HTMLElement, options: ThumbOptions = DEFAULT_OPTIONS) {
-    super(container, DEFAULT_OPTIONS, options, ["start"]);
+  constructor(options: ThumbOptions = DEFAULT_OPTIONS, state: ThumbState = DEFAULT_STATE) {
+    super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
+      theOrderOfIteratingThroughTheOptions: ["start"],
+    });
 
     this._id = new Date().getTime();
   }
@@ -48,6 +54,23 @@ export default class RangeSliderThumbView
         : this._options.start;
 
     return this;
+  }
+
+  protected _render(container?: HTMLElement | DocumentFragment) {
+    const template = (innerHTML: TemplateResult | TemplateResult[]) =>
+      html`<div class="range-slider__thumb" @pointerdown=${this} @pointerup=${this}>
+        ${innerHTML}
+      </div>`;
+
+    render(template, (this.dom.container = container ?? this.dom.container));
+
+    return template;
+  }
+  protected _onPointerdown(event: PointerEvent) {
+    console.log("_onPointerdown");
+  }
+  protected _onPointerup(event: PointerEvent) {
+    console.log("_onPointerup");
   }
 }
 
