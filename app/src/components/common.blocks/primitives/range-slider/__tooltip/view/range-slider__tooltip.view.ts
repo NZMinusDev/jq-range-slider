@@ -1,7 +1,7 @@
 import "./range-slider__tooltip.scss";
 
-import { html, render } from "lit-html";
-import { ClassInfo, classMap } from "lit-html/directives/class-map";
+import { html } from "lit-html";
+import { classMap } from "lit-html/directives/class-map";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 
@@ -30,6 +30,16 @@ export const DEFAULT_STATE: TooltipState = {
 export default class RangeSliderTooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState>
   implements RangeSliderTooltipView {
+  readonly template = () => html`<div
+    class=${classMap({
+      "range-slider__tooltip": true,
+      "range-slider__tooltip_isHidden": this._options.isHidden,
+    })}
+    style="transform:translate(${this._state.translate[0]}px,${this._state.translate[1]}px)"
+  >
+    ${this._state.value}
+  </div>`;
+
   constructor(options: TooltipOptions = DEFAULT_OPTIONS, state: TooltipState = DEFAULT_STATE) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: ["isHidden", "formatter"],
@@ -64,24 +74,6 @@ export default class RangeSliderTooltipView
     this._state.translate = ([] as number[]).concat(translate) as TooltipState["translate"];
 
     return this;
-  }
-
-  protected _render(container?: HTMLElement | DocumentFragment) {
-    const classes: ClassInfo = {
-      "range-slider__tooltip": true,
-      "range-slider__tooltip_isHidden": this._options.isHidden,
-    };
-
-    const template = () => html`<div
-      class=${classMap(classes)}
-      style="transform:translate(${this._state.translate[0]}px,${this._state.translate[1]}px)"
-    >
-      ${this._state.value}
-    </div>`;
-
-    render(template, (this.dom.container = container ?? this.dom.container));
-
-    return template;
   }
 }
 

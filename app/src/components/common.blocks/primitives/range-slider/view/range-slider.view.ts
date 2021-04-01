@@ -23,7 +23,7 @@ import RangeSliderPipsView, {
 } from "./../__pips/view/range-slider__pips.view";
 
 import { defaultsDeep } from "lodash-es";
-import { html, render, TemplateResult } from "lit-html";
+import { html, TemplateResult } from "lit-html";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
@@ -114,6 +114,18 @@ const VALUES_CALCULATION_PRECISION = 2;
 export default class RangeSliderView
   extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, SubViews>
   implements RangeSliderView {
+  readonly template = () => html`<div class="range-slider_orientation-${this._options.orientation}">
+    ${this._subViews.trackView.template(
+      ([] as TemplateResult[]).concat(
+        this._subViews.rangesView.map((view) => view.template()),
+        this._subViews.thumbsView.map((view, index) =>
+          view.template(this._subViews.tooltipsView[index].template())
+        )
+      )
+    )}
+    ${this._subViews.pipsView.template()}
+  </div>`;
+
   constructor(
     options: RangeSliderOptions = DEFAULT_OPTIONS,
     state: RangeSliderState = DEFAULT_STATE
@@ -599,27 +611,15 @@ export default class RangeSliderView
     return this._subViews.pipsView;
   }
 
-  protected _render(container?: HTMLElement | DocumentFragment) {
-    let template = () => html`<div class="range-slider_orientation-${this._options.orientation}">
-      ${this._subViews.trackView.render()(
-        ([] as TemplateResult[]).concat(
-          this._subViews.rangesView.map((view) => view.render()()),
-          this._subViews.thumbsView.map((view, index) =>
-            view.render()(this._subViews.tooltipsView[index].render()())
-          )
-        )
-      )}
-      ${this._subViews.pipsView.render()()}
-    </div>`;
-
+  protected _render() {
     if (
       this._subViews.thumbsView.length === this._subViews.tooltipsView.length &&
       this._subViews.thumbsView.length === this._subViews.rangesView.length - 1
     ) {
-      render(template(), (this.dom.container = container ?? this.dom.container));
+      super._render();
     }
 
-    return template;
+    return this;
   }
 }
 

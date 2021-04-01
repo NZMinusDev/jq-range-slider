@@ -1,6 +1,6 @@
 import "./range-slider__pips.scss";
 
-import { html, render, TemplateResult } from "lit-html";
+import { html, TemplateResult } from "lit-html";
 import { ClassInfo, classMap } from "lit-html/directives/class-map.js";
 import { StyleInfo, styleMap } from "lit-html/directives/style-map.js";
 
@@ -40,6 +40,16 @@ const RENDER_CALCULATION_PRECISION = 4;
 export default class RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
   implements RangeSliderPipsView {
+  readonly template = () =>
+    html`<div
+      class=${classMap({
+        "range-slider__pips": true,
+        "range-slider__pips_isHidden": this._options.isHidden,
+      })}
+    >
+      ${this.getPipsRender()}
+    </div>`;
+
   constructor(options: PipsOptions = DEFAULT_OPTIONS, state: PipsState = DEFAULT_STATE) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: ["isHidden", "values", "density", "formatter"],
@@ -97,12 +107,7 @@ export default class RangeSliderPipsView
     return this;
   }
 
-  protected _render(container?: HTMLElement | DocumentFragment) {
-    const pipsContainerClasses: ClassInfo = {
-      "range-slider__pips": true,
-      "range-slider__pips_isHidden": this._options.isHidden,
-    };
-
+  protected getPipsRender() {
     const valueClasses: ClassInfo = { "range-slider__pips-value": true };
     const markerClasses: ClassInfo = { "range-slider__pips-marker": true };
     let valueStyles: StyleInfo;
@@ -121,7 +126,7 @@ export default class RangeSliderPipsView
     let markerPosition = 0;
 
     let markers: TemplateResult[];
-    let pips = this._options.values.map((value, index, values) => {
+    return this._options.values.map((value, index, values) => {
       /**values */
       valueStyles = { left: `${(valuePosition += rangeShift)}%` };
       rangeShift = +(((values[index + 1] - value) / size) * 100).toFixed(
@@ -152,12 +157,6 @@ export default class RangeSliderPipsView
         ></div>
         ${markers}`;
     });
-
-    const template = () => html`<div class=${classMap(pipsContainerClasses)}>${pips}</div>`;
-
-    render(template, (this.dom.container = container ?? this.dom.container));
-
-    return template;
   }
 }
 

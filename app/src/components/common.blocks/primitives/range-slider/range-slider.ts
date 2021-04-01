@@ -1,3 +1,4 @@
+import { render } from "lit-html";
 import { RangeSliderModel } from "./models/range-slider.decl.model";
 import RangeSliderView from "./view/range-slider.view";
 
@@ -10,6 +11,13 @@ export default class RangeSlider {
     container: HTMLElement
   ) {
     this.view = new RangeSliderView(...viewParameters);
-    this.view.render(container);
+    render(this.view.template(), container);
+
+    this.view.on("render", () => {
+      render(this.view.template(), container);
+    });
+    this.view.on("remove", () => {
+      render(RangeSliderView.templateOfRemoving(), container);
+    });
   }
 }

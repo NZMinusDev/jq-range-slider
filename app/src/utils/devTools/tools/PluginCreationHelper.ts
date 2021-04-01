@@ -36,11 +36,11 @@ export interface Plugin {
  * btn.addEventListener('mousedown', menu);
  * btn.addEventListener('mouseup', menu);
  */
-export class EventManagerMixin {
-  protected eventHandlers: { [key: string]: ((...args: unknown[]) => void)[] } = {};
+export class EventManagerMixin<TEvents extends string> {
+  protected eventHandlers: { [key: string]: ((...args: any) => void)[] } = {};
 
   // Subscribe to the event
-  on(eventName: string, handler: (...args: unknown[]) => void) {
+  on(eventName: TEvents, handler: (...args: any) => void) {
     if (!this.eventHandlers[eventName]) {
       this.eventHandlers[eventName] = [];
     }
@@ -49,9 +49,9 @@ export class EventManagerMixin {
     return this;
   }
   // Cancel subscribe
-  off(eventName: string, handler: (...args: unknown[]) => void) {
+  off(eventName: TEvents, handler: (...args: any) => void) {
     let handlers = this.eventHandlers && this.eventHandlers[eventName];
-    if (!handlers) return;
+    if (!handlers) return this;
     for (let i = 0; i < handlers.length; i++) {
       if (handlers[i] === handler) {
         handlers.splice(i--, 1);
@@ -61,9 +61,9 @@ export class EventManagerMixin {
     return this;
   }
   // Generate the event with the specified name and data
-  trigger(eventName: string, ...args: unknown[]) {
+  trigger(eventName: TEvents, ...args: any) {
     if (!this.eventHandlers || !this.eventHandlers[eventName]) {
-      return; // no handlers
+      return this; // no handlers
     }
     // calling the handlers
     this.eventHandlers[eventName].forEach((handler) => handler.apply(this, args));
@@ -85,8 +85,9 @@ export abstract class MVPView<
   TOptionsToSet extends object,
   TState extends object = {},
   TSubViews extends object = {}
-> extends EventManagerMixin {
-  readonly dom: { container: HTMLElement | DocumentFragment };
+> extends EventManagerMixin<"render" | "remove"> {
+  readonly template = (...args: any) => html``;
+  static readonly templateOfRemoving = () => html``;
 
   protected readonly _options: TOptionsToGet;
   protected readonly _state: TState;
@@ -113,8 +114,6 @@ export abstract class MVPView<
   ) {
     super();
 
-    this.dom = { container: new DocumentFragment() };
-
     this._options = defaultsDeep({}, options, DEFAULT_OPTIONS);
     this._state = defaultsDeep({}, state, DEFAULT_STATE);
 
@@ -133,8 +132,6 @@ export abstract class MVPView<
 
     this._subViews = {} as TSubViews;
     this._subViews = this._initSubViews();
-
-    this._render();
 
     this._options = new Proxy(this._options, {
       set: (target, prop, val, receiver) => {
@@ -220,10 +217,10 @@ export abstract class MVPView<
     return this;
   }
 
-  render(container?: HTMLElement | DocumentFragment) {
-    this._initSubViews();
+  remove() {
+    this.trigger("remove");
 
-    return this._render(container);
+    return this;
   }
 
   protected _fixOptions() {
@@ -264,8 +261,10 @@ export abstract class MVPView<
     return this._subViews;
   }
 
-  protected _render(container?: HTMLElement | DocumentFragment) {
-    return (...args: any) => html``;
+  protected _render() {
+    this.trigger("render");
+
+    return this;
   }
 }
 
