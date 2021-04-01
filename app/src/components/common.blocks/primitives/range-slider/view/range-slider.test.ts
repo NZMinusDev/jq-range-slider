@@ -14,11 +14,11 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderView>,
   RangeSliderView
 > = function ({ instance, passedArgs }) {
-  const passedOptions = passedArgs[1];
+  const passedOptions = passedArgs[0];
 
-  expect(instance["_rangesViews"].length).toBe(instance["_options"].start.length + 1);
-  expect(instance["_thumbsViews"].length).toBe(instance["_options"].start.length);
-  expect(instance["_tooltipsViews"].length).toBe(instance["_options"].tooltips.length);
+  expect(instance["_subViews"]["rangesView"].length).toBe(instance["_options"].start.length + 1);
+  expect(instance["_subViews"]["thumbsView"].length).toBe(instance["_options"].start.length);
+  expect(instance["_subViews"]["tooltipsView"].length).toBe(instance["_options"].tooltips.length);
 
   expect(instance["_options"].connect.length).toBe(instance["_options"].start.length + 1);
   expect(instance["_options"].tooltips.length).toBe(instance["_options"].start.length);
@@ -32,14 +32,14 @@ const viewPropertiesExpecter: InstancePropsExpecter<
     }
 
     if (passedOptions?.tooltips?.[index] === true) {
-      expect(instance["_tooltipsViews"][index].getFormatterOption()).toBe(
+      expect(instance["_subViews"]["tooltipsView"][index].getFormatterOption()).toBe(
         instance["_options"].formatter
       );
-      expect(instance["_tooltipsViews"][index].getIsHiddenOption()).toBe(false);
+      expect(instance["_subViews"]["tooltipsView"][index].getIsHiddenOption()).toBe(false);
     } else if (passedOptions?.tooltips?.[index] === false) {
-      expect(instance["_tooltipsViews"][index].getIsHiddenOption()).toBe(true);
+      expect(instance["_subViews"]["tooltipsView"][index].getIsHiddenOption()).toBe(true);
     } else if (typeof passedOptions?.tooltips?.[index] === "function") {
-      expect(instance["_tooltipsViews"][index].getFormatterOption()).toBe(
+      expect(instance["_subViews"]["tooltipsView"][index].getFormatterOption()).toBe(
         passedOptions.tooltips[index]
       );
     }
@@ -60,7 +60,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
         ((instance["_options"].pips.values as number) - 1)
       ).toFixed(2);
       let accumulator = instance["_options"].intervals.min;
-      instance["_pipsView"]["_options"].values.forEach((value) => {
+      instance["_subViews"]["pipsView"]["_options"].values.forEach((value) => {
         expect(value).toBe(accumulator);
         accumulator += shift;
       });
@@ -75,7 +75,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
         (instance["_options"].intervals.max - instance["_options"].intervals.min) /
         100
       ).toFixed(2);
-      expect(instance["_pipsView"]["_options"].values).toStrictEqual(
+      expect(instance["_subViews"]["pipsView"]["_options"].values).toStrictEqual(
         (instance["_options"].pips.values as number[]).map((value) => value * perPercent)
       );
       break;
@@ -177,25 +177,21 @@ const differentOptionsArg: DifferentArguments<Parameters<
   ],
 };
 
-testInitDEFAULT_OPTIONS(
-  RangeSliderView,
-  [document.createElement("div"), DEFAULT_OPTIONS],
-  viewPropertiesExpecter
-);
+testInitDEFAULT_OPTIONS(RangeSliderView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderView,
   differentConstructorArgs: {
-    validRequiredArguments: [[document.createElement("div")]],
+    validRequiredArguments: [[]],
     ...(differentOptionsArg as DifferentArguments<ConstructorParameters<typeof RangeSliderView>>),
   },
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set("dom.self", 0).set("_options", 1),
+  propsToSet: new Map().set("_options", 1),
 });
 describe("init", () => {
   describe("with start, tooltips, connect options aren't array", () => {
     test("the instance's options should be correct arrays", () => {
-      const sliderOptions = (new RangeSliderView(document.createElement("div"), {
+      const sliderOptions = (new RangeSliderView({
         intervals: { min: -200, max: 200, "50%": -100 },
         start: -100,
         tooltips: false,
@@ -211,7 +207,7 @@ describe("init", () => {
 
 testGetter({
   Creator: RangeSliderView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderView.prototype.getOptions,
@@ -221,7 +217,7 @@ testGetter({
 });
 testSetter({
   Creator: RangeSliderView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderView.prototype.setOptions,
@@ -234,7 +230,7 @@ testSetter({
 describe("setOptions", () => {
   describe("with start, tooltips, connect options aren't array", () => {
     test("the instance's options should be correct arrays", () => {
-      const sliderOptions = (new RangeSliderView(document.createElement("div"), {
+      const sliderOptions = (new RangeSliderView({
         intervals: { min: -2000, max: 2000, "50%": -1000, "75%": 1800 },
         start: [-100, -50, 0, 50],
         tooltips: [true, false, true, false],
@@ -254,7 +250,7 @@ describe("setOptions", () => {
 describe("setOptions", () => {
   describe("with options which change amount of ranges/thumbs/tooltips subViews", () => {
     test("instance's amount of the subViews should be the same as options are set", () => {
-      const slider = new RangeSliderView(document.createElement("div"), {
+      const slider = new RangeSliderView({
         intervals: { min: -2000, max: 2000, "50%": -1000, "75%": 1800 },
         start: [-100, -50, 0, 50],
         tooltips: [true, false, true, false],
@@ -265,9 +261,9 @@ describe("setOptions", () => {
         connect: [true, false, true],
       });
 
-      expect(slider["_thumbsViews"].length).toBe(2);
-      expect(slider["_tooltipsViews"].length).toBe(2);
-      expect(slider["_rangesViews"].length).toBe(3);
+      expect(slider["_subViews"]["thumbsView"].length).toBe(2);
+      expect(slider["_subViews"]["tooltipsView"].length).toBe(2);
+      expect(slider["_subViews"]["rangesView"].length).toBe(3);
     });
   });
 });

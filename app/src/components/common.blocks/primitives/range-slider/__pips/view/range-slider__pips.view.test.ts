@@ -49,27 +49,23 @@ const differentOptionsArg: DifferentArguments<Parameters<
   ],
 };
 
-testInitDEFAULT_OPTIONS(
-  RangeSliderPipsView,
-  [document.createElement("div"), DEFAULT_OPTIONS],
-  viewPropertiesExpecter
-);
+testInitDEFAULT_OPTIONS(RangeSliderPipsView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderPipsView,
   differentConstructorArgs: {
-    validRequiredArguments: [[document.createElement("div")]],
+    validRequiredArguments: [[]],
     ...(differentOptionsArg as DifferentArguments<
       ConstructorParameters<typeof RangeSliderPipsView>
     >),
   },
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set("dom.self", 0).set("_options", 1),
+  propsToSet: new Map().set("_options", 1),
 });
 
 testGetter({
   Creator: RangeSliderPipsView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderPipsView.prototype.getOptions,
@@ -79,7 +75,7 @@ testGetter({
 });
 testSetter({
   Creator: RangeSliderPipsView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderPipsView.prototype.setOptions,

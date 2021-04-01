@@ -20,27 +20,23 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [[{ isConnected: true }]],
 };
 
-testInitDEFAULT_OPTIONS(
-  RangeSliderRangeView,
-  [document.createElement("div"), DEFAULT_OPTIONS],
-  viewPropertiesExpecter
-);
+testInitDEFAULT_OPTIONS(RangeSliderRangeView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderRangeView,
   differentConstructorArgs: {
-    validRequiredArguments: [[document.createElement("div")]],
+    validRequiredArguments: [[]],
     ...(differentOptionsArg as DifferentArguments<
       ConstructorParameters<typeof RangeSliderRangeView>
     >),
   },
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set("dom.self", 0).set("_options", 1),
+  propsToSet: new Map().set("_options", 1),
 });
 
 testGetter({
   Creator: RangeSliderRangeView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderRangeView.prototype.getOptions,
@@ -50,7 +46,7 @@ testGetter({
 });
 testSetter({
   Creator: RangeSliderRangeView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderRangeView.prototype.setOptions,

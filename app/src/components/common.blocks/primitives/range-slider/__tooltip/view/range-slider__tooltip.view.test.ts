@@ -1,4 +1,4 @@
-import RangeSliderTooltipView, { DEFAULT_OPTIONS } from "./range-slider__tooltip.view";
+import RangeSliderTooltipView, { DEFAULT_OPTIONS, DEFAULT_STATE } from "./range-slider__tooltip.view";
 
 import {
   InstancePropsExpecter,
@@ -32,27 +32,23 @@ const differentOptionsArg: DifferentArguments<Parameters<
   ],
 };
 
-testInitDEFAULT_OPTIONS(
-  RangeSliderTooltipView,
-  [document.createElement("div"), DEFAULT_OPTIONS],
-  viewPropertiesExpecter
-);
+testInitDEFAULT_OPTIONS(RangeSliderTooltipView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderTooltipView,
   differentConstructorArgs: {
-    validRequiredArguments: [[document.createElement("div")]],
+    validRequiredArguments: [[]],
     ...(differentOptionsArg as DifferentArguments<
       ConstructorParameters<typeof RangeSliderTooltipView>
     >),
   },
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set("dom.self", 0).set("_options", 1),
+  propsToSet: new Map().set("_options", 1),
 });
 
 testGetter({
   Creator: RangeSliderTooltipView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderTooltipView.prototype.getOptions,
@@ -62,7 +58,7 @@ testGetter({
 });
 testSetter({
   Creator: RangeSliderTooltipView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderTooltipView.prototype.setOptions,
@@ -71,4 +67,16 @@ testSetter({
   },
   propsToSet: new Map().set("_options", 0),
   resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
+});
+testSetter({
+  Creator: RangeSliderTooltipView,
+  constructorArgs: [],
+  instancePropsExpecter: viewPropertiesExpecter,
+  methodOfInstanceToTest: {
+    methodReference: RangeSliderTooltipView.prototype.setState,
+    expecter: ({ mock, passedArgs, instance }) => {},
+    differentArguments: {},
+  },
+  propsToSet: new Map().set("_state", 0),
+  resetPropsTo: new Map().set("_state", DEFAULT_STATE),
 });

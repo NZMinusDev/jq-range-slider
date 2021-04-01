@@ -36,27 +36,23 @@ const differentOptionsArg: DifferentArguments<Parameters<
   ],
 };
 
-testInitDEFAULT_OPTIONS(
-  RangeSliderThumbView,
-  [document.createElement("div"), DEFAULT_OPTIONS],
-  viewPropertiesExpecter
-);
+testInitDEFAULT_OPTIONS(RangeSliderThumbView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderThumbView,
   differentConstructorArgs: {
-    validRequiredArguments: [[document.createElement("div")]],
+    validRequiredArguments: [[]],
     ...(differentOptionsArg as DifferentArguments<
       ConstructorParameters<typeof RangeSliderThumbView>
     >),
   },
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set("dom.self", 0).set("_options", 1),
+  propsToSet: new Map().set("_options", 1),
 });
 
 testGetter({
   Creator: RangeSliderThumbView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderThumbView.prototype.getId,
@@ -66,7 +62,7 @@ testGetter({
 });
 testGetter({
   Creator: RangeSliderThumbView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderThumbView.prototype.getOptions,
@@ -76,7 +72,7 @@ testGetter({
 });
 testSetter({
   Creator: RangeSliderThumbView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderThumbView.prototype.setOptions,

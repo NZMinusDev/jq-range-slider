@@ -103,7 +103,6 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [
     [
       {
-        orientation: "vertical",
         intervals: { min: -999, max: 999, "25%": -900, "75%": 0 },
         steps: [1, 100, 11],
         padding: [10, 5],
@@ -112,27 +111,23 @@ const differentOptionsArg: DifferentArguments<Parameters<
   ],
 };
 
-testInitDEFAULT_OPTIONS(
-  RangeSliderTrackView,
-  [document.createElement("div"), DEFAULT_OPTIONS],
-  viewPropertiesExpecter
-);
+testInitDEFAULT_OPTIONS(RangeSliderTrackView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderTrackView,
   differentConstructorArgs: {
-    validRequiredArguments: [[document.createElement("div")]],
+    validRequiredArguments: [[]],
     ...(differentOptionsArg as DifferentArguments<
       ConstructorParameters<typeof RangeSliderTrackView>
     >),
   },
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set("dom.self", 0).set("_options", 1),
+  propsToSet: new Map().set("_options", 1),
 });
 describe("init", () => {
   describe("with steps, padding, options aren't array", () => {
     test("the instance's options should be correct arrays", () => {
-      const sliderOptions = (new RangeSliderTrackView(document.createElement("div"), {
+      const sliderOptions = (new RangeSliderTrackView({
         intervals: { min: -200, max: 200, "50%": -100 },
         steps: 2,
         padding: 20,
@@ -146,7 +141,7 @@ describe("init", () => {
 
 testGetter({
   Creator: RangeSliderTrackView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderTrackView.prototype.getOptions,
@@ -156,7 +151,7 @@ testGetter({
 });
 testSetter({
   Creator: RangeSliderTrackView,
-  constructorArgs: [document.createElement("div")],
+  constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderTrackView.prototype.setOptions,
@@ -169,7 +164,7 @@ testSetter({
 describe("setOptions", () => {
   describe("with steps, padding options aren't array", () => {
     test("the instance's options should be correct arrays", () => {
-      const sliderOptions = (new RangeSliderTrackView(document.createElement("div"), {
+      const sliderOptions = (new RangeSliderTrackView({
         intervals: { min: -2000, max: 2000, "50%": -1000, "75%": 1800 },
         steps: [10, 15, 20],
         padding: [30, 45],
