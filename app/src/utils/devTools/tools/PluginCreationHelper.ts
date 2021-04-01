@@ -1,16 +1,18 @@
+import { html } from "lit-html";
 import { defaultsDeep } from "lodash-es";
 
 export interface Plugin {
-  readonly dom: { self: HTMLElement };
+  readonly dom: { self: HTMLElement | null };
 }
 
 /**
- * Add events processing inside class without inheritances
+ * Add events processing inside class without inheritances and make child's handlers inside one class
  * @example
- * class Menu { // create class with using methods of mixin
+ * // example 1
+ * class Menu {
  *   choose(value) { this.trigger("select", value); }
  * }
- * applyMixins(Menu, EventManagerMixin);// add mixin
+ * applyMixins(Menu, EventManagerMixin);// add mixin (or use "extends" if you can)
  *
  * interface Menu extends Menu, EventManagerMixin {}
  *
@@ -18,61 +20,137 @@ export interface Plugin {
  *
  * menu.on("select", value => alert(`The selected value: ${value}`));
  * menu.choose("123"); // 123
+ *
+ * // example 2
+ * class Menu {
+ *   onMousedown(event) {
+ *     event.currentTarget.innerHTML = "The mouse button is pressed";
+ *   }
+ *
+ *   onMouseup(event) {
+ *     event.currentTarget.innerHTML += "...and unpressed.";
+ *   }
+ * }
+ *
+ * let menu = new Menu();
+ * btn.addEventListener('mousedown', menu);
+ * btn.addEventListener('mouseup', menu);
  */
 export class EventManagerMixin {
-  #eventHandlers;
+  protected eventHandlers: { [key: string]: ((...args: unknown[]) => void)[] } = {};
 
   // Subscribe to the event
   on(eventName: string, handler: (...args: unknown[]) => void) {
-    if (!this.#eventHandlers) this.#eventHandlers = {};
-    if (!this.#eventHandlers[eventName]) {
-      this.#eventHandlers[eventName] = [];
+    if (!this.eventHandlers[eventName]) {
+      this.eventHandlers[eventName] = [];
     }
-    this.#eventHandlers[eventName].push(handler);
+    this.eventHandlers[eventName].push(handler);
+
+    return this;
   }
   // Cancel subscribe
   off(eventName: string, handler: (...args: unknown[]) => void) {
-    let handlers = this.#eventHandlers && this.#eventHandlers[eventName];
+    let handlers = this.eventHandlers && this.eventHandlers[eventName];
     if (!handlers) return;
     for (let i = 0; i < handlers.length; i++) {
       if (handlers[i] === handler) {
         handlers.splice(i--, 1);
       }
     }
+
+    return this;
   }
   // Generate the event with the specified name and data
   trigger(eventName: string, ...args: unknown[]) {
-    if (!this.#eventHandlers || !this.#eventHandlers[eventName]) {
+    if (!this.eventHandlers || !this.eventHandlers[eventName]) {
       return; // no handlers
     }
     // calling the handlers
-    this.#eventHandlers[eventName].forEach((handler) => handler.apply(this, args));
+    this.eventHandlers[eventName].forEach((handler) => handler.apply(this, args));
+
+    return this;
+  }
+
+  handleEvent(event: Event) {
+    // mousedown -> onMousedown
+    let method = "_on" + event.type[0].toUpperCase() + event.type.slice(1);
+    if (this[method]) this[method](event);
+
+    return this;
   }
 }
 
-export abstract class MVPView<OptionsToGet extends object, OptionsToSet extends object>
-  extends EventManagerMixin
-  implements Plugin {
-  readonly dom: { self: HTMLElement };
+export abstract class MVPView<
+  TOptionsToGet extends object,
+  TOptionsToSet extends object,
+  TState extends object = {},
+  TSubViews extends object = {}
+> extends EventManagerMixin {
+  readonly dom: { container: HTMLElement | DocumentFragment };
 
-  protected _options: OptionsToGet;
+  protected readonly _options: TOptionsToGet;
+  protected readonly _state: TState;
+  protected readonly _subViews: TSubViews;
+
+  protected readonly theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[];
+  protected readonly theOrderOfIteratingThroughTheState: Extract<keyof TState, string>[];
+  protected readonly theOrderOfIteratingThroughTheSubViews: string[];
 
   constructor(
-    container: HTMLElement,
-    DEFAULT_OPTIONS: OptionsToGet,
-    options: OptionsToSet,
-    protected theOrderOfIteratingThroughTheOptions: Extract<keyof OptionsToGet, string>[]
+    DEFAULT_OPTIONS: TOptionsToGet,
+    DEFAULT_STATE: Partial<TState>,
+    options: TOptionsToSet,
+    state: TState,
+    {
+      theOrderOfIteratingThroughTheOptions = [],
+      theOrderOfIteratingThroughTheState = [],
+      theOrderOfIteratingThroughTheSubViews = [],
+    }: {
+      theOrderOfIteratingThroughTheOptions?: Extract<keyof TOptionsToGet, string>[];
+      theOrderOfIteratingThroughTheState?: Extract<keyof TState, string>[];
+      theOrderOfIteratingThroughTheSubViews?: string[];
+    }
   ) {
     super();
 
-    this.dom = { self: container };
+    this.dom = { container: new DocumentFragment() };
 
     this._options = defaultsDeep({}, options, DEFAULT_OPTIONS);
+    this._state = defaultsDeep({}, state, DEFAULT_STATE);
 
-    this._fixOptions();
+    this.theOrderOfIteratingThroughTheOptions = ([] as Extract<
+      keyof TOptionsToGet,
+      string
+    >[]).concat(theOrderOfIteratingThroughTheOptions);
+    this.theOrderOfIteratingThroughTheState = ([] as Extract<keyof TState, string>[]).concat(
+      theOrderOfIteratingThroughTheState
+    );
+    this.theOrderOfIteratingThroughTheSubViews = ([] as string[]).concat(
+      theOrderOfIteratingThroughTheSubViews
+    );
+
+    this._fixOptions()._fixState();
+
+    this._subViews = {} as TSubViews;
+    this._subViews = this._initSubViews();
+
+    this._render();
+
+    this._options = new Proxy(this._options, {
+      set: (target, prop, val, receiver) => {
+        this._render();
+        return Reflect.set(target, prop, val, receiver);
+      },
+    });
+    this._state = new Proxy(this._state, {
+      set: (target, prop, val, receiver) => {
+        this._render();
+        return Reflect.set(target, prop, val, receiver);
+      },
+    });
   }
 
-  getOptions(): OptionsToGet {
+  getOptions(): TOptionsToGet {
     const options: any = {};
     let getOptionMethodName;
     this.theOrderOfIteratingThroughTheOptions.forEach((optionKey) => {
@@ -80,10 +158,20 @@ export abstract class MVPView<OptionsToGet extends object, OptionsToSet extends 
       if (this[getOptionMethodName]) options[optionKey] = this[getOptionMethodName]();
     });
 
-    return options as OptionsToGet;
+    return options as TOptionsToGet;
+  }
+  getState(): TState {
+    const state: any = {};
+    let getStateMethodName;
+    this.theOrderOfIteratingThroughTheState.forEach((stateKey) => {
+      getStateMethodName = `get${stateKey[0].toUpperCase() + stateKey.slice(1)}State`;
+      if (this[getStateMethodName]) state[stateKey] = this[getStateMethodName]();
+    });
+
+    return state as TState;
   }
 
-  setOptions(options?: OptionsToSet) {
+  setOptions(options?: TOptionsToSet) {
     const optionsToForEach = options === undefined ? this._options : options;
 
     let setOptionMethodName;
@@ -92,10 +180,10 @@ export abstract class MVPView<OptionsToGet extends object, OptionsToSet extends 
       .sort(
         ([a], [b]) =>
           this.theOrderOfIteratingThroughTheOptions.indexOf(
-            a as Extract<keyof OptionsToGet, string>
+            a as Extract<keyof TOptionsToGet, string>
           ) -
           this.theOrderOfIteratingThroughTheOptions.indexOf(
-            b as Extract<keyof OptionsToGet, string>
+            b as Extract<keyof TOptionsToGet, string>
           )
       )
       .forEach(([optionKey, optionValue]) => {
@@ -109,11 +197,33 @@ export abstract class MVPView<OptionsToGet extends object, OptionsToSet extends 
 
     return this;
   }
+  setState(state?: Partial<TState>) {
+    const keyOfStateToForEach = state === undefined ? this._state : state;
 
-  remove() {
-    this.dom.self.remove();
+    let setStateMethodName;
+    let valueToPass;
+    Object.entries(keyOfStateToForEach)
+      .sort(
+        ([a], [b]) =>
+          this.theOrderOfIteratingThroughTheState.indexOf(a as Extract<keyof TState, string>) -
+          this.theOrderOfIteratingThroughTheState.indexOf(b as Extract<keyof TState, string>)
+      )
+      .forEach(([stateKey, stateValue]) => {
+        setStateMethodName = `set${stateKey[0].toUpperCase() + stateKey.slice(1)}State`;
+        valueToPass = state === undefined ? undefined : stateValue;
+
+        if (this[setStateMethodName]) {
+          this[setStateMethodName](valueToPass);
+        }
+      });
 
     return this;
+  }
+
+  render(container?: HTMLElement | DocumentFragment) {
+    this._initSubViews();
+
+    return this._render(container);
   }
 
   protected _fixOptions() {
@@ -125,15 +235,37 @@ export abstract class MVPView<OptionsToGet extends object, OptionsToSet extends 
 
     return this;
   }
-
-  protected _render() {
-    let renderOptionMethodName;
-    this.theOrderOfIteratingThroughTheOptions.forEach((option) => {
-      renderOptionMethodName = `_render${option[0].toUpperCase() + option.slice(1)}Option`;
-      if (this[renderOptionMethodName]) this[renderOptionMethodName]();
+  protected _fixState() {
+    let fixStateMethodName;
+    this.theOrderOfIteratingThroughTheState.forEach((state) => {
+      fixStateMethodName = `_fix${state[0].toUpperCase() + state.slice(1)}State`;
+      if (this[fixStateMethodName]) this[fixStateMethodName]();
     });
 
     return this;
+  }
+
+  protected _initSubViews() {
+    let initSubViewMethodName, toSubViewOptionsMethodName, toSubViewStateMethodName;
+    this.theOrderOfIteratingThroughTheSubViews.forEach((subViewName) => {
+      initSubViewMethodName = `_init${subViewName[0].toUpperCase() + subViewName.slice(1)}View`;
+      toSubViewOptionsMethodName = `_to${
+        subViewName[0].toUpperCase() + subViewName.slice(1)
+      }Options`;
+      toSubViewStateMethodName = `_to${subViewName[0].toUpperCase() + subViewName.slice(1)}State`;
+      if (this[initSubViewMethodName]) {
+        this._subViews[`${subViewName}View`] = this[initSubViewMethodName](
+          this[toSubViewOptionsMethodName] ? this[toSubViewOptionsMethodName]() : undefined,
+          this[toSubViewStateMethodName] ? this[toSubViewStateMethodName]() : undefined
+        );
+      }
+    });
+
+    return this._subViews;
+  }
+
+  protected _render(container?: HTMLElement | DocumentFragment) {
+    return (...args: any) => html``;
   }
 }
 
@@ -157,12 +289,14 @@ export abstract class PluginDecorator {
     this.plugin = plugin;
     this.listeners = listeners;
 
-    if (this.plugin.dom.self[modifierName]) {
-      this.plugin.dom.self[modifierName].cancel();
-    }
+    if (this.plugin.dom.self !== null) {
+      if (this.plugin.dom.self[modifierName]) {
+        this.plugin.dom.self[modifierName].cancel();
+      }
 
-    this.plugin.dom.self[modifierName] = this;
-    this.plugin.dom.self[modifierName].assign();
+      this.plugin.dom.self[modifierName] = this;
+      this.plugin.dom.self[modifierName].assign();
+    }
   }
 
   protected assign(): void {
@@ -201,36 +335,6 @@ export abstract class PluginDecorator {
   }
 }
 
-/**
- * Make child's handlers inside one class
- * @example
- * class Menu {
- *   handleEvent(event) {
- *     // mousedown -> onMousedown
- *     let method = 'on' + event.type[0].toUpperCase() + event.type.slice(1);
- *     this[method](event);
- *   }
- *
- *   onMousedown(event) {
- *     event.currentTarget.innerHTML = "The mouse button is pressed";
- *   }
- *
- *   onMouseup(event) {
- *     event.currentTarget.innerHTML += "...and unpressed.";
- *   }
- * }
- *
- * let menu = new Menu();
- * btn.addEventListener('mousedown', menu);
- * btn.addEventListener('mouseup', menu);
- */
-export abstract class EventHandler {
-  protected handleEvent(event: Event) {
-    // mousedown -> onMousedown
-    let method = "on" + event.type[0].toUpperCase() + event.type.slice(1);
-    this[method](event);
-  }
-}
 /**
  *
  * @param event - event of handler
