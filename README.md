@@ -85,16 +85,17 @@ _\* - inside the directories, there are additional folders for each individual r
    12. TODO Highlight.
    13. Quokka.js.
    14. ESLint.
-   15. Prettier - Code formatter.
-   16. Image preview.
-   17. VSCode Map Preview.
-   18. SVG.
-   19. markdownlint.
-   20. Sort Lines by Selection.
-   21. Live Server.
-   22. Import Cost.
-   23. JavaScript (ES6) code snippets.
-   24. Webpack Snippets.
+   15. lit-html.
+   16. Prettier - Code formatter.
+   17. Image preview.
+   18. VSCode Map Preview.
+   19. SVG.
+   20. markdownlint.
+   21. Sort Lines by Selection.
+   22. Live Server.
+   23. Import Cost.
+   24. JavaScript (ES6) code snippets.
+   25. Webpack Snippets.
 3. Preprocessors which speed up work:
    1. Pug.
    2. SCSS.
@@ -115,8 +116,9 @@ _\* - inside the directories, there are additional folders for each individual r
 5. ESLinter using [Airbnb standarts](https://github.com/airbnb/javascript) integrated with prettier and typescript which protects your knee from :gun: and your life from wasting :clock2:.
 6. Jest: delightful JavaScript Testing Framework with a focus on simplicity, it works fine with TypeScript.
 7. Pre-installed libraries:
-   1. jquery to support old projects;
-   2. lodash-es to supplement the js standard. Tip: you should use only import of lodash-es(moreover, when importing, only care about the readability and strictness of the code, and not the optimization of the weight) instead of common lodash because ES6+ module syntax is supported by terser for optimization;
+   1. lit-html to highlight html inside js/ts and only update the parts of the template that have changed since the last render;
+   2. jquery to support old projects;
+   3. lodash-es to supplement the js standard. Tip: you should use only import of lodash-es(moreover, when importing, only care about the readability and strictness of the code, and not the optimization of the weight) instead of common lodash because ES6+ module syntax is supported by terser for optimization;
 8. Custom Tools:
    1. Basic pug layers and mixins;
    2. scss and ts shortcuts;

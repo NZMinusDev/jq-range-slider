@@ -4,7 +4,7 @@ module.exports = {
   verbose: true,
   collectCoverage: true,
   coverageDirectory: "<rootDir>/../coverage",
-  transformIgnorePatterns: ["node_modules/(?!(lodash-es))"], // FIXME: should be replaced after ts-jest v27 release(ESM support)
+  transformIgnorePatterns: ["node_modules/(?!(lodash-es|lit-html))"], // FIXME: should be replaced after ts-jest v27 release(ESM support)
   coveragePathIgnorePatterns: ["<rootDir>/utils/"],
   moduleNameMapper: {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
