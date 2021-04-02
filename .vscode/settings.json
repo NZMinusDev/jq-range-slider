@@ -72,6 +72,11 @@
     "optipng",
     "prefetch",
     "spritesheet",
+    "tabindex",
+    "valuemax",
+    "valuemin",
+    "valuenow",
+    "valuetext",
     "webp"
   ],
   "cSpell.ignoreWords": ["import", "import normalize", "normalize"],

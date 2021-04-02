@@ -24,6 +24,8 @@ import RangeSliderPipsView, {
 
 import { defaultsDeep } from "lodash-es";
 import { html, TemplateResult } from "lit-html";
+import { styleMap, StyleInfo } from "lit-html/directives/style-map";
+import { classMap, ClassInfo } from "lit-html/directives/class-map";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
@@ -85,9 +87,7 @@ export type FixedRangeSliderOptions = {
   pips: NonNullable<Required<RangeSliderOptions["pips"]>>;
   animate: Required<RangeSliderOptions>["animate"];
 };
-export type RangeSliderState = {
-  values: number[];
-};
+export type RangeSliderState = {};
 
 export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,
@@ -112,18 +112,45 @@ export const DEFAULT_STATE: RangeSliderState = {
 
 const VALUES_CALCULATION_PRECISION = 2;
 export default class RangeSliderView
-  extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, SubViews>
+  extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, "", SubViews>
   implements RangeSliderView {
-  readonly template = () => html`<div class="range-slider_orientation-${this._options.orientation}">
-    ${this._subViews.trackView.template(
-      ([] as TemplateResult[]).concat(
-        this._subViews.rangesView.map((view) => view.template()),
-        this._subViews.thumbsView.map((view, index) =>
-          view.template(this._subViews.tooltipsView[index].template())
-        )
+  readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo) => html`<div
+    class=${classMap(
+      Object.assign(
+        {},
+        { "range-slider": true, ["range-slider_orientation-" + this._options.orientation]: true },
+        classInfo
       )
     )}
-    ${this._subViews.pipsView.template()}
+    style=${styleMap(Object.assign({}, {}, styleInfo))}
+  >
+    ${this._subViews.trackView.template(
+      {},
+      {},
+      ([] as TemplateResult[]).concat(
+        this._subViews.rangesView.map((view) => view.template({}, {})),
+        this._subViews.thumbsView.map((view, index, views) => {
+          const baseZIndex = 2;
+          const nextIndex = index + 1;
+          const rangeOfSwapZIndex =
+            (this._options.intervals.max - this._options.intervals.min) * 0.02;
+
+          return view.template(
+            {},
+            {
+              zIndex:
+                view.getAriaValueNowState() >
+                  views[nextIndex]?.getAriaValueNowState() - rangeOfSwapZIndex &&
+                view.getAriaValueMinState() < views[nextIndex]?.getAriaValueMinState()
+                  ? baseZIndex + views.length - index + 1 + ""
+                  : baseZIndex + index + "",
+            },
+            this._subViews.tooltipsView[index].template({}, {})
+          );
+        })
+      )
+    )}
+    ${this._subViews.pipsView.template({}, {})}
   </div>`;
 
   constructor(
@@ -143,7 +170,7 @@ export default class RangeSliderView
         "pips",
         "animate",
       ],
-      theOrderOfIteratingThroughTheState: ["values"],
+      theOrderOfIteratingThroughTheState: [],
       theOrderOfIteratingThroughTheSubViews: ["track", "ranges", "thumbs", "tooltips", "pips"],
     });
   }
@@ -197,7 +224,6 @@ export default class RangeSliderView
 
     this._fixStartOption()
       ._synchronizeWithThumbsOptions(true)
-      ._fixValuesState()
       ._fixConnectOption()
       ._synchronizeWithRangesOptions(true)
       ._fixTooltipsOption()
@@ -352,12 +378,6 @@ export default class RangeSliderView
     return this;
   }
 
-  protected _fixValuesState() {
-    this._state.values = ([] as number[]).concat(this._options.start);
-
-    return this;
-  }
-
   protected _toTrackOptions(): FixedTrackOptions {
     return {
       intervals: this._options.intervals,
@@ -433,14 +453,12 @@ export default class RangeSliderView
     return pipsOptions;
   }
 
-  //FIXME:
   protected _toTooltipsState() {
     const tooltipsState: TooltipState[] = [];
 
     this._options.tooltips.forEach((tooltip, index) => {
       tooltipsState.push({
-        value: this._state.values[index],
-        translate: [0, 0],
+        value: this._subViews.thumbsView[index].getAriaValueNowState(),
       });
     });
 
@@ -617,10 +635,91 @@ export default class RangeSliderView
       this._subViews.thumbsView.length === this._subViews.rangesView.length - 1
     ) {
       super._render();
+
+      this._subViews.thumbsView.forEach((thumbView) => {
+        thumbView.on("pointerdown", this._thumbEventListenerObject);
+      });
     }
 
     return this;
   }
+  protected _thumbEventListenerObject = {
+    handleEvent: ({ view, event }: { view: RangeSliderThumbView; event: Event }) => {
+      const thumbElem = (event.target as HTMLElement).closest(
+        ".range-slider__thumb"
+      ) as HTMLElement;
+      const trackElem = thumbElem.closest(".range-slider__track") as HTMLElement;
+
+      const thumbViewIndex = this._subViews.thumbsView.findIndex((thumbView) => thumbView === view);
+
+      const trackCoords = trackElem.getBoundingClientRect();
+      const thumbCoords = thumbElem.getBoundingClientRect();
+      const thumbScaleXToTrackMultiplier = 100 / thumbCoords.width;
+      const thumbOffsetXToCenter = thumbCoords.width / 2;
+      const trackValueSize = this._options.intervals.max - this._options.intervals.min;
+      const valuePerPx = trackValueSize / trackCoords.width;
+
+      switch (event.type) {
+        case "pointerdown": {
+          const pointerEvent = event as PointerEvent;
+
+          thumbElem.setPointerCapture(pointerEvent.pointerId);
+
+          let newThumbPositionOnTrack = thumbCoords.left - trackCoords.left + thumbOffsetXToCenter;
+          const moveThumbTo = (pointerEvent: PointerEvent) => {
+            const ariaValueMin = this._subViews.thumbsView[thumbViewIndex - 1]
+              ? this._subViews.thumbsView[thumbViewIndex - 1].getAriaValueNowState()
+              : this._options.intervals.min;
+            const ariaValueMax = this._subViews.thumbsView[thumbViewIndex + 1]
+              ? this._subViews.thumbsView[thumbViewIndex + 1].getAriaValueNowState()
+              : this._options.intervals.max;
+
+            newThumbPositionOnTrack += pointerEvent.movementX;
+            //FIXME: add coefficient of non linear
+            let thumbValue =
+              newThumbPositionOnTrack * valuePerPx - Math.abs(this._options.intervals.min);
+
+            if (thumbValue < ariaValueMin) {
+              newThumbPositionOnTrack =
+                (ariaValueMin + Math.abs(this._options.intervals.min)) / valuePerPx;
+              thumbValue = ariaValueMin;
+            }
+            if (thumbValue > ariaValueMax) {
+              newThumbPositionOnTrack =
+                (ariaValueMax + Math.abs(this._options.intervals.min)) / valuePerPx;
+              thumbValue = ariaValueMax;
+            }
+
+            view.setState({
+              ariaOrientation: this._options.orientation,
+              ariaValueMin,
+              ariaValueMax,
+              ariaValueNow: +thumbValue.toFixed(2),
+              ariaValueText: this._options.formatter(thumbValue),
+            });
+            this._subViews.tooltipsView[thumbViewIndex].setState({
+              value: this._subViews.tooltipsView[thumbViewIndex].getFormatterOption()(thumbValue),
+            });
+
+            thumbElem.style.transform = `translate(${
+              (newThumbPositionOnTrack - thumbOffsetXToCenter) * thumbScaleXToTrackMultiplier
+            }%,0)`;
+          };
+
+          thumbElem.addEventListener("pointermove", moveThumbTo);
+          thumbElem.addEventListener(
+            "lostpointercapture",
+            (event) => {
+              thumbElem.removeEventListener("pointermove", moveThumbTo);
+            },
+            { once: true }
+          );
+
+          break;
+        }
+      }
+    },
+  };
 }
 
 interface eventHandler {

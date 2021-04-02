@@ -1,6 +1,8 @@
 import "./range-slider__track.scss";
 
 import { html, TemplateResult } from "lit-html";
+import { ClassInfo, classMap } from "lit-html/directives/class-map";
+import { StyleInfo, styleMap } from "lit-html/directives/style-map";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { collapsingParseFloat } from "@utils/devTools/tools/ParserHelper";
@@ -37,8 +39,25 @@ const CALCULATION_PRECISION = 2;
 export default class RangeSliderTrackView
   extends MVPView<FixedTrackOptions, TrackOptions, TrackState>
   implements RangeSliderTrackView {
-  readonly template = (innerHTML: TemplateResult | TemplateResult[]) =>
-    html`<div class="range-slider__track">${innerHTML}</div>`;
+  readonly template = (
+    classInfo: ClassInfo,
+    styleInfo: StyleInfo,
+    innerHTML: TemplateResult | TemplateResult[]
+  ) =>
+    html`<div
+      class=${classMap(
+        Object.assign(
+          {},
+          {
+            "range-slider__track": true,
+          },
+          classInfo
+        )
+      )}
+      style=${styleMap(Object.assign({}, {}, styleInfo))}
+    >
+      ${innerHTML}
+    </div>`;
 
   constructor(options: TrackOptions = DEFAULT_OPTIONS, state: TrackState = DEFAULT_STATE) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {

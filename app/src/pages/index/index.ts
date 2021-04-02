@@ -14,6 +14,7 @@ const sliders = $(".range-slider__pips-demo").initRangeSlider(new RangeSliderMod
 });
 
 sliders[1].view.setOptions({
+  intervals: { min: -750, max: 500 },
   start: [-500, 0, 100],
   formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
   pips: { mode: "values", density: 5, values: [500, -750, -100, 0, 100, 200] },

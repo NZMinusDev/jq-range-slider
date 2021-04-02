@@ -10,7 +10,7 @@
   text-align: center;
   line-height: 100%;
   background-color: black;
-  user-select: none;
+  pointer-events: none;
   cursor: initial;
 
   &:before {

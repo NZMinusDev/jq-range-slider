@@ -40,12 +40,19 @@ const RENDER_CALCULATION_PRECISION = 4;
 export default class RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
   implements RangeSliderPipsView {
-  readonly template = () =>
+  readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo) =>
     html`<div
-      class=${classMap({
-        "range-slider__pips": true,
-        "range-slider__pips_isHidden": this._options.isHidden,
-      })}
+      class=${classMap(
+        Object.assign(
+          {},
+          {
+            "range-slider__pips": true,
+            "range-slider__pips_isHidden": this._options.isHidden,
+          },
+          classInfo
+        )
+      )}
+      style=${styleMap(Object.assign({}, {}, styleInfo))}
     >
       ${this.getPipsRender()}
     </div>`;
