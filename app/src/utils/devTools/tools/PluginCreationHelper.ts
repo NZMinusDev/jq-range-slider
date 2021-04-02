@@ -37,14 +37,18 @@ export interface Plugin {
  * btn.addEventListener('mouseup', menu);
  */
 export class EventManagerMixin<TEvents extends string> {
-  protected eventHandlers: { [key: string]: ((...args: any) => void)[] } = {};
+  protected eventHandlers: {
+    [key: string]: handler[];
+  } = {};
 
   // Subscribe to the event
-  on(eventName: TEvents, handler: (...args: any) => void) {
+  on(eventName: TEvents, handler: handler) {
     if (!this.eventHandlers[eventName]) {
       this.eventHandlers[eventName] = [];
     }
-    this.eventHandlers[eventName].push(handler);
+    if (!this.eventHandlers[eventName].includes(handler)) {
+      this.eventHandlers[eventName].push(handler);
+    }
 
     return this;
   }
@@ -66,7 +70,13 @@ export class EventManagerMixin<TEvents extends string> {
       return this; // no handlers
     }
     // calling the handlers
-    this.eventHandlers[eventName].forEach((handler) => handler.apply(this, args));
+    this.eventHandlers[eventName].forEach((handler) => {
+      if (typeof handler === "function") {
+        handler.apply(this, args);
+      } else {
+        handler.handleEvent(...args);
+      }
+    });
 
     return this;
   }
@@ -80,12 +90,22 @@ export class EventManagerMixin<TEvents extends string> {
   }
 }
 
+interface CustomEventListener {
+  (...args: any): void;
+}
+interface CustomEventListenerObject {
+  handleEvent(...args: any): void;
+  [key: string]: any;
+}
+type handler = CustomEventListener | CustomEventListenerObject;
+
 export abstract class MVPView<
   TOptionsToGet extends object,
   TOptionsToSet extends object,
-  TState extends object = {},
+  TState extends object,
+  TEvents extends string = "",
   TSubViews extends object = {}
-> extends EventManagerMixin<"render" | "remove"> {
+> extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">> {
   readonly template = (...args: any) => html``;
   static readonly templateOfRemoving = () => html``;
 
