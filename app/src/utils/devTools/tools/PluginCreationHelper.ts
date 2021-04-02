@@ -1,4 +1,6 @@
 import { html } from "lit-html";
+import { ClassInfo } from "lit-html/directives/class-map";
+import { StyleInfo } from "lit-html/directives/style-map";
 import { defaultsDeep } from "lodash-es";
 
 export interface Plugin {
@@ -104,9 +106,9 @@ export abstract class MVPView<
   TOptionsToSet extends object,
   TState extends object,
   TEvents extends string = "",
-  TSubViews extends object = {}
+  TSubViews extends { [key: string]: MVPView<any, any, any> | MVPView<any, any, any>[] } = {}
 > extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">> {
-  readonly template = (...args: any) => html``;
+  readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo, ...args: any) => html``;
   static readonly templateOfRemoving = () => html``;
 
   protected readonly _options: TOptionsToGet;
@@ -151,6 +153,29 @@ export abstract class MVPView<
     this._fixOptions()._fixState();
 
     this._subViews = {} as TSubViews;
+    this._subViews = new Proxy(this._subViews, {
+      set: (target, prop, val, receiver) => {
+        if (Array.isArray(val)) {
+          val = new Proxy(val, {
+            set: (target, prop, val, receiver) => {
+              if (prop !== "length") {
+                val.on("render", () => this._render());
+              }
+
+              return Reflect.set(target, prop, val, receiver);
+            },
+          });
+
+          val.forEach((subView) => {
+            subView.on("render", () => this._render());
+          });
+        } else {
+          val.on("render", () => this._render());
+        }
+
+        return Reflect.set(target, prop, val, receiver);
+      },
+    });
     this._subViews = this._initSubViews();
 
     this._options = new Proxy(this._options, {
@@ -271,7 +296,7 @@ export abstract class MVPView<
       }Options`;
       toSubViewStateMethodName = `_to${subViewName[0].toUpperCase() + subViewName.slice(1)}State`;
       if (this[initSubViewMethodName]) {
-        this._subViews[`${subViewName}View`] = this[initSubViewMethodName](
+        (this._subViews as any)[`${subViewName}View`] = this[initSubViewMethodName](
           this[toSubViewOptionsMethodName] ? this[toSubViewOptionsMethodName]() : undefined,
           this[toSubViewStateMethodName] ? this[toSubViewStateMethodName]() : undefined
         );
