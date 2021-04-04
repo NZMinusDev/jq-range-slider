@@ -651,6 +651,7 @@ export default class RangeSliderView
       const trackElem = thumbElem.closest(".range-slider__track") as HTMLElement;
 
       const thumbViewIndex = this._subViews.thumbsView.findIndex((thumbView) => thumbView === view);
+      const tooltipView = this._subViews.tooltipsView[thumbViewIndex];
 
       const trackCoords = trackElem.getBoundingClientRect();
       const thumbCoords = thumbElem.getBoundingClientRect();
@@ -690,6 +691,9 @@ export default class RangeSliderView
               thumbValue = ariaValueMax;
             }
 
+            view.off("render", this._renderThisHandler);
+            tooltipView.off("render", this._renderThisHandler);
+
             view.setState({
               ariaOrientation: this._options.orientation,
               ariaValueMin,
@@ -697,13 +701,17 @@ export default class RangeSliderView
               ariaValueNow: +thumbValue.toFixed(2),
               ariaValueText: this._options.formatter(thumbValue),
             });
-            this._subViews.tooltipsView[thumbViewIndex].setState({
-              value: this._subViews.tooltipsView[thumbViewIndex].getFormatterOption()(thumbValue),
+            tooltipView.setState({
+              value: tooltipView.getFormatterOption()(thumbValue),
             });
+            this._render()
 
             thumbElem.style.transform = `translate(${
               (newThumbPositionOnTrack - thumbOffsetXToCenter) * thumbScaleXToTrackMultiplier
             }%,0)`;
+
+            view.on("render", this._renderThisHandler);
+            tooltipView.on("render", this._renderThisHandler);
           };
 
           thumbElem.addEventListener("pointermove", moveThumbTo);

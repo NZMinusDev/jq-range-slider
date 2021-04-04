@@ -11,10 +11,10 @@ export default class RangeSlider {
     container: HTMLElement
   ) {
     this.view = new RangeSliderView(...viewParameters);
-    render(this.view.template(), container);
+    render(this.view.template({}, {}), container);
 
     this.view.on("render", () => {
-      render(this.view.template(), container);
+      render(this.view.template({}, {}), container);
     });
     this.view.on("remove", () => {
       render(RangeSliderView.templateOfRemoving(), container);
