@@ -111,8 +111,8 @@ export abstract class MVPView<
   readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo, ...args: any) => html``;
   static readonly templateOfRemoving = () => html``;
 
-  protected readonly _options: TOptionsToGet;
-  protected readonly _state: TState;
+  protected _options: TOptionsToGet;
+  protected _state: TState;
   protected readonly _subViews: TSubViews;
 
   protected readonly theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[];
@@ -159,18 +159,14 @@ export abstract class MVPView<
           val = new Proxy(val, {
             set: (target, prop, val, receiver) => {
               if (prop !== "length") {
-                val.on("render", () => this._render());
+                val.on("render", this._renderThisHandler);
               }
 
               return Reflect.set(target, prop, val, receiver);
             },
           });
-
-          val.forEach((subView) => {
-            subView.on("render", () => this._render());
-          });
         } else {
-          val.on("render", () => this._render());
+          val.on("render", this._renderThisHandler);
         }
 
         return Reflect.set(target, prop, val, receiver);
@@ -214,6 +210,9 @@ export abstract class MVPView<
   }
 
   setOptions(options?: TOptionsToSet) {
+    // revoke proxy
+    this._options = Object.assign({}, this._options);
+
     const optionsToForEach = options === undefined ? this._options : options;
 
     let setOptionMethodName;
@@ -237,9 +236,20 @@ export abstract class MVPView<
         }
       });
 
+    this._options = new Proxy(this._options, {
+      set: (target, prop, val, receiver) => {
+        this._render();
+        return Reflect.set(target, prop, val, receiver);
+      },
+    });
+    this._render();
+
     return this;
   }
   setState(state?: Partial<TState>) {
+    // revoke proxy
+    this._state = Object.assign({}, this._state, state);
+
     const keyOfStateToForEach = state === undefined ? this._state : state;
 
     let setStateMethodName;
@@ -258,6 +268,14 @@ export abstract class MVPView<
           this[setStateMethodName](valueToPass);
         }
       });
+
+    this._state = new Proxy(this._state, {
+      set: (target, prop, val, receiver) => {
+        this._render();
+        return Reflect.set(target, prop, val, receiver);
+      },
+    });
+    this._render();
 
     return this;
   }
@@ -311,6 +329,9 @@ export abstract class MVPView<
 
     return this;
   }
+  protected _renderThisHandler = () => {
+    this._render();
+  };
 }
 
 export interface MVPModel<State> {
