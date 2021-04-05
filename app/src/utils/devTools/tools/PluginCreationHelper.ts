@@ -101,14 +101,18 @@ export interface CustomEventListenerObject {
 export type handler = CustomEventListener | CustomEventListenerObject;
 
 export abstract class MVPView<
-  TOptionsToGet extends object,
-  TOptionsToSet extends object,
-  TState extends object,
-  TEvents extends string = "",
-  TSubViews extends { [key: string]: MVPView<any, any, any> | MVPView<any, any, any>[] } = {}
-> extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">> {
+    TOptionsToGet extends object,
+    TOptionsToSet extends object,
+    TState extends object,
+    TEvents extends string = "",
+    TSubViews extends { [key: string]: MVPView<any, any, any> | MVPView<any, any, any>[] } = {}
+  >
+  extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">>
+  implements Plugin {
   readonly template: template = ({ classInfo, styleInfo, attributes }, ...args) => html``;
   static readonly templateOfRemoving = () => html``;
+
+  readonly dom: { self: HTMLElement | null; [key: string]: HTMLElement | null } = { self: null };
 
   protected _options: TOptionsToGet;
   protected _state: TState;
@@ -281,6 +285,9 @@ export abstract class MVPView<
 
   remove() {
     this.trigger("remove");
+    Object.keys(this.dom).forEach((key) => {
+      this.dom[key] = null;
+    });
 
     return this;
   }
