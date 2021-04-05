@@ -65,6 +65,7 @@
     "@babel/polyfill": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-typescript": "^7.10.4",
+    "@open-wc/lit-helpers": "^0.3.12",
     "autoprefixer": "^9.8.6",
     "babel-loader": "^8.1.0",
     "bemdecl-to-fs-loader": "0.0.4",
