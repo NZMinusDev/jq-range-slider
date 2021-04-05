@@ -1,10 +1,11 @@
 import "./range-slider__thumb.scss";
 
 import { html, TemplateResult } from "lit-html";
-import { ClassInfo, classMap } from "lit-html/directives/class-map";
-import { StyleInfo, styleMap } from "lit-html/directives/style-map";
+import { classMap } from "lit-html/directives/class-map";
+import { styleMap } from "lit-html/directives/style-map";
+import { spread } from "@open-wc/lit-helpers";
 
-import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
+import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
 
 export default interface RangeSliderThumbView {
   getId(): Id;
@@ -33,11 +34,10 @@ export const DEFAULT_STATE: ThumbState = {
 };
 
 export default class RangeSliderThumbView
-  extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState, "pointerdown">
+  extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
   implements RangeSliderThumbView {
-  readonly template = (
-    classInfo: ClassInfo,
-    styleInfo: StyleInfo,
+  readonly template: template = (
+    { classInfo={}, styleInfo={}, attributes={} },
     innerHTML: TemplateResult | TemplateResult[]
   ) =>
     html`<div
@@ -49,9 +49,9 @@ export default class RangeSliderThumbView
       aria-valuemax="${this._state.ariaValueMax}"
       aria-valuenow="${this._state.ariaValueNow}"
       aria-valuetext="${this._state.ariaValueText}"
+      ...=${spread(attributes)}
       style=${styleMap(Object.assign({}, {}, styleInfo))}
       @dragstart=${() => false}
-      @pointerdown=${this}
     >
       ${innerHTML}
     </div>`;
@@ -136,10 +136,6 @@ export default class RangeSliderThumbView
         : this._options.start;
 
     return this;
-  }
-
-  protected _onPointerdown(event: PointerEvent) {
-    this.trigger("pointerdown", { view: this, event: event });
   }
 }
 

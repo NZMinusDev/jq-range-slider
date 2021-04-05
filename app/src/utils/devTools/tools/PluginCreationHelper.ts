@@ -1,4 +1,4 @@
-import { html } from "lit-html";
+import { html, TemplateResult } from "lit-html";
 import { ClassInfo } from "lit-html/directives/class-map";
 import { StyleInfo } from "lit-html/directives/style-map";
 import { defaultsDeep } from "lodash-es";
@@ -91,15 +91,14 @@ export class EventManagerMixin<TEvents extends string> {
     return this;
   }
 }
-
-interface CustomEventListener {
+export interface CustomEventListener {
   (...args: any): void;
 }
-interface CustomEventListenerObject {
+export interface CustomEventListenerObject {
   handleEvent(...args: any): void;
   [key: string]: any;
 }
-type handler = CustomEventListener | CustomEventListenerObject;
+export type handler = CustomEventListener | CustomEventListenerObject;
 
 export abstract class MVPView<
   TOptionsToGet extends object,
@@ -108,7 +107,7 @@ export abstract class MVPView<
   TEvents extends string = "",
   TSubViews extends { [key: string]: MVPView<any, any, any> | MVPView<any, any, any>[] } = {}
 > extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">> {
-  readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo, ...args: any) => html``;
+  readonly template: template = ({ classInfo, styleInfo, attributes }, ...args) => html``;
   static readonly templateOfRemoving = () => html``;
 
   protected _options: TOptionsToGet;
@@ -333,6 +332,14 @@ export abstract class MVPView<
     this._render();
   };
 }
+export type template = (
+  attributes: {
+    classInfo?: ClassInfo;
+    styleInfo?: StyleInfo;
+    attributes?: { [key: string]: unknown };
+  },
+  ...args: any
+) => TemplateResult;
 
 export interface MVPModel<State> {
   getState(): Promise<Required<State>>;

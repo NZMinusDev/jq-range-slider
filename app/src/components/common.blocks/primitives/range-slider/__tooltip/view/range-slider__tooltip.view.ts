@@ -1,10 +1,11 @@
 import "./range-slider__tooltip.scss";
 
 import { html } from "lit-html";
-import { ClassInfo, classMap } from "lit-html/directives/class-map";
-import { StyleInfo, styleMap } from "lit-html/directives/style-map";
+import { classMap } from "lit-html/directives/class-map";
+import { styleMap } from "lit-html/directives/style-map";
+import { spread } from "@open-wc/lit-helpers";
 
-import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
+import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
 
 export default interface RangeSliderTooltipView {
   getIsHiddenOption(): TooltipOptions["isHidden"];
@@ -29,7 +30,7 @@ export const DEFAULT_STATE: TooltipState = {
 export default class RangeSliderTooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState>
   implements RangeSliderTooltipView {
-  readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo) => html`<div
+  readonly template: template = ({ classInfo={}, styleInfo={}, attributes={} }) => html`<div
     class=${classMap(
       Object.assign(
         {},
@@ -40,6 +41,7 @@ export default class RangeSliderTooltipView
         classInfo
       )
     )}
+    ...=${spread(attributes)}
     style=${styleMap(Object.assign({}, {}, styleInfo))}
   >
     ${this._state.value}

@@ -1,10 +1,11 @@
 import "./range-slider__range.scss";
 
 import { html } from "lit-html";
-import { ClassInfo, classMap } from "lit-html/directives/class-map";
-import { StyleInfo, styleMap } from "lit-html/directives/style-map";
+import { classMap } from "lit-html/directives/class-map";
+import { styleMap } from "lit-html/directives/style-map";
+import { spread } from "@open-wc/lit-helpers";
 
-import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
+import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
 
 export default interface RangeSliderRangeView {
   getIsConnectedOption(): RangeOptions["isConnected"];
@@ -24,7 +25,7 @@ export const DEFAULT_STATE: RangeState = {};
 export default class RangeSliderRangeView
   extends MVPView<Required<RangeOptions>, RangeOptions, RangeState>
   implements RangeSliderRangeView {
-  readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo) =>
+  readonly template: template = ({ classInfo={}, styleInfo={}, attributes={} }) =>
     html`<div
       class=${classMap(
         Object.assign(
@@ -36,6 +37,7 @@ export default class RangeSliderRangeView
           classInfo
         )
       )}
+      ...=${spread(attributes)}
       style=${styleMap(Object.assign({}, {}, styleInfo))}
     ></div>`;
 

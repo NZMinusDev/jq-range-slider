@@ -3,8 +3,9 @@ import "./range-slider__pips.scss";
 import { html, TemplateResult } from "lit-html";
 import { ClassInfo, classMap } from "lit-html/directives/class-map.js";
 import { StyleInfo, styleMap } from "lit-html/directives/style-map.js";
+import { spread } from "@open-wc/lit-helpers";
 
-import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
+import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
 import { collapsingParseInt, collapsingParseFloat } from "@utils/devTools/tools/ParserHelper";
 import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
 
@@ -40,7 +41,7 @@ const RENDER_CALCULATION_PRECISION = 4;
 export default class RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
   implements RangeSliderPipsView {
-  readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo) =>
+  readonly template:template = ({ classInfo={}, styleInfo={}, attributes={} }) =>
     html`<div
       class=${classMap(
         Object.assign(
@@ -52,6 +53,7 @@ export default class RangeSliderPipsView
           classInfo
         )
       )}
+        ...=${spread(attributes)}
       style=${styleMap(Object.assign({}, {}, styleInfo))}
     >
       ${this.getPipsRender()}

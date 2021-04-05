@@ -24,8 +24,9 @@ import RangeSliderPipsView, {
 
 import { defaultsDeep } from "lodash-es";
 import { html, TemplateResult } from "lit-html";
-import { styleMap, StyleInfo } from "lit-html/directives/style-map";
-import { classMap, ClassInfo } from "lit-html/directives/class-map";
+import { styleMap } from "lit-html/directives/style-map";
+import { classMap } from "lit-html/directives/class-map";
+import { spread } from "@open-wc/lit-helpers";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
@@ -114,7 +115,7 @@ const VALUES_CALCULATION_PRECISION = 2;
 export default class RangeSliderView
   extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, "", SubViews>
   implements RangeSliderView {
-  readonly template = (classInfo: ClassInfo, styleInfo: StyleInfo) => html`<div
+  readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} }) => html`<div
     class=${classMap(
       Object.assign(
         {},
@@ -122,13 +123,13 @@ export default class RangeSliderView
         classInfo
       )
     )}
+    ...=${spread(attributes)}
     style=${styleMap(Object.assign({}, {}, styleInfo))}
   >
     ${this._subViews.trackView.template(
       {},
-      {},
       ([] as TemplateResult[]).concat(
-        this._subViews.rangesView.map((view) => view.template({}, {})),
+        this._subViews.rangesView.map((view) => view.template({})),
         this._subViews.thumbsView.map((view, index, views) => {
           const baseZIndex = 2;
           const nextIndex = index + 1;
@@ -136,21 +137,23 @@ export default class RangeSliderView
             (this._options.intervals.max - this._options.intervals.min) * 0.02;
 
           return view.template(
-            {},
             {
-              zIndex:
-                view.getAriaValueNowState() >
-                  views[nextIndex]?.getAriaValueNowState() - rangeOfSwapZIndex &&
-                view.getAriaValueMinState() < views[nextIndex]?.getAriaValueMinState()
-                  ? baseZIndex + views.length - index + 1 + ""
-                  : baseZIndex + index + "",
+              attributes: { "data-index": index, "@pointerdown": this._thumbEventListenerObject },
+              styleInfo: {
+                zIndex:
+                  view.getAriaValueNowState() >
+                    views[nextIndex]?.getAriaValueNowState() - rangeOfSwapZIndex &&
+                  view.getAriaValueMinState() < views[nextIndex]?.getAriaValueMinState()
+                    ? baseZIndex + views.length - index + 1 + ""
+                    : baseZIndex + index + "",
+              },
             },
-            this._subViews.tooltipsView[index].template({}, {})
+            this._subViews.tooltipsView[index].template({})
           );
         })
       )
     )}
-    ${this._subViews.pipsView.template({}, {})}
+    ${this._subViews.pipsView.template({})}
   </div>`;
 
   constructor(
@@ -635,22 +638,19 @@ export default class RangeSliderView
       this._subViews.thumbsView.length === this._subViews.rangesView.length - 1
     ) {
       super._render();
-
-      this._subViews.thumbsView.forEach((thumbView) => {
-        thumbView.on("pointerdown", this._thumbEventListenerObject);
-      });
     }
 
     return this;
   }
   protected _thumbEventListenerObject = {
-    handleEvent: ({ view, event }: { view: RangeSliderThumbView; event: Event }) => {
+    handleEvent: (event: Event) => {
       const thumbElem = (event.target as HTMLElement).closest(
         ".range-slider__thumb"
       ) as HTMLElement;
       const trackElem = thumbElem.closest(".range-slider__track") as HTMLElement;
 
-      const thumbViewIndex = this._subViews.thumbsView.findIndex((thumbView) => thumbView === view);
+      const thumbViewIndex = thumbElem.dataset.index ? +thumbElem.dataset.index : 0;
+      const view = this._subViews.thumbsView[thumbViewIndex];
       const tooltipView = this._subViews.tooltipsView[thumbViewIndex];
 
       const trackCoords = trackElem.getBoundingClientRect();
@@ -704,7 +704,7 @@ export default class RangeSliderView
             tooltipView.setState({
               value: tooltipView.getFormatterOption()(thumbValue),
             });
-            this._render()
+            this._render();
 
             thumbElem.style.transform = `translate(${
               (newThumbPositionOnTrack - thumbOffsetXToCenter) * thumbScaleXToTrackMultiplier
