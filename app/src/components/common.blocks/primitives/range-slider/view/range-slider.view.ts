@@ -12,6 +12,7 @@ import RangeSliderRangeView, {
 import RangeSliderThumbView, {
   DEFAULT_OPTIONS as THUMB_DEFAULT_OPTIONS,
   ThumbOptions,
+  ThumbState,
 } from "./../__thumb/view/range-slider__thumb.view";
 import RangeSliderTooltipView, {
   TooltipOptions,
@@ -53,8 +54,8 @@ export default interface RangeSliderView {
   setPipsOption(pips?: RangeSliderOptions["pips"]): this;
   setAnimateOption(animate?: RangeSliderOptions["animate"]): this;
 
-  get(): number[];
-  set(value?: number | number[]): this;
+  get(): FixedRangeSliderOptions["start"];
+  set(value?: RangeSliderOptions["start"]): this;
 
   whenIsStarted(callback: eventHandler): this;
   whenIsSlid(callback: eventHandler): this;
@@ -88,7 +89,10 @@ export type FixedRangeSliderOptions = {
   pips: NonNullable<Required<RangeSliderOptions["pips"]>>;
   animate: Required<RangeSliderOptions>["animate"];
 };
-export type RangeSliderState = {};
+export type RangeSliderState = {
+  id: number;
+  value: FixedRangeSliderOptions["start"];
+};
 
 export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,
@@ -108,7 +112,8 @@ export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   animate: (timeFraction: number) => timeFraction ** 2,
 };
 export const DEFAULT_STATE: RangeSliderState = {
-  values: DEFAULT_OPTIONS.start,
+  value: DEFAULT_OPTIONS.start,
+  id: -1,
 };
 
 const VALUES_CALCULATION_PRECISION = 2;
@@ -116,6 +121,7 @@ export default class RangeSliderView
   extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, "", SubViews>
   implements RangeSliderView {
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} }) => html`<div
+    data-id=${this._state.id}
     class=${classMap(
       Object.assign(
         {},
@@ -148,7 +154,7 @@ export default class RangeSliderView
                     : baseZIndex + index + "",
               },
             },
-            this._subViews.tooltipsView[index].template({})
+            this._subViews.tooltipsView[index]?.template({})
           );
         })
       )
@@ -158,7 +164,12 @@ export default class RangeSliderView
 
   constructor(
     options: RangeSliderOptions = DEFAULT_OPTIONS,
-    state: RangeSliderState = DEFAULT_STATE
+    state: RangeSliderState = {
+      value: Array.isArray(options.start)
+        ? options.start
+        : [options.start ?? DEFAULT_STATE.value[0]],
+      id: new Date().getTime(),
+    }
   ) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: [
@@ -212,11 +223,11 @@ export default class RangeSliderView
   setIntervalsOption(intervals: RangeSliderOptions["intervals"] = DEFAULT_OPTIONS.intervals) {
     this._options.intervals = intervals;
 
-    this._synchronizeWithTrackViewOptions(true)
+    this._synchronizeWithTrackView(true)
       ._fixStartOption()
       ._fixPipsOption()
-      ._synchronizeWithThumbsOptions(true)
-      ._synchronizeWithPipsOptions(true);
+      ._synchronizeWithThumbsView(true)
+      ._synchronizeWithPipsView(true);
 
     return this;
   }
@@ -226,18 +237,18 @@ export default class RangeSliderView
       : this._options.start.fill(start);
 
     this._fixStartOption()
-      ._synchronizeWithThumbsOptions(true)
+      ._synchronizeWithThumbsView(true)
       ._fixConnectOption()
-      ._synchronizeWithRangesOptions(true)
+      ._synchronizeWithRangesView(true)
       ._fixTooltipsOption()
-      ._synchronizeWithTooltipsOptions(true);
+      ._synchronizeWithTooltipsView(true)
 
     return this;
   }
   setStepsOption(steps: RangeSliderOptions["steps"] = DEFAULT_OPTIONS.steps) {
     this._options.steps = steps as FixedRangeSliderOptions["steps"];
 
-    this._synchronizeWithTrackViewOptions(true);
+    this._synchronizeWithTrackView(true);
 
     return this;
   }
@@ -246,7 +257,7 @@ export default class RangeSliderView
       ? ([] as FixedRangeSliderOptions["connect"]).concat(connect)
       : this._options.connect.fill(connect);
 
-    this._fixConnectOption()._synchronizeWithRangesOptions(true);
+    this._fixConnectOption()._synchronizeWithRangesView(true);
 
     return this;
   }
@@ -260,16 +271,14 @@ export default class RangeSliderView
   setPaddingOption(padding: RangeSliderOptions["padding"] = DEFAULT_OPTIONS.padding) {
     this._options.padding = padding as FixedRangeSliderOptions["padding"];
 
-    this._synchronizeWithTrackViewOptions(true);
+    this._synchronizeWithTrackView(true);
 
     return this;
   }
   setFormatterOption(formatter: RangeSliderOptions["formatter"] = DEFAULT_OPTIONS.formatter) {
     this._options.formatter = formatter;
 
-    this._fixTooltipsOption()
-      ._synchronizeWithTooltipsOptions(true)
-      ._synchronizeWithPipsOptions(true);
+    this._fixTooltipsOption()._synchronizeWithTooltipsView(true)._synchronizeWithPipsView(true);
 
     return this;
   }
@@ -278,19 +287,32 @@ export default class RangeSliderView
       ? ([] as FixedRangeSliderOptions["tooltips"]).concat(tooltips)
       : this._options.tooltips.fill(tooltips);
 
-    this._fixTooltipsOption()._synchronizeWithTooltipsOptions(true);
+    this._fixTooltipsOption()._synchronizeWithTooltipsView(true);
 
     return this;
   }
   setPipsOption(pips: RangeSliderOptions["pips"] = DEFAULT_OPTIONS.pips) {
     this._options.pips = defaultsDeep({}, pips, this._options.pips);
 
-    this._fixPipsOption()._synchronizeWithPipsOptions(true);
+    this._fixPipsOption()._synchronizeWithPipsView(true);
 
     return this;
   }
   setAnimateOption(animate: RangeSliderOptions["animate"] = DEFAULT_OPTIONS.animate) {
     this._options.animate = animate;
+
+    return this;
+  }
+
+  get() {
+    return ([] as FixedRangeSliderOptions["start"]).concat(this._state.value);
+  }
+  set(value: RangeSliderOptions["start"] = this._options.start) {
+    this._state.value = Array.isArray(value)
+      ? ([] as RangeSliderState["value"]).concat(value)
+      : this._state.value.fill(value);
+
+    this._synchronizeWithThumbsView(true)._synchronizeWithTooltipsView(true);
 
     return this;
   }
@@ -456,19 +478,36 @@ export default class RangeSliderView
     return pipsOptions;
   }
 
+  protected _toThumbsState() {
+    const thumbsState: ThumbState[] = [];
+    const tooltipsOptions = this._toTooltipsOptions();
+
+    this._state.value.forEach((value, index, values) => {
+      thumbsState.push({
+        ariaOrientation: this._options.orientation,
+        ariaValueMin: values[index - 1] ? values[index - 1] : this._options.intervals.min,
+        ariaValueMax: values[index + 1] ? values[index + 1] : this._options.intervals.max,
+        ariaValueNow: +value.toFixed(VALUES_CALCULATION_PRECISION),
+        ariaValueText: tooltipsOptions[index].formatter(value),
+      });
+    });
+
+    return thumbsState;
+  }
   protected _toTooltipsState() {
     const tooltipsState: TooltipState[] = [];
+    const tooltipsOptions = this._toTooltipsOptions();
 
-    this._options.tooltips.forEach((tooltip, index) => {
+    this._state.value.forEach((value, index) => {
       tooltipsState.push({
-        value: this._subViews.thumbsView[index].getAriaValueNowState(),
+        value: value,
       });
     });
 
     return tooltipsState;
   }
 
-  protected _synchronizeWithTrackViewOptions(shouldSet: boolean = false) {
+  protected _synchronizeWithTrackView(shouldSet: boolean = false) {
     if (shouldSet) {
       this._subViews.trackView.setOptions(this._toTrackOptions());
     }
@@ -480,7 +519,7 @@ export default class RangeSliderView
 
     return this;
   }
-  protected _synchronizeWithRangesOptions(shouldSet: boolean = false) {
+  protected _synchronizeWithRangesView(shouldSet: boolean = false) {
     if (shouldSet) {
       this._initRangesView(this._toRangesOptions());
     } else {
@@ -493,19 +532,23 @@ export default class RangeSliderView
 
     return this;
   }
-  protected _synchronizeWithThumbsOptions(shouldSet: boolean = false) {
+  protected _synchronizeWithThumbsView(shouldSet: boolean = false) {
     if (shouldSet) {
-      this._initThumbsView(this._toThumbsOptions());
+      this._initThumbsView(this._toThumbsOptions(), this._toThumbsState());
     } else {
       this._subViews.thumbsView.forEach((thumbView, index) => {
         const { start } = thumbView.getOptions();
 
         this._options.start[index] = start;
       });
+
+      this._state.value.forEach((value, index) => {
+        this._translateThumb(index);
+      });
     }
     return this;
   }
-  protected _synchronizeWithTooltipsOptions(shouldSet: boolean = false) {
+  protected _synchronizeWithTooltipsView(shouldSet: boolean = false) {
     if (shouldSet) {
       this._initTooltipsView(this._toTooltipsOptions(), this._toTooltipsState());
     } else {
@@ -522,7 +565,7 @@ export default class RangeSliderView
 
     return this;
   }
-  protected _synchronizeWithPipsOptions(shouldSet: boolean = false) {
+  protected _synchronizeWithPipsView(shouldSet: boolean = false) {
     if (shouldSet) {
       this._subViews.pipsView.setOptions(this._toPipsOptions());
     }
@@ -551,7 +594,7 @@ export default class RangeSliderView
   protected _initTrackView(options: TrackOptions): RangeSliderTrackView {
     this._subViews.trackView = new RangeSliderTrackView(options);
 
-    this._synchronizeWithTrackViewOptions();
+    this._synchronizeWithTrackView();
 
     return this._subViews.trackView;
   }
@@ -572,11 +615,11 @@ export default class RangeSliderView
       );
     }
 
-    this._synchronizeWithRangesOptions();
+    this._synchronizeWithRangesView();
 
     return this._subViews.rangesView;
   }
-  protected _initThumbsView(options: ThumbOptions[]): RangeSliderThumbView[] {
+  protected _initThumbsView(options: ThumbOptions[], state: ThumbState[]): RangeSliderThumbView[] {
     if (!this._subViews.thumbsView) {
       this._subViews.thumbsView = [];
     }
@@ -585,15 +628,18 @@ export default class RangeSliderView
       this._subViews.thumbsView.pop();
     }
     this._subViews.thumbsView.forEach((thumbView, index) => {
-      thumbView.setOptions(options[index]);
+      thumbView.setOptions(options[index]).setState(state[index]);
     });
     while (this._subViews.thumbsView.length < options.length) {
       this._subViews.thumbsView.push(
-        new RangeSliderThumbView(options[this._subViews.thumbsView.length])
+        new RangeSliderThumbView(
+          options[this._subViews.thumbsView.length],
+          state[this._subViews.thumbsView.length]
+        )
       );
     }
 
-    this._synchronizeWithThumbsOptions();
+    this._synchronizeWithThumbsView();
 
     return this._subViews.thumbsView;
   }
@@ -620,114 +666,156 @@ export default class RangeSliderView
       );
     }
 
-    this._synchronizeWithTooltipsOptions();
+    this._synchronizeWithTooltipsView();
 
     return this._subViews.tooltipsView;
   }
   protected _initPipsView(options: PipsOptions): RangeSliderPipsView {
     this._subViews.pipsView = new RangeSliderPipsView(options);
 
-    this._synchronizeWithPipsOptions();
+    this._synchronizeWithPipsView();
 
     return this._subViews.pipsView;
   }
 
   protected _render() {
-    if (
-      this._subViews.thumbsView.length === this._subViews.tooltipsView.length &&
-      this._subViews.thumbsView.length === this._subViews.rangesView.length - 1
-    ) {
-      super._render();
+    super._render();
+
+    if (this.dom.self === null) {
+      this.dom.self = document.querySelector(`[data-id="${this._state.id}"]`) as HTMLElement;
     }
 
     return this;
+  }
+  protected _translateThumb(thumbIndex: number, newThumbPositionOnTrack?: number) {
+    const thumbConstants = this._getThumbConstants(thumbIndex);
+    if (thumbConstants !== null) {
+      newThumbPositionOnTrack =
+        newThumbPositionOnTrack ??
+        (thumbConstants.thumbView.getAriaValueNowState() + Math.abs(this._options.intervals.min)) /
+          thumbConstants.valuePerPx;
+
+      thumbConstants.thumbElem.style.transform = `translate(${
+        (newThumbPositionOnTrack - thumbConstants.thumbOffsetXToCenter) *
+        thumbConstants.thumbScaleXToTrackMultiplier
+      }%,0)`;
+    }
   }
   protected _thumbEventListenerObject = {
     handleEvent: (event: Event) => {
       const thumbElem = (event.target as HTMLElement).closest(
         ".range-slider__thumb"
       ) as HTMLElement;
-      const trackElem = thumbElem.closest(".range-slider__track") as HTMLElement;
+      const thumbIndex = thumbElem.dataset.index ? +thumbElem.dataset.index : 0;
 
-      const thumbViewIndex = thumbElem.dataset.index ? +thumbElem.dataset.index : 0;
-      const view = this._subViews.thumbsView[thumbViewIndex];
-      const tooltipView = this._subViews.tooltipsView[thumbViewIndex];
+      const thumbConstants = this._getThumbConstants(thumbIndex);
+      if (thumbConstants !== null) {
+        switch (event.type) {
+          case "pointerdown": {
+            const pointerEvent = event as PointerEvent;
 
-      const trackCoords = trackElem.getBoundingClientRect();
-      const thumbCoords = thumbElem.getBoundingClientRect();
-      const thumbScaleXToTrackMultiplier = 100 / thumbCoords.width;
-      const thumbOffsetXToCenter = thumbCoords.width / 2;
-      const trackValueSize = this._options.intervals.max - this._options.intervals.min;
-      const valuePerPx = trackValueSize / trackCoords.width;
+            thumbElem.setPointerCapture(pointerEvent.pointerId);
 
-      switch (event.type) {
-        case "pointerdown": {
-          const pointerEvent = event as PointerEvent;
+            const tooltipView = this._subViews.tooltipsView[thumbIndex];
 
-          thumbElem.setPointerCapture(pointerEvent.pointerId);
+            let newThumbPositionOnTrack =
+              thumbConstants.thumbCoords.left -
+              thumbConstants.trackCoords.left +
+              thumbConstants.thumbOffsetXToCenter;
+            const moveThumbTo = (pointerEvent: PointerEvent) => {
+              const ariaValueMin = this._subViews.thumbsView[thumbIndex - 1]
+                ? this._subViews.thumbsView[thumbIndex - 1].getAriaValueNowState()
+                : this._options.intervals.min;
+              const ariaValueMax = this._subViews.thumbsView[thumbIndex + 1]
+                ? this._subViews.thumbsView[thumbIndex + 1].getAriaValueNowState()
+                : this._options.intervals.max;
 
-          let newThumbPositionOnTrack = thumbCoords.left - trackCoords.left + thumbOffsetXToCenter;
-          const moveThumbTo = (pointerEvent: PointerEvent) => {
-            const ariaValueMin = this._subViews.thumbsView[thumbViewIndex - 1]
-              ? this._subViews.thumbsView[thumbViewIndex - 1].getAriaValueNowState()
-              : this._options.intervals.min;
-            const ariaValueMax = this._subViews.thumbsView[thumbViewIndex + 1]
-              ? this._subViews.thumbsView[thumbViewIndex + 1].getAriaValueNowState()
-              : this._options.intervals.max;
+              newThumbPositionOnTrack += pointerEvent.movementX;
+              //FIXME: add coefficient of non linear
+              let thumbValue =
+                newThumbPositionOnTrack * thumbConstants.valuePerPx -
+                Math.abs(this._options.intervals.min);
 
-            newThumbPositionOnTrack += pointerEvent.movementX;
-            //FIXME: add coefficient of non linear
-            let thumbValue =
-              newThumbPositionOnTrack * valuePerPx - Math.abs(this._options.intervals.min);
+              if (thumbValue < ariaValueMin) {
+                newThumbPositionOnTrack =
+                  (ariaValueMin + Math.abs(this._options.intervals.min)) /
+                  thumbConstants.valuePerPx;
+                thumbValue = ariaValueMin;
+              }
+              if (thumbValue > ariaValueMax) {
+                newThumbPositionOnTrack =
+                  (ariaValueMax + Math.abs(this._options.intervals.min)) /
+                  thumbConstants.valuePerPx;
+                thumbValue = ariaValueMax;
+              }
 
-            if (thumbValue < ariaValueMin) {
-              newThumbPositionOnTrack =
-                (ariaValueMin + Math.abs(this._options.intervals.min)) / valuePerPx;
-              thumbValue = ariaValueMin;
-            }
-            if (thumbValue > ariaValueMax) {
-              newThumbPositionOnTrack =
-                (ariaValueMax + Math.abs(this._options.intervals.min)) / valuePerPx;
-              thumbValue = ariaValueMax;
-            }
+              thumbConstants.thumbView.off("render", this._renderThisHandler);
+              tooltipView.off("render", this._renderThisHandler);
 
-            view.off("render", this._renderThisHandler);
-            tooltipView.off("render", this._renderThisHandler);
+              thumbConstants.thumbView.setState({
+                ariaOrientation: this._options.orientation,
+                ariaValueMin,
+                ariaValueMax,
+                ariaValueNow: +thumbValue.toFixed(VALUES_CALCULATION_PRECISION),
+                ariaValueText: tooltipView.getFormatterOption()(thumbValue),
+              });
+              tooltipView.setState({
+                value: thumbValue,
+              });
+              this._render();
 
-            view.setState({
-              ariaOrientation: this._options.orientation,
-              ariaValueMin,
-              ariaValueMax,
-              ariaValueNow: +thumbValue.toFixed(2),
-              ariaValueText: this._options.formatter(thumbValue),
-            });
-            tooltipView.setState({
-              value: tooltipView.getFormatterOption()(thumbValue),
-            });
-            this._render();
+              this._translateThumb(thumbIndex, newThumbPositionOnTrack);
 
-            thumbElem.style.transform = `translate(${
-              (newThumbPositionOnTrack - thumbOffsetXToCenter) * thumbScaleXToTrackMultiplier
-            }%,0)`;
+              thumbConstants.thumbView.on("render", this._renderThisHandler);
+              tooltipView.on("render", this._renderThisHandler);
+            };
 
-            view.on("render", this._renderThisHandler);
-            tooltipView.on("render", this._renderThisHandler);
-          };
+            thumbElem.addEventListener("pointermove", moveThumbTo);
+            thumbElem.addEventListener(
+              "lostpointercapture",
+              (event) => {
+                thumbElem.removeEventListener("pointermove", moveThumbTo);
+              },
+              { once: true }
+            );
 
-          thumbElem.addEventListener("pointermove", moveThumbTo);
-          thumbElem.addEventListener(
-            "lostpointercapture",
-            (event) => {
-              thumbElem.removeEventListener("pointermove", moveThumbTo);
-            },
-            { once: true }
-          );
-
-          break;
+            break;
+          }
         }
       }
     },
   };
+  protected _getThumbConstants(thumbIndex: number) {
+    if (this.dom.self !== null) {
+      const trackElem = this.dom.self.querySelector(".range-slider__track") as HTMLElement;
+      const thumbElem = trackElem.querySelector(
+        ` .range-slider__thumb[data-index="${thumbIndex}"]`
+      ) as HTMLElement;
+
+      const thumbView = this._subViews.thumbsView[thumbIndex];
+
+      const trackCoords = trackElem.getBoundingClientRect();
+      const thumbCoords = thumbElem.getBoundingClientRect();
+      const thumbOffsetXToCenter = thumbCoords.width / 2;
+      const thumbScaleXToTrackMultiplier = 100 / thumbCoords.width;
+      const trackValueSize = this._options.intervals.max - this._options.intervals.min;
+      const valuePerPx = trackValueSize / trackCoords.width;
+
+      return {
+        trackElem,
+        thumbElem,
+        thumbView,
+        trackCoords,
+        thumbCoords,
+        thumbOffsetXToCenter,
+        thumbScaleXToTrackMultiplier,
+        trackValueSize,
+        valuePerPx,
+      };
+    }
+
+    return null;
+  }
 }
 
 interface eventHandler {

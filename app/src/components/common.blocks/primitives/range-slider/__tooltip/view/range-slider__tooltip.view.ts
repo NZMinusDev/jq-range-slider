@@ -16,7 +16,7 @@ export default interface RangeSliderTooltipView {
 
 export type TooltipOptions = { isHidden?: boolean; formatter?: Formatter };
 export type TooltipState = {
-  value: number | string;
+  value: number;
 };
 
 export const DEFAULT_OPTIONS: Required<TooltipOptions> = {
@@ -24,13 +24,13 @@ export const DEFAULT_OPTIONS: Required<TooltipOptions> = {
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
 };
 export const DEFAULT_STATE: TooltipState = {
-  value: 0,
+  value: -1,
 };
 
 export default class RangeSliderTooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState>
   implements RangeSliderTooltipView {
-  readonly template: template = ({ classInfo={}, styleInfo={}, attributes={} }) => html`<div
+  readonly template: template = ({ classInfo = {}, styleInfo = {}, attributes = {} }) => html`<div
     class=${classMap(
       Object.assign(
         {},
@@ -44,7 +44,7 @@ export default class RangeSliderTooltipView
     ...=${spread(attributes)}
     style=${styleMap(Object.assign({}, {}, styleInfo))}
   >
-    ${this._state.value}
+    ${this._options.formatter(this._state.value)}
   </div>`;
 
   constructor(options: TooltipOptions = DEFAULT_OPTIONS, state: TooltipState = DEFAULT_STATE) {
