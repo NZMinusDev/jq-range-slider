@@ -37,23 +37,27 @@ export default class RangeSliderThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
   implements RangeSliderThumbView {
   readonly template: template = (
-    { classInfo={}, styleInfo={}, attributes={} },
+    { classInfo = {}, styleInfo = {}, attributes = {} },
     innerHTML: TemplateResult | TemplateResult[]
   ) =>
     html`<div
-      class=${classMap(Object.assign({}, { "range-slider__thumb": true }, classInfo))}
-      role="slider"
-      tabindex="0"
-      aria-orientation="${this._state.ariaOrientation}"
-      aria-valuemin="${this._state.ariaValueMin}"
-      aria-valuemax="${this._state.ariaValueMax}"
-      aria-valuenow="${this._state.ariaValueNow}"
-      aria-valuetext="${this._state.ariaValueText}"
+      class=${classMap(Object.assign({}, { "range-slider__thumb-origin": true }, classInfo))}
       ...=${spread(attributes)}
       style=${styleMap(Object.assign({}, {}, styleInfo))}
-      @dragstart=${() => false}
     >
-      ${innerHTML}
+      <div
+        class=${classMap({ "range-slider__thumb": true })}
+        role="slider"
+        tabindex="0"
+        aria-orientation="${this._state.ariaOrientation}"
+        aria-valuemin="${this._state.ariaValueMin}"
+        aria-valuemax="${this._state.ariaValueMax}"
+        aria-valuenow="${this._state.ariaValueNow}"
+        aria-valuetext="${this._state.ariaValueText}"
+        @dragstart=${() => false}
+      >
+        ${innerHTML}
+      </div>
     </div>`;
 
   protected _id: number;

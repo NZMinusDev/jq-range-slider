@@ -241,7 +241,7 @@ export default class RangeSliderView
       ._fixConnectOption()
       ._synchronizeWithRangesView(true)
       ._fixTooltipsOption()
-      ._synchronizeWithTooltipsView(true)
+      ._synchronizeWithTooltipsView(true);
 
     return this;
   }
@@ -704,7 +704,7 @@ export default class RangeSliderView
   protected _thumbEventListenerObject = {
     handleEvent: (event: Event) => {
       const thumbElem = (event.target as HTMLElement).closest(
-        ".range-slider__thumb"
+        ".range-slider__thumb-origin"
       ) as HTMLElement;
       const thumbIndex = thumbElem.dataset.index ? +thumbElem.dataset.index : 0;
 
@@ -789,7 +789,7 @@ export default class RangeSliderView
     if (this.dom.self !== null) {
       const trackElem = this.dom.self.querySelector(".range-slider__track") as HTMLElement;
       const thumbElem = trackElem.querySelector(
-        ` .range-slider__thumb[data-index="${thumbIndex}"]`
+        `.range-slider__thumb-origin[data-index="${thumbIndex}"]`
       ) as HTMLElement;
 
       const thumbView = this._subViews.thumbsView[thumbIndex];
