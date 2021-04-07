@@ -33,6 +33,8 @@ export const DEFAULT_STATE: ThumbState = {
   ariaValueText: "-1",
 };
 
+const ARIA_ATTRIBUTE_PRECISION = 2;
+
 export default class RangeSliderThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
   implements RangeSliderThumbView {
@@ -50,9 +52,9 @@ export default class RangeSliderThumbView
         role="slider"
         tabindex="0"
         aria-orientation="${this._state.ariaOrientation}"
-        aria-valuemin="${this._state.ariaValueMin}"
-        aria-valuemax="${this._state.ariaValueMax}"
-        aria-valuenow="${this._state.ariaValueNow}"
+        aria-valuemin="${+(this._state.ariaValueMin).toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuemax="${+(this._state.ariaValueMax).toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuenow="${+(this._state.ariaValueNow).toFixed(ARIA_ATTRIBUTE_PRECISION)}"
         aria-valuetext="${this._state.ariaValueText}"
         @dragstart=${() => false}
       >

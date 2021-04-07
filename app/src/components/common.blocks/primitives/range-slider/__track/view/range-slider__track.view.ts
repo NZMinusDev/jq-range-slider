@@ -212,16 +212,18 @@ export default class RangeSliderTrackView
 
   protected _getSortedKeysOfIntervalsOption() {
     const intervalsKeys = Object.keys(this._options.intervals);
-    intervalsKeys.sort((a, b) => {
-      if (a === "min" || b === "max") {
-        return -1;
-      }
-      if (a === "max" || b === "min") {
-        return 1;
-      }
-      return collapsingParseFloat(a) - collapsingParseFloat(b);
-    });
+    intervalsKeys.sort(intervalsKeysCompareFunc);
 
     return intervalsKeys;
   }
+}
+
+export const intervalsKeysCompareFunc = (a, b) => {
+  if (a === "min" || b === "max") {
+    return -1;
+  }
+  if (a === "max" || b === "min") {
+    return 1;
+  }
+  return collapsingParseFloat(a) - collapsingParseFloat(b);
 }

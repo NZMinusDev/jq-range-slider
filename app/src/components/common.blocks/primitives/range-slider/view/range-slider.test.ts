@@ -55,13 +55,12 @@ const viewPropertiesExpecter: InstancePropsExpecter<
     case "count": {
       expect(instance["_options"].pips.values).toBeGreaterThanOrEqual(0);
 
-      const shift = +(
+      const shift =
         (instance["_options"].intervals.max - instance["_options"].intervals.min) /
-        ((instance["_options"].pips.values as number) - 1)
-      ).toFixed(2);
+        ((instance["_options"].pips.values as number) - 1);
       let accumulator = instance["_options"].intervals.min;
       instance["_subViews"]["pipsView"]["_options"].values.forEach((value) => {
-        expect(value).toBe(accumulator);
+        expect(value).toBe(+accumulator.toFixed(2));
         accumulator += shift;
       });
       break;

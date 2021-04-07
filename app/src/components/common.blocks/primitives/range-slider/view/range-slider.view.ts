@@ -3,6 +3,7 @@ import "./range-slider.scss";
 import RangeSliderTrackView, {
   DEFAULT_OPTIONS as TRACK_DEFAULT_OPTIONS,
   FixedTrackOptions,
+  intervalsKeysCompareFunc,
   TrackOptions,
 } from "./../__track/view/range-slider__track.view";
 import RangeSliderRangeView, {
@@ -116,7 +117,6 @@ export const DEFAULT_STATE: RangeSliderState = {
   id: -1,
 };
 
-const VALUES_CALCULATION_PRECISION = 2;
 export default class RangeSliderView
   extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, "", SubViews>
   implements RangeSliderView {
@@ -147,10 +147,10 @@ export default class RangeSliderView
               attributes: { "data-index": index, "@pointerdown": this._thumbEventListenerObject },
               styleInfo: {
                 zIndex:
-                  view.getAriaValueNowState() >
+                  view.getAriaValueNowState() >=
                     views[nextIndex]?.getAriaValueNowState() - rangeOfSwapZIndex &&
                   view.getAriaValueMinState() < views[nextIndex]?.getAriaValueMinState()
-                    ? baseZIndex + views.length - index + 1 + ""
+                    ? baseZIndex + 2 * views.length - index - 2 + ""
                     : baseZIndex + index + "",
               },
             },
@@ -403,6 +403,41 @@ export default class RangeSliderView
     return this;
   }
 
+  protected _getIntervalInfoByPoint(value: number) {
+    const intervalKeys = Object.keys(this._options.intervals).sort(intervalsKeysCompareFunc);
+
+    if (value > this._options.intervals.max) return { keyOfInfimum: "max" };
+    if (value < this._options.intervals.min) return { keyOfSupremum: "min" };
+
+    const indexOfSupremum = intervalKeys.findIndex((key) => this._options.intervals[key] > value);
+    const keyOfInfimum =
+      indexOfSupremum === -1
+        ? intervalKeys[intervalKeys.length - 2]
+        : intervalKeys[indexOfSupremum - 1];
+    const keyOfSupremum = indexOfSupremum === -1 ? "max" : intervalKeys[indexOfSupremum];
+
+    const valueSize =
+      this._options.intervals[keyOfSupremum] - this._options.intervals[keyOfInfimum];
+    const percentSize =
+      this._getIntervalKeyAsNumber(keyOfSupremum) - this._getIntervalKeyAsNumber(keyOfInfimum);
+
+    const intervalRatio = valueSize / percentSize;
+    const fullRatio = (this._options.intervals.max - this._options.intervals.min) / 100;
+
+    const magnificationFactor = intervalRatio / fullRatio;
+
+    return {
+      keyOfInfimum,
+      keyOfSupremum,
+      valueSize,
+      percentSize,
+      magnificationFactor,
+    };
+  }
+  protected _getIntervalKeyAsNumber(key: keyof Required<TrackOptions>["intervals"]) {
+    return key === "min" ? 0 : key === "max" ? 100 : Number.parseFloat(`${key}`);
+  }
+
   protected _toTrackOptions(): FixedTrackOptions {
     return {
       intervals: this._options.intervals,
@@ -448,10 +483,9 @@ export default class RangeSliderView
 
     switch (this._options.pips.mode) {
       case "count": {
-        const shift = +(
+        const shift =
           (this._options.intervals.max - this._options.intervals.min) /
-          ((this._options.pips.values as number) - 1)
-        ).toFixed(VALUES_CALCULATION_PRECISION);
+          ((this._options.pips.values as number) - 1);
 
         let accumulator = this._options.intervals.min;
         for (let index = 0; index < this._options.pips.values; index++) {
@@ -462,10 +496,7 @@ export default class RangeSliderView
         break;
       }
       case "positions": {
-        const perPercent = +(
-          (this._options.intervals.max - this._options.intervals.min) /
-          100
-        ).toFixed(VALUES_CALCULATION_PRECISION);
+        const perPercent = (this._options.intervals.max - this._options.intervals.min) / 100;
 
         values = values.map((value) => value * perPercent);
 
@@ -487,7 +518,7 @@ export default class RangeSliderView
         ariaOrientation: this._options.orientation,
         ariaValueMin: values[index - 1] ? values[index - 1] : this._options.intervals.min,
         ariaValueMax: values[index + 1] ? values[index + 1] : this._options.intervals.max,
-        ariaValueNow: +value.toFixed(VALUES_CALCULATION_PRECISION),
+        ariaValueNow: value,
         ariaValueText: tooltipsOptions[index].formatter(value),
       });
     });
@@ -496,7 +527,6 @@ export default class RangeSliderView
   }
   protected _toTooltipsState() {
     const tooltipsState: TooltipState[] = [];
-    const tooltipsOptions = this._toTooltipsOptions();
 
     this._state.value.forEach((value, index) => {
       tooltipsState.push({
@@ -579,10 +609,7 @@ export default class RangeSliderView
         break;
       }
       case "positions": {
-        const perPercent = +(
-          (this._options.intervals.max - this._options.intervals.min) /
-          100
-        ).toFixed(VALUES_CALCULATION_PRECISION);
+        const perPercent = (this._options.intervals.max - this._options.intervals.min) / 100;
 
         this._options.pips.values = values.map((value) => value / perPercent);
       }
@@ -689,17 +716,52 @@ export default class RangeSliderView
   }
   protected _translateThumb(thumbIndex: number, newThumbPositionOnTrack?: number) {
     const thumbConstants = this._getThumbConstants(thumbIndex);
-    if (thumbConstants !== null) {
-      newThumbPositionOnTrack =
-        newThumbPositionOnTrack ??
-        (thumbConstants.thumbView.getAriaValueNowState() + Math.abs(this._options.intervals.min)) /
-          thumbConstants.valuePerPx;
 
-      thumbConstants.thumbElem.style.transform = `translate(${
-        (newThumbPositionOnTrack - thumbConstants.thumbOffsetXToCenter) *
-        thumbConstants.thumbScaleXToTrackMultiplier
-      }%,0)`;
+    if (thumbConstants === null) {
+      return;
     }
+    
+    const thumbValue = thumbConstants.thumbView.getAriaValueNowState();
+
+    if (!newThumbPositionOnTrack) {
+      const intervalKeys = Object.keys(this._options.intervals).sort(intervalsKeysCompareFunc);
+
+      let offsetOnTrackInPercent = 0;
+      let intervalValueSize: number;
+      let intervalPercentSize: number;
+      let valuePerPercentInInterval: number;
+      let isStopOffset = false;
+      intervalKeys.forEach((intervalKey, index) => {
+        if (!isStopOffset && intervalKeys[index + 1] !== undefined) {
+          intervalValueSize =
+            this._options.intervals[intervalKeys[index + 1]] - this._options.intervals[intervalKey];
+          intervalPercentSize =
+            this._getIntervalKeyAsNumber(intervalKeys[index + 1]) -
+            this._getIntervalKeyAsNumber(intervalKeys[index]);
+          valuePerPercentInInterval = intervalValueSize / intervalPercentSize;
+
+          if (
+            thumbValue >= this._options.intervals[intervalKey] &&
+            thumbValue <= this._options.intervals[intervalKeys[index + 1]]
+          ) {
+            offsetOnTrackInPercent +=
+              (thumbValue - this._options.intervals[intervalKey]) / valuePerPercentInInterval;
+            isStopOffset = true;
+          } else {
+            offsetOnTrackInPercent += intervalPercentSize;
+          }
+        } else {
+          return;
+        }
+      });
+
+      newThumbPositionOnTrack = (thumbConstants.trackCoords.width * offsetOnTrackInPercent) / 100;
+    }
+
+    thumbConstants.thumbElem.style.transform = `translate(${
+      (newThumbPositionOnTrack - thumbConstants.thumbOffsetXToCenter) *
+      thumbConstants.thumbScaleXToTrackMultiplier
+    }%,0)`;
   }
   protected _thumbEventListenerObject = {
     handleEvent: (event: Event) => {
@@ -717,57 +779,139 @@ export default class RangeSliderView
             thumbElem.setPointerCapture(pointerEvent.pointerId);
 
             const tooltipView = this._subViews.tooltipsView[thumbIndex];
+            const lessThumbView: RangeSliderThumbView | undefined = this._subViews.thumbsView[
+              thumbIndex - 1
+            ];
+            const moreThumbView: RangeSliderThumbView | undefined = this._subViews.thumbsView[
+              thumbIndex + 1
+            ];
 
             let newThumbPositionOnTrack =
               thumbConstants.thumbCoords.left -
               thumbConstants.trackCoords.left +
               thumbConstants.thumbOffsetXToCenter;
             const moveThumbTo = (pointerEvent: PointerEvent) => {
-              const ariaValueMin = this._subViews.thumbsView[thumbIndex - 1]
-                ? this._subViews.thumbsView[thumbIndex - 1].getAriaValueNowState()
-                : this._options.intervals.min;
-              const ariaValueMax = this._subViews.thumbsView[thumbIndex + 1]
-                ? this._subViews.thumbsView[thumbIndex + 1].getAriaValueNowState()
-                : this._options.intervals.max;
+              const doubleMovementX =
+                pointerEvent.clientX -
+                thumbConstants.thumbElem.getBoundingClientRect().left -
+                thumbConstants.thumbOffsetXToCenter;
 
-              newThumbPositionOnTrack += pointerEvent.movementX;
-              //FIXME: add coefficient of non linear
-              let thumbValue =
-                newThumbPositionOnTrack * thumbConstants.valuePerPx -
-                Math.abs(this._options.intervals.min);
+              let thumbValue = thumbConstants.thumbView.getAriaValueNowState();
+              let currentIntervalInfo = this._getIntervalInfoByPoint(thumbValue);
 
-              if (thumbValue < ariaValueMin) {
-                newThumbPositionOnTrack =
-                  (ariaValueMin + Math.abs(this._options.intervals.min)) /
-                  thumbConstants.valuePerPx;
-                thumbValue = ariaValueMin;
+              if (currentIntervalInfo.magnificationFactor !== undefined) {
+                const ariaValueMin = this._subViews.thumbsView[thumbIndex - 1]
+                  ? this._subViews.thumbsView[thumbIndex - 1].getAriaValueNowState()
+                  : this._options.intervals.min;
+                const ariaValueMax = this._subViews.thumbsView[thumbIndex + 1]
+                  ? this._subViews.thumbsView[thumbIndex + 1].getAriaValueNowState()
+                  : this._options.intervals.max;
+
+                const thumbValueIncrementation =
+                  doubleMovementX *
+                  thumbConstants.valuePerPx *
+                  currentIntervalInfo.magnificationFactor;
+
+                thumbValue += thumbValueIncrementation;
+                newThumbPositionOnTrack += doubleMovementX;
+
+                while (
+                  currentIntervalInfo.keyOfSupremum !== undefined &&
+                  thumbValue > this._options.intervals[currentIntervalInfo.keyOfSupremum]
+                ) {
+                  const nextIntervalInfo = this._getIntervalInfoByPoint(thumbValue);
+                  if (
+                    currentIntervalInfo.magnificationFactor !== undefined &&
+                    nextIntervalInfo.magnificationFactor !== undefined
+                  ) {
+                    const thumbValueBeforeIncrementation = thumbValue - thumbValueIncrementation;
+                    const complementToWholeIntervalValue =
+                      this._options.intervals[currentIntervalInfo.keyOfSupremum] -
+                      thumbValueBeforeIncrementation;
+
+                    const toWholeIntervalFactor =
+                      complementToWholeIntervalValue / thumbValueIncrementation;
+                    const toNewValueFactor = 1 - toWholeIntervalFactor;
+
+                    thumbValue =
+                      thumbValueBeforeIncrementation +
+                      doubleMovementX *
+                        thumbConstants.valuePerPx *
+                        (toWholeIntervalFactor * currentIntervalInfo.magnificationFactor +
+                          toNewValueFactor * nextIntervalInfo.magnificationFactor);
+                  }
+
+                  currentIntervalInfo = this._getIntervalInfoByPoint(thumbValue);
+                }
+                while (
+                  currentIntervalInfo.keyOfInfimum !== undefined &&
+                  thumbValue < this._options.intervals[currentIntervalInfo.keyOfInfimum]
+                ) {
+                  const previousIntervalInfo = this._getIntervalInfoByPoint(thumbValue);
+                  if (
+                    currentIntervalInfo.magnificationFactor !== undefined &&
+                    previousIntervalInfo.magnificationFactor !== undefined
+                  ) {
+                    const thumbValueBeforeIncrementation = thumbValue - thumbValueIncrementation;
+                    const complementToWholeIntervalValue =
+                      this._options.intervals[currentIntervalInfo.keyOfInfimum] -
+                      thumbValueBeforeIncrementation;
+
+                    const toWholeIntervalFactor =
+                      complementToWholeIntervalValue / thumbValueIncrementation;
+                    const toNewValueFactor = 1 - toWholeIntervalFactor;
+
+                    thumbValue =
+                      thumbValueBeforeIncrementation +
+                      doubleMovementX *
+                        thumbConstants.valuePerPx *
+                        (toWholeIntervalFactor * currentIntervalInfo.magnificationFactor +
+                          toNewValueFactor * previousIntervalInfo.magnificationFactor);
+                  }
+
+                  currentIntervalInfo = this._getIntervalInfoByPoint(thumbValue);
+                }
+                if (thumbValue < ariaValueMin) {
+                  newThumbPositionOnTrack = 0;
+                  thumbValue = ariaValueMin;
+                }
+                if (thumbValue > ariaValueMax) {
+                  newThumbPositionOnTrack = thumbConstants.trackCoords.width;
+                  thumbValue = ariaValueMax;
+                }
+
+                thumbConstants.thumbView.off("render", this._renderThisHandler);
+                tooltipView.off("render", this._renderThisHandler);
+
+                thumbConstants.thumbView.setState({
+                  ariaOrientation: this._options.orientation,
+                  ariaValueMin,
+                  ariaValueMax,
+                  ariaValueNow: thumbValue,
+                  ariaValueText: tooltipView.getFormatterOption()(thumbValue),
+                });
+                tooltipView.setState({
+                  value: thumbValue,
+                });
+
+                if (lessThumbView !== undefined) {
+                  lessThumbView.off("render", this._renderThisHandler);
+                  lessThumbView.setAriaValueMaxState(thumbValue);
+                  lessThumbView.on("render", this._renderThisHandler);
+                }
+                if (moreThumbView !== undefined) {
+                  moreThumbView.off("render", this._renderThisHandler);
+                  moreThumbView.setAriaValueMinState(thumbValue);
+                  moreThumbView.on("render", this._renderThisHandler);
+                }
+
+                this._render();
+
+                this._translateThumb(thumbIndex, newThumbPositionOnTrack);
+
+                thumbConstants.thumbView.on("render", this._renderThisHandler);
+                tooltipView.on("render", this._renderThisHandler);
               }
-              if (thumbValue > ariaValueMax) {
-                newThumbPositionOnTrack =
-                  (ariaValueMax + Math.abs(this._options.intervals.min)) /
-                  thumbConstants.valuePerPx;
-                thumbValue = ariaValueMax;
-              }
-
-              thumbConstants.thumbView.off("render", this._renderThisHandler);
-              tooltipView.off("render", this._renderThisHandler);
-
-              thumbConstants.thumbView.setState({
-                ariaOrientation: this._options.orientation,
-                ariaValueMin,
-                ariaValueMax,
-                ariaValueNow: +thumbValue.toFixed(VALUES_CALCULATION_PRECISION),
-                ariaValueText: tooltipView.getFormatterOption()(thumbValue),
-              });
-              tooltipView.setState({
-                value: thumbValue,
-              });
-              this._render();
-
-              this._translateThumb(thumbIndex, newThumbPositionOnTrack);
-
-              thumbConstants.thumbView.on("render", this._renderThisHandler);
-              tooltipView.on("render", this._renderThisHandler);
             };
 
             thumbElem.addEventListener("pointermove", moveThumbTo);
@@ -786,35 +930,35 @@ export default class RangeSliderView
     },
   };
   protected _getThumbConstants(thumbIndex: number) {
-    if (this.dom.self !== null) {
-      const trackElem = this.dom.self.querySelector(".range-slider__track") as HTMLElement;
-      const thumbElem = trackElem.querySelector(
-        `.range-slider__thumb-origin[data-index="${thumbIndex}"]`
-      ) as HTMLElement;
-
-      const thumbView = this._subViews.thumbsView[thumbIndex];
-
-      const trackCoords = trackElem.getBoundingClientRect();
-      const thumbCoords = thumbElem.getBoundingClientRect();
-      const thumbOffsetXToCenter = thumbCoords.width / 2;
-      const thumbScaleXToTrackMultiplier = 100 / thumbCoords.width;
-      const trackValueSize = this._options.intervals.max - this._options.intervals.min;
-      const valuePerPx = trackValueSize / trackCoords.width;
-
-      return {
-        trackElem,
-        thumbElem,
-        thumbView,
-        trackCoords,
-        thumbCoords,
-        thumbOffsetXToCenter,
-        thumbScaleXToTrackMultiplier,
-        trackValueSize,
-        valuePerPx,
-      };
+    if (this.dom.self === null) {
+      return null;
     }
 
-    return null;
+    const trackElem = this.dom.self.querySelector(".range-slider__track") as HTMLElement;
+    const thumbElem = trackElem.querySelector(
+      `.range-slider__thumb-origin[data-index="${thumbIndex}"]`
+    ) as HTMLElement;
+
+    const thumbView = this._subViews.thumbsView[thumbIndex];
+
+    const trackCoords = trackElem.getBoundingClientRect();
+    const thumbCoords = thumbElem.getBoundingClientRect();
+    const thumbOffsetXToCenter = thumbCoords.width / 2;
+    const thumbScaleXToTrackMultiplier = 100 / thumbCoords.width;
+    const trackValueSize = this._options.intervals.max - this._options.intervals.min;
+    const valuePerPx = trackValueSize / trackCoords.width;
+
+    return {
+      trackElem,
+      thumbElem,
+      thumbView,
+      trackCoords,
+      thumbCoords,
+      thumbOffsetXToCenter,
+      thumbScaleXToTrackMultiplier,
+      trackValueSize,
+      valuePerPx,
+    };
   }
 }
 
