@@ -41,7 +41,7 @@ const RENDER_CALCULATION_PRECISION = 4;
 export default class RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
   implements RangeSliderPipsView {
-  readonly template:template = ({ classInfo={}, styleInfo={}, attributes={} }) =>
+  readonly template: template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
     html`<div
       class=${classMap(
         Object.assign(
@@ -53,7 +53,7 @@ export default class RangeSliderPipsView
           classInfo
         )
       )}
-        ...=${spread(attributes)}
+      ...=${spread(attributes)}
       style=${styleMap(Object.assign({}, {}, styleInfo))}
     >
       ${this.getPipsRender()}

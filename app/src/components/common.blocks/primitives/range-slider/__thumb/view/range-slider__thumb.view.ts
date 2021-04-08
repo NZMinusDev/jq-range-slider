@@ -39,8 +39,8 @@ export default class RangeSliderThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
   implements RangeSliderThumbView {
   readonly template: template = (
-    { classInfo = {}, styleInfo = {}, attributes = {} },
-    innerHTML: TemplateResult | TemplateResult[]
+    { classInfo = {}, styleInfo = {}, attributes = {} } = {},
+    innerHTML: TemplateResult | TemplateResult[] = html``
   ) =>
     html`<div
       class=${classMap(Object.assign({}, { "range-slider__thumb-origin": true }, classInfo))}
@@ -52,11 +52,11 @@ export default class RangeSliderThumbView
         role="slider"
         tabindex="0"
         aria-orientation="${this._state.ariaOrientation}"
-        aria-valuemin="${+(this._state.ariaValueMin).toFixed(ARIA_ATTRIBUTE_PRECISION)}"
-        aria-valuemax="${+(this._state.ariaValueMax).toFixed(ARIA_ATTRIBUTE_PRECISION)}"
-        aria-valuenow="${+(this._state.ariaValueNow).toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuemin="${+this._state.ariaValueMin.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuemax="${+this._state.ariaValueMax.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuenow="${+this._state.ariaValueNow.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
         aria-valuetext="${this._state.ariaValueText}"
-        @dragstart=${() => false}
+        @dragstart=${this}
       >
         ${innerHTML}
       </div>
@@ -142,6 +142,10 @@ export default class RangeSliderThumbView
         : this._options.start;
 
     return this;
+  }
+
+  protected _onDragstart() {
+    return false;
   }
 }
 

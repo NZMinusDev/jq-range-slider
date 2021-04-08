@@ -7,6 +7,7 @@ import {
   testGetter,
   testSetter,
   DifferentArguments,
+  testDOM,
 } from "@utils/devTools/tools/UnitTestingHelper";
 import { collapsingParseFloat, getPrecision } from "@utils/devTools/tools/ParserHelper";
 
@@ -177,4 +178,11 @@ describe("setOptions", () => {
       expect(sliderOptions.padding).toStrictEqual([20, 20]);
     });
   });
+});
+
+testDOM({
+  Creator: RangeSliderTrackView,
+  constructorsArgs: [],
+  templatesArgs: [],
+  callbacksWithTest: [],
 });

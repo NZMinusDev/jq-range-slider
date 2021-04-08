@@ -7,6 +7,7 @@ import {
   testGetter,
   testSetter,
   DifferentArguments,
+  testDOM,
 } from "@utils/devTools/tools/UnitTestingHelper";
 import { collapsingParseInt, getPrecision } from "@utils/devTools/tools/ParserHelper";
 
@@ -84,4 +85,11 @@ testSetter({
   },
   propsToSet: new Map().set("_options", 0),
   resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
+});
+
+testDOM({
+  Creator: RangeSliderPipsView,
+  constructorsArgs: [],
+  templatesArgs: [],
+  callbacksWithTest: [],
 });

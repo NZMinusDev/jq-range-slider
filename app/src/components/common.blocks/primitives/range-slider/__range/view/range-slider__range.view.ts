@@ -25,7 +25,7 @@ export const DEFAULT_STATE: RangeState = {};
 export default class RangeSliderRangeView
   extends MVPView<Required<RangeOptions>, RangeOptions, RangeState>
   implements RangeSliderRangeView {
-  readonly template: template = ({ classInfo={}, styleInfo={}, attributes={} }) =>
+  readonly template: template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
     html`<div
       class=${classMap(
         Object.assign(

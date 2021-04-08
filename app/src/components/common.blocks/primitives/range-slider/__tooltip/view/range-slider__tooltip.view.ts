@@ -30,7 +30,11 @@ export const DEFAULT_STATE: TooltipState = {
 export default class RangeSliderTooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState>
   implements RangeSliderTooltipView {
-  readonly template: template = ({ classInfo = {}, styleInfo = {}, attributes = {} }) => html`<div
+  readonly template: template = ({
+    classInfo = {},
+    styleInfo = {},
+    attributes = {},
+  } = {}) => html`<div
     class=${classMap(
       Object.assign(
         {},
@@ -50,7 +54,6 @@ export default class RangeSliderTooltipView
   constructor(options: TooltipOptions = DEFAULT_OPTIONS, state: TooltipState = DEFAULT_STATE) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: ["isHidden", "formatter"],
-      theOrderOfIteratingThroughTheState: ["value"],
     });
   }
 

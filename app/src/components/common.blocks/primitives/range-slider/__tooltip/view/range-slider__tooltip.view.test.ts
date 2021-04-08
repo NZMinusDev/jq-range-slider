@@ -1,4 +1,7 @@
-import RangeSliderTooltipView, { DEFAULT_OPTIONS, DEFAULT_STATE } from "./range-slider__tooltip.view";
+import RangeSliderTooltipView, {
+  DEFAULT_OPTIONS,
+  DEFAULT_STATE,
+} from "./range-slider__tooltip.view";
 
 import {
   InstancePropsExpecter,
@@ -7,6 +10,7 @@ import {
   testGetter,
   testSetter,
   DifferentArguments,
+  testDOM,
 } from "@utils/devTools/tools/UnitTestingHelper";
 
 const viewPropertiesExpecter: InstancePropsExpecter<
@@ -79,4 +83,11 @@ testSetter({
   },
   propsToSet: new Map().set("_state", 0),
   resetPropsTo: new Map().set("_state", DEFAULT_STATE),
+});
+
+testDOM({
+  Creator: RangeSliderTooltipView,
+  constructorsArgs: [],
+  templatesArgs: [],
+  callbacksWithTest: [],
 });

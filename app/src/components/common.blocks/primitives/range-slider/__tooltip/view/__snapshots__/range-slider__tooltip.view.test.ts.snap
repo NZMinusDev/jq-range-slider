@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DOM manipulation renders correctly 1`] = `
+<DocumentFragment>
+  <!---->
+  <div
+    class="range-slider__tooltip"
+    style=""
+  >
+    
+    
+    -1.00
+    
+  
+  </div>
+  <!---->
+</DocumentFragment>
+`;

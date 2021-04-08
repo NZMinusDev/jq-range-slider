@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DOM manipulation renders correctly 1`] = `
+<DocumentFragment>
+  <!---->
+  <div
+    class="range-slider__thumb-origin"
+    style=""
+  >
+    
+      
+    <div
+      aria-orientation="horizontal"
+      aria-valuemax="-1"
+      aria-valuemin="-1"
+      aria-valuenow="-1"
+      aria-valuetext="-1"
+      class="range-slider__thumb"
+      role="slider"
+      tabindex="0"
+    >
+      
+        
+      
+      
+    </div>
+    
+    
+  </div>
+  <!---->
+</DocumentFragment>
+`;

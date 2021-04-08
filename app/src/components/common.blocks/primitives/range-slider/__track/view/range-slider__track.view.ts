@@ -41,8 +41,8 @@ export default class RangeSliderTrackView
   extends MVPView<FixedTrackOptions, TrackOptions, TrackState>
   implements RangeSliderTrackView {
   readonly template: template = (
-    { classInfo={}, styleInfo={}, attributes={} },
-    innerHTML: TemplateResult | TemplateResult[]
+    { classInfo = {}, styleInfo = {}, attributes = {} } = {},
+    innerHTML: TemplateResult | TemplateResult[] = html``
   ) =>
     html`<div
       class=${classMap(
@@ -226,4 +226,4 @@ export const intervalsKeysCompareFunc = (a, b) => {
     return 1;
   }
   return collapsingParseFloat(a) - collapsingParseFloat(b);
-}
+};

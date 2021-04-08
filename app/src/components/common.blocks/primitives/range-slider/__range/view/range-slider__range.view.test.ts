@@ -7,6 +7,7 @@ import {
   testGetter,
   testSetter,
   DifferentArguments,
+  testDOM,
 } from "@utils/devTools/tools/UnitTestingHelper";
 
 const viewPropertiesExpecter: InstancePropsExpecter<
@@ -55,4 +56,11 @@ testSetter({
   },
   propsToSet: new Map().set("_options", 0),
   resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
+});
+
+testDOM({
+  Creator: RangeSliderRangeView,
+  constructorsArgs: [],
+  templatesArgs: [],
+  callbacksWithTest: [],
 });
