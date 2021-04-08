@@ -109,7 +109,7 @@ export abstract class MVPView<
   >
   extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">>
   implements Plugin {
-  readonly template: template = ({ classInfo, styleInfo, attributes }, ...args) => html``;
+  readonly template: template = ({ classInfo, styleInfo, attributes } = {}, ...args) => html``;
   static readonly templateOfRemoving = () => html``;
 
   readonly dom: { self: HTMLElement | null; [key: string]: HTMLElement | null } = { self: null };
@@ -120,7 +120,7 @@ export abstract class MVPView<
 
   protected readonly theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[];
   protected readonly theOrderOfIteratingThroughTheState: Extract<keyof TState, string>[];
-  protected readonly theOrderOfIteratingThroughTheSubViews: string[];
+  protected readonly theOrderOfIteratingThroughTheSubViews: Extract<keyof TSubViews, string>[];
 
   constructor(
     DEFAULT_OPTIONS: TOptionsToGet,
@@ -134,28 +134,60 @@ export abstract class MVPView<
     }: {
       theOrderOfIteratingThroughTheOptions?: Extract<keyof TOptionsToGet, string>[];
       theOrderOfIteratingThroughTheState?: Extract<keyof TState, string>[];
-      theOrderOfIteratingThroughTheSubViews?: string[];
+      theOrderOfIteratingThroughTheSubViews?: Extract<keyof TSubViews, string>[];
     }
   ) {
     super();
 
     this._options = defaultsDeep({}, options, DEFAULT_OPTIONS);
     this._state = defaultsDeep({}, state, DEFAULT_STATE);
+    this._subViews = {} as TSubViews;
 
-    this.theOrderOfIteratingThroughTheOptions = ([] as Extract<
-      keyof TOptionsToGet,
-      string
-    >[]).concat(theOrderOfIteratingThroughTheOptions);
-    this.theOrderOfIteratingThroughTheState = ([] as Extract<keyof TState, string>[]).concat(
-      theOrderOfIteratingThroughTheState
+    type OptionsKey = Extract<keyof TOptionsToGet, string>;
+    type StateKey = Extract<keyof TState, string>;
+    type SubViewsKey = Extract<keyof TSubViews, string>;
+    this.theOrderOfIteratingThroughTheOptions = Array.from(
+      new Set(
+        ([] as OptionsKey[]).concat(
+          Object.keys(this._options) as OptionsKey[],
+          theOrderOfIteratingThroughTheOptions
+        )
+      )
     );
-    this.theOrderOfIteratingThroughTheSubViews = ([] as string[]).concat(
-      theOrderOfIteratingThroughTheSubViews
+    this.theOrderOfIteratingThroughTheState = Array.from(
+      new Set(
+        ([] as StateKey[]).concat(
+          Object.keys(this._state) as StateKey[],
+          theOrderOfIteratingThroughTheState
+        )
+      )
+    );
+    this.theOrderOfIteratingThroughTheSubViews = Array.from(
+      new Set(
+        ([] as SubViewsKey[]).concat(
+          Object.keys(this._subViews) as SubViewsKey[],
+          theOrderOfIteratingThroughTheSubViews
+        )
+      )
+    );
+    this.theOrderOfIteratingThroughTheOptions.sort(
+      (a, b) =>
+        this.theOrderOfIteratingThroughTheOptions.indexOf(a as OptionsKey) -
+        this.theOrderOfIteratingThroughTheOptions.indexOf(b as OptionsKey)
+    );
+    this.theOrderOfIteratingThroughTheState.sort(
+      (a, b) =>
+        this.theOrderOfIteratingThroughTheState.indexOf(a as StateKey) -
+        this.theOrderOfIteratingThroughTheState.indexOf(b as StateKey)
+    );
+    this.theOrderOfIteratingThroughTheSubViews.sort(
+      (a, b) =>
+        this.theOrderOfIteratingThroughTheSubViews.indexOf(a as SubViewsKey) -
+        this.theOrderOfIteratingThroughTheSubViews.indexOf(b as SubViewsKey)
     );
 
     this._fixOptions()._fixState();
 
-    this._subViews = {} as TSubViews;
     this._subViews = new Proxy(this._subViews, {
       set: (target, prop, val, receiver) => {
         if (Array.isArray(val)) {
@@ -193,6 +225,7 @@ export abstract class MVPView<
 
   getOptions(): TOptionsToGet {
     const options: any = {};
+
     let getOptionMethodName;
     this.theOrderOfIteratingThroughTheOptions.forEach((optionKey) => {
       getOptionMethodName = `get${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
@@ -203,6 +236,7 @@ export abstract class MVPView<
   }
   getState(): TState {
     const state: any = {};
+
     let getStateMethodName;
     this.theOrderOfIteratingThroughTheState.forEach((stateKey) => {
       getStateMethodName = `get${stateKey[0].toUpperCase() + stateKey.slice(1)}State`;
@@ -340,12 +374,12 @@ export abstract class MVPView<
   };
 }
 export type template = (
-  attributes: {
+  attributes?: {
     classInfo?: ClassInfo;
     styleInfo?: StyleInfo;
     attributes?: { [key: string]: unknown };
   },
-  ...args: any
+  ...args: any | undefined
 ) => TemplateResult;
 
 export interface MVPModel<State> {
