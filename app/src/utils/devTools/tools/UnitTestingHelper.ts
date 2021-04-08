@@ -1,7 +1,9 @@
+import { cloneDeep, isPlainObject } from "lodash-es";
+import { render, TemplateResult } from "lit-html";
+
 import { OptionalTupleValues, RequiredTupleValues } from "./TypingHelper";
 import { eachDeep, resolveLongBracketNotation } from "./ObjectHelper";
 import { isReferenceType } from "./TypeOf";
-import { cloneDeep, isPlainObject } from "lodash-es";
 
 /**
  * Testing(expect non undefined bounded(by instancePropsExpecter) properties) of arguments of constructor by creating the instance with argsOfCreator
@@ -190,6 +192,60 @@ export function testSetter<
         TInstance
       >,
       methodOfInstanceToRun,
+    });
+  });
+}
+
+//FIXME: TTemplateArgs typing
+/**
+ * It runs tests with corresponding constructor and its template arguments and provides rendered container, also uses toMatchSnapshot
+ * @param Creator A Class or Function
+ * @param constructorsArgs arguments of constructors
+ * @param templatesArgs arguments of templates
+ * @param callbacksWithTest callback which runs test
+ */
+export function testDOM<
+  TCreator extends new (...args: any) => InstanceType<TCreator>,
+  TInstance extends { template: (...args: any) => TemplateResult }
+>({
+  Creator,
+  constructorsArgs,
+  templatesArgs,
+  callbacksWithTest,
+}: {
+  Creator: TCreator;
+  constructorsArgs: ConstructorParameters<TCreator>[];
+  templatesArgs: any[];
+  callbacksWithTest: (({
+    container,
+    instance,
+  }: {
+    container: DocumentFragment;
+    instance: InstanceType<TCreator>;
+  }) => void)[];
+}) {
+  describe("DOM manipulation", () => {
+    callbacksWithTest.push(() => {
+      test("renders correctly", () => {
+        expect(container).toMatchSnapshot();
+      });
+    });
+
+    let container: DocumentFragment, instance: InstanceType<TCreator>;
+    callbacksWithTest.forEach((testCallback, index) => {
+      container = new DocumentFragment();
+      instance = new Creator(
+        ...(constructorsArgs[index] === undefined ? [] : (constructorsArgs[index] as any))
+      );
+
+      render(
+        (instance as TInstance).template(
+          ...(templatesArgs[index] === undefined ? [] : templatesArgs[index])
+        ),
+        container
+      );
+
+      testCallback({ container, instance });
     });
   });
 }
