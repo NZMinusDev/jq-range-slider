@@ -1,7 +1,4 @@
-import RangeSliderTooltipView, {
-  DEFAULT_OPTIONS,
-  DEFAULT_STATE,
-} from "./range-slider__tooltip.view";
+import RangeSliderTooltipView, { DEFAULT_OPTIONS } from "./range-slider__tooltip.view";
 
 import {
   InstancePropsExpecter,
@@ -71,18 +68,6 @@ testSetter({
   },
   propsToSet: new Map().set("_options", 0),
   resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
-});
-testSetter({
-  Creator: RangeSliderTooltipView,
-  constructorArgs: [],
-  instancePropsExpecter: viewPropertiesExpecter,
-  methodOfInstanceToTest: {
-    methodReference: RangeSliderTooltipView.prototype.setState,
-    expecter: ({ mock, passedArgs, instance }) => {},
-    differentArguments: {},
-  },
-  propsToSet: new Map().set("_state", 0),
-  resetPropsTo: new Map().set("_state", DEFAULT_STATE),
 });
 
 testDOM({

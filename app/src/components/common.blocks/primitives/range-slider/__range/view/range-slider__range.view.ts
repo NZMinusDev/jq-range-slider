@@ -27,18 +27,13 @@ export default class RangeSliderRangeView
   implements RangeSliderRangeView {
   readonly template: template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
     html`<div
-      class=${classMap(
-        Object.assign(
-          {},
-          {
-            "range-slider__range": true,
-            ".range-slider__range_isConnected": this._options.isConnected,
-          },
-          classInfo
-        )
-      )}
+      class=${classMap({
+        "range-slider__range": true,
+        ".range-slider__range_isConnected": this._options.isConnected,
+        ...classInfo,
+      })}
       ...=${spread(attributes)}
-      style=${styleMap(Object.assign({}, {}, styleInfo))}
+      style=${styleMap({ ...styleInfo })}
     ></div>`;
 
   constructor(options: RangeOptions = DEFAULT_OPTIONS, state: RangeState = DEFAULT_STATE) {

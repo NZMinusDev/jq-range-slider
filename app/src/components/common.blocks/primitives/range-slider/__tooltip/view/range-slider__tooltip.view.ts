@@ -35,18 +35,13 @@ export default class RangeSliderTooltipView
     styleInfo = {},
     attributes = {},
   } = {}) => html`<div
-    class=${classMap(
-      Object.assign(
-        {},
-        {
-          "range-slider__tooltip": true,
-          "range-slider__tooltip_isHidden": this._options.isHidden,
-        },
-        classInfo
-      )
-    )}
+    class=${classMap({
+      "range-slider__tooltip": true,
+      "range-slider__tooltip_isHidden": this._options.isHidden,
+      ...classInfo,
+    })}
     ...=${spread(attributes)}
-    style=${styleMap(Object.assign({}, {}, styleInfo))}
+    style=${styleMap({ ...styleInfo })}
   >
     ${this._options.formatter(this._state.value)}
   </div>`;
@@ -71,12 +66,6 @@ export default class RangeSliderTooltipView
   }
   setFormatterOption(formatter: TooltipOptions["formatter"] = DEFAULT_OPTIONS.formatter) {
     this._options.formatter = formatter;
-
-    return this;
-  }
-
-  setValueState(value: TooltipState["value"] = DEFAULT_STATE.value) {
-    this._state.value = value;
 
     return this;
   }

@@ -18,12 +18,9 @@ exports[`DOM manipulation renders correctly 1`] = `
       class="range-slider__thumb"
       role="slider"
       tabindex="0"
-    >
+    />
+    
       
-        
-      
-      
-    </div>
     
     
   </div>

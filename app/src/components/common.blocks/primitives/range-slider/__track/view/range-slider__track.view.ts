@@ -45,17 +45,12 @@ export default class RangeSliderTrackView
     innerHTML: TemplateResult | TemplateResult[] = html``
   ) =>
     html`<div
-      class=${classMap(
-        Object.assign(
-          {},
-          {
-            "range-slider__track": true,
-          },
-          classInfo
-        )
-      )}
+      class=${classMap({
+        "range-slider__track": true,
+        ...classInfo,
+      })}
       ...=${spread(attributes)}
-      style=${styleMap(Object.assign({}, {}, styleInfo))}
+      style=${styleMap({ ...styleInfo })}
     >
       ${innerHTML}
     </div>`;
@@ -67,7 +62,7 @@ export default class RangeSliderTrackView
   }
 
   getIntervalsOption() {
-    return Object.assign({}, this._options.intervals);
+    return { ...this._options.intervals };
   }
   getStepsOption() {
     return ([] as FixedTrackOptions["steps"]).concat(this._options.steps);
@@ -77,7 +72,7 @@ export default class RangeSliderTrackView
   }
 
   setIntervalsOption(intervals: TrackOptions["intervals"] = DEFAULT_OPTIONS.intervals) {
-    this._options.intervals = Object.assign({}, intervals);
+    this._options.intervals = { ...intervals };
 
     this._fixIntervalsOption()._fixStepsOption()._fixPaddingOption();
 

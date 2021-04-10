@@ -43,18 +43,13 @@ export default class RangeSliderPipsView
   implements RangeSliderPipsView {
   readonly template: template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
     html`<div
-      class=${classMap(
-        Object.assign(
-          {},
-          {
-            "range-slider__pips": true,
-            "range-slider__pips_isHidden": this._options.isHidden,
-          },
-          classInfo
-        )
-      )}
+      class=${classMap({
+        "range-slider__pips": true,
+        "range-slider__pips_isHidden": this._options.isHidden,
+        ...classInfo,
+      })}
       ...=${spread(attributes)}
-      style=${styleMap(Object.assign({}, {}, styleInfo))}
+      style=${styleMap({ ...styleInfo })}
     >
       ${this.getPipsRender()}
     </div>`;

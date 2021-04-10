@@ -43,9 +43,9 @@ export default class RangeSliderThumbView
     innerHTML: TemplateResult | TemplateResult[] = html``
   ) =>
     html`<div
-      class=${classMap(Object.assign({}, { "range-slider__thumb-origin": true }, classInfo))}
+      class=${classMap({ "range-slider__thumb-origin": true, ...classInfo })}
       ...=${spread(attributes)}
-      style=${styleMap(Object.assign({}, {}, styleInfo))}
+      style=${styleMap({ ...styleInfo })}
     >
       <div
         class=${classMap({ "range-slider__thumb": true })}
@@ -57,9 +57,8 @@ export default class RangeSliderThumbView
         aria-valuenow="${+this._state.ariaValueNow.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
         aria-valuetext="${this._state.ariaValueText}"
         @dragstart=${this}
-      >
-        ${innerHTML}
-      </div>
+      ></div>
+      ${innerHTML}
     </div>`;
 
   protected _id: number;
@@ -80,55 +79,9 @@ export default class RangeSliderThumbView
     return this._options.start;
   }
 
-  getAriaOrientationState() {
-    return this._state.ariaOrientation;
-  }
-  getAriaValueMinState() {
-    return this._state.ariaValueMin;
-  }
-  getAriaValueMaxState() {
-    return this._state.ariaValueMax;
-  }
-  getAriaValueNowState() {
-    return this._state.ariaValueNow;
-  }
-  getAriaValueTextState() {
-    return this._state.ariaValueText;
-  }
-
   setStartOption(start: ThumbOptions["start"] = DEFAULT_OPTIONS.start) {
     this._options.start = start;
     this._fixStartOption();
-
-    return this;
-  }
-
-  setAriaOrientationState(
-    ariaOrientation: ThumbState["ariaOrientation"] = DEFAULT_STATE["ariaOrientation"]
-  ) {
-    this._state.ariaOrientation = ariaOrientation;
-
-    return this;
-  }
-  setAriaValueMinState(ariaValueMin: ThumbState["ariaValueMin"] = DEFAULT_STATE["ariaValueMin"]) {
-    this._state.ariaValueMin = ariaValueMin;
-
-    return this;
-  }
-  setAriaValueMaxState(ariaValueMax: ThumbState["ariaValueMax"] = DEFAULT_STATE["ariaValueMax"]) {
-    this._state.ariaValueMax = ariaValueMax;
-
-    return this;
-  }
-  setAriaValueNowState(ariaValueNow: ThumbState["ariaValueNow"] = DEFAULT_STATE["ariaValueNow"]) {
-    this._state.ariaValueNow = ariaValueNow;
-
-    return this;
-  }
-  setAriaValueTextState(
-    ariaValueText: ThumbState["ariaValueText"] = DEFAULT_STATE["ariaValueText"]
-  ) {
-    this._state.ariaValueText = ariaValueText;
 
     return this;
   }

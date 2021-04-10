@@ -1,4 +1,4 @@
-import { html, TemplateResult } from "lit-html";
+import { html, render, TemplateResult } from "lit-html";
 import { ClassInfo } from "lit-html/directives/class-map";
 import { StyleInfo } from "lit-html/directives/style-map";
 import { defaultsDeep } from "lodash-es";
@@ -101,26 +101,19 @@ export interface CustomEventListenerObject {
 export type handler = CustomEventListener | CustomEventListenerObject;
 
 export abstract class MVPView<
-    TOptionsToGet extends object,
-    TOptionsToSet extends object,
-    TState extends object,
-    TEvents extends string = "",
-    TSubViews extends { [key: string]: MVPView<any, any, any> | MVPView<any, any, any>[] } = {}
-  >
-  extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">>
-  implements Plugin {
+  TOptionsToGet extends object,
+  TOptionsToSet extends object,
+  TState extends object,
+  TEvents extends string = ""
+> extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">> {
   readonly template: template = ({ classInfo, styleInfo, attributes } = {}, ...args) => html``;
   static readonly templateOfRemoving = () => html``;
 
-  readonly dom: { self: HTMLElement | null; [key: string]: HTMLElement | null } = { self: null };
-
   protected _options: TOptionsToGet;
   protected _state: TState;
-  protected readonly _subViews: TSubViews;
 
   protected readonly theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[];
   protected readonly theOrderOfIteratingThroughTheState: Extract<keyof TState, string>[];
-  protected readonly theOrderOfIteratingThroughTheSubViews: Extract<keyof TSubViews, string>[];
 
   constructor(
     DEFAULT_OPTIONS: TOptionsToGet,
@@ -130,22 +123,18 @@ export abstract class MVPView<
     {
       theOrderOfIteratingThroughTheOptions = [],
       theOrderOfIteratingThroughTheState = [],
-      theOrderOfIteratingThroughTheSubViews = [],
     }: {
       theOrderOfIteratingThroughTheOptions?: Extract<keyof TOptionsToGet, string>[];
       theOrderOfIteratingThroughTheState?: Extract<keyof TState, string>[];
-      theOrderOfIteratingThroughTheSubViews?: Extract<keyof TSubViews, string>[];
     }
   ) {
     super();
 
     this._options = defaultsDeep({}, options, DEFAULT_OPTIONS);
     this._state = defaultsDeep({}, state, DEFAULT_STATE);
-    this._subViews = {} as TSubViews;
 
     type OptionsKey = Extract<keyof TOptionsToGet, string>;
     type StateKey = Extract<keyof TState, string>;
-    type SubViewsKey = Extract<keyof TSubViews, string>;
     this.theOrderOfIteratingThroughTheOptions = Array.from(
       new Set(
         ([] as OptionsKey[]).concat(
@@ -162,14 +151,6 @@ export abstract class MVPView<
         )
       )
     );
-    this.theOrderOfIteratingThroughTheSubViews = Array.from(
-      new Set(
-        ([] as SubViewsKey[]).concat(
-          Object.keys(this._subViews) as SubViewsKey[],
-          theOrderOfIteratingThroughTheSubViews
-        )
-      )
-    );
     this.theOrderOfIteratingThroughTheOptions.sort(
       (a, b) =>
         this.theOrderOfIteratingThroughTheOptions.indexOf(a as OptionsKey) -
@@ -180,47 +161,8 @@ export abstract class MVPView<
         this.theOrderOfIteratingThroughTheState.indexOf(a as StateKey) -
         this.theOrderOfIteratingThroughTheState.indexOf(b as StateKey)
     );
-    this.theOrderOfIteratingThroughTheSubViews.sort(
-      (a, b) =>
-        this.theOrderOfIteratingThroughTheSubViews.indexOf(a as SubViewsKey) -
-        this.theOrderOfIteratingThroughTheSubViews.indexOf(b as SubViewsKey)
-    );
 
     this._fixOptions()._fixState();
-
-    this._subViews = new Proxy(this._subViews, {
-      set: (target, prop, val, receiver) => {
-        if (Array.isArray(val)) {
-          val = new Proxy(val, {
-            set: (target, prop, val, receiver) => {
-              if (prop !== "length") {
-                val.on("render", this._renderThisHandler);
-              }
-
-              return Reflect.set(target, prop, val, receiver);
-            },
-          });
-        } else {
-          val.on("render", this._renderThisHandler);
-        }
-
-        return Reflect.set(target, prop, val, receiver);
-      },
-    });
-    this._subViews = this._initSubViews();
-
-    this._options = new Proxy(this._options, {
-      set: (target, prop, val, receiver) => {
-        this._render();
-        return Reflect.set(target, prop, val, receiver);
-      },
-    });
-    this._state = new Proxy(this._state, {
-      set: (target, prop, val, receiver) => {
-        this._render();
-        return Reflect.set(target, prop, val, receiver);
-      },
-    });
   }
 
   getOptions(): TOptionsToGet {
@@ -234,22 +176,7 @@ export abstract class MVPView<
 
     return options as TOptionsToGet;
   }
-  getState(): TState {
-    const state: any = {};
-
-    let getStateMethodName;
-    this.theOrderOfIteratingThroughTheState.forEach((stateKey) => {
-      getStateMethodName = `get${stateKey[0].toUpperCase() + stateKey.slice(1)}State`;
-      if (this[getStateMethodName]) state[stateKey] = this[getStateMethodName]();
-    });
-
-    return state as TState;
-  }
-
   setOptions(options?: TOptionsToSet) {
-    // revoke proxy
-    this._options = Object.assign({}, this._options);
-
     const optionsToForEach = options === undefined ? this._options : options;
 
     let setOptionMethodName;
@@ -273,20 +200,18 @@ export abstract class MVPView<
         }
       });
 
-    this._options = new Proxy(this._options, {
-      set: (target, prop, val, receiver) => {
-        this._render();
-        return Reflect.set(target, prop, val, receiver);
-      },
-    });
     this._render();
 
     return this;
   }
-  setState(state?: Partial<TState>) {
-    // revoke proxy
-    this._state = Object.assign({}, this._state, state);
 
+  remove() {
+    this.trigger("remove");
+
+    return this;
+  }
+
+  protected _setState(state?: Partial<TState>) {
     const keyOfStateToForEach = state === undefined ? this._state : state;
 
     let setStateMethodName;
@@ -306,22 +231,7 @@ export abstract class MVPView<
         }
       });
 
-    this._state = new Proxy(this._state, {
-      set: (target, prop, val, receiver) => {
-        this._render();
-        return Reflect.set(target, prop, val, receiver);
-      },
-    });
     this._render();
-
-    return this;
-  }
-
-  remove() {
-    this.trigger("remove");
-    Object.keys(this.dom).forEach((key) => {
-      this.dom[key] = null;
-    });
 
     return this;
   }
@@ -345,33 +255,11 @@ export abstract class MVPView<
     return this;
   }
 
-  protected _initSubViews() {
-    let initSubViewMethodName, toSubViewOptionsMethodName, toSubViewStateMethodName;
-    this.theOrderOfIteratingThroughTheSubViews.forEach((subViewName) => {
-      initSubViewMethodName = `_init${subViewName[0].toUpperCase() + subViewName.slice(1)}View`;
-      toSubViewOptionsMethodName = `_to${
-        subViewName[0].toUpperCase() + subViewName.slice(1)
-      }Options`;
-      toSubViewStateMethodName = `_to${subViewName[0].toUpperCase() + subViewName.slice(1)}State`;
-      if (this[initSubViewMethodName]) {
-        (this._subViews as any)[`${subViewName}View`] = this[initSubViewMethodName](
-          this[toSubViewOptionsMethodName] ? this[toSubViewOptionsMethodName]() : undefined,
-          this[toSubViewStateMethodName] ? this[toSubViewStateMethodName]() : undefined
-        );
-      }
-    });
-
-    return this._subViews;
-  }
-
   protected _render() {
     this.trigger("render");
 
     return this;
   }
-  protected _renderThisHandler = () => {
-    this._render();
-  };
 }
 export type template = (
   attributes?: {
@@ -381,6 +269,29 @@ export type template = (
   },
   ...args: any | undefined
 ) => TemplateResult;
+
+export function renderMVPView<
+  TMVPViewCreator extends new (...args: TArguments) => TInstance,
+  TArguments extends unknown[],
+  TInstance extends MVPView<any, any, any>
+>(
+  ViewCreator: TMVPViewCreator,
+  viewParameters: TArguments,
+  container: HTMLElement | DocumentFragment
+) {
+  const view = new ViewCreator(...viewParameters);
+  render(view.template({}), container);
+
+  view
+    .on("render", () => {
+      render(view.template({}), container);
+    })
+    .on("remove", () => {
+      render((ViewCreator as any).templateOfRemoving(), container);
+    });
+
+  return view;
+}
 
 export interface MVPModel<State> {
   getState(): Promise<Required<State>>;

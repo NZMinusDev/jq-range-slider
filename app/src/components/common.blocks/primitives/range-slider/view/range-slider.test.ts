@@ -7,6 +7,7 @@ import {
   testGetter,
   testSetter,
   DifferentArguments,
+  testDOM,
 } from "@utils/devTools/tools/UnitTestingHelper";
 import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
 
@@ -14,12 +15,6 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderView>,
   RangeSliderView
 > = function ({ instance, passedArgs }) {
-  const passedOptions = passedArgs[0];
-
-  expect(instance["_subViews"]["rangesView"].length).toBe(instance["_options"].start.length + 1);
-  expect(instance["_subViews"]["thumbsView"].length).toBe(instance["_options"].start.length);
-  expect(instance["_subViews"]["tooltipsView"].length).toBe(instance["_options"].tooltips.length);
-
   expect(instance["_options"].connect.length).toBe(instance["_options"].start.length + 1);
   expect(instance["_options"].tooltips.length).toBe(instance["_options"].start.length);
 
@@ -30,39 +25,12 @@ const viewPropertiesExpecter: InstancePropsExpecter<
     if (index > 0) {
       expect(startValue).toBeGreaterThanOrEqual(instance["_options"].start[index - 1]);
     }
-
-    if (passedOptions?.tooltips?.[index] === true) {
-      expect(instance["_subViews"]["tooltipsView"][index].getFormatterOption()).toBe(
-        instance["_options"].formatter
-      );
-      expect(instance["_subViews"]["tooltipsView"][index].getIsHiddenOption()).toBe(false);
-    } else if (passedOptions?.tooltips?.[index] === false) {
-      expect(instance["_subViews"]["tooltipsView"][index].getIsHiddenOption()).toBe(true);
-    } else if (typeof passedOptions?.tooltips?.[index] === "function") {
-      expect(instance["_subViews"]["tooltipsView"][index].getFormatterOption()).toBe(
-        passedOptions.tooltips[index]
-      );
-    }
   });
 
   switch (instance["_options"].pips.mode) {
-    case "intervals": {
-      expect(instance["_options"].pips.values).toStrictEqual(
-        Object.values(instance["_options"].intervals).sort(ascending)
-      );
-      break;
-    }
     case "count": {
       expect(instance["_options"].pips.values).toBeGreaterThanOrEqual(0);
 
-      const shift =
-        (instance["_options"].intervals.max - instance["_options"].intervals.min) /
-        ((instance["_options"].pips.values as number) - 1);
-      let accumulator = instance["_options"].intervals.min;
-      instance["_subViews"]["pipsView"]["_options"].values.forEach((value) => {
-        expect(value).toBe(+accumulator.toFixed(2));
-        accumulator += shift;
-      });
       break;
     }
     case "positions": {
@@ -70,13 +38,6 @@ const viewPropertiesExpecter: InstancePropsExpecter<
         (instance["_options"].pips.values as number[]).filter((value) => value >= 0 && value <= 100)
       );
 
-      const perPercent = +(
-        (instance["_options"].intervals.max - instance["_options"].intervals.min) /
-        100
-      ).toFixed(2);
-      expect(instance["_subViews"]["pipsView"]["_options"].values).toStrictEqual(
-        (instance["_options"].pips.values as number[]).map((value) => value * perPercent)
-      );
       break;
     }
     case "values": {
@@ -246,23 +207,30 @@ describe("setOptions", () => {
     });
   });
 });
-describe("setOptions", () => {
-  describe("with options which change amount of ranges/thumbs/tooltips subViews", () => {
-    test("instance's amount of the subViews should be the same as options are set", () => {
-      const slider = new RangeSliderView({
-        intervals: { min: -2000, max: 2000, "50%": -1000, "75%": 1800 },
-        start: [-100, -50, 0, 50],
-        tooltips: [true, false, true, false],
-        connect: [false, true, false, true, false],
-      }).setOptions({
-        start: [-1000, 1000],
-        tooltips: [true, false],
-        connect: [true, false, true],
-      });
 
-      expect(slider["_subViews"]["thumbsView"].length).toBe(2);
-      expect(slider["_subViews"]["tooltipsView"].length).toBe(2);
-      expect(slider["_subViews"]["rangesView"].length).toBe(3);
-    });
-  });
+testDOM({
+  Creator: RangeSliderView,
+  constructorsArgs: [],
+  templatesArgs: [],
+  callbacksWithTest: [],
 });
+
+//TODO: render is run only once
+// const MockRangeSliderView = (jest.createMockFromModule("./range-slider.view.ts") as any)
+//   .default as jest.Mock<RangeSliderView, ConstructorParameters<typeof RangeSliderView>>;
+// describe("classMock", () => {
+//   beforeEach(() => {
+//     MockRangeSliderView.mockClear();
+//   });
+
+//   test("init 1", () => {
+//     const pipsInstance = new MockRangeSliderView();
+
+//     pipsInstance.set(10);
+//   });
+//   test("init 2", () => {
+//     expect(MockRangeSliderView).not.toHaveBeenCalled();
+
+//     const pipsInstance = new MockRangeSliderView();
+//   });
+// });

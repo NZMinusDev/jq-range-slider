@@ -1,7 +1,4 @@
-import RangeSliderThumbView, { DEFAULT_OPTIONS, DEFAULT_STATE } from "./range-slider__thumb.view";
-
-import { render } from "lit-html";
-
+import RangeSliderThumbView, { DEFAULT_OPTIONS } from "./range-slider__thumb.view";
 import {
   InstancePropsExpecter,
   testInit,
@@ -73,16 +70,6 @@ testGetter({
     returns: "_options",
   },
 });
-testGetter({
-  Creator: RangeSliderThumbView,
-  constructorArgs: [],
-  instancePropsExpecter: viewPropertiesExpecter,
-  methodOfInstanceToTest: {
-    methodReference: RangeSliderThumbView.prototype.getState,
-    expecter: ({ mock, passedArgs, instance }) => {},
-    returns: "_state",
-  },
-});
 testSetter({
   Creator: RangeSliderThumbView,
   constructorArgs: [],
@@ -94,18 +81,6 @@ testSetter({
   },
   propsToSet: new Map().set("_options", 0),
   resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
-});
-testSetter({
-  Creator: RangeSliderThumbView,
-  constructorArgs: [],
-  instancePropsExpecter: viewPropertiesExpecter,
-  methodOfInstanceToTest: {
-    methodReference: RangeSliderThumbView.prototype.setState,
-    expecter: ({ mock, passedArgs, instance }) => {},
-    differentArguments: {},
-  },
-  propsToSet: new Map().set("_state", 0),
-  resetPropsTo: new Map().set("_state", DEFAULT_STATE),
 });
 
 testDOM({
