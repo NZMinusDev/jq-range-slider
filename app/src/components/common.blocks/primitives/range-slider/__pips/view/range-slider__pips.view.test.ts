@@ -24,10 +24,6 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   expect(instance["_options"].density).toEqual(
     collapsingParseInt(`${instance["_options"].density}`)
   );
-
-  const formatterMock = jest.fn(instance["_options"].formatter);
-  formatterMock(1);
-  expect(formatterMock).toHaveReturned();
 };
 
 const differentOptionsArg: DifferentArguments<Parameters<
@@ -62,6 +58,17 @@ testInit({
   },
   instancePropsExpecter: viewPropertiesExpecter,
   propsToSet: new Map().set("_options", 1),
+});
+describe("init", () => {
+  describe("with default options", () => {
+    test("the instance's func options should be to have returned", () => {
+      const instance = new RangeSliderPipsView();
+
+      const formatterMock = jest.fn(instance["_options"].formatter);
+      formatterMock(1);
+      expect(formatterMock).toHaveReturned();
+    });
+  });
 });
 
 testGetter({

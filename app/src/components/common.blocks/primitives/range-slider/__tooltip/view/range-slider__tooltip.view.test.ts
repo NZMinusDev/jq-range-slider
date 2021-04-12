@@ -13,11 +13,7 @@ import {
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderTooltipView>,
   RangeSliderTooltipView
-> = function ({ instance }) {
-  const formatterMock = jest.fn(instance["_options"].formatter);
-  formatterMock(12.345);
-  expect(formatterMock).toHaveReturned();
-};
+> = function ({ instance }) {};
 
 const differentOptionsArg: DifferentArguments<Parameters<
   typeof RangeSliderTooltipView.prototype.setOptions
@@ -45,6 +41,17 @@ testInit({
   },
   instancePropsExpecter: viewPropertiesExpecter,
   propsToSet: new Map().set("_options", 1),
+});
+describe("init", () => {
+  describe("with default options", () => {
+    test("the instance's func options should be to have returned", () => {
+      const instance = new RangeSliderTooltipView();
+
+      const formatterMock = jest.fn(instance["_options"].formatter);
+      formatterMock(12.345);
+      expect(formatterMock).toHaveReturned();
+    });
+  });
 });
 
 testGetter({

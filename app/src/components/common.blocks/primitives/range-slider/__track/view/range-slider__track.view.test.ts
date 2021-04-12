@@ -139,6 +139,17 @@ describe("init", () => {
     });
   });
 });
+describe("init", () => {
+  describe("with default options", () => {
+    test("the instance's func options should be to have returned", () => {
+      const instance = new RangeSliderTrackView();
+
+      const templateMock = jest.fn(instance.template);
+      templateMock();
+      expect(templateMock).toHaveReturned();
+    });
+  });
+});
 
 testGetter({
   Creator: RangeSliderTrackView,
