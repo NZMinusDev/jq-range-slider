@@ -1,9 +1,10 @@
 import { cloneDeep, isPlainObject } from "lodash-es";
-import { render, TemplateResult } from "lit-html";
+import { TemplateResult } from "lit-html";
 
 import { OptionalTupleValues, RequiredTupleValues } from "./TypingHelper";
 import { eachDeep, resolveLongBracketNotation } from "./ObjectHelper";
 import { isReferenceType } from "./TypeOf";
+import { renderMVPView } from "./PluginCreationHelper";
 
 /**
  * Testing(expect non undefined bounded(by instancePropsExpecter) properties) of arguments of constructor by creating the instance with argsOfCreator
@@ -234,14 +235,9 @@ export function testDOM<
     let container: DocumentFragment, instance: InstanceType<TCreator>;
     callbacksWithTest.forEach((testCallback, index) => {
       container = new DocumentFragment();
-      instance = new Creator(
-        ...(constructorsArgs[index] === undefined ? [] : (constructorsArgs[index] as any))
-      );
-
-      render(
-        (instance as TInstance).template(
-          ...(templatesArgs[index] === undefined ? [] : templatesArgs[index])
-        ),
+      instance = renderMVPView(
+        Creator,
+        constructorsArgs[index] === undefined ? [] : (constructorsArgs[index] as any),
         container
       );
 
