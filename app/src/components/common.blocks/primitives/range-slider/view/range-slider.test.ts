@@ -18,8 +18,12 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   expect(instance["_options"].tooltips.length).toBe(instance["_options"].start.length);
 
   instance["_options"].start.forEach((startValue, index) => {
-    expect(startValue).toBeGreaterThanOrEqual(instance["_options"].intervals.min);
-    expect(startValue).toBeLessThanOrEqual(instance["_options"].intervals.max);
+    expect(startValue).toBeGreaterThanOrEqual(
+      instance["_options"].intervals.min + instance["_options"].padding[0]
+    );
+    expect(startValue).toBeLessThanOrEqual(
+      instance["_options"].intervals.max - instance["_options"].padding[1]
+    );
 
     if (index > 0) {
       expect(startValue).toBeGreaterThanOrEqual(instance["_options"].start[index - 1]);
@@ -83,6 +87,13 @@ const differentOptionsArg: DifferentArguments<Parameters<
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [] }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [-101] }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [101] }],
+    [
+      {
+        intervals: { min: -100, max: 100, "50%": 50 },
+        start: [-100, -90, 0, 100],
+        padding: [10, 10],
+      },
+    ],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [50, -50, -75, 0, 10] }],
     [{ pips: { mode: "intervals", values: 5 } }],
     [{ pips: { mode: "intervals", values: [0, 0, -10, 50, -99] } }],
@@ -230,20 +241,22 @@ testDOM({
     [
       {
         intervals: { min: -1250, "80%": -500, "90%": 400, max: 1500 },
-        start: [-1250, -600, 1500],
+        start: [-1150, -600, 1400],
+        padding: 100,
       },
     ],
   ],
   templatesArgs: [],
   callbacksWithTest: [
     ({ container, instance }) => {
-      const MIN_TRACK_VALUE = -1250;
-      const MAX_TRACK_VALUE = 1500;
-      const TRACK_VALUE_SIZE = MAX_TRACK_VALUE - MIN_TRACK_VALUE;
+      const PADDING = 100;
+      const MIN_TRACK_VALUE = -1250 + PADDING;
+      const MAX_TRACK_VALUE = 1500 - PADDING;
+      const TRACK_VALUE_SIZE = MAX_TRACK_VALUE - MIN_TRACK_VALUE + 2 * PADDING;
       const TRACK_PX_SIZE = 100;
       const TRACK_RATIO = TRACK_VALUE_SIZE / 100;
       const VALUE_PER_PX = TRACK_VALUE_SIZE / TRACK_PX_SIZE;
-      const MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB = 30;
+      const MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB = 29;
 
       const thumbsElements = container.querySelectorAll<HTMLElement>(".range-slider__thumb");
       const originsElements = Array.from<HTMLElement>(thumbsElements).map((thumbElem) => {
@@ -325,7 +338,7 @@ testDOM({
           );
           const newValue = +(innerThumb.getAttribute("aria-valuenow") as string);
 
-          if (valueBefore >= -1250 && valueBefore < -500 && newValue < -500) {
+          if (valueBefore >= MIN_TRACK_VALUE && valueBefore < -500 && newValue < -500) {
             expect(newValue - valueBefore).toBeCloseTo(
               ((-500 - -1250) / 80 / TRACK_RATIO) * VALUE_PER_PX * movementTO
             );
@@ -335,7 +348,7 @@ testDOM({
               ((400 - -500) / 10 / TRACK_RATIO) * VALUE_PER_PX * movementTO
             );
           }
-          if (valueBefore >= 400 && valueBefore < 1500 && newValue < 1500) {
+          if (valueBefore >= 400 && valueBefore < MAX_TRACK_VALUE && newValue < MAX_TRACK_VALUE) {
             expect(newValue - valueBefore).toBeCloseTo(
               ((1500 - 400) / 10 / TRACK_RATIO) * VALUE_PER_PX * movementTO
             );
@@ -353,7 +366,7 @@ testDOM({
           );
           const newValue = +(innerThumb.getAttribute("aria-valuenow") as string);
 
-          if (newValue >= -1250 && newValue < -500 && valueBefore < -500) {
+          if (newValue >= MIN_TRACK_VALUE && newValue < -500 && valueBefore < -500) {
             expect(newValue - valueBefore).toBeCloseTo(
               ((-500 - -1250) / 80 / TRACK_RATIO) * VALUE_PER_PX * movementFrom
             );
@@ -363,7 +376,7 @@ testDOM({
               ((400 - -500) / 10 / TRACK_RATIO) * VALUE_PER_PX * movementFrom
             );
           }
-          if (newValue >= 400 && newValue < 1500 && valueBefore < 1500) {
+          if (newValue >= 400 && newValue < MAX_TRACK_VALUE && valueBefore < MAX_TRACK_VALUE) {
             expect(newValue - valueBefore).toBeCloseTo(
               ((1500 - 400) / 10 / TRACK_RATIO) * VALUE_PER_PX * movementFrom
             );
@@ -408,6 +421,68 @@ testDOM({
             bubbles: true,
           })
         );
+      });
+
+      test("step options should work", () => {
+        const STEPS = [50, 1, 300];
+        instance.setStepsOption(STEPS);
+        innerThumb.dispatchEvent(
+          new PointerEvent("pointerdown", {
+            pointerId: 1,
+            bubbles: true,
+          })
+        );
+
+        const movementTO = 1;
+        for (let index = 0; index < MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB; index++) {
+          const valueBefore = +(innerThumb.getAttribute("aria-valuenow") as string);
+          innerThumb.dispatchEvent(
+            new PointerEvent("pointermove", {
+              pointerId: 1,
+              movementX: movementTO,
+              bubbles: true,
+            })
+          );
+          const newValue = +(innerThumb.getAttribute("aria-valuenow") as string);
+
+          if (valueBefore >= MIN_TRACK_VALUE && valueBefore < -500) {
+            if (newValue >= -500) {
+              continue;
+            }
+
+            expect(Number.isInteger((newValue - valueBefore) / STEPS[0])).toBe(true);
+          }
+          if (valueBefore >= -500 && valueBefore < 400) {
+            if (newValue >= 400) {
+              continue;
+            }
+
+            expect(Number.isInteger((newValue - valueBefore) / STEPS[1])).toBe(true);
+          }
+          if (valueBefore >= 400 && valueBefore < MAX_TRACK_VALUE && newValue <= MAX_TRACK_VALUE) {
+            if (newValue >= MAX_TRACK_VALUE) {
+              continue;
+            }
+
+            expect(Number.isInteger((newValue - valueBefore) / STEPS[2])).toBe(true);
+          }
+        }
+
+        innerThumb.dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 1,
+            movementX: -1,
+            bubbles: true,
+          })
+        );
+        innerThumb.dispatchEvent(
+          new PointerEvent("lostpointercapture", {
+            pointerId: 1,
+            bubbles: true,
+          })
+        );
+        instance.set([-1150, -600, 1400]);
+        instance.setStepsOption();
       });
 
       test("z-indexes of close to each other thumbs should be swapped for user friendly usage", () => {

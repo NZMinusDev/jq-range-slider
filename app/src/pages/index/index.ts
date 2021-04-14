@@ -8,6 +8,8 @@ import RangeSliderModel from "@common.blocks/primitives/range-slider/models/rang
 const rangeSliderOptions: Partial<RangeSliderOptions> = {
   intervals: { min: -1250, "80%": -500, "90%": 400, max: 1500 },
   start: [-1250, -600, 1500],
+  padding: 200,
+  steps: [50, "none", 300],
   pips: {},
 };
 

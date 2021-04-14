@@ -55,7 +55,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
         Math.abs(
           instance["_options"].intervals[key] -
             instance["_options"].intervals[keysOfIntervals[index + 1]]
-        )
+        ) -
+          (index === 0 ? instance["_options"].padding[0] : 0) -
+          (index === keys.length - 2 ? instance["_options"].padding[1] : 0)
       );
       expect(getPrecision(instance["_options"].steps[index] as number)).toBeLessThanOrEqual(2);
     }
@@ -96,6 +98,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
     [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [-10, 0] }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [300, 500] }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, steps: [5.543543, 10.54876] }],
+    [{ intervals: { min: -100, max: 100, "50%": 50 }, padding: 10, steps: [150, 50] }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, padding: -10 }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, padding: 249 }],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, padding: 10.76589645 }],

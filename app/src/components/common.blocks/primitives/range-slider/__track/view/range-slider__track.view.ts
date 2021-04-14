@@ -57,7 +57,7 @@ export default class RangeSliderTrackView
 
   constructor(options: TrackOptions = DEFAULT_OPTIONS, state: TrackState = DEFAULT_STATE) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
-      theOrderOfIteratingThroughTheOptions: ["intervals", "steps", "padding"],
+      theOrderOfIteratingThroughTheOptions: ["intervals", "padding", "steps"],
     });
   }
 
@@ -92,7 +92,7 @@ export default class RangeSliderTrackView
       ? (([] as number[]).concat(padding) as FixedTrackOptions["padding"])
       : this._options.padding.fill(padding);
 
-    this._fixPaddingOption();
+    this._fixPaddingOption()._fixStepsOption();
 
     return this;
   }
@@ -159,12 +159,15 @@ export default class RangeSliderTrackView
     }
 
     const intervalsKeys = this._getSortedKeysOfIntervalsOption();
-    this._options.steps = this._options.steps.map((step, index) => {
+    this._options.steps = this._options.steps.map((step, index, steps) => {
       const roundedStep = typeof step === "number" ? +step.toFixed(CALCULATION_PRECISION) : step;
-      const maxStep = +Math.abs(
-        this._options.intervals[intervalsKeys[index]] -
-          this._options.intervals[intervalsKeys[index + 1]]
-      ).toFixed(CALCULATION_PRECISION);
+      const maxStep =
+        +Math.abs(
+          this._options.intervals[intervalsKeys[index]] -
+            this._options.intervals[intervalsKeys[index + 1]]
+        ).toFixed(CALCULATION_PRECISION) -
+        (index === 0 ? this._options.padding[0] : 0) -
+        (index === steps.length - 1 ? this._options.padding[1] : 0);
 
       if (roundedStep !== "none") {
         if (roundedStep > maxStep) {

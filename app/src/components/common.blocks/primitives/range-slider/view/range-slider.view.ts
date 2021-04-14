@@ -11,7 +11,6 @@ import RangeSliderRangeView, {
   RangeOptions,
 } from "./../__range/view/range-slider__range.view";
 import RangeSliderThumbView, {
-  DEFAULT_OPTIONS as THUMB_DEFAULT_OPTIONS,
   ThumbOptions,
   ThumbState,
 } from "./../__thumb/view/range-slider__thumb.view";
@@ -68,7 +67,7 @@ export default interface RangeSliderView {
 
 export type RangeSliderOptions = {
   intervals?: TrackOptions["intervals"];
-  start?: ThumbOptions["start"] | NonNullable<ThumbOptions["start"]>[];
+  start?: number | number[];
   steps?: TrackOptions["steps"];
   connect?: NonNullable<RangeOptions["isConnected"]> | Required<RangeOptions>["isConnected"][];
   orientation?: "horizontal" | "vertical";
@@ -80,7 +79,7 @@ export type RangeSliderOptions = {
 };
 export type FixedRangeSliderOptions = {
   intervals: Required<RangeSliderOptions>["intervals"];
-  start: Required<ThumbOptions>["start"][];
+  start: number[];
   steps: FixedTrackOptions["steps"];
   connect: Required<RangeOptions>["isConnected"][];
   orientation: Required<RangeSliderOptions>["orientation"];
@@ -96,7 +95,7 @@ export type RangeSliderState = {
 
 export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,
-  start: [THUMB_DEFAULT_OPTIONS.start],
+  start: [0],
   steps: TRACK_DEFAULT_OPTIONS.steps,
   connect: [RANGE_DEFAULT_OPTIONS.isConnected, RANGE_DEFAULT_OPTIONS.isConnected],
   orientation: "horizontal",
@@ -144,14 +143,13 @@ export default class RangeSliderView
             const previousIndex = index - 1;
             const rangeOfSwapZIndex =
               (this._options.intervals.max - this._options.intervals.min) * 0.02;
+            const trackBorder = this._getValueBorderOfTrack();
             const infimum =
               views[previousIndex] !== undefined
                 ? this._state.value[previousIndex]
-                : this._options.intervals.min;
+                : trackBorder.min;
             const supremum =
-              views[nextIndex] !== undefined
-                ? this._state.value[nextIndex]
-                : this._options.intervals.max;
+              views[nextIndex] !== undefined ? this._state.value[nextIndex] : trackBorder.max;
 
             return view.template(
               {
@@ -187,11 +185,11 @@ export default class RangeSliderView
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: [
         "intervals",
+        "padding",
         "start",
         "steps",
         "connect",
         "orientation",
-        "padding",
         "formatter",
         "tooltips",
         "pips",
@@ -234,7 +232,7 @@ export default class RangeSliderView
   setIntervalsOption(intervals: RangeSliderOptions["intervals"] = DEFAULT_OPTIONS.intervals) {
     this._options.intervals = { ...intervals };
 
-    this._fixStartOption()._fixPipsOption()._fixValueState();
+    this._fixIntervalsOption()._fixStartOption()._fixPipsOption()._fixValueState();
 
     return this;
   }
@@ -251,6 +249,8 @@ export default class RangeSliderView
     this._options.steps = this._options.steps = Array.isArray(steps)
       ? (([] as (number | "none")[]).concat(steps) as FixedRangeSliderOptions["steps"])
       : this._options.steps.fill(steps);
+
+    this._fixStepsOption();
 
     return this;
   }
@@ -274,6 +274,8 @@ export default class RangeSliderView
     this._options.padding = Array.isArray(padding)
       ? (([] as number[]).concat(padding) as FixedRangeSliderOptions["padding"])
       : this._options.padding.fill(padding);
+
+    this._fixPaddingOption()._fixStartOption()._fixValueState();
 
     return this;
   }
@@ -314,6 +316,8 @@ export default class RangeSliderView
       ? ([] as RangeSliderState["value"]).concat(value)
       : this._state.value.fill(value);
 
+    this._fixValueState();
+
     return this;
   }
 
@@ -325,6 +329,24 @@ export default class RangeSliderView
     return this;
   }
 
+  protected _fixIntervalsOption() {
+    this._options.intervals = new RangeSliderTrack({
+      intervals: this._options.intervals,
+      padding: this._options.padding,
+      steps: this._options.steps,
+    }).getOptions().intervals;
+
+    return this;
+  }
+  protected _fixPaddingOption() {
+    this._options.padding = new RangeSliderTrack({
+      intervals: this._options.intervals,
+      padding: this._options.padding,
+      steps: this._options.steps,
+    }).getOptions().padding;
+
+    return this;
+  }
   protected _fixStartOption() {
     this._options.start = Array.isArray(this._options.start)
       ? this._options.start
@@ -334,14 +356,58 @@ export default class RangeSliderView
       this._options.start = ([] as FixedRangeSliderOptions["start"]).concat(DEFAULT_OPTIONS.start);
     }
 
+    const trackBorder = this._getValueBorderOfTrack();
     this._options.start = this._options.start.map((start) =>
-      start < this._options.intervals.min
-        ? this._options.intervals.min
-        : start > this._options.intervals.max
-        ? this._options.intervals.max
-        : start
+      start < trackBorder.min ? trackBorder.min : start > trackBorder.max ? trackBorder.max : start
     );
     this._options.start.sort(ascending);
+
+    return this;
+  }
+  protected _fixStepsOption() {
+    this._options.steps = new RangeSliderTrack({
+      intervals: this._options.intervals,
+      padding: this._options.padding,
+      steps: this._options.steps,
+    }).getOptions().steps;
+
+    return this;
+  }
+  protected _fixPipsOption() {
+    switch (this._options.pips.mode) {
+      case "intervals": {
+        this._options.pips.values = Object.values(this._options.intervals);
+        break;
+      }
+      case "count": {
+        this._options.pips.values = Array.isArray(this._options.pips.values)
+          ? this._options.pips.values.length
+          : this._options.pips.values < 0
+          ? 0
+          : this._options.pips.values;
+        break;
+      }
+      case "positions": {
+        this._options.pips.values = Array.isArray(this._options.pips.values)
+          ? this._options.pips.values.filter((value) => value >= 0 && value <= 100)
+          : [0, 25, 50, 75, 100];
+        break;
+      }
+      case "values": {
+        this._options.pips.values = Array.isArray(this._options.pips.values)
+          ? this._options.pips.values.filter(
+              (value) =>
+                value >= this._options.intervals.min && value <= this._options.intervals.max
+            )
+          : ([] as number[]).concat(DEFAULT_OPTIONS.pips.values);
+        break;
+      }
+    }
+
+    //FIXME:
+    // const { density, values } = new RangeSliderPips(this._toPipsOptions()).getOptions();
+    // this._options.pips.values = values;
+    // this._options.pips.values = density;
 
     return this;
   }
@@ -377,47 +443,11 @@ export default class RangeSliderView
 
     return this;
   }
-  protected _fixPipsOption() {
-    switch (this._options.pips.mode) {
-      case "intervals": {
-        this._options.pips.values = Object.values(this._options.intervals);
-        break;
-      }
-      case "count": {
-        this._options.pips.values = Array.isArray(this._options.pips.values)
-          ? this._options.pips.values.length
-          : this._options.pips.values < 0
-          ? 0
-          : this._options.pips.values;
-        break;
-      }
-      case "positions": {
-        this._options.pips.values = Array.isArray(this._options.pips.values)
-          ? this._options.pips.values.filter((value) => value >= 0 && value <= 100)
-          : [0, 25, 50, 75, 100];
-        break;
-      }
-      case "values": {
-        this._options.pips.values = Array.isArray(this._options.pips.values)
-          ? this._options.pips.values.filter(
-              (value) =>
-                value >= this._options.intervals.min && value <= this._options.intervals.max
-            )
-          : ([] as number[]).concat(DEFAULT_OPTIONS.pips.values);
-        break;
-      }
-    }
-
-    return this;
-  }
 
   protected _fixValueState() {
+    const trackBorder = this._getValueBorderOfTrack();
     this._state.value = this._state.value.map((value) =>
-      value < this._options.intervals.min
-        ? this._options.intervals.min
-        : value > this._options.intervals.max
-        ? this._options.intervals.max
-        : value
+      value < trackBorder.min ? trackBorder.min : value > trackBorder.max ? trackBorder.max : value
     );
 
     this._state.value.sort(ascending);
@@ -425,6 +455,12 @@ export default class RangeSliderView
     return this;
   }
 
+  protected _getValueBorderOfTrack() {
+    return {
+      min: this._options.intervals.min + this._options.padding[0],
+      max: this._options.intervals.max - this._options.padding[1],
+    };
+  }
   protected _getIntervalInfoByPoint(value: number, { isIncludedInSupremum = false } = {}) {
     const intervalKeys = Object.keys(this._options.intervals).sort(intervalsKeysCompareFunc);
 
@@ -450,12 +486,15 @@ export default class RangeSliderView
 
     const magnificationFactor = intervalRatio / fullRatio;
 
+    const step = this._options.steps[indexOfSupremum - 1];
+
     return {
       keyOfInfimum,
       keyOfSupremum,
       valueSize,
       percentSize,
       magnificationFactor,
+      step,
     };
   }
   protected _getIntervalKeyAsNumber(key: keyof Required<TrackOptions>["intervals"]) {
@@ -519,10 +558,11 @@ export default class RangeSliderView
 
     const values = this._state.value;
     const value = values[index];
+    const trackBorder = this._getValueBorderOfTrack();
     return {
       ariaOrientation: this._options.orientation,
-      ariaValueMin: values[index - 1] ? values[index - 1] : this._options.intervals.min,
-      ariaValueMax: values[index + 1] ? values[index + 1] : this._options.intervals.max,
+      ariaValueMin: values[index - 1] ? values[index - 1] : trackBorder.min,
+      ariaValueMax: values[index + 1] ? values[index + 1] : trackBorder.max,
       ariaValueNow: value,
       ariaValueText: tooltipOptions.formatter(value),
     };
@@ -549,6 +589,7 @@ export default class RangeSliderView
 
           thumbElem.setPointerCapture(pointerEvent.pointerId);
 
+          let movementAcc = 0;
           const moveThumbTo = (pointerEvent: PointerEvent) => {
             if (pointerEvent.movementX === 0) return;
 
@@ -558,26 +599,48 @@ export default class RangeSliderView
             let currentIntervalInfo = this._getIntervalInfoByPoint(thumbValue);
 
             if (currentIntervalInfo.magnificationFactor !== undefined) {
+              const trackBorder = this._getValueBorderOfTrack();
               const ariaValueMin = this._state.value[thumbConstants.thumbIndex - 1]
                 ? this._state.value[thumbConstants.thumbIndex - 1]
-                : this._options.intervals.min;
+                : trackBorder.min;
               const ariaValueMax = this._state.value[thumbConstants.thumbIndex + 1]
                 ? this._state.value[thumbConstants.thumbIndex + 1]
-                : this._options.intervals.max;
-              const thumbValueIncrementation =
-                pointerEvent.movementX *
-                newCalculated.valuePerPx *
-                currentIntervalInfo.magnificationFactor;
+                : trackBorder.max;
 
+              movementAcc += pointerEvent.movementX;
+              const thumbValueIncrementation =
+                movementAcc * newCalculated.valuePerPx * currentIntervalInfo.magnificationFactor;
               thumbValue += thumbValueIncrementation;
 
-              thumbValue = this._fixNonLinearShiftThroughIntervals(
+              const shiftThroughIntervals = this._fixNonLinearShiftThroughIntervals(
                 currentIntervalInfo,
                 thumbValue,
                 thumbValueIncrementation,
-                pointerEvent.movementX,
+                movementAcc,
                 newCalculated.valuePerPx
               );
+
+              if (this._options.steps.find((step) => step !== "none") !== undefined) {
+                const shiftOnLastInterval =
+                  shiftThroughIntervals.increments.length > 0
+                    ? shiftThroughIntervals.increments[shiftThroughIntervals.increments.length - 1]
+                    : thumbValueIncrementation;
+                const steppedIncrementation = this._toThumbSteppedIncrementation(
+                  shiftOnLastInterval,
+                  shiftThroughIntervals.currentIntervalInfo.step
+                );
+
+                thumbValue =
+                  shiftThroughIntervals.thumbValueAfterIncrementation - shiftOnLastInterval;
+
+                if (Math.abs(steppedIncrementation) > 0) {
+                  thumbValue += steppedIncrementation;
+                  movementAcc = 0;
+                }
+              } else {
+                thumbValue = shiftThroughIntervals.thumbValueAfterIncrementation;
+                movementAcc = 0;
+              }
 
               thumbValue =
                 thumbValue <= ariaValueMin
@@ -631,12 +694,14 @@ export default class RangeSliderView
       keyOfInfimum: string;
       keyOfSupremum: string;
       magnificationFactor: number;
+      step: number | "none";
     },
     thumbValueAfterIncrementation: number,
     thumbValueIncrementation: number,
     movement: number,
     valuePerPx: number
   ) {
+    const increments: number[] = [];
     let isLessThanInfimum,
       isMoreThanSupremum,
       intermediateThumbValueIncrementation = thumbValueIncrementation;
@@ -686,6 +751,8 @@ export default class RangeSliderView
           thumbValueAfterIncrementation - this._options.intervals[keyOfCrossedInterval];
         movement -= movement * toWholeIntervalFactor;
 
+        increments.push(intermediateThumbValueIncrementation);
+
         currentIntervalInfo = this._getIntervalInfoByPoint(
           this._options.intervals[keyOfCrossedInterval],
           { isIncludedInSupremum: isLessThanInfimum }
@@ -693,7 +760,21 @@ export default class RangeSliderView
       }
     }
 
-    return thumbValueAfterIncrementation;
+    return {
+      thumbValueAfterIncrementation,
+      increments,
+      currentIntervalInfo,
+    };
+  }
+  protected _toThumbSteppedIncrementation(
+    thumbIncrementationOfLastInterval: number,
+    step: number | "none"
+  ) {
+    if (step === "none") return thumbIncrementationOfLastInterval;
+
+    const signFactor = thumbIncrementationOfLastInterval >= 0 ? 1 : -1;
+
+    return signFactor * Math.floor(Math.abs(thumbIncrementationOfLastInterval) / step) * step;
   }
   protected _thumbValueToPositionOnTrack(thumbIndex: number) {
     const TRACK_RELATIVE_SIZE_IN_PERCENT = 100;
@@ -744,11 +825,3 @@ interface eventHandler {
 }
 type Formatter = (value: number) => string;
 type Mode = "intervals" | "count" | "positions" | "values";
-
-type SubViews = {
-  track: RangeSliderTrack;
-  ranges: RangeSliderRangeView[];
-  thumbs: RangeSliderThumbView[];
-  tooltips: RangeSliderTooltipView[];
-  pips: RangeSliderPips;
-};
