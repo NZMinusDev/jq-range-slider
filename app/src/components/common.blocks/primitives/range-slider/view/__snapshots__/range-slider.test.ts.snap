@@ -18,12 +18,12 @@ exports[`DOM manipulation renders correctly 1`] = `
       <!---->
       <div
         class="range-slider__range"
-        style=""
+        style="transform: translate(0%, 0) scale(0.5, 1);"
       />
       <!---->
       <div
         class="range-slider__range"
-        style=""
+        style="transform: translate(50%, 0) scale(0.5, 1);"
       />
       <!---->
       <div

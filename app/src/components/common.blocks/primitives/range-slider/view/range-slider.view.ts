@@ -74,8 +74,8 @@ export type RangeSliderOptions = {
   padding?: TrackOptions["padding"];
   formatter?: Formatter;
   tooltips?: boolean | (NonNullable<TooltipOptions["formatter"]> | boolean)[];
-  pips?: Omit<PipsOptions, "formatter" | "values"> & { mode?: Mode; values?: number | number[] };
-  animate?: (timeFraction: number) => number;
+  pips?: Omit<PipsOptions, "formatter" | "values"> & { mode?: Mode; values?: number | number[] }; //TODO:
+  animate?: (timeFraction: number) => number; //TODO:
 };
 export type FixedRangeSliderOptions = {
   intervals: Required<RangeSliderOptions>["intervals"];
@@ -131,7 +131,17 @@ export default class RangeSliderView
       ([] as TemplateResult[]).concat(
         this._options.connect
           .map((isConnected, index) => new RangeSliderRangeView(this._toRangeOptions(index)))
-          .map((view) => view.template()),
+          .map((view, index) => {
+            const a =
+              index === 0 ? 0 : this._thumbValueToPositionOnTrack(index - 1).offsetOnTrackInPercent;
+            const b = this._thumbValueToPositionOnTrack(index).offsetOnTrackInPercent;
+
+            return view.template({
+              styleInfo: {
+                transform: `translate(${a}%, 0) scale(${(b - a) / 100}, 1)`,
+              },
+            });
+          }),
         this._state.value
           .map(
             (thumbValue, index) =>
@@ -151,6 +161,11 @@ export default class RangeSliderView
             const supremum =
               views[nextIndex] !== undefined ? this._state.value[nextIndex] : trackBorder.max;
 
+            const thumbOffsetOperands = this._thumbValueToPositionOnTrack(index);
+            const thumbTranslate =
+              thumbOffsetOperands.offsetOnTrackInPercent * thumbOffsetOperands.THUMB_SCALE_FACTOR -
+              thumbOffsetOperands.THUMB_TO_CENTER_OFFSET;
+
             return view.template(
               {
                 attributes: { "@pointerdown": this._thumbEventListenerObject },
@@ -160,7 +175,7 @@ export default class RangeSliderView
                     this._state.value[index] >= infimum + rangeOfSwapZIndex
                       ? baseZIndex + 2 * views.length - index - 2 + ""
                       : baseZIndex + index + "",
-                  transform: `translate(${this._thumbValueToPositionOnTrack(index)}%, 0)`,
+                  transform: `translate(${thumbTranslate}%, 0)`,
                 },
               },
               new RangeSliderTooltipView(
@@ -816,7 +831,7 @@ export default class RangeSliderView
       }
     });
 
-    return offsetOnTrackInPercent * THUMB_SCALE_FACTOR - THUMB_TO_CENTER_OFFSET;
+    return { offsetOnTrackInPercent, THUMB_SCALE_FACTOR, THUMB_TO_CENTER_OFFSET };
   }
 }
 

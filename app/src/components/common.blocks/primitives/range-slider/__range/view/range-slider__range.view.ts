@@ -29,7 +29,7 @@ export default class RangeSliderRangeView
     html`<div
       class=${classMap({
         "range-slider__range": true,
-        ".range-slider__range_isConnected": this._options.isConnected,
+        "range-slider__range_isConnected": this._options.isConnected,
         ...classInfo,
       })}
       ...=${spread(attributes)}
