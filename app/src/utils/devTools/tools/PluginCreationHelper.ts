@@ -138,16 +138,16 @@ export abstract class MVPView<
     this.theOrderOfIteratingThroughTheOptions = Array.from(
       new Set(
         ([] as OptionsKey[]).concat(
-          Object.keys(this._options) as OptionsKey[],
-          theOrderOfIteratingThroughTheOptions
+          theOrderOfIteratingThroughTheOptions,
+          Object.keys(this._options) as OptionsKey[]
         )
       )
     );
     this.theOrderOfIteratingThroughTheState = Array.from(
       new Set(
         ([] as StateKey[]).concat(
-          Object.keys(this._state) as StateKey[],
-          theOrderOfIteratingThroughTheState
+          theOrderOfIteratingThroughTheState,
+          Object.keys(this._state) as StateKey[]
         )
       )
     );
