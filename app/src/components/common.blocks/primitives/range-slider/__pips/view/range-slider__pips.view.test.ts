@@ -16,8 +16,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   RangeSliderPipsView
 > = function ({ instance }) {
   instance["_options"].values.forEach((value, index, self) => {
-    if (index > 0) expect(value > self[index - 1]);
-    expect(getPrecision(value)).toBeLessThanOrEqual(2);
+    if (index > 0) expect(value.percent > self[index - 1].percent);
+    expect(value.percent).toBeGreaterThanOrEqual(0);
+    expect(value.percent).toBeLessThanOrEqual(100);
   });
 
   expect(instance["_options"].density).toBeGreaterThanOrEqual(0);
@@ -30,15 +31,49 @@ const differentOptionsArg: DifferentArguments<Parameters<
   typeof RangeSliderPipsView.prototype.setOptions
 >> = {
   invalidOptionalArguments: [
-    [{ values: [0, -100, 100, 20, -1000], density: -5 }],
-    [{ values: [20.543543, 300.5811], density: 5.5543 }],
+    [
+      {
+        values: [
+          { value: 0, percent: 9 },
+          { value: -100, percent: 81 },
+          { value: 100, percent: 100 },
+          { value: 20, percent: 92.72 },
+          { value: -1000, percent: 0 },
+        ],
+      },
+    ],
+    [
+      {
+        values: [
+          { value: 0, percent: -10 },
+          { value: 100, percent: 101 },
+        ],
+      },
+    ],
+    [{ density: -5 }],
+    [{ density: 5.5543 }],
   ],
-  partialOptionalArguments: [[{ values: [-100, 0, 100] }]],
+  partialOptionalArguments: [
+    [
+      {
+        values: [
+          { value: -100, percent: 0 },
+          { value: 0, percent: 50 },
+          { value: 100, percent: 100 },
+        ],
+      },
+    ],
+  ],
   fullOptionalArguments: [
     [
       {
         isHidden: true,
-        values: [-200, 0, 10, 100],
+        values: [
+          { value: -200, percent: 0 },
+          { value: 0, percent: 66.66 },
+          { value: 10, percent: 70 },
+          { value: 100, percent: 100 },
+        ],
         density: 2,
         formatter: (value: number) => `${value.toString()}$`,
       },

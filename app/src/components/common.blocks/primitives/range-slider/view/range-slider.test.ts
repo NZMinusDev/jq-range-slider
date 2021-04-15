@@ -33,6 +33,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   switch (instance["_options"].pips.mode) {
     case "count": {
       expect(instance["_options"].pips.values).toBeGreaterThanOrEqual(0);
+      expect(Number.isInteger(instance["_options"].pips.values)).toBe(true);
 
       break;
     }
@@ -108,6 +109,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
         pips: { mode: "values", values: [-101, -100, 50, 99, 101] },
       },
     ],
+    [{ pips: { values: [] } }],
   ],
   partialOptionalArguments: [
     [

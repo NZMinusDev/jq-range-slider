@@ -34,6 +34,17 @@ testInit({
   instancePropsExpecter: viewPropertiesExpecter,
   propsToSet: new Map().set("_options", 1),
 });
+describe("init", () => {
+  describe("with default options", () => {
+    test("the instance's func options should be to have returned", () => {
+      const instance = new RangeSliderRangeView();
+
+      const templateMock = jest.fn(instance.template);
+      templateMock();
+      expect(templateMock).toHaveReturned();
+    });
+  });
+});
 
 testGetter({
   Creator: RangeSliderRangeView,

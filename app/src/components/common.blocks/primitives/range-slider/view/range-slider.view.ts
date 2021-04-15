@@ -57,6 +57,7 @@ export default interface RangeSliderView {
   get(): FixedRangeSliderOptions["start"];
   set(value?: RangeSliderOptions["start"]): this;
 
+  //TODO: заменить на on("event",()=>{}) + event typing on class
   whenIsStarted(callback: eventHandler): this;
   whenIsSlid(callback: eventHandler): this;
   whenIsUpdated(callback: eventHandler): this;
@@ -74,7 +75,7 @@ export type RangeSliderOptions = {
   padding?: TrackOptions["padding"];
   formatter?: Formatter;
   tooltips?: boolean | (NonNullable<TooltipOptions["formatter"]> | boolean)[];
-  pips?: Omit<PipsOptions, "formatter" | "values"> & { mode?: Mode; values?: number | number[] }; //TODO:
+  pips?: Omit<PipsOptions, "formatter" | "values"> & { mode?: Mode; values?: number | number[] };
   animate?: (timeFraction: number) => number; //TODO:
 };
 export type FixedRangeSliderOptions = {
@@ -311,6 +312,13 @@ export default class RangeSliderView
     return this;
   }
   setPipsOption(pips: RangeSliderOptions["pips"] = DEFAULT_OPTIONS.pips) {
+    if (
+      Array.isArray(this._options.pips.values) &&
+      Array.isArray(pips.values) &&
+      this._options.pips.values.length > pips.values.length
+    ) {
+      this._options.pips.values.splice(pips.values.length === 0 ? 0 : pips.values.length - 1);
+    }
     this._options.pips = defaultsDeep({}, pips, this._options.pips);
 
     this._fixPipsOption();
@@ -389,6 +397,11 @@ export default class RangeSliderView
     return this;
   }
   protected _fixPipsOption() {
+    if (!Array.isArray(this._options.pips.values)) {
+      this._options.pips.values =
+        this._options.pips.values < 1 ? 0 : Math.floor(this._options.pips.values);
+    }
+
     switch (this._options.pips.mode) {
       case "intervals": {
         this._options.pips.values = Object.values(this._options.intervals);
@@ -397,32 +410,45 @@ export default class RangeSliderView
       case "count": {
         this._options.pips.values = Array.isArray(this._options.pips.values)
           ? this._options.pips.values.length
-          : this._options.pips.values < 0
-          ? 0
           : this._options.pips.values;
+
         break;
       }
       case "positions": {
-        this._options.pips.values = Array.isArray(this._options.pips.values)
-          ? this._options.pips.values.filter((value) => value >= 0 && value <= 100)
-          : [0, 25, 50, 75, 100];
+        if (Array.isArray(this._options.pips.values)) {
+          this._options.pips.values = this._options.pips.values.filter(
+            (value) => value >= 0 && value <= 100
+          );
+        } else {
+          const amountOfValues = this._options.pips.values;
+          if (amountOfValues < 1) break;
+
+          const shiftInPercent = 100 / amountOfValues;
+
+          let accumulator = 0;
+          this._options.pips.values = [];
+          for (let index = 0; index <= amountOfValues; index++) {
+            this._options.pips.values.push(accumulator);
+            accumulator += shiftInPercent;
+          }
+        }
         break;
       }
       case "values": {
+        const valueBorderOfTrack = this._getValueBorderOfTrack();
         this._options.pips.values = Array.isArray(this._options.pips.values)
           ? this._options.pips.values.filter(
-              (value) =>
-                value >= this._options.intervals.min && value <= this._options.intervals.max
+              (value) => value >= valueBorderOfTrack.min && value <= valueBorderOfTrack.max
             )
-          : ([] as number[]).concat(DEFAULT_OPTIONS.pips.values);
+          : [];
         break;
       }
     }
 
-    //FIXME:
-    // const { density, values } = new RangeSliderPips(this._toPipsOptions()).getOptions();
-    // this._options.pips.values = values;
-    // this._options.pips.values = density;
+    if (Array.isArray(this._options.pips.values)) {
+      this._options.pips.values.sort(ascending);
+    }
+    this._options.pips.density = new RangeSliderPips(this._toPipsOptions()).getDensityOption();
 
     return this;
   }
@@ -515,6 +541,40 @@ export default class RangeSliderView
   protected _getIntervalKeyAsNumber(key: keyof Required<TrackOptions>["intervals"]) {
     return key === "min" ? 0 : key === "max" ? 100 : Number.parseFloat(`${key}`);
   }
+  protected _toTrackPercent(valueOnTrack: number) {
+    const intervalKeys = Object.keys(this._options.intervals).sort(intervalsKeysCompareFunc);
+
+    let offsetOnTrackInPercent = 0;
+    let intervalValueSize: number;
+    let intervalPercentSize: number;
+    let valuePerPercentInInterval: number;
+    let isStopOffset = false;
+    intervalKeys.forEach((intervalKey, index) => {
+      if (!isStopOffset && intervalKeys[index + 1] !== undefined) {
+        intervalValueSize =
+          this._options.intervals[intervalKeys[index + 1]] - this._options.intervals[intervalKey];
+        intervalPercentSize =
+          this._getIntervalKeyAsNumber(intervalKeys[index + 1]) -
+          this._getIntervalKeyAsNumber(intervalKeys[index]);
+        valuePerPercentInInterval = intervalValueSize / intervalPercentSize;
+
+        if (
+          valueOnTrack >= this._options.intervals[intervalKey] &&
+          valueOnTrack < this._options.intervals[intervalKeys[index + 1]]
+        ) {
+          offsetOnTrackInPercent +=
+            (valueOnTrack - this._options.intervals[intervalKey]) / valuePerPercentInInterval;
+          isStopOffset = true;
+        } else {
+          offsetOnTrackInPercent += intervalPercentSize;
+        }
+      } else {
+        return;
+      }
+    });
+
+    return offsetOnTrackInPercent;
+  }
 
   protected _toTrackOptions(): FixedTrackOptions {
     return {
@@ -540,32 +600,71 @@ export default class RangeSliderView
   protected _toPipsOptions(): Required<PipsOptions> {
     const formatter = this._options.formatter;
     const { isHidden, density } = this._options.pips;
-    let values = Array.isArray(this._options.pips.values) ? this._options.pips.values : [];
+    let values = Array.isArray(this._options.pips.values)
+      ? ([] as number[]).concat(this._options.pips.values)
+      : [];
 
+    const valueBorderOfTrack = this._getValueBorderOfTrack();
+
+    let pipsValues: NonNullable<PipsOptions["values"]> = [];
     switch (this._options.pips.mode) {
-      case "count": {
-        const shift =
-          (this._options.intervals.max - this._options.intervals.min) /
-          ((this._options.pips.values as number) - 1);
+      case "intervals": {
+        const leftPadInPercent = this._toTrackPercent(
+          this._options.intervals.min + this._options.padding[0]
+        );
+        const rightPadInPercent = this._toTrackPercent(
+          this._options.intervals.max - this._options.padding[1]
+        );
 
-        let accumulator = this._options.intervals.min;
-        for (let index = 0; index < this._options.pips.values; index++) {
-          values.push(accumulator);
-          accumulator += shift;
+        values[0] = valueBorderOfTrack.min;
+        values[values.length - 1] = valueBorderOfTrack.max;
+
+        const lastIndex = values.length - 1;
+        let percent: number;
+        values.forEach((value, index) => {
+          percent =
+            index === 0
+              ? leftPadInPercent
+              : index === lastIndex
+              ? rightPadInPercent
+              : this._toTrackPercent(value);
+          pipsValues.push({ percent, value });
+        });
+
+        break;
+      }
+      case "count": {
+        const amountOfPipsValues = this._options.pips.values as number;
+        if (amountOfPipsValues > 0) {
+          const shift = (valueBorderOfTrack.max - valueBorderOfTrack.min) / amountOfPipsValues;
+
+          let value = valueBorderOfTrack.min;
+          for (let index = 0; index <= amountOfPipsValues; index++) {
+            pipsValues.push({ percent: this._toTrackPercent(value), value });
+            value += shift;
+          }
         }
 
         break;
       }
       case "positions": {
-        const perPercent = (this._options.intervals.max - this._options.intervals.min) / 100;
+        const perPercent = (valueBorderOfTrack.max - valueBorderOfTrack.min) / 100;
+        pipsValues = values.map((value) => {
+          value = value * perPercent - Math.abs(valueBorderOfTrack.min);
+          return { percent: this._toTrackPercent(value), value };
+        });
 
-        values = values.map((value) => value * perPercent);
-
+        break;
+      }
+      case "values": {
+        pipsValues = values.map((value) => {
+          return { percent: this._toTrackPercent(value), value };
+        });
         break;
       }
     }
 
-    return { isHidden, values, density, formatter };
+    return { isHidden, values: pipsValues, density, formatter };
   }
 
   protected _toThumbState(index: number): ThumbState {
@@ -651,6 +750,8 @@ export default class RangeSliderView
                 if (Math.abs(steppedIncrementation) > 0) {
                   thumbValue += steppedIncrementation;
                   movementAcc = 0;
+                } else {
+                  return;
                 }
               } else {
                 thumbValue = shiftThroughIntervals.thumbValueAfterIncrementation;
@@ -799,37 +900,7 @@ export default class RangeSliderView
 
     const THUMB_TO_CENTER_OFFSET = 50;
 
-    const intervalKeys = Object.keys(this._options.intervals).sort(intervalsKeysCompareFunc);
-
-    let offsetOnTrackInPercent = 0;
-    let intervalValueSize: number;
-    let intervalPercentSize: number;
-    let valuePerPercentInInterval: number;
-    let isStopOffset = false;
-    intervalKeys.forEach((intervalKey, index) => {
-      if (!isStopOffset && intervalKeys[index + 1] !== undefined) {
-        intervalValueSize =
-          this._options.intervals[intervalKeys[index + 1]] - this._options.intervals[intervalKey];
-        intervalPercentSize =
-          this._getIntervalKeyAsNumber(intervalKeys[index + 1]) -
-          this._getIntervalKeyAsNumber(intervalKeys[index]);
-        valuePerPercentInInterval = intervalValueSize / intervalPercentSize;
-
-        if (
-          this._state.value[thumbIndex] >= this._options.intervals[intervalKey] &&
-          this._state.value[thumbIndex] <= this._options.intervals[intervalKeys[index + 1]]
-        ) {
-          offsetOnTrackInPercent +=
-            (this._state.value[thumbIndex] - this._options.intervals[intervalKey]) /
-            valuePerPercentInInterval;
-          isStopOffset = true;
-        } else {
-          offsetOnTrackInPercent += intervalPercentSize;
-        }
-      } else {
-        return;
-      }
-    });
+    const offsetOnTrackInPercent = this._toTrackPercent(this._state.value[thumbIndex]);
 
     return { offsetOnTrackInPercent, THUMB_SCALE_FACTOR, THUMB_TO_CENTER_OFFSET };
   }

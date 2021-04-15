@@ -6,8 +6,8 @@ import { StyleInfo, styleMap } from "lit-html/directives/style-map.js";
 import { spread } from "@open-wc/lit-helpers";
 
 import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
-import { collapsingParseInt, collapsingParseFloat } from "@utils/devTools/tools/ParserHelper";
-import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
+import { collapsingParseInt } from "@utils/devTools/tools/ParserHelper";
+import { defaultsDeep } from "lodash";
 
 export default interface RangeSliderPipsView {
   getIsHiddenOption(): PipsOptions["isHidden"];
@@ -22,7 +22,7 @@ export default interface RangeSliderPipsView {
 
 export type PipsOptions = {
   isHidden?: boolean;
-  values?: number[];
+  values?: { percent: number; value: number }[];
   density?: number;
   formatter?: Formatter;
 };
@@ -36,7 +36,6 @@ export const DEFAULT_OPTIONS: Required<PipsOptions> = {
 };
 export const DEFAULT_STATE: PipsState = {};
 
-const VALUES_CALCULATION_PRECISION = 2;
 const RENDER_CALCULATION_PRECISION = 4;
 export default class RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
@@ -64,7 +63,7 @@ export default class RangeSliderPipsView
     return this._options.isHidden;
   }
   getValuesOption() {
-    return ([] as number[]).concat(this._options.values);
+    return ([] as { percent: number; value: number }[]).concat(this._options.values);
   }
   getDensityOption() {
     return this._options.density;
@@ -79,7 +78,7 @@ export default class RangeSliderPipsView
     return this;
   }
   setValuesOption(values: PipsOptions["values"] = DEFAULT_OPTIONS.values) {
-    this._options.values = ([] as number[]).concat(values);
+    this._options.values = defaultsDeep([], values);
     this._fixValuesOption();
 
     return this;
@@ -98,8 +97,8 @@ export default class RangeSliderPipsView
 
   protected _fixValuesOption() {
     this._options.values = this._options.values
-      .map((value) => collapsingParseFloat(`${value}`, VALUES_CALCULATION_PRECISION))
-      .sort(ascending);
+      .filter((value) => value.percent >= 0 && value.percent <= 100)
+      .sort((a, b) => a.percent - b.percent);
 
     return this;
   }
@@ -112,30 +111,34 @@ export default class RangeSliderPipsView
   }
 
   protected getPipsRender() {
+    if (this._options.values.length < 1) return html``;
+
     const valueClasses: ClassInfo = { "range-slider__pips-value": true };
     const markerClasses: ClassInfo = { "range-slider__pips-marker": true };
+
     let valueStyles: StyleInfo;
     let markerStyles: StyleInfo;
 
     /**values */
-    const size = this._options.values[this._options.values.length - 1] - this._options.values[0];
     let valuePosition = 0;
-    let rangeShift = 0;
+    let rangeShift = this._options.values[0].percent;
     let rangeBetweenValues = 0;
 
     /**density */
     const rangeBetweenMarkers = +(1 / this._options.density).toFixed(RENDER_CALCULATION_PRECISION);
     let amountOfMarkers: number;
     let previousValueStyles: StyleInfo;
-    let markerPosition = 0;
+    let markerPosition = this._options.values[0].percent;
 
     let markers: TemplateResult[];
     return this._options.values.map((value, index, values) => {
       /**values */
       valueStyles = { left: `${(valuePosition += rangeShift)}%` };
-      rangeShift = +(((values[index + 1] - value) / size) * 100).toFixed(
-        RENDER_CALCULATION_PRECISION
-      );
+      if (values[index + 1] !== undefined) {
+        rangeShift = +(values[index + 1].percent - value.percent).toFixed(
+          RENDER_CALCULATION_PRECISION
+        );
+      }
       /**density */
       markers = [];
       if (index > 0) {
@@ -156,8 +159,8 @@ export default class RangeSliderPipsView
       return html`<div
           class=${classMap(valueClasses)}
           style=${styleMap(valueStyles)}
-          data-value=${value}
-          data-formatted-value="${this._options.formatter(this._options.values[index])}"
+          data-value=${value.value}
+          data-formatted-value="${this._options.formatter(value.value)}"
         ></div>
         ${markers}`;
     });
