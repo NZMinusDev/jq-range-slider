@@ -223,7 +223,7 @@ export abstract class MVPView<
           this.theOrderOfIteratingThroughTheState.indexOf(b as Extract<keyof TState, string>)
       )
       .forEach(([stateKey, stateValue]) => {
-        setStateMethodName = `set${stateKey[0].toUpperCase() + stateKey.slice(1)}State`;
+        setStateMethodName = `_set${stateKey[0].toUpperCase() + stateKey.slice(1)}State`;
         valueToPass = state === undefined ? undefined : stateValue;
 
         if (this[setStateMethodName]) {
