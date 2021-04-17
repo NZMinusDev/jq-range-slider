@@ -128,7 +128,7 @@ export default class RangeSliderView
     style=${styleMap({ ...styleInfo })}
   >
     ${new RangeSliderTrack(this._toTrackOptions()).template(
-      {},
+      { attributes: { "@click": this._trackEventListenerObject } },
       ([] as TemplateResult[]).concat(
         this._options.connect
           .map((isConnected, index) => new RangeSliderRangeView(this._toRangeOptions(index)))
@@ -187,7 +187,9 @@ export default class RangeSliderView
           })
       )
     )}
-    ${new RangeSliderPips(this._toPipsOptions()).template()}
+    ${new RangeSliderPips(this._toPipsOptions()).template({
+      attributes: { "@click": this._pipsEventListenerObject },
+    })}
   </div>`;
 
   constructor(
@@ -335,19 +337,21 @@ export default class RangeSliderView
     return ([] as FixedRangeSliderOptions["start"]).concat(this._state.value);
   }
   set(value: RangeSliderOptions["start"] = this._options.start) {
-    this._state.value = Array.isArray(value)
-      ? ([] as RangeSliderState["value"]).concat(value)
-      : this._state.value.fill(value);
+    this._setValueState(
+      Array.isArray(value)
+        ? ([] as RangeSliderState["value"]).concat(value)
+        : this._state.value.fill(value)
+    );
 
-    this._fixValueState();
+    this._render();
 
     return this;
   }
 
-  protected _setState(state?: RangeSliderState) {
-    super._setState(state);
+  protected _setValueState(value: RangeSliderState["value"] = DEFAULT_STATE["value"]) {
+    this._state.value = ([] as RangeSliderState["value"]).concat(value);
 
-    this.set(state?.value);
+    this._fixValueState();
 
     return this;
   }
@@ -502,6 +506,14 @@ export default class RangeSliderView
       max: this._options.intervals.max - this._options.padding[1],
     };
   }
+  protected _getLinearPercentBorderOfTrack() {
+    const valueBorderOfTrack = this._getValueBorderOfTrack();
+
+    return {
+      min: this._toTrackPercent(valueBorderOfTrack.min),
+      max: this._toTrackPercent(valueBorderOfTrack.max),
+    };
+  }
   protected _getIntervalInfoByPoint(value: number, { isIncludedInSupremum = false } = {}) {
     const intervalKeys = Object.keys(this._options.intervals).sort(intervalsKeysCompareFunc);
 
@@ -571,6 +583,41 @@ export default class RangeSliderView
     });
 
     return offsetOnTrackInPercent;
+  }
+  protected _toTrackValue(linearPercentOnTrack: number) {
+    const intervalKeys = Object.keys(this._options.intervals).sort(intervalsKeysCompareFunc);
+
+    let trackValue = this._options.intervals.min;
+    let intervalValueSize: number;
+    let intervalPercentSize: number;
+    let valuePerPercentInInterval: number;
+    let isStopOffset = false;
+    intervalKeys.forEach((intervalKey, index) => {
+      if (!isStopOffset && intervalKeys[index + 1] !== undefined) {
+        intervalValueSize =
+          this._options.intervals[intervalKeys[index + 1]] - this._options.intervals[intervalKey];
+        intervalPercentSize =
+          this._getIntervalKeyAsNumber(intervalKeys[index + 1]) -
+          this._getIntervalKeyAsNumber(intervalKeys[index]);
+        valuePerPercentInInterval = intervalValueSize / intervalPercentSize;
+
+        if (
+          linearPercentOnTrack >= this._getIntervalKeyAsNumber(intervalKey) &&
+          linearPercentOnTrack < this._getIntervalKeyAsNumber(intervalKeys[index + 1])
+        ) {
+          trackValue +=
+            (linearPercentOnTrack - this._getIntervalKeyAsNumber(intervalKey)) *
+            valuePerPercentInInterval;
+          isStopOffset = true;
+        } else {
+          trackValue += intervalPercentSize * valuePerPercentInInterval;
+        }
+      } else {
+        return;
+      }
+    });
+
+    return trackValue;
   }
 
   protected _toTrackOptions(): FixedTrackOptions {
@@ -765,9 +812,7 @@ export default class RangeSliderView
                 : thumbValue;
 
             this._state.value[thumbConstants.thumbIndex] = thumbValue;
-            this._setState({
-              value: this._state.value,
-            });
+            this._setState({});
           };
 
           thumbElem.addEventListener("pointermove", moveThumbTo);
@@ -897,6 +942,62 @@ export default class RangeSliderView
 
     return { offsetOnTrackInPercent, THUMB_SCALE_FACTOR, THUMB_TO_CENTER_OFFSET };
   }
+
+  protected _trackEventListenerObject = {
+    handleEvent: (event: Event) => {
+      const trackElem = (event.target as HTMLElement).closest(
+        ".range-slider__track"
+      ) as HTMLElement;
+
+      if ((event.target as HTMLElement).closest(".range-slider__thumb-origin") !== null) return;
+
+      switch (event.type) {
+        case "click": {
+          const clickEvent = event as MouseEvent;
+          const trackBoundingClientRect = trackElem.getBoundingClientRect();
+          const linearPercentTrackBorder = this._getLinearPercentBorderOfTrack();
+          const clickedLinearPercent =
+            ((clickEvent.clientX - trackBoundingClientRect.left) / trackBoundingClientRect.width) *
+            100;
+
+          const validatedClickedLinearPercent =
+            clickedLinearPercent < linearPercentTrackBorder.min
+              ? linearPercentTrackBorder.min
+              : clickedLinearPercent > linearPercentTrackBorder.max
+              ? linearPercentTrackBorder.max
+              : clickedLinearPercent;
+          const clickedValue = this._toTrackValue(validatedClickedLinearPercent) as number;
+
+          this._state.value[this._getNearestThumb(clickedValue)] = clickedValue;
+          this._setState({});
+        }
+      }
+    },
+  };
+  protected _getNearestThumb(value: number) {
+    const distances = this._state.value.map((thumbValue) => Math.abs(thumbValue - value));
+
+    return distances.indexOf(Math.min(...distances));
+  }
+
+  protected _pipsEventListenerObject = {
+    handleEvent: (event: Event) => {
+      const pipValueElem = (event.target as HTMLElement).closest(
+        ".range-slider__pips-value"
+      ) as HTMLElement;
+
+      if (pipValueElem === null) return;
+
+      switch (event.type) {
+        case "click": {
+          const pipValue = pipValueElem.dataset.value as string;
+
+          this._state.value[this._getNearestThumb(+pipValue)] = +pipValue;
+          this._setState({});
+        }
+      }
+    },
+  };
 }
 
 interface eventHandler {

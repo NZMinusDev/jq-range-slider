@@ -258,6 +258,18 @@ testSetter({
   constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
+    methodReference: RangeSliderView.prototype["_setState"],
+    expecter: ({ mock, passedArgs, instance }) => {},
+    differentArguments: { invalidOptionalArguments: [[{ value: undefined }]] },
+  },
+  propsToSet: new Map().set("_state", 0),
+  resetPropsTo: new Map().set("_state", DEFAULT_STATE),
+});
+testSetter({
+  Creator: RangeSliderView,
+  constructorArgs: [],
+  instancePropsExpecter: viewPropertiesExpecter,
+  methodOfInstanceToTest: {
     methodReference: RangeSliderView.prototype.set,
     expecter: ({ mock, passedArgs, instance }) => {},
     differentArguments: { fullOptionalArguments: [[50], [[-10, 0, 10]]] },
@@ -280,14 +292,22 @@ testDOM({
   templatesArgs: [],
   callbacksWithTest: [
     ({ container, instance }) => {
+      const INTERVALS = { min: -1250, "80%": -500, "90%": 400, max: 1500 };
+      const START = [-1150, -600, 1400];
       const PADDING = 100;
-      const MIN_TRACK_VALUE = -1250 + PADDING;
-      const MAX_TRACK_VALUE = 1500 - PADDING;
-      const TRACK_VALUE_SIZE = MAX_TRACK_VALUE - MIN_TRACK_VALUE + 2 * PADDING;
+      const TRACK_VALUE_SIZE = INTERVALS.max - INTERVALS.min;
+      const MIN_TRACK_VALUE = INTERVALS.min + PADDING;
+      const MAX_TRACK_VALUE = INTERVALS.max - PADDING;
       const TRACK_PX_SIZE = 100;
       const TRACK_RATIO = TRACK_VALUE_SIZE / 100;
       const VALUE_PER_PX = TRACK_VALUE_SIZE / TRACK_PX_SIZE;
       const MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB = 29;
+
+      const trackElem = container.querySelector<HTMLElement>(".range-slider__track") as HTMLElement;
+      const pipsElement = container.querySelector(".range-slider__pips") as HTMLElement;
+      const pipsValuesElements = pipsElement.querySelectorAll<HTMLElement>(
+        ".range-slider__pips-value"
+      );
 
       const thumbsElements = container.querySelectorAll<HTMLElement>(".range-slider__thumb");
       const originsElements = Array.from<HTMLElement>(thumbsElements).map((thumbElem) => {
@@ -300,6 +320,19 @@ testDOM({
       const innerThumb = thumbsElements.item(1);
       const supremumThumb = thumbsElements.item(2);
 
+      trackElem.getBoundingClientRect = () => {
+        return {
+          width: TRACK_PX_SIZE,
+          height: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          x: 0,
+          y: 0,
+          toJSON: () => ``,
+        };
+      };
       jest.spyOn(instance as any, "_getThumbConstants").mockImplementation((thumbElem) => {
         return {
           thumbIndex: originsElements.indexOf(thumbElem as HTMLElement),
@@ -531,7 +564,7 @@ testDOM({
             bubbles: true,
           })
         );
-        instance.set([-1150, -600, 1400]);
+        instance.set();
         instance.setStepsOption();
       });
 
@@ -688,11 +721,47 @@ testDOM({
           })
         );
       });
+
+      test("click on track should be handled", () => {
+        instance.set([-1000, START[1], 1300]);
+
+        innerThumb.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        expect(instance["_state"].value).toStrictEqual([-1000, START[1], 1300]);
+
+        trackElem.dispatchEvent(new MouseEvent("click", { clientX: -1 }));
+        trackElem.dispatchEvent(
+          new MouseEvent("click", {
+            clientX: TRACK_PX_SIZE * 0.5,
+          })
+        );
+        trackElem.dispatchEvent(new MouseEvent("click", { clientX: TRACK_PX_SIZE + 1 }));
+
+        expect(instance["_state"].value.map((val) => +val.toFixed(2))).toMatchObject([
+          START[0],
+          expect.any(Number),
+          START[2],
+        ]);
+
+        instance.set();
+      });
+
+      test("click on valuable pip should be handled", () => {
+        instance.set([-1000, -600, 1300]);
+
+        (pipsElement.querySelector(".range-slider__pips-marker") as HTMLElement).dispatchEvent(
+          new MouseEvent("click", { bubbles: true })
+        );
+        expect(instance["_state"].value).toStrictEqual([-1000, -600, 1300]);
+
+        pipsValuesElements.item(0).dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        pipsValuesElements.item(3).dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+        expect(instance["_state"].value.map((val) => +val.toFixed(2))).toMatchObject(START);
+      });
     },
     ({ container, instance }) => {
       test("_getThumbConstants method should calculate correctly", () => {
         const _getThumbConstantsMock = jest.spyOn(instance as any, "_getThumbConstants");
-
         const fakeThumbOriginElem = container.querySelector(
           ".range-slider__thumb-origin"
         ) as HTMLElement;

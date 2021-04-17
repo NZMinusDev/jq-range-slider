@@ -102,6 +102,10 @@ describe("init", () => {
       const formatterMock = jest.fn(instance["_options"].formatter);
       formatterMock(1);
       expect(formatterMock).toHaveReturned();
+
+      const templateMock = jest.fn(instance.template);
+      templateMock();
+      expect(templateMock).toHaveReturned();
     });
   });
 });

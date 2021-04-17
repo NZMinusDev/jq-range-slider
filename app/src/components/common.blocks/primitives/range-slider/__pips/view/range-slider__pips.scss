@@ -15,6 +15,7 @@
 }
 .range-slider__pips-value {
   height: 10px;
+  cursor: pointer;
 
   &:after {
     content: attr(data-formatted-value);
