@@ -421,12 +421,12 @@ export default class RangeSliderView
           );
         } else {
           const amountOfValues = this._options.pips.values;
+          this._options.pips.values = [];
           if (amountOfValues < 1) break;
 
           const shiftInPercent = 100 / amountOfValues;
 
           let accumulator = 0;
-          this._options.pips.values = [];
           for (let index = 0; index <= amountOfValues; index++) {
             this._options.pips.values.push(accumulator);
             accumulator += shiftInPercent;
@@ -511,11 +511,8 @@ export default class RangeSliderView
     const indexOfSupremum = isIncludedInSupremum
       ? intervalKeys.findIndex((key) => this._options.intervals[key] >= value)
       : intervalKeys.findIndex((key) => this._options.intervals[key] > value);
-    const keyOfInfimum =
-      indexOfSupremum === -1
-        ? intervalKeys[intervalKeys.length - 2]
-        : intervalKeys[indexOfSupremum - 1];
-    const keyOfSupremum = indexOfSupremum === -1 ? "max" : intervalKeys[indexOfSupremum];
+    const keyOfInfimum = intervalKeys[indexOfSupremum - 1];
+    const keyOfSupremum = intervalKeys[indexOfSupremum];
 
     const valueSize =
       this._options.intervals[keyOfSupremum] - this._options.intervals[keyOfInfimum];
@@ -675,8 +672,8 @@ export default class RangeSliderView
     const trackBorder = this._getValueBorderOfTrack();
     return {
       ariaOrientation: this._options.orientation,
-      ariaValueMin: values[index - 1] ? values[index - 1] : trackBorder.min,
-      ariaValueMax: values[index + 1] ? values[index + 1] : trackBorder.max,
+      ariaValueMin: values[index - 1] ?? trackBorder.min,
+      ariaValueMax: values[index + 1] ?? trackBorder.max,
       ariaValueNow: value,
       ariaValueText: tooltipOptions.formatter(value),
     };
@@ -710,66 +707,67 @@ export default class RangeSliderView
             const newCalculated = thumbConstants.getCalculated();
 
             let thumbValue = this._state.value[thumbConstants.thumbIndex];
-            let currentIntervalInfo = this._getIntervalInfoByPoint(thumbValue);
+            let currentIntervalInfo = this._getIntervalInfoByPoint(thumbValue) as {
+              keyOfInfimum: string;
+              keyOfSupremum: string;
+              valueSize: number;
+              percentSize: number;
+              magnificationFactor: number;
+              step: number;
+            };
 
-            if (currentIntervalInfo.magnificationFactor !== undefined) {
-              const trackBorder = this._getValueBorderOfTrack();
-              const ariaValueMin = this._state.value[thumbConstants.thumbIndex - 1]
-                ? this._state.value[thumbConstants.thumbIndex - 1]
-                : trackBorder.min;
-              const ariaValueMax = this._state.value[thumbConstants.thumbIndex + 1]
-                ? this._state.value[thumbConstants.thumbIndex + 1]
-                : trackBorder.max;
+            const trackBorder = this._getValueBorderOfTrack();
+            const ariaValueMin =
+              this._state.value[thumbConstants.thumbIndex - 1] ?? trackBorder.min;
+            const ariaValueMax =
+              this._state.value[thumbConstants.thumbIndex + 1] ?? trackBorder.max;
 
-              movementAcc += pointerEvent.movementX;
-              const thumbValueIncrementation =
-                movementAcc * newCalculated.valuePerPx * currentIntervalInfo.magnificationFactor;
-              thumbValue += thumbValueIncrementation;
+            movementAcc += pointerEvent.movementX;
+            const thumbValueIncrementation =
+              movementAcc * newCalculated.valuePerPx * currentIntervalInfo.magnificationFactor;
+            thumbValue += thumbValueIncrementation;
 
-              const shiftThroughIntervals = this._fixNonLinearShiftThroughIntervals(
-                currentIntervalInfo,
-                thumbValue,
-                thumbValueIncrementation,
-                movementAcc,
-                newCalculated.valuePerPx
+            const shiftThroughIntervals = this._fixNonLinearShiftThroughIntervals(
+              currentIntervalInfo,
+              thumbValue,
+              thumbValueIncrementation,
+              movementAcc,
+              newCalculated.valuePerPx
+            );
+
+            if (this._options.steps.find((step) => step !== "none") !== undefined) {
+              const shiftOnLastInterval =
+                shiftThroughIntervals.increments.length > 0
+                  ? shiftThroughIntervals.increments[shiftThroughIntervals.increments.length - 1]
+                  : thumbValueIncrementation;
+              const steppedIncrementation = this._toThumbSteppedIncrementation(
+                shiftOnLastInterval,
+                shiftThroughIntervals.currentIntervalInfo.step
               );
 
-              if (this._options.steps.find((step) => step !== "none") !== undefined) {
-                const shiftOnLastInterval =
-                  shiftThroughIntervals.increments.length > 0
-                    ? shiftThroughIntervals.increments[shiftThroughIntervals.increments.length - 1]
-                    : thumbValueIncrementation;
-                const steppedIncrementation = this._toThumbSteppedIncrementation(
-                  shiftOnLastInterval,
-                  shiftThroughIntervals.currentIntervalInfo.step
-                );
+              thumbValue =
+                shiftThroughIntervals.thumbValueAfterIncrementation - shiftOnLastInterval;
 
-                thumbValue =
-                  shiftThroughIntervals.thumbValueAfterIncrementation - shiftOnLastInterval;
-
-                if (Math.abs(steppedIncrementation) > 0) {
-                  thumbValue += steppedIncrementation;
-                  movementAcc = 0;
-                } else {
-                  return;
-                }
-              } else {
-                thumbValue = shiftThroughIntervals.thumbValueAfterIncrementation;
+              if (Math.abs(steppedIncrementation) > 0) {
+                thumbValue += steppedIncrementation;
                 movementAcc = 0;
               }
-
-              thumbValue =
-                thumbValue <= ariaValueMin
-                  ? ariaValueMin
-                  : thumbValue >= ariaValueMax
-                  ? ariaValueMax
-                  : thumbValue;
-
-              this._state.value[thumbConstants.thumbIndex] = thumbValue;
-              this._setState({
-                value: this._state.value,
-              });
+            } else {
+              thumbValue = shiftThroughIntervals.thumbValueAfterIncrementation;
+              movementAcc = 0;
             }
+
+            thumbValue =
+              thumbValue <= ariaValueMin
+                ? ariaValueMin
+                : thumbValue >= ariaValueMax
+                ? ariaValueMax
+                : thumbValue;
+
+            this._state.value[thumbConstants.thumbIndex] = thumbValue;
+            this._setState({
+              value: this._state.value,
+            });
           };
 
           thumbElem.addEventListener("pointermove", moveThumbTo);
@@ -840,40 +838,35 @@ export default class RangeSliderView
         { isIncludedInSupremum: isLessThanInfimum }
       );
 
-      if (
-        currentIntervalInfo.magnificationFactor !== undefined &&
-        nextIntervalInfo.magnificationFactor !== undefined
-      ) {
-        const thumbValueBeforeIncrementation =
-          thumbValueAfterIncrementation - intermediateThumbValueIncrementation;
+      const thumbValueBeforeIncrementation =
+        thumbValueAfterIncrementation - intermediateThumbValueIncrementation;
 
-        const complementToWholeIntervalValue =
-          this._options.intervals[keyOfCrossedInterval] - thumbValueBeforeIncrementation;
+      const complementToWholeIntervalValue =
+        this._options.intervals[keyOfCrossedInterval] - thumbValueBeforeIncrementation;
 
-        const toWholeIntervalFactor =
-          complementToWholeIntervalValue / intermediateThumbValueIncrementation;
-        const toNewValueFactor = 1 - toWholeIntervalFactor;
+      const toWholeIntervalFactor =
+        complementToWholeIntervalValue / intermediateThumbValueIncrementation;
+      const toNewValueFactor = 1 - toWholeIntervalFactor;
 
-        intermediateThumbValueIncrementation =
-          movement *
-          valuePerPx *
-          (toWholeIntervalFactor * currentIntervalInfo.magnificationFactor +
-            toNewValueFactor * nextIntervalInfo.magnificationFactor);
+      intermediateThumbValueIncrementation =
+        movement *
+        valuePerPx *
+        (toWholeIntervalFactor * currentIntervalInfo.magnificationFactor +
+          toNewValueFactor * (nextIntervalInfo.magnificationFactor as number));
 
-        thumbValueAfterIncrementation =
-          thumbValueBeforeIncrementation + intermediateThumbValueIncrementation;
+      thumbValueAfterIncrementation =
+        thumbValueBeforeIncrementation + intermediateThumbValueIncrementation;
 
-        intermediateThumbValueIncrementation =
-          thumbValueAfterIncrementation - this._options.intervals[keyOfCrossedInterval];
-        movement -= movement * toWholeIntervalFactor;
+      intermediateThumbValueIncrementation =
+        thumbValueAfterIncrementation - this._options.intervals[keyOfCrossedInterval];
+      movement -= movement * toWholeIntervalFactor;
 
-        increments.push(intermediateThumbValueIncrementation);
+      increments.push(intermediateThumbValueIncrementation);
 
-        currentIntervalInfo = this._getIntervalInfoByPoint(
-          this._options.intervals[keyOfCrossedInterval],
-          { isIncludedInSupremum: isLessThanInfimum }
-        ) as any;
-      }
+      currentIntervalInfo = this._getIntervalInfoByPoint(
+        this._options.intervals[keyOfCrossedInterval],
+        { isIncludedInSupremum: isLessThanInfimum }
+      ) as any;
     }
 
     return {

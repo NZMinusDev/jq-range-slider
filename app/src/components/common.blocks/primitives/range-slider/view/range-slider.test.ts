@@ -1,4 +1,4 @@
-import RangeSliderView, { DEFAULT_OPTIONS } from "./range-slider.view";
+import RangeSliderView, { DEFAULT_OPTIONS, DEFAULT_STATE } from "./range-slider.view";
 
 import {
   InstancePropsExpecter,
@@ -82,7 +82,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
       {
         intervals: { min: -100, max: 100, "50%": 50 },
         start: [-50, 0, 75],
-        tooltips: [true, false, true, true, true, false],
+        tooltips: [(val: number) => `${val}`, false, true, true, true, false],
       },
     ],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [] }],
@@ -92,7 +92,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
       {
         intervals: { min: -100, max: 100, "50%": 50 },
         start: [-100, -90, 0, 100],
-        padding: [10, 10],
+        padding: 5,
       },
     ],
     [{ intervals: { min: -100, max: 100, "50%": 50 }, start: [50, -50, -75, 0, 10] }],
@@ -109,7 +109,10 @@ const differentOptionsArg: DifferentArguments<Parameters<
         pips: { mode: "values", values: [-101, -100, 50, 99, 101] },
       },
     ],
+    [{ steps: 5 }],
     [{ pips: { values: [] } }],
+    [{ pips: { values: [50] } }],
+    [{ pips: { mode: "positions", values: 0 } }],
   ],
   partialOptionalArguments: [
     [
@@ -171,7 +174,11 @@ describe("init", () => {
 describe("init", () => {
   describe("with default options", () => {
     test("the instance's func options should be to have returned", () => {
-      const instance = new RangeSliderView();
+      const instance = new RangeSliderView({
+        intervals: { min: -100, max: 100 },
+        start: [-50, 0, 50],
+        tooltips: [() => ``, false, true],
+      });
 
       const formatterMock = jest.fn(instance["_options"].formatter);
       formatterMock(10);
@@ -180,6 +187,16 @@ describe("init", () => {
       const animateMock = jest.fn(instance["_options"].animate);
       animateMock(10);
       expect(animateMock).toHaveReturned();
+
+      const templateMock = jest.fn(instance.template);
+      templateMock();
+      expect(templateMock).toHaveReturned();
+
+      const _getIntervalInfoByPointMock = jest.spyOn(instance as any, "_getIntervalInfoByPoint");
+      instance["_getIntervalInfoByPoint"](-200);
+      expect(_getIntervalInfoByPointMock).toHaveReturnedWith({ keyOfSupremum: "min" });
+      instance["_getIntervalInfoByPoint"](200);
+      expect(_getIntervalInfoByPointMock).toHaveReturnedWith({ keyOfInfimum: "max" });
     });
   });
 });
@@ -236,6 +253,18 @@ describe("setOptions", () => {
     });
   });
 });
+testSetter({
+  Creator: RangeSliderView,
+  constructorArgs: [],
+  instancePropsExpecter: viewPropertiesExpecter,
+  methodOfInstanceToTest: {
+    methodReference: RangeSliderView.prototype.set,
+    expecter: ({ mock, passedArgs, instance }) => {},
+    differentArguments: { fullOptionalArguments: [[50], [[-10, 0, 10]]] },
+  },
+  propsToSet: new Map().set("_state.value.0", "0.0"),
+  resetPropsTo: new Map().set("_state", DEFAULT_STATE),
+});
 
 testDOM({
   Creator: RangeSliderView,
@@ -271,19 +300,21 @@ testDOM({
       const innerThumb = thumbsElements.item(1);
       const supremumThumb = thumbsElements.item(2);
 
-      jest.spyOn(instance as any, "_getThumbConstants").mockReturnValue({
-        thumbIndex: 1,
-        trackValueSize: TRACK_VALUE_SIZE,
-        getCalculated() {
-          const valuePerPx = TRACK_VALUE_SIZE / TRACK_PX_SIZE;
+      jest.spyOn(instance as any, "_getThumbConstants").mockImplementation((thumbElem) => {
+        return {
+          thumbIndex: originsElements.indexOf(thumbElem as HTMLElement),
+          trackValueSize: TRACK_VALUE_SIZE,
+          getCalculated() {
+            const valuePerPx = TRACK_VALUE_SIZE / TRACK_PX_SIZE;
 
-          return {
-            valuePerPx,
-          };
-        },
+            return {
+              valuePerPx,
+            };
+          },
+        };
       });
 
-      test("should be only one render for each pointermove", () => {
+      test("should be only one render for each pointermove where movement > 0", () => {
         const renderMock = jest.spyOn(instance as any, "_render");
 
         innerThumb.dispatchEvent(
@@ -297,6 +328,13 @@ testDOM({
           new PointerEvent("pointermove", {
             pointerId: 1,
             movementX: 10,
+            bubbles: true,
+          })
+        );
+        innerThumb.dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 1,
+            movementX: 0,
             bubbles: true,
           })
         );
@@ -427,7 +465,7 @@ testDOM({
 
       test("step options should work", () => {
         const STEPS = [50, 1, 300];
-        instance.setStepsOption(STEPS);
+        instance.setStepsOption([50, "none", 300]);
         innerThumb.dispatchEvent(
           new PointerEvent("pointerdown", {
             pointerId: 1,
@@ -447,25 +485,35 @@ testDOM({
           );
           const newValue = +(innerThumb.getAttribute("aria-valuenow") as string);
 
-          if (valueBefore >= MIN_TRACK_VALUE && valueBefore < -500) {
-            if (newValue >= -500) {
-              continue;
-            }
-
+          if (valueBefore > MIN_TRACK_VALUE && valueBefore < -500 && newValue < -500) {
             expect(Number.isInteger((newValue - valueBefore) / STEPS[0])).toBe(true);
           }
-          if (valueBefore >= -500 && valueBefore < 400) {
-            if (newValue >= 400) {
-              continue;
-            }
-
+          if (valueBefore > -500 && valueBefore < 400 && newValue < 400) {
             expect(Number.isInteger((newValue - valueBefore) / STEPS[1])).toBe(true);
           }
-          if (valueBefore >= 400 && valueBefore < MAX_TRACK_VALUE && newValue <= MAX_TRACK_VALUE) {
-            if (newValue >= MAX_TRACK_VALUE) {
-              continue;
-            }
+          if (valueBefore > 400 && valueBefore < MAX_TRACK_VALUE) {
+            expect(Number.isInteger((newValue - valueBefore) / STEPS[2])).toBe(true);
+          }
+        }
+        const movementFrom = -1;
+        for (let index = 0; index < MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB; index++) {
+          const valueBefore = +(innerThumb.getAttribute("aria-valuenow") as string);
+          innerThumb.dispatchEvent(
+            new PointerEvent("pointermove", {
+              pointerId: 1,
+              movementX: movementFrom,
+              bubbles: true,
+            })
+          );
+          const newValue = +(innerThumb.getAttribute("aria-valuenow") as string);
 
+          if (newValue > MIN_TRACK_VALUE && newValue < -500 && valueBefore < -500) {
+            expect(Number.isInteger((newValue - valueBefore) / STEPS[0])).toBe(true);
+          }
+          if (newValue > -500 && newValue < 400 && valueBefore < 400) {
+            expect(Number.isInteger(Math.round(newValue - valueBefore) / STEPS[1])).toBe(true);
+          }
+          if (newValue > 400 && newValue < MAX_TRACK_VALUE) {
             expect(Number.isInteger((newValue - valueBefore) / STEPS[2])).toBe(true);
           }
         }
@@ -609,6 +657,33 @@ testDOM({
         supremumThumb.dispatchEvent(
           new PointerEvent("lostpointercapture", {
             pointerId: 3,
+            bubbles: true,
+          })
+        );
+      });
+
+      test("click on origin shouldn't be handled", () => {
+        const valueBefore = +(innerThumb.getAttribute("aria-valuenow") as string);
+        originsElements[1].dispatchEvent(
+          new PointerEvent("pointerdown", {
+            pointerId: 2,
+            bubbles: true,
+          })
+        );
+
+        originsElements[1].dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 2,
+            movementX: 1,
+            bubbles: true,
+          })
+        );
+        const newValue = +(innerThumb.getAttribute("aria-valuenow") as string);
+        expect(valueBefore).toBe(newValue);
+
+        originsElements[1].dispatchEvent(
+          new PointerEvent("lostpointercapture", {
+            pointerId: 2,
             bubbles: true,
           })
         );
