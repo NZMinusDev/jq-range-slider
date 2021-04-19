@@ -10,7 +10,7 @@
   will-change: transform;
   transform-origin: 0 0;
   transform-style: flat;
-  transition: opacity, (transform 0.3s);
+  transition: (transform 0.3s);
 }
 
 .range-slider__range_isConnected {

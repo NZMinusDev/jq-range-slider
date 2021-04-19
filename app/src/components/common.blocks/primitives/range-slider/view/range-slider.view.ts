@@ -750,14 +750,17 @@ export default class RangeSliderView
 
           thumbElem.setPointerCapture(pointerEvent.pointerId);
 
+          this._toggleTransitionAnimate(thumbElem, [...thumbConstants.siblingRanges]);
+
           let movementAcc = 0;
           const moveThumbTo = (pointerEvent: PointerEvent) => {
             if (
               this._options.orientation === "horizontal"
                 ? pointerEvent.movementX === 0
                 : pointerEvent.movementY === 0
-            )
+            ) {
               return;
+            }
 
             const newCalculated = thumbConstants.getCalculated();
 
@@ -831,6 +834,7 @@ export default class RangeSliderView
             "lostpointercapture",
             (event) => {
               thumbElem.removeEventListener("pointermove", moveThumbTo);
+              this._toggleTransitionAnimate(thumbElem, [...thumbConstants.siblingRanges]);
             },
             { once: true }
           );
@@ -846,10 +850,17 @@ export default class RangeSliderView
     const thumbIndex = Array.from(
       trackElem.querySelectorAll<HTMLElement>(".range-slider__thumb-origin")
     ).indexOf(thumbElem);
+    const ranges = trackElem.querySelectorAll<HTMLElement>(".range-slider__range");
+    const siblingRanges = [ranges.item(thumbIndex), ranges.item(thumbIndex + 1)] as [
+      HTMLElement,
+      HTMLElement
+    ];
 
     return {
+      trackElem,
       thumbIndex,
       trackValueSize,
+      siblingRanges,
       getCalculated: () => {
         const valuePerPx =
           this._options.orientation === "horizontal"
@@ -955,6 +966,30 @@ export default class RangeSliderView
     const offsetOnTrackInPercent = this._toTrackPercent(this._state.value[thumbIndex]);
 
     return { offsetOnTrackInPercent, THUMB_SCALE_FACTOR, THUMB_TO_CENTER_OFFSET };
+  }
+  protected _toggleTransitionAnimate(
+    thumbElem: HTMLElement,
+    siblingRangeElements: [HTMLElement, HTMLElement]
+  ) {
+    const thumbTransition = thumbElem.style.transition;
+    const siblingRangesTransitions = [
+      siblingRangeElements[0].style.transition,
+      siblingRangeElements[1].style.transition,
+    ];
+
+    if (
+      thumbTransition !== "" ||
+      siblingRangesTransitions[0] !== "" ||
+      siblingRangesTransitions[1] !== ""
+    ) {
+      thumbElem.style.transition = "";
+      siblingRangeElements[0].style.transition = "";
+      siblingRangeElements[1].style.transition = "";
+    } else {
+      thumbElem.style.transition = "initial";
+      siblingRangeElements[0].style.transition = "initial";
+      siblingRangeElements[1].style.transition = "initial";
+    }
   }
 
   protected _trackEventListenerObject = {
