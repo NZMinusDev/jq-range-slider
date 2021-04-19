@@ -1,8 +1,7 @@
-.range-slider__tooltip {
-  $triangleSize: 5px;
+$triangleSize: 5px;
 
+.range-slider__tooltip {
   position: absolute;
-  top: calc(-100% - #{$triangleSize * 2});
   z-index: 1;
   padding: 1ex;
   border-radius: 4px;
@@ -16,15 +15,32 @@
   &:before {
     content: "";
     position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -$triangleSize;
     border-width: $triangleSize;
     border-style: solid;
-    border-color: black transparent transparent transparent;
   }
 }
 
 .range-slider__tooltip_isHidden {
   display: none;
+}
+
+.range-slider__tooltip_orientation-top {
+  top: calc(-100% - #{$triangleSize * 2});
+
+  &:before {
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-color: black transparent transparent transparent;
+  }
+}
+.range-slider__tooltip_orientation-left {
+  right: calc(100% + #{$triangleSize * 2});
+
+  &:before {
+    top: 50%;
+    left: 100%;
+    transform: translate(0, -50%);
+    border-color: transparent transparent transparent black;
+  }
 }

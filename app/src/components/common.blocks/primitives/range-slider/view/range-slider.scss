@@ -6,17 +6,6 @@
 
 .range-slider {
   position: relative;
-}
-
-.range-slider_orientation-horizontal {
-  & .range-slider__thumb {
-    cursor: ew-resize;
-  }
-}
-.range-slider_orientation-vertical {
-  transform: rotate(90deg);
-
-  & .range-slider__thumb {
-    cursor: ns-resize;
-  }
+  width: 100%;
+  height: 100%;
 }

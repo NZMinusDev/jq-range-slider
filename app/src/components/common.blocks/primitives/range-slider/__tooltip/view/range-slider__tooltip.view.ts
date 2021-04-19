@@ -14,12 +14,17 @@ export default interface RangeSliderTooltipView {
   setFormatterOption(formatter?: TooltipOptions["formatter"]): this;
 }
 
-export type TooltipOptions = { isHidden?: boolean; formatter?: Formatter };
+export type TooltipOptions = {
+  orientation?: "top" | "left";
+  isHidden?: boolean;
+  formatter?: Formatter;
+};
 export type TooltipState = {
   value: number;
 };
 
 export const DEFAULT_OPTIONS: Required<TooltipOptions> = {
+  orientation: "top",
   isHidden: false,
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
 };
@@ -37,6 +42,7 @@ export default class RangeSliderTooltipView
   } = {}) => html`<div
     class=${classMap({
       "range-slider__tooltip": true,
+      [`range-slider__tooltip_orientation-${this._options.orientation}`]: true,
       "range-slider__tooltip_isHidden": this._options.isHidden,
       ...classInfo,
     })}

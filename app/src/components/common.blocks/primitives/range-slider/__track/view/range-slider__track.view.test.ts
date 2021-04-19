@@ -107,6 +107,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [
     [
       {
+        orientation:"horizontal",
         intervals: { min: -999, max: 999, "25%": -900, "75%": 0 },
         steps: [1, 100, 11],
         padding: [10, 5],

@@ -100,11 +100,12 @@ export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
   tooltips: [true],
   pips: {
+    orientation: "horizontal",
     mode: "intervals",
     values: Object.values(TRACK_DEFAULT_OPTIONS.intervals),
     density: PIPS_DEFAULT_OPTIONS.density,
     isHidden: PIPS_DEFAULT_OPTIONS.isHidden,
-  }
+  },
 };
 export const DEFAULT_STATE: RangeSliderState = {
   value: DEFAULT_OPTIONS.start,
@@ -116,7 +117,6 @@ export default class RangeSliderView
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
     class=${classMap({
       "range-slider": true,
-      ["range-slider_orientation-" + this._options.orientation]: true,
       ...classInfo,
     })}
     ...=${spread(attributes)}
@@ -134,7 +134,10 @@ export default class RangeSliderView
 
             return view.template({
               styleInfo: {
-                transform: `translate(${a}%, 0) scale(${(b - a) / 100}, 1)`,
+                transform:
+                  this._options.orientation === "horizontal"
+                    ? `translate(${a}%, 0) scale(${(b - a) / 100}, 1)`
+                    : `translate(0, ${a}%) scale(1, ${(b - a) / 100})`,
               },
             });
           }),
@@ -171,7 +174,10 @@ export default class RangeSliderView
                     this._state.value[index] >= infimum + rangeOfSwapZIndex
                       ? baseZIndex + 2 * views.length - index - 2 + ""
                       : baseZIndex + index + "",
-                  transform: `translate(${thumbTranslate}%, 0)`,
+                  transform:
+                    this._options.orientation === "horizontal"
+                      ? `translate(${thumbTranslate}%, 0)`
+                      : `translate(0, ${thumbTranslate}%)`,
                 },
               },
               new RangeSliderTooltipView(
@@ -344,6 +350,7 @@ export default class RangeSliderView
 
   protected _fixIntervalsOption() {
     this._options.intervals = new RangeSliderTrack({
+      orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
       steps: this._options.steps,
@@ -353,6 +360,7 @@ export default class RangeSliderView
   }
   protected _fixPaddingOption() {
     this._options.padding = new RangeSliderTrack({
+      orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
       steps: this._options.steps,
@@ -379,6 +387,7 @@ export default class RangeSliderView
   }
   protected _fixStepsOption() {
     this._options.steps = new RangeSliderTrack({
+      orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
       steps: this._options.steps,
@@ -608,6 +617,7 @@ export default class RangeSliderView
 
   protected _toTrackOptions(): FixedTrackOptions {
     return {
+      orientation: this._options.orientation,
       intervals: this._options.intervals,
       steps: this._options.steps,
       padding: this._options.padding,
@@ -623,6 +633,7 @@ export default class RangeSliderView
     const tooltip = this._options.tooltips[index];
 
     return {
+      orientation: this._options.orientation === "horizontal" ? "top" : "left",
       formatter: typeof tooltip === "boolean" ? this._options.formatter : tooltip,
       isHidden: tooltip ? false : true,
     };
@@ -694,7 +705,13 @@ export default class RangeSliderView
       }
     }
 
-    return { isHidden, values: pipsValues, density, formatter };
+    return {
+      orientation: this._options.orientation,
+      isHidden,
+      values: pipsValues,
+      density,
+      formatter,
+    };
   }
 
   protected _toThumbState(index: number): ThumbState {
@@ -735,7 +752,12 @@ export default class RangeSliderView
 
           let movementAcc = 0;
           const moveThumbTo = (pointerEvent: PointerEvent) => {
-            if (pointerEvent.movementX === 0) return;
+            if (
+              this._options.orientation === "horizontal"
+                ? pointerEvent.movementX === 0
+                : pointerEvent.movementY === 0
+            )
+              return;
 
             const newCalculated = thumbConstants.getCalculated();
 
@@ -755,7 +777,10 @@ export default class RangeSliderView
             const ariaValueMax =
               this._state.value[thumbConstants.thumbIndex + 1] ?? trackBorder.max;
 
-            movementAcc += pointerEvent.movementX;
+            movementAcc +=
+              this._options.orientation === "horizontal"
+                ? pointerEvent.movementX
+                : pointerEvent.movementY;
             const thumbValueIncrementation =
               movementAcc * newCalculated.valuePerPx * currentIntervalInfo.magnificationFactor;
             thumbValue += thumbValueIncrementation;
@@ -825,8 +850,11 @@ export default class RangeSliderView
     return {
       thumbIndex,
       trackValueSize,
-      getCalculated() {
-        const valuePerPx = trackValueSize / trackElem.getBoundingClientRect().width;
+      getCalculated: () => {
+        const valuePerPx =
+          this._options.orientation === "horizontal"
+            ? trackValueSize / trackElem.getBoundingClientRect().width
+            : trackValueSize / trackElem.getBoundingClientRect().height;
 
         return {
           valuePerPx,
@@ -943,8 +971,13 @@ export default class RangeSliderView
           const trackBoundingClientRect = trackElem.getBoundingClientRect();
           const linearPercentTrackBorder = this._getLinearPercentBorderOfTrack();
           const clickedLinearPercent =
-            ((clickEvent.clientX - trackBoundingClientRect.left) / trackBoundingClientRect.width) *
-            100;
+            this._options.orientation === "horizontal"
+              ? ((clickEvent.clientX - trackBoundingClientRect.left) /
+                  trackBoundingClientRect.width) *
+                100
+              : ((clickEvent.clientY - trackBoundingClientRect.top) /
+                  trackBoundingClientRect.height) *
+                100;
 
           const validatedClickedLinearPercent =
             clickedLinearPercent < linearPercentTrackBorder.min

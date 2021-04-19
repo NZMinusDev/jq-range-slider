@@ -6,10 +6,7 @@
 }
 
 .range-slider__thumb-origin {
-  width: 5%;
-  height: 200%;
   position: absolute;
-  top: -50%;
   z-index: 2;
   will-change: transform;
   transition: (transform 0.3s);
@@ -18,8 +15,6 @@
 .range-slider__thumb {
   $bgColor: black;
 
-  width: 2em;
-  height: 100%;
   backface-visibility: hidden;
   background-color: $bgColor;
   box-shadow: 0 0 0 0;
@@ -36,8 +31,43 @@
   &:before,
   &:after {
     content: "";
-    height: 75%;
-    width: 1px;
     background: white;
+  }
+}
+
+.range-slider__thumb-origin_orientation-horizontal {
+  width: 5%;
+  height: 200%;
+  top: -50%;
+
+  .range-slider__thumb {
+    width: 2em;
+    height: 100%;
+    flex-direction: row;
+    cursor: ew-resize;
+
+    &:before,
+    &:after {
+      height: 75%;
+      width: 1px;
+    }
+  }
+}
+.range-slider__thumb-origin_orientation-vertical {
+  width: 200%;
+  height: 5%;
+  left: -50%;
+
+  .range-slider__thumb {
+    width: 100%;
+    height: 2em;
+    flex-direction: column;
+    cursor: ns-resize;
+
+    &:before,
+    &:after {
+      height: 1px;
+      width: 75%;
+    }
   }
 }

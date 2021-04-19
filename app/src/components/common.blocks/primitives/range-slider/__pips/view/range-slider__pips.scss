@@ -1,6 +1,10 @@
+$pipThickness: 2px;
+$valuePipLength: 1em;
+$markerPipLength: 0.5em;
+$margin: 0.5em;
+
 .range-slider__pips {
   position: relative;
-  padding-top: 0.5em;
   color: grey;
 }
 .range-slider__pips_isHidden {
@@ -9,22 +13,57 @@
 
 .range-slider__pips-value,
 .range-slider__pips-marker {
-  width: 2px;
   position: absolute;
   background: burlywood;
 }
 .range-slider__pips-value {
-  height: 10px;
   cursor: pointer;
 
   &:after {
     content: attr(data-formatted-value);
     display: inline-block;
-    transform: translate(-50%, 50%);
     white-space: nowrap;
     text-align: center;
   }
 }
-.range-slider__pips-marker {
-  height: 5px;
+
+.range-slider__pips_orientation-horizontal {
+  display: block;
+  margin-top: #{$margin};
+
+  .range-slider__pips-value,
+  .range-slider__pips-marker {
+    width: #{$pipThickness};
+  }
+
+  .range-slider__pips-value {
+    height: #{$valuePipLength};
+
+    &:after {
+      transform: translate(-50%, 50%);
+    }
+  }
+  .range-slider__pips-marker {
+    height: #{$markerPipLength};
+  }
+}
+.range-slider__pips_orientation-vertical {
+  display: inline-block;
+  height: 100%;
+  margin-left: #{$margin};
+
+  .range-slider__pips-value,
+  .range-slider__pips-marker {
+    height: #{$pipThickness};
+  }
+  .range-slider__pips-value {
+    width: #{$valuePipLength};
+
+    &:after {
+      transform: translate(50%, -50%);
+    }
+  }
+  .range-slider__pips-marker {
+    width: #{$markerPipLength};
+  }
 }

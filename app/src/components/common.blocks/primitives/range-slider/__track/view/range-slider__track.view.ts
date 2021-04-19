@@ -18,11 +18,13 @@ export default interface RangeSliderTrackView {
 }
 
 export type TrackOptions = {
+  orientation?: "horizontal" | "vertical";
   intervals?: { min: number; max: number; [key: string]: number };
   steps?: "none" | number | ("none" | number)[];
   padding?: number | [number, number];
 };
 export type FixedTrackOptions = {
+  orientation: Required<TrackOptions>["orientation"];
   intervals: Required<TrackOptions>["intervals"];
   steps: ("none" | number)[];
   padding: [number, number];
@@ -30,6 +32,7 @@ export type FixedTrackOptions = {
 export type TrackState = {};
 
 export const DEFAULT_OPTIONS: FixedTrackOptions = {
+  orientation: "horizontal",
   intervals: { min: -100, max: 100 },
   steps: ["none"],
   padding: [0, 0],
@@ -47,6 +50,7 @@ export default class RangeSliderTrackView
     html`<div
       class=${classMap({
         "range-slider__track": true,
+        [`range-slider__track_orientation-${this._options.orientation}`]: true,
         ...classInfo,
       })}
       ...=${spread(attributes)}

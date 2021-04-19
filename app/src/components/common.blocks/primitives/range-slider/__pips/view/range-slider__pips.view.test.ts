@@ -67,6 +67,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [
     [
       {
+        orientation:"horizontal",
         isHidden: true,
         values: [
           { value: -200, percent: 0 },

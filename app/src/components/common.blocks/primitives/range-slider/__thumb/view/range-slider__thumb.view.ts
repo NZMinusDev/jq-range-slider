@@ -37,7 +37,11 @@ export default class RangeSliderThumbView
     innerHTML: TemplateResult | TemplateResult[] = html``
   ) =>
     html`<div
-      class=${classMap({ "range-slider__thumb-origin": true, ...classInfo })}
+      class=${classMap({
+        "range-slider__thumb-origin": true,
+        [`range-slider__thumb-origin_orientation-${this._state.ariaOrientation}`]: true,
+        ...classInfo,
+      })}
       ...=${spread(attributes)}
       style=${styleMap({ ...styleInfo })}
     >

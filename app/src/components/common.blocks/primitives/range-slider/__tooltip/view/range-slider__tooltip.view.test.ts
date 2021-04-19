@@ -22,6 +22,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [
     [
       {
+        orientation:"top",
         formatter: (value: number) => `${value.toFixed(0).toLocaleString()}$`,
         isHidden: true,
       },

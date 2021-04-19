@@ -21,6 +21,7 @@ export default interface RangeSliderPipsView {
 }
 
 export type PipsOptions = {
+  orientation?: "horizontal" | "vertical";
   isHidden?: boolean;
   values?: { percent: number; value: number }[];
   density?: number;
@@ -29,6 +30,7 @@ export type PipsOptions = {
 export type PipsState = {};
 
 export const DEFAULT_OPTIONS: Required<PipsOptions> = {
+  orientation: "horizontal",
   isHidden: false,
   values: [],
   density: 1,
@@ -44,6 +46,7 @@ export default class RangeSliderPipsView
     html`<div
       class=${classMap({
         "range-slider__pips": true,
+        [`range-slider__pips_orientation-${this._options.orientation}`]: true,
         "range-slider__pips_isHidden": this._options.isHidden,
         ...classInfo,
       })}
@@ -133,7 +136,11 @@ export default class RangeSliderPipsView
     let markers: TemplateResult[];
     return this._options.values.map((value, index, values) => {
       /**values */
-      valueStyles = { left: `${(valuePosition += rangeShift)}%` };
+      valueStyles = {
+        [this._options.orientation === "horizontal"
+          ? "left"
+          : "top"]: `${(valuePosition += rangeShift)}%`,
+      };
       if (values[index + 1] !== undefined) {
         rangeShift = +(values[index + 1].percent - value.percent).toFixed(
           RENDER_CALCULATION_PRECISION
@@ -143,11 +150,22 @@ export default class RangeSliderPipsView
       markers = [];
       if (index > 0) {
         rangeBetweenValues =
-          Number.parseFloat(valueStyles.left) - Number.parseFloat(previousValueStyles.left);
+          Number.parseFloat(
+            this._options.orientation === "horizontal" ? valueStyles.left : valueStyles.top
+          ) -
+          Number.parseFloat(
+            this._options.orientation === "horizontal"
+              ? previousValueStyles.left
+              : previousValueStyles.top
+          );
         amountOfMarkers = Math.floor(rangeBetweenValues * this._options.density);
 
         for (let j = 0; j < amountOfMarkers; j++) {
-          markerStyles = { left: `${(markerPosition += rangeBetweenMarkers)}%` };
+          markerStyles = {
+            [this._options.orientation === "horizontal"
+              ? "left"
+              : "top"]: `${(markerPosition += rangeBetweenMarkers)}%`,
+          };
           markers.push(html`<div
             class=${classMap(markerClasses)}
             style=${styleMap(markerStyles)}

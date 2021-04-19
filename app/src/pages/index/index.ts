@@ -20,8 +20,14 @@ const sliders = $(".range-slider__pips-demo").initRangeSlider(
 );
 
 sliders[1].view.setOptions({
+  orientation: "vertical",
   intervals: { min: -1250, "80%": -500, "90%": 400, max: 1500 },
   formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
   connect: [false, true, false, true],
   pips: { mode: "count", density: 5, values: 2 },
 });
+
+const theSecondSlider = document
+  .querySelectorAll(".range-slider__pips-demo")
+  .item(1) as HTMLElement;
+theSecondSlider.style.height = `700px`;
