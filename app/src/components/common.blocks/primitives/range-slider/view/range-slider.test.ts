@@ -137,8 +137,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
         padding: [10, 5],
         formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
         tooltips: [true, (number: number) => `${number.toFixed(4).toLocaleString()}%`],
-        pips: { mode: "count", values: 4, density: 5 },
-        animate: (timeFraction: number) => timeFraction ** 3,
+        pips: { mode: "count", values: 4, density: 5 }
       },
     ],
   ],
@@ -183,10 +182,6 @@ describe("init", () => {
       const formatterMock = jest.fn(instance["_options"].formatter);
       formatterMock(10);
       expect(formatterMock).toHaveReturned();
-
-      const animateMock = jest.fn(instance["_options"].animate);
-      animateMock(10);
-      expect(animateMock).toHaveReturned();
 
       const templateMock = jest.fn(instance.template);
       templateMock();

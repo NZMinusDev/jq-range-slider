@@ -42,7 +42,6 @@ export default interface RangeSliderView {
   getFormatterOption(): FixedRangeSliderOptions["formatter"];
   getTooltipsOption(): FixedRangeSliderOptions["tooltips"];
   getPipsOption(): FixedRangeSliderOptions["pips"];
-  getAnimateOption(): FixedRangeSliderOptions["animate"];
   setIntervalsOption(intervals?: RangeSliderOptions["intervals"]): this;
   setStartOption(start?: RangeSliderOptions["start"]): this;
   setStepsOption(steps?: RangeSliderOptions["steps"]): this;
@@ -52,7 +51,6 @@ export default interface RangeSliderView {
   setFormatterOption(formatter?: RangeSliderOptions["formatter"]): this;
   setTooltipsOption(tooltips?: RangeSliderOptions["tooltips"]): this;
   setPipsOption(pips?: RangeSliderOptions["pips"]): this;
-  setAnimateOption(animate?: RangeSliderOptions["animate"]): this;
 
   get(): FixedRangeSliderOptions["start"];
   set(value?: RangeSliderOptions["start"]): this;
@@ -76,7 +74,6 @@ export type RangeSliderOptions = {
   formatter?: Formatter;
   tooltips?: boolean | (NonNullable<TooltipOptions["formatter"]> | boolean)[];
   pips?: Omit<PipsOptions, "formatter" | "values"> & { mode?: Mode; values?: number | number[] };
-  animate?: (timeFraction: number) => number; //TODO:
 };
 export type FixedRangeSliderOptions = {
   intervals: Required<RangeSliderOptions>["intervals"];
@@ -88,7 +85,6 @@ export type FixedRangeSliderOptions = {
   formatter: Required<RangeSliderOptions>["formatter"];
   tooltips: (Required<TooltipOptions>["formatter"] | boolean)[];
   pips: NonNullable<Required<RangeSliderOptions["pips"]>>;
-  animate: Required<RangeSliderOptions>["animate"];
 };
 export type RangeSliderState = {
   value: FixedRangeSliderOptions["start"];
@@ -108,8 +104,7 @@ export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
     values: Object.values(TRACK_DEFAULT_OPTIONS.intervals),
     density: PIPS_DEFAULT_OPTIONS.density,
     isHidden: PIPS_DEFAULT_OPTIONS.isHidden,
-  },
-  animate: (timeFraction: number) => timeFraction ** 2,
+  }
 };
 export const DEFAULT_STATE: RangeSliderState = {
   value: DEFAULT_OPTIONS.start,
@@ -211,7 +206,6 @@ export default class RangeSliderView
         "formatter",
         "tooltips",
         "pips",
-        "animate",
       ],
     });
   }
@@ -242,9 +236,6 @@ export default class RangeSliderView
   }
   getPipsOption() {
     return defaultsDeep({}, this._options.pips);
-  }
-  getAnimateOption() {
-    return this._options.animate;
   }
 
   setIntervalsOption(intervals: RangeSliderOptions["intervals"] = DEFAULT_OPTIONS.intervals) {
@@ -324,11 +315,6 @@ export default class RangeSliderView
     this._options.pips = defaultsDeep({}, pips, this._options.pips);
 
     this._fixPipsOption();
-
-    return this;
-  }
-  setAnimateOption(animate: RangeSliderOptions["animate"] = DEFAULT_OPTIONS.animate) {
-    this._options.animate = animate;
 
     return this;
   }
