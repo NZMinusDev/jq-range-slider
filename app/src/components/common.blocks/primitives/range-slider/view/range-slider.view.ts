@@ -54,14 +54,6 @@ export default interface RangeSliderView {
 
   get(): FixedRangeSliderOptions["start"];
   set(value?: RangeSliderOptions["start"]): this;
-
-  //TODO: заменить на on("event",()=>{}) + event typing on class
-  whenIsStarted(callback: eventHandler): this;
-  whenIsSlid(callback: eventHandler): this;
-  whenIsUpdated(callback: eventHandler): this;
-  whenIsChanged(callback: eventHandler): this;
-  whenIsSet(callback: eventHandler): this;
-  whenIsEnded(callback: eventHandler): this;
 }
 
 export type RangeSliderOptions = {
@@ -112,7 +104,7 @@ export const DEFAULT_STATE: RangeSliderState = {
 };
 
 export default class RangeSliderView
-  extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, "">
+  extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, "start" | "slide" | "update" | "change" | "set" | "end">
   implements RangeSliderView {
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
     class=${classMap({
@@ -336,6 +328,8 @@ export default class RangeSliderView
     );
 
     this._render();
+
+    this.trigger("update").trigger("set")
 
     return this;
   }
@@ -747,10 +741,12 @@ export default class RangeSliderView
       switch (event.type) {
         case "pointerdown": {
           const pointerEvent = event as PointerEvent;
-
+       
           thumbElem.setPointerCapture(pointerEvent.pointerId);
 
           this._toggleTransitionAnimate(thumbElem, [...thumbConstants.siblingRanges]);
+
+          this.trigger("start");
 
           let movementAcc = 0;
           const moveThumbTo = (pointerEvent: PointerEvent) => {
@@ -827,6 +823,8 @@ export default class RangeSliderView
 
             this._state.value[thumbConstants.thumbIndex] = thumbValue;
             this._setState({});
+
+            this.trigger("slide").trigger("update")
           };
 
           thumbElem.addEventListener("pointermove", moveThumbTo);
@@ -835,6 +833,7 @@ export default class RangeSliderView
             (event) => {
               thumbElem.removeEventListener("pointermove", moveThumbTo);
               this._toggleTransitionAnimate(thumbElem, [...thumbConstants.siblingRanges]);
+              this.trigger("change").trigger("set").trigger("end")
             },
             { once: true }
           );
@@ -1024,6 +1023,8 @@ export default class RangeSliderView
 
           this._state.value[this._getNearestThumb(clickedValue)] = clickedValue;
           this._setState({});
+
+          this.trigger("slide").trigger("update").trigger("change").trigger("set")
         }
       }
     },
@@ -1048,6 +1049,8 @@ export default class RangeSliderView
 
           this._state.value[this._getNearestThumb(+pipValue)] = +pipValue;
           this._setState({});
+
+          this.trigger("slide").trigger("update").trigger("change").trigger("set")
         }
       }
     },
