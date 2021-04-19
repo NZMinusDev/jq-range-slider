@@ -39,24 +39,24 @@ export interface Plugin {
  * btn.addEventListener('mouseup', menu);
  */
 export class EventManagerMixin<TEvents extends string> {
-  protected eventHandlers: {
+  protected _eventHandlers: {
     [key: string]: handler[];
   } = {};
 
   // Subscribe to the event
   on(eventName: TEvents, handler: handler) {
-    if (!this.eventHandlers[eventName]) {
-      this.eventHandlers[eventName] = [];
+    if (!this._eventHandlers[eventName]) {
+      this._eventHandlers[eventName] = [];
     }
-    if (!this.eventHandlers[eventName].includes(handler)) {
-      this.eventHandlers[eventName].push(handler);
+    if (!this._eventHandlers[eventName].includes(handler)) {
+      this._eventHandlers[eventName].push(handler);
     }
 
     return this;
   }
   // Cancel subscribe
   off(eventName: TEvents, handler: (...args: any) => void) {
-    let handlers = this.eventHandlers && this.eventHandlers[eventName];
+    let handlers = this._eventHandlers && this._eventHandlers[eventName];
     if (!handlers) return this;
     for (let i = 0; i < handlers.length; i++) {
       if (handlers[i] === handler) {
@@ -68,11 +68,11 @@ export class EventManagerMixin<TEvents extends string> {
   }
   // Generate the event with the specified name and data
   trigger(eventName: TEvents, ...args: any) {
-    if (!this.eventHandlers || !this.eventHandlers[eventName]) {
+    if (!this._eventHandlers || !this._eventHandlers[eventName]) {
       return this; // no handlers
     }
     // calling the handlers
-    this.eventHandlers[eventName].forEach((handler) => {
+    this._eventHandlers[eventName].forEach((handler) => {
       if (typeof handler === "function") {
         handler.apply(this, args);
       } else {
@@ -112,8 +112,8 @@ export abstract class MVPView<
   protected _options: TOptionsToGet;
   protected _state: TState;
 
-  protected readonly theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[];
-  protected readonly theOrderOfIteratingThroughTheState: Extract<keyof TState, string>[];
+  protected readonly _theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[];
+  protected readonly _theOrderOfIteratingThroughTheState: Extract<keyof TState, string>[];
 
   constructor(
     DEFAULT_OPTIONS: TOptionsToGet,
@@ -135,7 +135,7 @@ export abstract class MVPView<
 
     type OptionsKey = Extract<keyof TOptionsToGet, string>;
     type StateKey = Extract<keyof TState, string>;
-    this.theOrderOfIteratingThroughTheOptions = Array.from(
+    this._theOrderOfIteratingThroughTheOptions = Array.from(
       new Set(
         ([] as OptionsKey[]).concat(
           theOrderOfIteratingThroughTheOptions,
@@ -143,7 +143,7 @@ export abstract class MVPView<
         )
       )
     );
-    this.theOrderOfIteratingThroughTheState = Array.from(
+    this._theOrderOfIteratingThroughTheState = Array.from(
       new Set(
         ([] as StateKey[]).concat(
           theOrderOfIteratingThroughTheState,
@@ -151,15 +151,15 @@ export abstract class MVPView<
         )
       )
     );
-    this.theOrderOfIteratingThroughTheOptions.sort(
+    this._theOrderOfIteratingThroughTheOptions.sort(
       (a, b) =>
-        this.theOrderOfIteratingThroughTheOptions.indexOf(a as OptionsKey) -
-        this.theOrderOfIteratingThroughTheOptions.indexOf(b as OptionsKey)
+        this._theOrderOfIteratingThroughTheOptions.indexOf(a as OptionsKey) -
+        this._theOrderOfIteratingThroughTheOptions.indexOf(b as OptionsKey)
     );
-    this.theOrderOfIteratingThroughTheState.sort(
+    this._theOrderOfIteratingThroughTheState.sort(
       (a, b) =>
-        this.theOrderOfIteratingThroughTheState.indexOf(a as StateKey) -
-        this.theOrderOfIteratingThroughTheState.indexOf(b as StateKey)
+        this._theOrderOfIteratingThroughTheState.indexOf(a as StateKey) -
+        this._theOrderOfIteratingThroughTheState.indexOf(b as StateKey)
     );
 
     this._fixOptions()._fixState();
@@ -169,7 +169,7 @@ export abstract class MVPView<
     const options: any = {};
 
     let getOptionMethodName;
-    this.theOrderOfIteratingThroughTheOptions.forEach((optionKey) => {
+    this._theOrderOfIteratingThroughTheOptions.forEach((optionKey) => {
       getOptionMethodName = `get${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
       if (this[getOptionMethodName]) options[optionKey] = this[getOptionMethodName]();
     });
@@ -184,10 +184,10 @@ export abstract class MVPView<
     Object.entries(optionsToForEach)
       .sort(
         ([a], [b]) =>
-          this.theOrderOfIteratingThroughTheOptions.indexOf(
+          this._theOrderOfIteratingThroughTheOptions.indexOf(
             a as Extract<keyof TOptionsToGet, string>
           ) -
-          this.theOrderOfIteratingThroughTheOptions.indexOf(
+          this._theOrderOfIteratingThroughTheOptions.indexOf(
             b as Extract<keyof TOptionsToGet, string>
           )
       )
@@ -219,8 +219,8 @@ export abstract class MVPView<
     Object.entries(keyOfStateToForEach)
       .sort(
         ([a], [b]) =>
-          this.theOrderOfIteratingThroughTheState.indexOf(a as Extract<keyof TState, string>) -
-          this.theOrderOfIteratingThroughTheState.indexOf(b as Extract<keyof TState, string>)
+          this._theOrderOfIteratingThroughTheState.indexOf(a as Extract<keyof TState, string>) -
+          this._theOrderOfIteratingThroughTheState.indexOf(b as Extract<keyof TState, string>)
       )
       .forEach(([stateKey, stateValue]) => {
         setStateMethodName = `_set${stateKey[0].toUpperCase() + stateKey.slice(1)}State`;
@@ -238,7 +238,7 @@ export abstract class MVPView<
 
   protected _fixOptions() {
     let fixOptionMethodName;
-    this.theOrderOfIteratingThroughTheOptions.forEach((option) => {
+    this._theOrderOfIteratingThroughTheOptions.forEach((option) => {
       fixOptionMethodName = `_fix${option[0].toUpperCase() + option.slice(1)}Option`;
       if (this[fixOptionMethodName]) this[fixOptionMethodName]();
     });
@@ -247,7 +247,7 @@ export abstract class MVPView<
   }
   protected _fixState() {
     let fixStateMethodName;
-    this.theOrderOfIteratingThroughTheState.forEach((state) => {
+    this._theOrderOfIteratingThroughTheState.forEach((state) => {
       fixStateMethodName = `_fix${state[0].toUpperCase() + state.slice(1)}State`;
       if (this[fixStateMethodName]) this[fixStateMethodName]();
     });
@@ -280,11 +280,11 @@ export function renderMVPView<
   container: HTMLElement | DocumentFragment
 ) {
   const view = new ViewCreator(...viewParameters);
-  render(view.template({}), container);
+  render(view.template(), container);
 
   view
     .on("render", () => {
-      render(view.template({}), container);
+      render(view.template(), container);
     })
     .on("remove", () => {
       render((ViewCreator as any).templateOfRemoving(), container);
