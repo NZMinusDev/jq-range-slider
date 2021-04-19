@@ -65,6 +65,9 @@ export default class RangeSliderTrackView
     });
   }
 
+  getOrientationOption() {
+    return this._options.orientation;
+  }
   getIntervalsOption() {
     return { ...this._options.intervals };
   }
@@ -75,6 +78,11 @@ export default class RangeSliderTrackView
     return ([] as number[]).concat(this._options.padding) as FixedTrackOptions["padding"];
   }
 
+  setOrientationOption(orientation: TrackOptions["orientation"] = DEFAULT_OPTIONS.orientation) {
+    this._options.orientation = orientation;
+
+    return this;
+  }
   setIntervalsOption(intervals: TrackOptions["intervals"] = DEFAULT_OPTIONS.intervals) {
     this._options.intervals = { ...intervals };
 

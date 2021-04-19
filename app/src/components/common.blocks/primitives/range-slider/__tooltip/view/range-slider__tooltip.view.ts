@@ -8,8 +8,10 @@ import { spread } from "@open-wc/lit-helpers";
 import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
 
 export default interface RangeSliderTooltipView {
+  getOrientationOption(): TooltipOptions["orientation"];
   getIsHiddenOption(): TooltipOptions["isHidden"];
   getFormatterOption(): TooltipOptions["formatter"];
+  setOrientationOption(orientation: TooltipOptions["orientation"]): this;
   setIsHiddenOption(isHidden?: TooltipOptions["isHidden"]): this;
   setFormatterOption(formatter?: TooltipOptions["formatter"]): this;
 }
@@ -58,6 +60,9 @@ export default class RangeSliderTooltipView
     });
   }
 
+  getOrientationOption() {
+    return this._options.orientation;
+  }
   getIsHiddenOption() {
     return this._options.isHidden;
   }
@@ -65,6 +70,11 @@ export default class RangeSliderTooltipView
     return this._options.formatter;
   }
 
+  setOrientationOption(orientation: TooltipOptions["orientation"] = DEFAULT_OPTIONS.orientation) {
+    this._options.orientation = orientation;
+
+    return this;
+  }
   setIsHiddenOption(isHidden: TooltipOptions["isHidden"] = DEFAULT_OPTIONS.isHidden) {
     this._options.isHidden = isHidden;
 

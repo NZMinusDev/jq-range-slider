@@ -10,10 +10,12 @@ import { collapsingParseInt } from "@utils/devTools/tools/ParserHelper";
 import { defaultsDeep } from "lodash";
 
 export default interface RangeSliderPipsView {
+  getOrientationOption(): PipsOptions["orientation"];
   getIsHiddenOption(): PipsOptions["isHidden"];
   getValuesOption(): PipsOptions["values"];
   getDensityOption(): PipsOptions["density"];
   getFormatterOption(): PipsOptions["formatter"];
+  setOrientationOption(orientation?: PipsOptions["orientation"]): this;
   setIsHiddenOption(isHidden?: PipsOptions["isHidden"]): this;
   setValuesOption(values?: PipsOptions["values"]): this;
   setDensityOption(density?: PipsOptions["density"]): this;
@@ -62,6 +64,9 @@ export default class RangeSliderPipsView
     });
   }
 
+  getOrientationOption() {
+    return this._options.orientation;
+  }
   getIsHiddenOption() {
     return this._options.isHidden;
   }
@@ -75,6 +80,11 @@ export default class RangeSliderPipsView
     return this._options.formatter;
   }
 
+  setOrientationOption(orientation: PipsOptions["orientation"] = DEFAULT_OPTIONS.orientation) {
+    this._options.orientation = orientation;
+
+    return this;
+  }
   setIsHiddenOption(isHidden: PipsOptions["isHidden"] = DEFAULT_OPTIONS.isHidden) {
     this._options.isHidden = isHidden;
 
