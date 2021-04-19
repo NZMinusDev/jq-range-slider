@@ -15,8 +15,8 @@ const rangeSliderOptions: Partial<RangeSliderOptions> = {
 };
 
 const sliders = $(".range-slider__pips-demo").initRangeSlider(
-  new RangeSliderModel(),
-  rangeSliderOptions
+  rangeSliderOptions,
+  new RangeSliderModel()
 );
 
 sliders[1].view.setOptions({

@@ -3,12 +3,12 @@
 import RangeSliderPresenter from "./range-slider";
 //FIXME: make model optional
 (function ($, window, undefined) {
-  $.fn.initRangeSlider = function (rangeSliderModel, viewOptions) {
-    // this is jq collection
+  $.fn.initRangeSlider = function (viewOptions, rangeSliderModel) {
+    // "this" is jq collection
     const presenters: RangeSliderPresenter[] = [];
     this.each(function () {
-      presenters.push(new RangeSliderPresenter(rangeSliderModel, [viewOptions], this));
-      // this is html
+      presenters.push(new RangeSliderPresenter([viewOptions], this, rangeSliderModel));
+      // "this" is html
     });
 
     return presenters;

@@ -6,9 +6,9 @@ export default class RangeSlider {
   readonly view: RangeSliderView;
 
   constructor(
-    readonly model: RangeSliderModel,
     viewParameters: ConstructorParameters<typeof RangeSliderView>,
-    container: HTMLElement
+    container: HTMLElement,
+    readonly model?: RangeSliderModel
   ) {
     this.view = renderMVPView(RangeSliderView, viewParameters, container);
   }

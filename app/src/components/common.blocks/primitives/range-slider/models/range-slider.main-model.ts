@@ -10,14 +10,4 @@ export default class RangeSliderMainModel implements RangeSliderModel {
   whenStateIsChanged(callback: (state: RangeSliderState) => void): void {
     throw new Error("Method not implemented.");
   }
-
-  getThumbsValues(): Promise<number[]> {
-    throw new Error("Method not implemented.");
-  }
-  setThumbsValues(thumbsValues?: (number | undefined)[]): Promise<this> {
-    throw new Error("Method not implemented.");
-  }
-  whenThumbsValuesIsChanged(callback: (thumbsValues: number[]) => void): void {
-    throw new Error("Method not implemented.");
-  }
 }
