@@ -7,7 +7,7 @@ import { spread } from "@open-wc/lit-helpers";
 
 import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
 import { collapsingParseInt } from "@utils/devTools/tools/ParserHelper";
-import { defaultsDeep } from "lodash";
+import defaultsDeep from "lodash-es/defaultsDeep";
 
 export default interface RangeSliderPipsView {
   getOrientationOption(): PipsOptions["orientation"];

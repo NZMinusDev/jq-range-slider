@@ -1,7 +1,7 @@
 import { html, render, TemplateResult } from "lit-html";
 import { ClassInfo } from "lit-html/directives/class-map";
 import { StyleInfo } from "lit-html/directives/style-map";
-import { defaultsDeep } from "lodash-es";
+import defaultsDeep from "lodash-es/defaultsDeep";
 
 export interface Plugin {
   readonly dom: { self: HTMLElement | null };

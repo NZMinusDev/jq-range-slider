@@ -1,4 +1,5 @@
-import { cloneDeep, isPlainObject } from "lodash-es";
+import cloneDeep from "lodash-es/cloneDeep";
+import isPlainObject from "lodash-es/isPlainObject";
 import { TemplateResult } from "lit-html";
 
 import { OptionalTupleValues, RequiredTupleValues } from "./TypingHelper";
