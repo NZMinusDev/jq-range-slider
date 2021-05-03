@@ -516,9 +516,10 @@ export default class RangeSliderView
     if (value > this._options.intervals.max) return { keyOfInfimum: "max" };
     if (value < this._options.intervals.min) return { keyOfSupremum: "min" };
 
-    const indexOfSupremum = isIncludedInSupremum
+    let indexOfSupremum = isIncludedInSupremum
       ? intervalKeys.findIndex((key) => this._options.intervals[key] >= value)
       : intervalKeys.findIndex((key) => this._options.intervals[key] > value);
+    if (value === this._options.intervals.max) indexOfSupremum = intervalKeys.length - 1;
     const keyOfInfimum = intervalKeys[indexOfSupremum - 1];
     const keyOfSupremum = intervalKeys[indexOfSupremum];
 
