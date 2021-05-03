@@ -789,7 +789,9 @@ export default class RangeSliderView
                 ? pointerEvent.movementX
                 : pointerEvent.movementY;
             const thumbValueIncrementation =
-              movementAcc * newCalculated.valuePerPx * currentIntervalInfo.magnificationFactor;
+              (movementAcc / window.devicePixelRatio) *
+              newCalculated.valuePerPx *
+              currentIntervalInfo.magnificationFactor;
             thumbValue += thumbValueIncrementation;
 
             const shiftThroughIntervals = this._fixNonLinearShiftThroughIntervals(
@@ -926,7 +928,7 @@ export default class RangeSliderView
       const toNewValueFactor = 1 - toWholeIntervalFactor;
 
       intermediateThumbValueIncrementation =
-        movement *
+        (movement / window.devicePixelRatio) *
         valuePerPx *
         (toWholeIntervalFactor * currentIntervalInfo.magnificationFactor +
           toNewValueFactor * (nextIntervalInfo.magnificationFactor as number));
