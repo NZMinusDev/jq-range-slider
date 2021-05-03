@@ -1,4 +1,4 @@
-import { RangeSliderModel, RangeSliderState } from "./range-slider.decl.model";
+import { RangeSliderModel, RangeSliderState } from "./range-slider.model";
 
 export default class RangeSliderMainModel implements RangeSliderModel {
   getState(): Promise<RangeSliderState> {
