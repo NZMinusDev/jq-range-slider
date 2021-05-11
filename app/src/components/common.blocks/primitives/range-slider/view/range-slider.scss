@@ -1,11 +1,20 @@
 .range-slider,
 .range-slider * {
+  box-sizing: border-box;
   user-select: none;
   touch-action: none;
 }
 
 .range-slider {
-  position: relative;
   width: 100%;
   height: 100%;
+  display: inline-flex;
+  position: relative;
+}
+
+.range-slider_orientation-horizontal {
+  flex-direction: column;
+}
+.range-slider_orientation-vertical {
+  flex-direction: row;
 }

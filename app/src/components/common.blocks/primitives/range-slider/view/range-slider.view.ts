@@ -119,6 +119,7 @@ export default class RangeSliderView
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
     class=${classMap({
       "range-slider": true,
+      [`range-slider_orientation-${this._options.orientation}`]: true,
       ...classInfo,
     })}
     ...=${spread(attributes)}
