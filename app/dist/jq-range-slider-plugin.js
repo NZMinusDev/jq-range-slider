@@ -1,0 +1,1 @@
+!function(n,e,i){n.fn.initRangeSlider=function(n,e){const i=[];return this.each((function(){i.push(new RangeSliderPresenter(this,[n],e))})),i}}(jQuery,window);
