@@ -12,8 +12,6 @@ It's jq-range-slider plugin using MVP on typescript.
 
 ---
 
-### Colorpicker
-
 ![colorpicker](./app/src/assets/readme/colorpicker.gif)
 ![dates](./app/src/assets/readme/dates.gif)
 ![config](./app/src/assets/readme/config.gif)
@@ -125,7 +123,7 @@ getPipsOption(): {
 }
 
 // runs render, tip: call with empty object if you need just emit render
-// to do reset pass nothing
+// to do reset pass undefined
 setOptions(options?: {
   intervals: { [key: string]: number; min: number; max: number; }
   start: number | number[]
@@ -143,7 +141,7 @@ setOptions(options?: {
   }
 }): this;
 // don't run render
-// to do reset pass nothing
+// to do reset pass undefined
 setIntervalsOption(intervals?: { [key: string]: number; min: number; max: number; }): this;
 setStartOption(start?: number | number[]): this;
 setStepsOption(steps?: number | "none" | (number | "none")[]): this;
@@ -160,7 +158,7 @@ setPipsOption(pips?: {
 }): this;
 
 get(): number[];
-// to do reset pass nothing
+// to do reset pass undefined
 set(value?: number | number[]): this;
 
 on(eventName: "start" | "slide" | "update" | "change" | "set" | "end" | "render" | "remove", handler: ((..args: any) => void) | { handleEvent(...args: any): void; }): this;
@@ -184,7 +182,7 @@ Init:
 ```js
 new window.RangeSliderPresenter(
   document.querySelector(".slider-container"),
-  [RANGE_SLIDER_OPTIONS], // it's optional
+  RANGE_SLIDER_OPTIONS, // it's optional
   RANGE_SLIDER_MODEL // it's optional
 );
 ```
