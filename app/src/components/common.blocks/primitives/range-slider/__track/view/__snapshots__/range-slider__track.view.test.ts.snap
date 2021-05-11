@@ -4,7 +4,7 @@ exports[`DOM manipulation renders correctly 1`] = `
 <DocumentFragment>
   <!---->
   <div
-    class="range-slider__track"
+    class="range-slider__track range-slider__track_orientation-horizontal"
     style=""
   >
     

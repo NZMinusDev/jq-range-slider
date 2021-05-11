@@ -9,7 +9,7 @@ import {
   DifferentArguments,
   testDOM,
 } from "@utils/devTools/tools/UnitTestingHelper";
-import { collapsingParseFloat, getPrecision } from "@utils/devTools/tools/ParserHelper";
+import { collapsingParseFloat } from "@utils/devTools/tools/ParserHelper";
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderTrackView>,
@@ -38,10 +38,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
       expect(key).toBe(`${parsedKey}%`);
       expect(parsedKey).toBeGreaterThan(0);
       expect(parsedKey).toBeLessThan(100);
-      expect(getPrecision(parsedKey)).toBeLessThanOrEqual(2);
     }
-
-    expect(getPrecision(instance["_options"].intervals[key])).toBeLessThanOrEqual(2);
 
     if (index > 0) {
       expect(instance["_options"].intervals[key]).toBeGreaterThanOrEqual(
@@ -59,7 +56,6 @@ const viewPropertiesExpecter: InstancePropsExpecter<
           (index === 0 ? instance["_options"].padding[0] : 0) -
           (index === keys.length - 2 ? instance["_options"].padding[1] : 0)
       );
-      expect(getPrecision(instance["_options"].steps[index] as number)).toBeLessThanOrEqual(2);
     }
   });
 
@@ -69,9 +65,8 @@ const viewPropertiesExpecter: InstancePropsExpecter<
         (instance["_options"].intervals[keysOfIntervals[keysOfIntervals.length - 1]] -
           instance["_options"].intervals[keysOfIntervals[0]]) /
           2
-      ).toFixed(2)
+      )
     );
-    expect(getPrecision(pad)).toBeLessThanOrEqual(2);
   });
 };
 
@@ -107,7 +102,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [
     [
       {
-        orientation:"horizontal",
+        orientation: "horizontal",
         intervals: { min: -999, max: 999, "25%": -900, "75%": 0 },
         steps: [1, 100, 11],
         padding: [10, 5],

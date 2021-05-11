@@ -9,7 +9,7 @@ import {
   DifferentArguments,
   testDOM,
 } from "@utils/devTools/tools/UnitTestingHelper";
-import { collapsingParseInt, getPrecision } from "@utils/devTools/tools/ParserHelper";
+import { collapsingParseInt } from "@utils/devTools/tools/ParserHelper";
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderPipsView>,
@@ -67,7 +67,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [
     [
       {
-        orientation:"horizontal",
+        orientation: "horizontal",
         isHidden: true,
         values: [
           { value: -200, percent: 0 },

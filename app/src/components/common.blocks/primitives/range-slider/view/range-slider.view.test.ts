@@ -137,7 +137,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
         padding: [10, 5],
         formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
         tooltips: [true, (number: number) => `${number.toFixed(4).toLocaleString()}%`],
-        pips: { mode: "count", values: 4, density: 5 }
+        pips: { mode: "count", values: 4, density: 5 },
       },
     ],
   ],
@@ -260,6 +260,24 @@ testSetter({
   propsToSet: new Map().set("_state", 0),
   resetPropsTo: new Map().set("_state", DEFAULT_STATE),
 });
+describe("_setState", () => {
+  describe("with different lengths of value and isActiveThumbs", () => {
+    test("the value and isActiveThumbs should have the same length", () => {
+      const instance = new RangeSliderView(
+        {
+          start: [-50, 0, 50],
+        },
+        { value: [-5, 0, 5], isActiveThumbs: [false, false, false, false] }
+      );
+
+      expect(instance["_state"].value.length).toBe(instance["_state"].isActiveThumbs.length);
+
+      instance["_setState"]({ value: [-15, 0, 15], isActiveThumbs: [true] });
+
+      expect(instance["_state"].value.length).toBe(instance["_state"].isActiveThumbs.length);
+    });
+  });
+});
 testSetter({
   Creator: RangeSliderView,
   constructorArgs: [],
@@ -318,7 +336,7 @@ testDOM({
       trackElem.getBoundingClientRect = () => {
         return {
           width: TRACK_PX_SIZE,
-          height: 0,
+          height: TRACK_PX_SIZE,
           top: 0,
           right: 0,
           bottom: 0,
@@ -342,7 +360,7 @@ testDOM({
         };
       });
 
-      test("should be only one render for each pointermove where movement > 0", () => {
+      test("should be only one render for each pointermove where abs(movement) > 0", () => {
         const renderMock = jest.spyOn(instance as any, "_render");
 
         innerThumb.dispatchEvent(
@@ -381,9 +399,44 @@ testDOM({
           })
         );
 
-        expect(renderMock).toBeCalledTimes(2);
+        // +1 for _state.isActiveThumbs update when lostpointercapture
+        expect(renderMock).toBeCalledTimes(3);
 
         renderMock.mockRestore();
+      });
+
+      test("vertical orientation should be supported", () => {
+        instance.setOrientationOption("vertical");
+
+        innerThumb.dispatchEvent(
+          new PointerEvent("pointerdown", {
+            pointerId: 1,
+            bubbles: true,
+          })
+        );
+        innerThumb.dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 1,
+            movementY: 10,
+            bubbles: true,
+          })
+        );
+        innerThumb.dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 1,
+            movementY: -10,
+            bubbles: true,
+          })
+        );
+        innerThumb.dispatchEvent(
+          new PointerEvent("lostpointercapture", {
+            pointerId: 1,
+            bubbles: true,
+          })
+        );
+        expect(instance.get()).toMatchObject(START);
+
+        instance.setOrientationOption("horizontal");
       });
 
       test("value should be calculated with taking into account non linear intervals", () => {
@@ -670,6 +723,44 @@ testDOM({
         );
         expect(+(supremumThumb.getAttribute("aria-valuenow") as string)).toBe(MAX_TRACK_VALUE);
 
+        instance.setPaddingOption(0);
+        infimumThumb.dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 2,
+            movementX: -TRACK_PX_SIZE,
+            bubbles: true,
+          })
+        );
+        infimumThumb.dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 2,
+            movementX: -1,
+            bubbles: true,
+          })
+        );
+        expect(+(infimumThumb.getAttribute("aria-valuenow") as string)).toBe(
+          MIN_TRACK_VALUE - PADDING
+        );
+        supremumThumb.dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 3,
+            movementX: TRACK_PX_SIZE,
+            bubbles: true,
+          })
+        );
+        supremumThumb.dispatchEvent(
+          new PointerEvent("pointermove", {
+            pointerId: 3,
+            movementX: 1,
+            bubbles: true,
+          })
+        );
+        expect(+(supremumThumb.getAttribute("aria-valuenow") as string)).toBe(
+          MAX_TRACK_VALUE + PADDING
+        );
+        instance.set();
+        instance.setPaddingOption(PADDING);
+
         innerThumb.dispatchEvent(
           new PointerEvent("lostpointercapture", {
             pointerId: 1,
@@ -730,12 +821,25 @@ testDOM({
           })
         );
         trackElem.dispatchEvent(new MouseEvent("click", { clientX: TRACK_PX_SIZE + 1 }));
-
         expect(instance["_state"].value.map((val) => +val.toFixed(2))).toMatchObject([
           START[0],
           expect.any(Number),
           START[2],
         ]);
+
+        instance.setOrientationOption("vertical");
+        trackElem.dispatchEvent(new MouseEvent("click", { clientY: -1 }));
+        trackElem.dispatchEvent(
+          new MouseEvent("click", {
+            clientY: TRACK_PX_SIZE * 0.5,
+          })
+        );
+        expect(instance["_state"].value.map((val) => +val.toFixed(2))).toMatchObject([
+          START[0],
+          expect.any(Number),
+          START[2],
+        ]);
+        instance.setOrientationOption("horizontal");
 
         instance.set();
       });
@@ -756,10 +860,13 @@ testDOM({
     },
     ({ container, instance }) => {
       test("_getThumbConstants method should calculate correctly", () => {
-        const _getThumbConstantsMock = jest.spyOn(instance as any, "_getThumbConstants");
         const fakeThumbOriginElem = container.querySelector(
           ".range-slider__thumb-origin"
         ) as HTMLElement;
+
+        const TRACK_PX_SIZE = 2000;
+        const trackValueSize =
+          instance.getIntervalsOption().max - instance.getIntervalsOption().min;
         jest
           .spyOn(
             fakeThumbOriginElem.closest(".range-slider__track") as HTMLElement,
@@ -767,8 +874,8 @@ testDOM({
           )
           .mockImplementation(() => {
             return {
-              width: 2000,
-              height: 0,
+              width: TRACK_PX_SIZE,
+              height: TRACK_PX_SIZE,
               top: 0,
               right: 0,
               bottom: 0,
@@ -778,15 +885,40 @@ testDOM({
               toJSON: () => ``,
             };
           });
+        const _getThumbConstantsMock = jest.spyOn(instance as any, "_getThumbConstants");
 
         const thumbConstants = instance["_getThumbConstants"](fakeThumbOriginElem);
+        const ranges = thumbConstants.trackElem.querySelectorAll<HTMLElement>(
+          ".range-slider__range"
+        );
+        const siblingRanges = [
+          ranges.item(thumbConstants.thumbIndex),
+          ranges.item(thumbConstants.thumbIndex + 1),
+        ] as [HTMLElement, HTMLElement];
 
         expect(_getThumbConstantsMock).toHaveReturnedWith({
+          trackElem: thumbConstants.trackElem,
           thumbIndex: 0,
-          trackValueSize: 200,
+          trackValueSize,
+          siblingRanges,
           getCalculated: expect.any(Function),
         });
-        expect(thumbConstants.getCalculated()).toMatchObject({ valuePerPx: 200 / 2000 });
+        expect(thumbConstants.getCalculated()).toMatchObject({
+          valuePerPx: trackValueSize / TRACK_PX_SIZE,
+        });
+
+        instance.setOrientationOption("vertical");
+        expect(_getThumbConstantsMock).toHaveReturnedWith({
+          trackElem: thumbConstants.trackElem,
+          thumbIndex: 0,
+          trackValueSize,
+          siblingRanges,
+          getCalculated: expect.any(Function),
+        });
+        expect(thumbConstants.getCalculated()).toMatchObject({
+          valuePerPx: trackValueSize / TRACK_PX_SIZE,
+        });
+        instance.setOrientationOption("horizontal");
 
         _getThumbConstantsMock.mockRestore();
       });

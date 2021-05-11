@@ -10,24 +10,24 @@ exports[`DOM manipulation renders correctly 1`] = `
     
     
     <div
-      class="range-slider__track"
+      class="range-slider__track range-slider__track_orientation-horizontal"
       style=""
     >
       
       
       <!---->
       <div
-        class="range-slider__range"
+        class="range-slider__range range-slider__range_animate-tap"
         style="transform: translate(0%, 0) scale(0.5, 1);"
       />
       <!---->
       <div
-        class="range-slider__range"
+        class="range-slider__range range-slider__range_animate-tap"
         style="transform: translate(50%, 0) scale(0.5, 1);"
       />
       <!---->
       <div
-        class="range-slider__thumb-origin"
+        class="range-slider__thumb-origin range-slider__thumb-origin_orientation-horizontal range-slider__thumb-origin_animate-tap"
         style="z-index: 2; transform: translate(950%, 0);"
       >
         
@@ -45,7 +45,7 @@ exports[`DOM manipulation renders correctly 1`] = `
         
       
         <div
-          class="range-slider__tooltip"
+          class="range-slider__tooltip range-slider__tooltip_orientation-top"
           style=""
         >
           
@@ -64,30 +64,24 @@ exports[`DOM manipulation renders correctly 1`] = `
     
     
     <div
-      class="range-slider__pips"
+      class="range-slider__pips range-slider__pips_orientation-horizontal"
       style=""
     >
       
       
       <!---->
+      <!---->
+      
+        
       <div
         class="range-slider__pips-value"
         data-formatted-value="-100.00"
         data-value="-100"
         style="left: 0%;"
       />
-      
-        
+       
       <!---->
       <!---->
-      <div
-        class="range-slider__pips-value"
-        data-formatted-value="100.00"
-        data-value="100"
-        style="left: 100%;"
-      />
-      
-        
       <!---->
       <div
         class="range-slider__pips-marker"
@@ -589,7 +583,15 @@ exports[`DOM manipulation renders correctly 1`] = `
         style="left: 100%;"
       />
       <!---->
-      <!---->
+      
+        
+      <div
+        class="range-slider__pips-value"
+        data-formatted-value="100.00"
+        data-value="100"
+        style="left: 100%;"
+      />
+       
       <!---->
       
     
