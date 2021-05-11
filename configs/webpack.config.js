@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const MediaQueryPlugin = require("media-query-plugin");
 const DartSASS = require("sass");
@@ -173,8 +174,9 @@ const designWidth = 1440;
  * CleanWebpackPlugin - clean dist folder before each use.
  */
 const webpackPlugins = () => {
-  const plugins = [
-    ...resultOfTemplatesProcessing.HTMLWebpackPlugins,
+  const plugins = [];
+  if (isDev) plugins.push(...resultOfTemplatesProcessing.HTMLWebpackPlugins);
+  plugins.push(
     new MediaQueryPlugin({
       include: true,
       queries: {
@@ -188,7 +190,7 @@ const webpackPlugins = () => {
     }),
     new MiniCssExtractPlugin({
       // FIXME: can't use styles/[name]/[name] cause of MediaQueryPlugin interpolation bug
-      filename: hashedFileName("styles/[name]/style", "css"),
+      filename: isDev ? hashedFileName("styles/[name]/style", "css") : "range-slider.css",
     }),
     // FIXME: make it works before MediaQueryPlugin for extracting wrapped content
     new WrapperPlugin({
@@ -235,8 +237,8 @@ const webpackPlugins = () => {
           ],
         ],
       },
-    }),
-  ];
+    })
+  );
 
   if (isProd) {
     plugins.push(
@@ -263,8 +265,42 @@ const webpackPlugins = () => {
           ],
         },
       }),
-      new DuplicatesPlugin() // writes data in stats.json as plain text, shouldn't be in dev mod
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(
+              PATHS.src_absolute,
+              "./components/common.blocks/primitives/range-slider/jq-range-slider-plugin.js"
+            ),
+            to: path.resolve(PATHS.src_absolute, "./../dist"),
+          },
+          {
+            from: path.resolve(
+              PATHS.src_absolute,
+              "./components/common.blocks/primitives/range-slider/jq-range-slider-plugin.d.ts"
+            ),
+            to: path.resolve(
+              PATHS.src_absolute,
+              "./../dist/types/components/common.blocks/primitives/range-slider"
+            ),
+          },
+          {
+            from: path.resolve(
+              PATHS.src_absolute,
+              "./components/common.blocks/primitives/range-slider/range-slider-plugin.d.ts"
+            ),
+            to: path.resolve(
+              PATHS.src_absolute,
+              "./../dist/types/components/common.blocks/primitives/range-slider"
+            ),
+          },
+        ],
+      })
     );
+  }
+
+  if (process.env.MEASURE === "true") {
+    plugins.push(new DuplicatesPlugin()); // writes data in stats.json as plain text, shouldn't be in dev mod)
   }
 
   plugins.push(
@@ -417,56 +453,56 @@ const assetsLoaders = (extraLoader) => {
 const optimization = () => {
   const config = {
     // extract manifest from all entries
-    runtimeChunk: { name: "manifest" },
-    splitChunks: {
-      // split common imports into separate files
-      chunks: "all", // == 'initial' && 'async'
-      minChunks: 1,
-      cacheGroups: {
-        global: {
-          test: /.*\\utils\\global\\.*/,
-          priority: 12,
-          enforce: true,
-        },
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          priority: 11, // The optimization will prefer the cache group with a higher priority
-          enforce: true, // always create chunks (ignore: minSize, maxAsyncRequests, ... )
-        },
-        lib: {
-          test: /.*\\library.blocks\\.*/,
-          priority: 10,
-          enforce: true,
-        },
-        common: {
-          test: /.*\\common.blocks\\.*/,
-          priority: 9,
-          enforce: true,
-        },
-        thematic: {
-          test: /.*\\thematic\\.*\.blocks.*/,
-          priority: 3,
-          enforce: true,
-        },
-        experiments: {
-          test: /.*\\experimental\\.*\.blocks.*/,
-          priority: 2,
-          enforce: true,
-        },
-        css: {
-          test: /\.css$/,
-          minChunks: 2,
-          priority: 1,
-          enforce: true,
-        },
-        js: {
-          test: /\.js$/,
-          minChunks: 2,
-          priority: 1,
-          enforce: true,
-        },
-      },
-    },
+    // runtimeChunk: { name: "manifest" },
+    // splitChunks: {
+    //   // split common imports into separate files
+    //   chunks: "all", // == 'initial' && 'async'
+    //   minChunks: 1,
+    //   cacheGroups: {
+    //     global: {
+    //       test: /.*\\utils\\global\\.*/,
+    //       priority: 12,
+    //       enforce: true,
+    //     },
+    //     vendors: {
+    //       test: /[\\/]node_modules[\\/]/,
+    //       priority: 11, // The optimization will prefer the cache group with a higher priority
+    //       enforce: true, // always create chunks (ignore: minSize, maxAsyncRequests, ... )
+    //     },
+    //     lib: {
+    //       test: /.*\\library.blocks\\.*/,
+    //       priority: 10,
+    //       enforce: true,
+    //     },
+    //     common: {
+    //       test: /.*\\common.blocks\\.*/,
+    //       priority: 9,
+    //       enforce: true,
+    //     },
+    //     thematic: {
+    //       test: /.*\\thematic\\.*\.blocks.*/,
+    //       priority: 3,
+    //       enforce: true,
+    //     },
+    //     experiments: {
+    //       test: /.*\\experimental\\.*\.blocks.*/,
+    //       priority: 2,
+    //       enforce: true,
+    //     },
+    //     css: {
+    //       test: /\.css$/,
+    //       minChunks: 2,
+    //       priority: 1,
+    //       enforce: true,
+    //     },
+    //     js: {
+    //       test: /\.js$/,
+    //       minChunks: 2,
+    //       priority: 1,
+    //       enforce: true,
+    //     },
+    //   },
+    // },
   };
 
   if (isProd) {
@@ -485,10 +521,16 @@ module.exports = smp.wrap({
   context: PATHS.src_absolute,
   mode: "development",
   // Declarations of used files in bundles
-  entry: resultOfTemplatesProcessing.entries,
+  entry: isDev
+    ? resultOfTemplatesProcessing.entries
+    : {
+        "range-slider-plugin": [
+          `./components/common.blocks/primitives/range-slider/range-slider-plugin.ts`,
+        ],
+      },
   // Where to put bundles for every entry point
   output: {
-    filename: hashedFileName("bundles/[id]/[name]", "js"),
+    filename: isDev ? hashedFileName("bundles/[id]/[name]", "js") : "[name].js",
     path: PATHS.dist_absolute,
   },
   resolve: {
@@ -501,7 +543,6 @@ module.exports = smp.wrap({
     rules: [
       {
         test: /\.pug$/,
-        exclude: /.*\.view\.pug/,
         use: templatesLoaders(),
       },
       {
