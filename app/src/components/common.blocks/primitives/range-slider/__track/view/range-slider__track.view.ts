@@ -37,9 +37,8 @@ export const DEFAULT_OPTIONS: FixedTrackOptions = {
   steps: ["none"],
   padding: [0, 0],
 };
-export const DEFAULT_STATE: TrackState = {};
 
-const CALCULATION_PRECISION = 2;
+export const DEFAULT_STATE: TrackState = {};
 export default class RangeSliderTrackView
   extends MVPView<FixedTrackOptions, TrackOptions, TrackState>
   implements RangeSliderTrackView {
@@ -144,10 +143,6 @@ export default class RangeSliderTrackView
         if (val < Number.MIN_SAFE_INTEGER) {
           this._options.intervals[validKey] = Number.MIN_SAFE_INTEGER;
         }
-
-        this._options.intervals[validKey] = +this._options.intervals[validKey].toFixed(
-          CALCULATION_PRECISION
-        );
       }
     });
 
@@ -172,24 +167,23 @@ export default class RangeSliderTrackView
 
     const intervalsKeys = this._getSortedKeysOfIntervalsOption();
     this._options.steps = this._options.steps.map((step, index, steps) => {
-      const roundedStep = typeof step === "number" ? +step.toFixed(CALCULATION_PRECISION) : step;
       const maxStep =
         +Math.abs(
           this._options.intervals[intervalsKeys[index]] -
             this._options.intervals[intervalsKeys[index + 1]]
-        ).toFixed(CALCULATION_PRECISION) -
+        ) -
         (index === 0 ? this._options.padding[0] : 0) -
         (index === steps.length - 1 ? this._options.padding[1] : 0);
 
-      if (roundedStep !== "none") {
-        if (roundedStep > maxStep) {
+      if (step !== "none") {
+        if (step > maxStep) {
           return maxStep;
         }
 
-        if (roundedStep <= 0) {
+        if (step <= 0) {
           return DEFAULT_OPTIONS.steps[0];
         } else {
-          return roundedStep;
+          return step;
         }
       } else {
         return step;
@@ -205,16 +199,15 @@ export default class RangeSliderTrackView
 
     const intervalsKeys = this._getSortedKeysOfIntervalsOption();
     this._options.padding = this._options.padding.map((padding, index) => {
-      const maxPad = +(
+      const maxPad =
         (this._options.intervals[intervalsKeys[intervalsKeys.length - 1]] -
           this._options.intervals[intervalsKeys[0]]) /
-        2
-      ).toFixed(CALCULATION_PRECISION);
+        2;
 
       if (padding < 0) return 0;
       if (padding > maxPad) return maxPad;
 
-      return +this._options.padding[index].toFixed(CALCULATION_PRECISION);
+      return this._options.padding[index];
     }) as FixedTrackOptions["padding"];
 
     return this;
