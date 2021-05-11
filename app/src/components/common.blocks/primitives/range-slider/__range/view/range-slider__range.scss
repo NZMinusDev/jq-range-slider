@@ -6,13 +6,17 @@
   right: 0;
   z-index: 1;
   background: tomato;
+  border-radius: inherit;
   opacity: 0;
   will-change: transform;
   transform-origin: 0 0;
   transform-style: flat;
-  transition: (transform 0.3s);
 }
 
 .range-slider__range_isConnected {
   opacity: 1;
+}
+
+.range-slider__range_animate-tap {
+  transition: transform 0.3s;
 }

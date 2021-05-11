@@ -9,7 +9,6 @@
   position: absolute;
   z-index: 2;
   will-change: transform;
-  transition: (transform 0.3s);
 }
 
 .range-slider__thumb {
@@ -70,4 +69,8 @@
       width: 75%;
     }
   }
+}
+
+.range-slider__thumb-origin_animate-tap {
+  transition: transform 0.3s;
 }

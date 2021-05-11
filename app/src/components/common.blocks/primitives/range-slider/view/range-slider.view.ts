@@ -83,6 +83,7 @@ export type FixedRangeSliderOptions = {
 };
 export type RangeSliderState = {
   value: FixedRangeSliderOptions["start"];
+  isActiveThumbs: boolean[];
 };
 
 export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
@@ -101,8 +102,10 @@ export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
     isHidden: PIPS_DEFAULT_OPTIONS.isHidden,
   },
 };
+
 export const DEFAULT_STATE: RangeSliderState = {
   value: DEFAULT_OPTIONS.start,
+  isActiveThumbs: new Array(DEFAULT_OPTIONS.start.length).fill(false),
 };
 
 export default class RangeSliderView
@@ -132,6 +135,11 @@ export default class RangeSliderView
             const b = this._thumbValueToPositionOnTrack(index).offsetOnTrackInPercent;
 
             return view.template({
+              classInfo: {
+                "range-slider__range_animate-tap":
+                  (this._state.isActiveThumbs[index] ?? false) ===
+                  (this._state.isActiveThumbs[index - 1] ?? false),
+              },
               styleInfo: {
                 transform:
                   this._options.orientation === "horizontal"
@@ -166,7 +174,9 @@ export default class RangeSliderView
 
             return view.template(
               {
-                attributes: { "@pointerdown": this._thumbEventListenerObject },
+                classInfo: {
+                  "range-slider__thumb-origin_animate-tap": !this._state.isActiveThumbs[index],
+                },
                 styleInfo: {
                   zIndex:
                     this._state.value[index] >= supremum - rangeOfSwapZIndex &&
@@ -178,11 +188,13 @@ export default class RangeSliderView
                       ? `translate(${thumbTranslate}%, 0)`
                       : `translate(0, ${thumbTranslate}%)`,
                 },
+                attributes: { "@pointerdown": this._thumbEventListenerObject },
               },
               new RangeSliderTooltipView(
                 this._toTooltipOptions(index),
                 this._toTooltipState(index)
-              ).template()
+              ).template(),
+              this._state.isActiveThumbs[index]
             );
           })
       )
@@ -198,6 +210,9 @@ export default class RangeSliderView
       value: Array.isArray(options.start)
         ? options.start
         : [options.start ?? DEFAULT_STATE.value[0]],
+      isActiveThumbs: Array.isArray(options.start)
+        ? new Array(options.start.length).fill(false)
+        : DEFAULT_STATE.isActiveThumbs,
     }
   ) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
@@ -212,6 +227,7 @@ export default class RangeSliderView
         "tooltips",
         "pips",
       ],
+      theOrderOfIteratingThroughTheState: ["value", "isActiveThumbs"],
     });
   }
 
@@ -255,7 +271,11 @@ export default class RangeSliderView
       ? ([] as FixedRangeSliderOptions["start"]).concat(start)
       : this._options.start.fill(start);
 
-    this._fixStartOption()._fixConnectOption()._fixTooltipsOption()._fixValueState();
+    this._fixStartOption()
+      ._fixConnectOption()
+      ._fixTooltipsOption()
+      ._fixValueState()
+      ._fixIsActiveThumbsState();
 
     return this;
   }
@@ -320,6 +340,16 @@ export default class RangeSliderView
     this._options.pips = defaultsDeep({}, pips, this._options.pips);
 
     this._fixPipsOption();
+
+    return this;
+  }
+  setOptions(options?: RangeSliderOptions) {
+    const copy = ([] as RangeSliderState["isActiveThumbs"]).concat(this._state.isActiveThumbs);
+
+    // transition off
+    this._state.isActiveThumbs.fill(true);
+    super.setOptions(options);
+    this._state.isActiveThumbs = copy;
 
     return this;
   }
@@ -491,9 +521,24 @@ export default class RangeSliderView
       value < trackBorder.min ? trackBorder.min : value > trackBorder.max ? trackBorder.max : value
     );
 
+    while (this._state.value.length > this._options.start.length) {
+      this._state.value.pop();
+    }
+    while (this._state.value.length < this._options.start.length) {
+      this._state.value.push(this._options.start[this._state.value.length]);
+    }
+
     this._state.value.sort(ascending);
 
     return this;
+  }
+  protected _fixIsActiveThumbsState() {
+    while (this._state.isActiveThumbs.length > this._state.value.length) {
+      this._state.isActiveThumbs.pop();
+    }
+    while (this._state.isActiveThumbs.length < this._state.value.length) {
+      this._state.isActiveThumbs.push(false);
+    }
   }
 
   protected _getValueBorderOfTrack() {
@@ -752,7 +797,7 @@ export default class RangeSliderView
 
           thumbElem.setPointerCapture(pointerEvent.pointerId);
 
-          this._toggleTransitionAnimate(thumbElem, [...thumbConstants.siblingRanges]);
+          this._state.isActiveThumbs[thumbConstants.thumbIndex] = true;
 
           this.trigger("start");
 
@@ -842,7 +887,8 @@ export default class RangeSliderView
             "lostpointercapture",
             (event) => {
               thumbElem.removeEventListener("pointermove", moveThumbTo);
-              this._toggleTransitionAnimate(thumbElem, [...thumbConstants.siblingRanges]);
+              this._state.isActiveThumbs[thumbConstants.thumbIndex] = false;
+              this._setState({});
               this.trigger("change").trigger("set").trigger("end");
             },
             { once: true }
@@ -975,30 +1021,6 @@ export default class RangeSliderView
     const offsetOnTrackInPercent = this._toTrackPercent(this._state.value[thumbIndex]);
 
     return { offsetOnTrackInPercent, THUMB_SCALE_FACTOR, THUMB_TO_CENTER_OFFSET };
-  }
-  protected _toggleTransitionAnimate(
-    thumbElem: HTMLElement,
-    siblingRangeElements: [HTMLElement, HTMLElement]
-  ) {
-    const thumbTransition = thumbElem.style.transition;
-    const siblingRangesTransitions = [
-      siblingRangeElements[0].style.transition,
-      siblingRangeElements[1].style.transition,
-    ];
-
-    if (
-      thumbTransition !== "" ||
-      siblingRangesTransitions[0] !== "" ||
-      siblingRangesTransitions[1] !== ""
-    ) {
-      thumbElem.style.transition = "";
-      siblingRangeElements[0].style.transition = "";
-      siblingRangeElements[1].style.transition = "";
-    } else {
-      thumbElem.style.transition = "initial";
-      siblingRangeElements[0].style.transition = "initial";
-      siblingRangeElements[1].style.transition = "initial";
-    }
   }
 
   protected _trackEventListenerObject = {

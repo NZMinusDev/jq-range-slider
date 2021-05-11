@@ -34,12 +34,14 @@ export default class RangeSliderThumbView
   implements RangeSliderThumbView {
   readonly template: template = (
     { classInfo = {}, styleInfo = {}, attributes = {} } = {},
-    innerHTML: TemplateResult | TemplateResult[] = html``
+    innerHTML: TemplateResult | TemplateResult[] = html``,
+    isActive: boolean = false
   ) =>
     html`<div
       class=${classMap({
         "range-slider__thumb-origin": true,
         [`range-slider__thumb-origin_orientation-${this._state.ariaOrientation}`]: true,
+        "range-slider__thumb-origin_isActive": isActive,
         ...classInfo,
       })}
       ...=${spread(attributes)}
