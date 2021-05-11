@@ -1,46 +1,47 @@
 $pipThickness: 2px;
 $valuePipLength: 1em;
 $markerPipLength: 0.5em;
-$margin: 0.5em;
 
 .range-slider__pips {
+  display: inline-block;
   position: relative;
   color: grey;
-}
-.range-slider__pips_isHidden {
-  display: none;
 }
 
 .range-slider__pips-value,
 .range-slider__pips-marker {
-  position: absolute;
   background: burlywood;
 }
 .range-slider__pips-value {
+  position: relative;
   cursor: pointer;
 
   &:after {
     content: attr(data-formatted-value);
     display: inline-block;
-    white-space: nowrap;
     text-align: center;
   }
 }
+.range-slider__pips-marker {
+  position: absolute;
+}
 
 .range-slider__pips_orientation-horizontal {
-  display: block;
-  margin-top: #{$margin};
-
   .range-slider__pips-value,
   .range-slider__pips-marker {
+    display: inline-block;
     width: #{$pipThickness};
   }
 
   .range-slider__pips-value {
     height: #{$valuePipLength};
 
+    &:not(:first-child) {
+      margin-left: -6px;
+    }
+
     &:after {
-      transform: translate(-50%, 50%);
+      transform: translate(-50%, #{$valuePipLength});
     }
   }
   .range-slider__pips-marker {
@@ -48,22 +49,29 @@ $margin: 0.5em;
   }
 }
 .range-slider__pips_orientation-vertical {
-  display: inline-block;
   height: 100%;
-  margin-left: #{$margin};
 
   .range-slider__pips-value,
   .range-slider__pips-marker {
+    display: block;
     height: #{$pipThickness};
   }
   .range-slider__pips-value {
     width: #{$valuePipLength};
 
+    &:not(:first-child) {
+      margin-top: -2px;
+    }
+
     &:after {
-      transform: translate(50%, -50%);
+      transform: translate(#{$valuePipLength}, -50%);
     }
   }
   .range-slider__pips-marker {
     width: #{$markerPipLength};
   }
+}
+
+.range-slider__pips_isHidden {
+  display: none;
 }

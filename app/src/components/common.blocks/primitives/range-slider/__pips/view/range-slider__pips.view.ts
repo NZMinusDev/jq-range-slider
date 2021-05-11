@@ -38,9 +38,9 @@ export const DEFAULT_OPTIONS: Required<PipsOptions> = {
   density: 1,
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
 };
+
 export const DEFAULT_STATE: PipsState = {};
 
-const RENDER_CALCULATION_PRECISION = 4;
 export default class RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
   implements RangeSliderPipsView {
@@ -55,7 +55,7 @@ export default class RangeSliderPipsView
       ...=${spread(attributes)}
       style=${styleMap({ ...styleInfo })}
     >
-      ${this.getPipsRender()}
+      ${this._getPipsRender()}
     </div>`;
 
   constructor(options: PipsOptions = DEFAULT_OPTIONS, state: PipsState = DEFAULT_STATE) {
@@ -123,74 +123,64 @@ export default class RangeSliderPipsView
     return this;
   }
 
-  protected getPipsRender() {
+  protected _getPipsRender() {
     if (this._options.values.length < 1) return html``;
 
     const valueClasses: ClassInfo = { "range-slider__pips-value": true };
     const markerClasses: ClassInfo = { "range-slider__pips-marker": true };
 
+    const positionKey = this._options.orientation === "horizontal" ? "left" : "top";
     let valueStyles: StyleInfo;
     let markerStyles: StyleInfo;
 
     /**values */
     let valuePosition = 0;
     let rangeShift = this._options.values[0].percent;
-    let rangeBetweenValues = 0;
 
     /**density */
-    const rangeBetweenMarkers = +(1 / this._options.density).toFixed(RENDER_CALCULATION_PRECISION);
+    const rangeBetweenMarkers = 1 / this._options.density;
     let amountOfMarkers: number;
-    let previousValueStyles: StyleInfo;
     let markerPosition = this._options.values[0].percent;
 
     let markers: TemplateResult[];
     return this._options.values.map((value, index, values) => {
       /**values */
       valueStyles = {
-        [this._options.orientation === "horizontal"
-          ? "left"
-          : "top"]: `${(valuePosition += rangeShift)}%`,
+        [positionKey]: `${(valuePosition += rangeShift)}%`,
       };
-      if (values[index + 1] !== undefined) {
-        rangeShift = +(values[index + 1].percent - value.percent).toFixed(
-          RENDER_CALCULATION_PRECISION
-        );
-      }
       /**density */
       markers = [];
       if (index > 0) {
-        rangeBetweenValues =
-          Number.parseFloat(
-            this._options.orientation === "horizontal" ? valueStyles.left : valueStyles.top
-          ) -
-          Number.parseFloat(
-            this._options.orientation === "horizontal"
-              ? previousValueStyles.left
-              : previousValueStyles.top
-          );
-        amountOfMarkers = Math.floor(rangeBetweenValues * this._options.density);
+        amountOfMarkers = rangeShift * this._options.density;
 
         for (let j = 0; j < amountOfMarkers; j++) {
+          markerPosition += rangeBetweenMarkers;
+          if (markerPosition > valuePosition) {
+            markerPosition = valuePosition;
+          }
+
           markerStyles = {
-            [this._options.orientation === "horizontal"
-              ? "left"
-              : "top"]: `${(markerPosition += rangeBetweenMarkers)}%`,
+            [positionKey]: `${markerPosition}%`,
           };
+
           markers.push(html`<div
             class=${classMap(markerClasses)}
             style=${styleMap(markerStyles)}
           ></div>`);
         }
       }
-      previousValueStyles = valueStyles;
 
-      return html`<div
+      if (values[index + 1] !== undefined) {
+        rangeShift = +(values[index + 1].percent - value.percent);
+      }
+
+      return html`${markers}
+        <div
           class=${classMap(valueClasses)}
           style=${styleMap(valueStyles)}
           data-value=${value.value}
           data-formatted-value="${this._options.formatter(value.value)}"
-        ></div>
-        ${markers}`;
+        ></div> `;
     });
   }
 }
