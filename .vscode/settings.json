@@ -6,7 +6,6 @@
   "editor.rulers": [100],
   "editor.wordWrap": "wordWrapColumn",
   "editor.wordWrapColumn": 100,
-  "prettier.printWidth": 100, 
   "files.autoSave": "afterDelay",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {

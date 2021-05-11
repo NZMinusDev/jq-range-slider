@@ -1,6 +1,6 @@
 {
   "name": "jq-range-slider",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "It's jq-range-slider plugin using MVP on typescript",
   "private": true,
   "scripts": {
@@ -112,5 +112,12 @@
     "webpack-cli": "^3.3.12",
     "webpack-images-resizer": "^0.1.2",
     "wrapper-webpack-plugin": "^2.1.0"
+  },
+  "eslintConfig": {
+    "extends": "./configs/.eslintrc.js"
+  },
+  "prettier": {
+    "endOfLine": "auto",
+    "printWidth": 100
   }
 }

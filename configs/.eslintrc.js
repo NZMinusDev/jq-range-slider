@@ -1,4 +1,5 @@
 module.exports = {
+  env: { browser: true },
   /**
    * Alternative to "Espree" parser that can read Typescript code and produce said ESTree(the language ESLint can understand)
    */
@@ -12,6 +13,7 @@ module.exports = {
      * List of recommended rules for TypeScript from "@typescript-eslint" plugin
      */
     "plugin:@typescript-eslint/recommended",
+    "plugin:lit/recommended",
     /**
      * Enables (eslint-plugin-prettier), which run Prettier analysis as part of ESLint.
      * Disable any linting rule that might interfere with an existing Prettier rule using(eslint-config-prettier).
@@ -37,6 +39,24 @@ module.exports = {
     "promise/no-new-statics": "error",
     "promise/no-return-in-finally": "warn",
     "promise/valid-params": "warn",
-    "lit/rule-name": "error"
+  },
+  settings: {
+    "import/resolver": {
+      alias: {
+        map: [
+          ["@pug", "./app/src/pug"],
+          ["@layouts", "./app/src/layouts"],
+          ["@library.blocks", "./app/src/components/library.blocks/"],
+          ["@common.blocks", "./app/src/components/common.blocks/"],
+          ["@thematic", "./app/src/components/thematic/"],
+          ["@experiments", "./app/src/components/experimental/"],
+          ["@images", "./app/src/assets/pictures/images/"],
+          ["@contents", "./app/src/assets/pictures/contents/"],
+          ["@fonts", "./app/src/assets/fonts/"],
+          ["@utils", "./app/src/utils/"],
+        ],
+        extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
+      },
+    },
   },
 };
