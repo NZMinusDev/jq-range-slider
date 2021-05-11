@@ -1,3 +1,5 @@
+/// <reference path="./range-slider-plugin.d.ts" />
+
 import RangeSliderPresenter from "./range-slider";
 
-(window as any).RangeSliderPresenter = RangeSliderPresenter;
+window.RangeSliderPresenter = RangeSliderPresenter;
