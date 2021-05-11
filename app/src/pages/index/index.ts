@@ -3,8 +3,7 @@ import "./index.scss";
 
 import "@common.blocks/primitives/range-slider/range-slider-plugin";
 import "@common.blocks/primitives/range-slider/jq-range-slider-plugin";
-import { RangeSliderOptions } from "@common.blocks/primitives/range-slider/view/range-slider.view";
-import RangeSliderModel from "@common.blocks/primitives/range-slider/models/range-slider.main-model";
+import { RangeSliderOptions } from "@common.blocks/primitives/range-slider/view/range-slider.view.coupling";
 
 const rangeSliderOptions: Partial<RangeSliderOptions> = {
   intervals: { min: -1250, "80%": -500, "90%": 400, max: 1500 },
@@ -15,10 +14,7 @@ const rangeSliderOptions: Partial<RangeSliderOptions> = {
   pips: {},
 };
 
-const sliders = $(".range-slider__pips-demo").initRangeSlider(
-  rangeSliderOptions,
-  new RangeSliderModel()
-);
+const sliders = $(".range-slider__pips-demo").initRangeSlider(rangeSliderOptions);
 
 sliders[1].view.setOptions({
   orientation: "vertical",

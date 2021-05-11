@@ -1,47 +1,31 @@
 import "./range-slider__tooltip.scss";
 
+import IRangeSliderTooltipView, {
+  TooltipOptions,
+  TooltipState,
+} from "./range-slider__tooltip.view.coupling";
+
 import { html } from "lit-html";
 import { classMap } from "lit-html/directives/class-map";
 import { styleMap } from "lit-html/directives/style-map";
 import { spread } from "@open-wc/lit-helpers";
 
-import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
-
-export default interface RangeSliderTooltipView {
-  getOrientationOption(): TooltipOptions["orientation"];
-  getIsHiddenOption(): TooltipOptions["isHidden"];
-  getFormatterOption(): TooltipOptions["formatter"];
-  setOrientationOption(orientation: TooltipOptions["orientation"]): this;
-  setIsHiddenOption(isHidden?: TooltipOptions["isHidden"]): this;
-  setFormatterOption(formatter?: TooltipOptions["formatter"]): this;
-}
-
-export type TooltipOptions = {
-  orientation?: "top" | "left";
-  isHidden?: boolean;
-  formatter?: Formatter;
-};
-export type TooltipState = {
-  value: number;
-};
+import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 
 export const DEFAULT_OPTIONS: Required<TooltipOptions> = {
   orientation: "top",
   isHidden: false,
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
 };
+
 export const DEFAULT_STATE: TooltipState = {
   value: -1,
 };
 
 export default class RangeSliderTooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState>
-  implements RangeSliderTooltipView {
-  readonly template: template = ({
-    classInfo = {},
-    styleInfo = {},
-    attributes = {},
-  } = {}) => html`<div
+  implements IRangeSliderTooltipView {
+  readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
     class=${classMap({
       "range-slider__tooltip": true,
       [`range-slider__tooltip_orientation-${this._options.orientation}`]: true,
@@ -86,5 +70,3 @@ export default class RangeSliderTooltipView
     return this;
   }
 }
-
-type Formatter = (value: number) => string;

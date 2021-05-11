@@ -1,26 +1,31 @@
 import "./range-slider.scss";
 
-import RangeSliderTrack, {
+import IRangeSliderView, {
+  RangeSliderOptions,
+  FixedRangeSliderOptions,
+  RangeSliderState,
+  Formatter,
+} from "./range-slider.view.coupling";
+
+import { FixedTrackOptions, TrackOptions } from "../__track/view/range-slider__track.view.coupling";
+import { RangeOptions } from "../__range/view/range-slider__range.view.coupling";
+import { ThumbOptions, ThumbState } from "../__thumb/view/range-slider__thumb.view.coupling";
+import {
+  TooltipOptions,
+  TooltipState,
+} from "../__tooltip/view/range-slider__tooltip.view.coupling";
+import { PipsOptions } from "../__pips/view/range-slider__pips.view.coupling";
+import RangeSliderTrackView, {
   DEFAULT_OPTIONS as TRACK_DEFAULT_OPTIONS,
-  FixedTrackOptions,
   intervalsKeysCompareFunc,
-  TrackOptions,
 } from "./../__track/view/range-slider__track.view";
 import RangeSliderRangeView, {
   DEFAULT_OPTIONS as RANGE_DEFAULT_OPTIONS,
-  RangeOptions,
 } from "./../__range/view/range-slider__range.view";
-import RangeSliderThumbView, {
-  ThumbOptions,
-  ThumbState,
-} from "./../__thumb/view/range-slider__thumb.view";
-import RangeSliderTooltipView, {
-  TooltipOptions,
-  TooltipState,
-} from "./../__tooltip/view/range-slider__tooltip.view";
-import RangeSliderPips, {
+import RangeSliderThumbView from "./../__thumb/view/range-slider__thumb.view";
+import RangeSliderTooltipView from "./../__tooltip/view/range-slider__tooltip.view";
+import RangeSliderPipsView, {
   DEFAULT_OPTIONS as PIPS_DEFAULT_OPTIONS,
-  PipsOptions,
 } from "./../__pips/view/range-slider__pips.view";
 
 import defaultsDeep from "lodash-es/defaultsDeep";
@@ -31,60 +36,6 @@ import { spread } from "@open-wc/lit-helpers";
 
 import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { ascending } from "@utils/devTools/tools/ProcessingOfPrimitiveDataHelper";
-
-export default interface RangeSliderView {
-  getIntervalsOption(): FixedRangeSliderOptions["intervals"];
-  getStartOption(): FixedRangeSliderOptions["start"];
-  getStepsOption(): FixedRangeSliderOptions["steps"];
-  getConnectOption(): FixedRangeSliderOptions["connect"];
-  getOrientationOption(): FixedRangeSliderOptions["orientation"];
-  getPaddingOption(): FixedRangeSliderOptions["padding"];
-  getFormatterOption(): FixedRangeSliderOptions["formatter"];
-  getTooltipsOption(): FixedRangeSliderOptions["tooltips"];
-  getPipsOption(): FixedRangeSliderOptions["pips"];
-  setIntervalsOption(intervals?: RangeSliderOptions["intervals"]): this;
-  setStartOption(start?: RangeSliderOptions["start"]): this;
-  setStepsOption(steps?: RangeSliderOptions["steps"]): this;
-  setConnectOption(connect?: RangeSliderOptions["connect"]): this;
-  setOrientationOption(orientation?: RangeSliderOptions["orientation"]): this;
-  setPaddingOption(padding?: RangeSliderOptions["padding"]): this;
-  setFormatterOption(formatter?: RangeSliderOptions["formatter"]): this;
-  setTooltipsOption(tooltips?: RangeSliderOptions["tooltips"]): this;
-  setPipsOption(pips?: RangeSliderOptions["pips"]): this;
-
-  get(): FixedRangeSliderOptions["start"];
-  set(value?: RangeSliderOptions["start"]): this;
-}
-
-export type RangeSliderOptions = {
-  intervals?: TrackOptions["intervals"];
-  start?: number | number[];
-  steps?: TrackOptions["steps"];
-  connect?: NonNullable<RangeOptions["isConnected"]> | Required<RangeOptions>["isConnected"][];
-  orientation?: "horizontal" | "vertical";
-  padding?: TrackOptions["padding"];
-  formatter?: Formatter;
-  tooltips?: boolean | (NonNullable<TooltipOptions["formatter"]> | boolean)[];
-  pips?: Omit<PipsOptions, "formatter" | "values" | "orientation"> & {
-    mode?: Mode;
-    values?: number | number[];
-  };
-};
-export type FixedRangeSliderOptions = {
-  intervals: Required<RangeSliderOptions>["intervals"];
-  start: number[];
-  steps: FixedTrackOptions["steps"];
-  connect: Required<RangeOptions>["isConnected"][];
-  orientation: Required<RangeSliderOptions>["orientation"];
-  padding: FixedTrackOptions["padding"];
-  formatter: Required<RangeSliderOptions>["formatter"];
-  tooltips: (Required<TooltipOptions>["formatter"] | boolean)[];
-  pips: NonNullable<Required<RangeSliderOptions["pips"]>>;
-};
-export type RangeSliderState = {
-  value: FixedRangeSliderOptions["start"];
-  isActiveThumbs: boolean[];
-};
 
 export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,
@@ -115,7 +66,7 @@ export default class RangeSliderView
     RangeSliderState,
     "start" | "slide" | "update" | "change" | "set" | "end"
   >
-  implements RangeSliderView {
+  implements IRangeSliderView {
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
     class=${classMap({
       "range-slider": true,
@@ -125,7 +76,7 @@ export default class RangeSliderView
     ...=${spread(attributes)}
     style=${styleMap({ ...styleInfo })}
   >
-    ${new RangeSliderTrack(this._toTrackOptions()).template(
+    ${new RangeSliderTrackView(this._toTrackOptions()).template(
       { attributes: { "@click": this._trackEventListenerObject } },
       ([] as TemplateResult[]).concat(
         this._options.connect
@@ -200,7 +151,7 @@ export default class RangeSliderView
           })
       )
     )}
-    ${new RangeSliderPips(this._toPipsOptions()).template({
+    ${new RangeSliderPipsView(this._toPipsOptions()).template({
       attributes: { "@click": this._pipsEventListenerObject },
     })}
   </div>`;
@@ -248,7 +199,7 @@ export default class RangeSliderView
     return this._options.orientation;
   }
   getPaddingOption() {
-    return ([] as number[]).concat(this._options.padding);
+    return ([] as number[]).concat(this._options.padding) as [number, number];
   }
   getFormatterOption() {
     return this._options.formatter;
@@ -381,7 +332,7 @@ export default class RangeSliderView
   }
 
   protected _fixIntervalsOption() {
-    this._options.intervals = new RangeSliderTrack({
+    this._options.intervals = new RangeSliderTrackView({
       orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
@@ -391,7 +342,7 @@ export default class RangeSliderView
     return this;
   }
   protected _fixPaddingOption() {
-    this._options.padding = new RangeSliderTrack({
+    this._options.padding = new RangeSliderTrackView({
       orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
@@ -418,7 +369,7 @@ export default class RangeSliderView
     return this;
   }
   protected _fixStepsOption() {
-    this._options.steps = new RangeSliderTrack({
+    this._options.steps = new RangeSliderTrackView({
       orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
@@ -479,7 +430,7 @@ export default class RangeSliderView
     if (Array.isArray(this._options.pips.values)) {
       this._options.pips.values.sort(ascending);
     }
-    this._options.pips.density = new RangeSliderPips(this._toPipsOptions()).getDensityOption();
+    this._options.pips.density = new RangeSliderPipsView(this._toPipsOptions()).getDensityOption();
 
     return this;
   }
@@ -1089,9 +1040,3 @@ export default class RangeSliderView
     },
   };
 }
-
-interface eventHandler {
-  (values: number[], isTapped: boolean): void;
-}
-type Formatter = (value: number) => string;
-type Mode = "intervals" | "count" | "positions" | "values";

@@ -1,14 +1,19 @@
-import { renderMVPView } from "@utils/devTools/tools/PluginCreationHelper";
-import { RangeSliderModel } from "./models/range-slider.model";
+import IRangeSliderPresenter from "./range-slider.coupling";
+
+import IRangeSliderView, { RangeSliderOptions } from "./view/range-slider.view.coupling";
+import IRangeSliderModel from "./models/range-slider.model.coupling";
+
 import RangeSliderView from "./view/range-slider.view";
 
-export default class RangeSlider {
-  readonly view: RangeSliderView;
+import { renderMVPView } from "@utils/devTools/tools/PluginCreationHelper";
+
+export default class RangeSliderPresenter implements IRangeSliderPresenter {
+  readonly view: IRangeSliderView;
 
   constructor(
     container: HTMLElement,
     viewOptions?: RangeSliderOptions,
-    readonly model?: RangeSliderModel
+    readonly model?: IRangeSliderModel
   ) {
     this.view = renderMVPView(RangeSliderView, [viewOptions] as [RangeSliderOptions], container);
 

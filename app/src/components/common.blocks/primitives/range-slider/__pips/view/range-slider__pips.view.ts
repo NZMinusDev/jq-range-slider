@@ -1,35 +1,15 @@
 import "./range-slider__pips.scss";
 
+import IRangeSliderPipsView, { PipsOptions, PipsState } from "./range-slider__pips.view.coupling";
+
+import defaultsDeep from "lodash-es/defaultsDeep";
 import { html, TemplateResult } from "lit-html";
 import { ClassInfo, classMap } from "lit-html/directives/class-map.js";
 import { StyleInfo, styleMap } from "lit-html/directives/style-map.js";
 import { spread } from "@open-wc/lit-helpers";
 
-import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
+import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { collapsingParseInt } from "@utils/devTools/tools/ParserHelper";
-import defaultsDeep from "lodash-es/defaultsDeep";
-
-export default interface RangeSliderPipsView {
-  getOrientationOption(): PipsOptions["orientation"];
-  getIsHiddenOption(): PipsOptions["isHidden"];
-  getValuesOption(): PipsOptions["values"];
-  getDensityOption(): PipsOptions["density"];
-  getFormatterOption(): PipsOptions["formatter"];
-  setOrientationOption(orientation?: PipsOptions["orientation"]): this;
-  setIsHiddenOption(isHidden?: PipsOptions["isHidden"]): this;
-  setValuesOption(values?: PipsOptions["values"]): this;
-  setDensityOption(density?: PipsOptions["density"]): this;
-  setFormatterOption(formatter?: PipsOptions["formatter"]): this;
-}
-
-export type PipsOptions = {
-  orientation?: "horizontal" | "vertical";
-  isHidden?: boolean;
-  values?: { percent: number; value: number }[];
-  density?: number;
-  formatter?: Formatter;
-};
-export type PipsState = {};
 
 export const DEFAULT_OPTIONS: Required<PipsOptions> = {
   orientation: "horizontal",
@@ -43,8 +23,8 @@ export const DEFAULT_STATE: PipsState = {};
 
 export default class RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
-  implements RangeSliderPipsView {
-  readonly template: template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
+  implements IRangeSliderPipsView {
+  readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
     html`<div
       class=${classMap({
         "range-slider__pips": true,
@@ -184,5 +164,3 @@ export default class RangeSliderPipsView
     });
   }
 }
-
-type Formatter = (value: number) => string;

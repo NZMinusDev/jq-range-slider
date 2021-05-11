@@ -1,35 +1,18 @@
 import "./range-slider__track.scss";
 
+import IRangeSliderTrackView, {
+  TrackOptions,
+  FixedTrackOptions,
+  TrackState,
+} from "./range-slider__track.view.coupling";
+
 import { html, TemplateResult } from "lit-html";
 import { classMap } from "lit-html/directives/class-map";
 import { styleMap } from "lit-html/directives/style-map";
 import { spread } from "@open-wc/lit-helpers";
 
-import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
+import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 import { collapsingParseFloat } from "@utils/devTools/tools/ParserHelper";
-
-export default interface RangeSliderTrackView {
-  getIntervalsOption(): FixedTrackOptions["intervals"];
-  getStepsOption(): FixedTrackOptions["steps"];
-  getPaddingOption(): FixedTrackOptions["padding"];
-  setIntervalsOption(intervals?: TrackOptions["intervals"]): this;
-  setStepsOption(steps?: TrackOptions["steps"]): this;
-  setPaddingOption(padding?: TrackOptions["padding"]): this;
-}
-
-export type TrackOptions = {
-  orientation?: "horizontal" | "vertical";
-  intervals?: { min: number; max: number; [key: string]: number };
-  steps?: "none" | number | ("none" | number)[];
-  padding?: number | [number, number];
-};
-export type FixedTrackOptions = {
-  orientation: Required<TrackOptions>["orientation"];
-  intervals: Required<TrackOptions>["intervals"];
-  steps: ("none" | number)[];
-  padding: [number, number];
-};
-export type TrackState = {};
 
 export const DEFAULT_OPTIONS: FixedTrackOptions = {
   orientation: "horizontal",
@@ -39,10 +22,11 @@ export const DEFAULT_OPTIONS: FixedTrackOptions = {
 };
 
 export const DEFAULT_STATE: TrackState = {};
+
 export default class RangeSliderTrackView
   extends MVPView<FixedTrackOptions, TrackOptions, TrackState>
-  implements RangeSliderTrackView {
-  readonly template: template = (
+  implements IRangeSliderTrackView {
+  readonly template = (
     { classInfo = {}, styleInfo = {}, attributes = {} } = {},
     innerHTML: TemplateResult | TemplateResult[] = html``
   ) =>

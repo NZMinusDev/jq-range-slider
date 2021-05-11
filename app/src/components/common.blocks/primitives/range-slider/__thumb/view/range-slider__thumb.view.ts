@@ -1,24 +1,19 @@
 import "./range-slider__thumb.scss";
 
+import IRangeSliderThumbView, {
+  ThumbOptions,
+  ThumbState,
+} from "./range-slider__thumb.view.coupling";
+
 import { html, TemplateResult } from "lit-html";
 import { classMap } from "lit-html/directives/class-map";
 import { styleMap } from "lit-html/directives/style-map";
 import { spread } from "@open-wc/lit-helpers";
 
-import { MVPView, template } from "@utils/devTools/tools/PluginCreationHelper";
-
-export default interface RangeSliderThumbView {}
-
-export type ThumbOptions = {};
-export type ThumbState = {
-  ariaOrientation: "horizontal" | "vertical";
-  ariaValueMin: number;
-  ariaValueMax: number;
-  ariaValueNow: number;
-  ariaValueText: string;
-};
+import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
 
 export const DEFAULT_OPTIONS: Required<ThumbOptions> = {};
+
 export const DEFAULT_STATE: ThumbState = {
   ariaOrientation: "horizontal",
   ariaValueMin: -1,
@@ -31,8 +26,8 @@ const ARIA_ATTRIBUTE_PRECISION = 2;
 
 export default class RangeSliderThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
-  implements RangeSliderThumbView {
-  readonly template: template = (
+  implements IRangeSliderThumbView {
+  readonly template = (
     { classInfo = {}, styleInfo = {}, attributes = {} } = {},
     innerHTML: TemplateResult | TemplateResult[] = html``,
     isActive: boolean = false
