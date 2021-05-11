@@ -20,12 +20,8 @@ $triangleSize: 5px;
   }
 }
 
-.range-slider__tooltip_isHidden {
-  display: none;
-}
-
 .range-slider__tooltip_orientation-top {
-  top: calc(-100% - #{$triangleSize * 2});
+  bottom: calc(100% + #{$triangleSize * 2});
 
   &:before {
     top: 100%;
@@ -43,4 +39,8 @@ $triangleSize: 5px;
     transform: translate(0, -50%);
     border-color: transparent transparent transparent black;
   }
+}
+
+.range-slider__tooltip_isHidden {
+  display: none;
 }
