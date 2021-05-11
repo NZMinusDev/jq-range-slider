@@ -6,10 +6,26 @@ export default class RangeSlider {
   readonly view: RangeSliderView;
 
   constructor(
-    viewParameters: ConstructorParameters<typeof RangeSliderView>,
     container: HTMLElement,
+    viewOptions?: RangeSliderOptions,
     readonly model?: RangeSliderModel
   ) {
-    this.view = renderMVPView(RangeSliderView, viewParameters, container);
+    this.view = renderMVPView(RangeSliderView, [viewOptions] as [RangeSliderOptions], container);
+
+    if (model !== undefined) {
+      model
+        .getState()
+        .then((state) => {
+          this.view.set(state.value);
+        })
+        .then(() => {
+          this.view.on("set", () => {
+            model.setState({ value: this.view.get() });
+          });
+          model.whenStateIsChanged((state) => {
+            this.view.set(state.value);
+          });
+        });
+    }
   }
 }

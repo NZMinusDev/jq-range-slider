@@ -1,10 +1,10 @@
-/// <reference path="./jq-range-slider.d.ts"/>:
+/// <reference path="./jq-range-slider-plugin.d.ts" />
 
 (function ($, window, undefined) {
   $.fn.initRangeSlider = function (viewOptions, rangeSliderModel) {
     const presenters = [];
     this.each(function () {
-      presenters.push(new RangeSliderPresenter([viewOptions], this, rangeSliderModel));
+      presenters.push(new RangeSliderPresenter(this, [viewOptions], rangeSliderModel));
     });
 
     return presenters;
