@@ -1,4 +1,5 @@
 .range-slider__track {
+  display: inline-block;
   position: relative;
   z-index: 1;
   background: whitesmoke;
@@ -9,12 +10,10 @@
 }
 
 .range-slider__track_orientation-horizontal {
-  display: block;
   width: 100%;
   height: 1em;
 }
 .range-slider__track_orientation-vertical {
-  display: inline-block;
   width: 1em;
   height: 100%;
 }
