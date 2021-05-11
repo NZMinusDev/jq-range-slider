@@ -1,0 +1,243 @@
+@startuml
+class EventManagerMixin<TEvents extends string> {
+    #_eventHandlers: { [key: string]: handler[]; }
+    +on(eventName: TEvents, handler: handler): this
+    +off(eventName: TEvents, handler: (...args: any) => void): this
+    +trigger(eventName: TEvents, args: any): this
+    +handleEvent(event: Event): this
+}
+abstract class MVPView<TOptionsToGet extends object, TOptionsToSet extends object, TState extends object, TEvents extends string> extends EventManagerMixin {
+    +template: template
+    #_options: TOptionsToGet
+    #_state: TState
+    #_theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[]
+    #_theOrderOfIteratingThroughTheState: Extract<keyof TState, string>[]
+    +getOptions(): TOptionsToGet
+    +setOptions(options?: TOptionsToSet | undefined): this
+    +remove(): this
+    #_setState(state?: Partial<TState> | undefined): this
+    #_fixOptions(): this
+    #_fixState(): this
+    #_render(): this
+    +{static} templateOfRemoving: () => TemplateResult
+}
+interface MVPModel<State> {
+    +getState(): Promise<Required<State>>
+    +setState(state?: Partial<State> | undefined): Promise<this>
+    +whenStateIsChanged(callback: (state: Required<State>) => void): void
+}
+interface IRangeSliderTrackView extends MVPView {
+    +getIntervalsOption(): { [key: string]: number; min: number; max: number; }
+    +getStepsOption(): (number | "none")[]
+    +getPaddingOption(): [number, number]
+    +setIntervalsOption(intervals?: { [key: string]: number; min: number; max: number; } | undefined): this
+    +setStepsOption(steps?: number | "none" | (number | "none")[] | undefined): this
+    +setPaddingOption(padding?: number | [number, number] | undefined): this
+}
+interface IRangeSliderRangeView extends MVPView {
+    +getIsConnectedOption(): boolean | undefined
+    +setIsConnectedOption(connect?: boolean | undefined): this
+}
+interface IRangeSliderTooltipView extends MVPView {
+    +getOrientationOption(): "top" | "left" | undefined
+    +getIsHiddenOption(): boolean | undefined
+    +getFormatterOption(): Formatter | undefined
+    +setOrientationOption(orientation: "top" | "left" | undefined): this
+    +setIsHiddenOption(isHidden?: boolean | undefined): this
+    +setFormatterOption(formatter?: Formatter | undefined): this
+}
+interface IRangeSliderPipsView extends MVPView {
+    +getOrientationOption(): "horizontal" | "vertical" | undefined
+    +getIsHiddenOption(): boolean | undefined
+    +getValuesOption(): { percent: number; value: number; }[] | undefined
+    +getDensityOption(): number | undefined
+    +getFormatterOption(): Formatter | undefined
+    +setOrientationOption(orientation?: "horizontal" | "vertical" | undefined): this
+    +setIsHiddenOption(isHidden?: boolean | undefined): this
+    +setValuesOption(values?: { percent: number; value: number; }[] | undefined): this
+    +setDensityOption(density?: number | undefined): this
+    +setFormatterOption(formatter?: Formatter | undefined): this
+}
+interface IRangeSliderView extends MVPView {
+    +getIntervalsOption(): { [key: string]: number; min: number; max: number; }
+    +getStartOption(): number[]
+    +getStepsOption(): (number | "none")[]
+    +getConnectOption(): boolean[]
+    +getOrientationOption(): "horizontal" | "vertical"
+    +getPaddingOption(): [number, number]
+    +getFormatterOption(): Formatter
+    +getTooltipsOption(): (boolean | Formatter)[]
+    +getPipsOption(): Required<Omit<PipsOptions, "orientation" | "formatter" | "values"> & { mode?: Mode | undefined; values?: number | number[] | undefined; }>
+    +setIntervalsOption(intervals?: { [key: string]: number; min: number; max: number; } | undefined): this
+    +setStartOption(start?: number | number[] | undefined): this
+    +setStepsOption(steps?: number | "none" | (number | "none")[] | undefined): this
+    +setConnectOption(connect?: boolean | boolean[] | undefined): this
+    +setOrientationOption(orientation?: "horizontal" | "vertical" | undefined): this
+    +setPaddingOption(padding?: number | [number, number] | undefined): this
+    +setFormatterOption(formatter?: Formatter | undefined): this
+    +setTooltipsOption(tooltips?: boolean | (boolean | Formatter)[] | undefined): this
+    +setPipsOption(pips?: (Omit<PipsOptions, "orientation" | "formatter" | "values"> & { mode?: Mode | undefined; values?: number | number[] | undefined; }) | undefined): this
+    +get(): number[]
+    +set(value?: number | number[] | undefined): this
+}
+interface IRangeSliderModel extends MVPModel
+interface IRangeSliderPresenter {
+    +view: IRangeSliderView
+    +model?: IRangeSliderModel | undefined
+}
+interface IRangeSliderThumbView extends MVPView
+class RangeSliderTrackView extends MVPView implements IRangeSliderTrackView {
+    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, innerHTML?: TemplateResult | TemplateResult[]) => TemplateResult
+    +getOrientationOption(): "horizontal" | "vertical"
+    +getIntervalsOption(): { [x: string]: number; min: number; max: number; }
+    +getStepsOption(): (number | "none")[]
+    +getPaddingOption(): [number, number]
+    +setOrientationOption(orientation?: "horizontal" | "vertical" | undefined): this
+    +setIntervalsOption(intervals?: { [key: string]: number; min: number; max: number; } | undefined): this
+    +setStepsOption(steps?: number | "none" | (number | "none")[] | undefined): this
+    +setPaddingOption(padding?: number | [number, number] | undefined): this
+    #_fixIntervalsOption(): this
+    #_fixStepsOption(): this
+    #_fixPaddingOption(): this
+    #_getSortedKeysOfIntervalsOption(): string[]
+}
+class RangeSliderRangeView extends MVPView implements IRangeSliderRangeView {
+    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
+    +getIsConnectedOption(): boolean
+    +setIsConnectedOption(isConnected?: boolean): this
+}
+class RangeSliderThumbView extends MVPView implements IRangeSliderThumbView {
+    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, innerHTML?: TemplateResult | TemplateResult[], isActive?: boolean) => TemplateResult
+    #_onDragstart(): boolean
+}
+class RangeSliderTooltipView extends MVPView implements IRangeSliderTooltipView {
+    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
+    +getOrientationOption(): "top" | "left"
+    +getIsHiddenOption(): boolean
+    +getFormatterOption(): Formatter
+    +setOrientationOption(orientation?: "top" | "left" | undefined): this
+    +setIsHiddenOption(isHidden?: boolean | undefined): this
+    +setFormatterOption(formatter?: Formatter | undefined): this
+}
+class RangeSliderPipsView extends MVPView implements IRangeSliderPipsView {
+    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
+    +getOrientationOption(): "horizontal" | "vertical"
+    +getIsHiddenOption(): boolean
+    +getValuesOption(): { percent: number; value: number; }[]
+    +getDensityOption(): number
+    +getFormatterOption(): Formatter
+    +setOrientationOption(orientation?: "horizontal" | "vertical" | undefined): this
+    +setIsHiddenOption(isHidden?: boolean | undefined): this
+    +setValuesOption(values?: { percent: number; value: number; }[] | undefined): this
+    +setDensityOption(density?: number | undefined): this
+    +setFormatterOption(formatter?: Formatter | undefined): this
+    #_fixValuesOption(): this
+    #_fixDensityOption(): this
+    #_getPipsRender(): TemplateResult | TemplateResult[]
+}
+class RangeSliderView extends MVPView implements IRangeSliderView {
+    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
+    +getIntervalsOption(): { [x: string]: number; min: number; max: number; }
+    +getStartOption(): number[]
+    +getStepsOption(): (number | "none")[]
+    +getConnectOption(): boolean[]
+    +getOrientationOption(): "horizontal" | "vertical"
+    +getPaddingOption(): [number, number]
+    +getFormatterOption(): Formatter
+    +getTooltipsOption(): (boolean | Formatter)[]
+    +getPipsOption(): any
+    +setIntervalsOption(intervals?: { [key: string]: number; min: number; max: number; } | undefined): this
+    +setStartOption(start?: number | number[] | undefined): this
+    +setStepsOption(steps?: number | "none" | (number | "none")[] | undefined): this
+    +setConnectOption(connect?: boolean | boolean[] | undefined): this
+    +setOrientationOption(orientation?: "horizontal" | "vertical" | undefined): this
+    +setPaddingOption(padding?: number | [number, number] | undefined): this
+    +setFormatterOption(formatter?: Formatter | undefined): this
+    +setTooltipsOption(tooltips?: boolean | (boolean | Formatter)[] | undefined): this
+    +setPipsOption(pips?: (Omit<PipsOptions, "orientation" | "formatter" | "values"> & { mode?: Mode | undefined; values?: number | number[] | undefined; }) | undefined): this
+    +setOptions(options?: RangeSliderOptions): this
+    +get(): number[]
+    +set(value?: number | number[] | undefined): this
+    #_setValueState(value?: number[]): this
+    #_fixIntervalsOption(): this
+    #_fixPaddingOption(): this
+    #_fixStartOption(): this
+    #_fixStepsOption(): this
+    #_fixPipsOption(): this
+    #_fixConnectOption(): this
+    #_fixTooltipsOption(): this
+    #_fixValueState(): this
+    #_fixIsActiveThumbsState(): void
+    #_getValueBorderOfTrack(): { min: number; max: number; }
+    #_getLinearPercentBorderOfTrack(): { min: number; max: number; }
+    #_getIntervalInfoByPoint(value: number, __1?: { isIncludedInSupremum?: boolean | undefined; }): { keyOfInfimum: string; keyOfSupremum?: undefined; valueSize?: undefined; percentSize?: undefined; magnificationFactor?: undefined; step?: undefined; } | { keyOfSupremum: string; keyOfInfimum?: undefined; valueSize?: undefined; percentSize?: undefined; magnificationFactor?: undefined; step?: undefined; } | { ...; }
+    #_getIntervalKeyAsNumber(key: string | number): number
+    #_toTrackPercent(valueOnTrack: number): number
+    #_toTrackValue(linearPercentOnTrack: number): number
+    #_toTrackOptions(): FixedTrackOptions
+    #_toRangeOptions(index: number): Required<RangeOptions>
+    #_toThumbOptions(index: number): Required<ThumbOptions>
+    #_toTooltipOptions(index: number): Required<TooltipOptions>
+    #_toPipsOptions(): Required<PipsOptions>
+    #_toThumbState(index: number): ThumbState
+    #_toTooltipState(index: number): TooltipState
+    #_thumbEventListenerObject: { handleEvent: (event: Event) => void; }
+    #_getThumbConstants(thumbElem: HTMLElement): { trackElem: HTMLElement; thumbIndex: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { valuePerPx: number; }; }
+    #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | "none"; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): { thumbValueAfterIncrementation: number; increments: number[]; currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | "none"; }; }
+    #_toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): number
+    #_thumbValueToPositionOnTrack(thumbIndex: number): { offsetOnTrackInPercent: number; THUMB_SCALE_FACTOR: number; THUMB_TO_CENTER_OFFSET: number; }
+    #_trackEventListenerObject: { handleEvent: (event: Event) => void; }
+    #_getNearestThumb(value: number): number
+    #_pipsEventListenerObject: { handleEvent: (event: Event) => void; }
+}
+class RangeSliderPresenter implements IRangeSliderPresenter {
+    +view: IRangeSliderView
+    +model?: IRangeSliderModel | undefined
+}
+RangeSliderView "1" *-- "1" RangeSliderTrackView : composes template using template of >
+RangeSliderView "1" *-- "*" RangeSliderRangeView : composes template using templates of >
+RangeSliderView "1" *-- "*" RangeSliderThumbView : composes template using templates of >
+RangeSliderView "1" *-- "*" RangeSliderTooltipView : composes template using templates of >
+RangeSliderView "1" *-- "1" RangeSliderPipsView : composes template using template of >
+IRangeSliderPresenter --> IRangeSliderModel
+IRangeSliderPresenter --> IRangeSliderView
+note left of MVPView::template
+  This method can <b>include templates of the others</b> and it's used for efficient rendering
+end note
+note left of MVPView::_options
+  Just options that <b>customize the behavior</b>. Can be set from outside by <b>construcor</b> or <b>setOptions</b> method but <b>immutable inside</b>
+end note
+note left of MVPView::_state
+  Current state of view. Can be set <b>only by constructor</b> and can be <b>changed by user interaction</b>
+end note
+note left of MVPView::_theOrderOfIteratingThroughTheOptions
+  Keys of <b>"_options"</b> property for iteration through <b>"_options"</b> with properly order
+end note
+note left of MVPView::_theOrderOfIteratingThroughTheState
+  Keys of <b>"_state"</b> property for iteration through <b>"_state"</b> with properly order
+end note
+note left of MVPView::getOptions
+  Iterates through <b>"get<key>Option()"</b> methods using <b>"_theOrderOfIteratingThroughTheOptions"</b> property
+end note
+note left of MVPView::setOptions
+  Iterates through <b>"set<key>Option()"</b> methods using <b>"_theOrderOfIteratingThroughTheOptions"</b> property. Also emit <b>"render"</b> event after end of iteration.
+end note
+note left of MVPView::remove
+  Emit <b>"remove"</b> event
+end note
+note left of MVPView::_setState
+  Iterates through <b>"set<key>State()"</b> methods using <b>"_theOrderOfIteratingThroughTheState"</b> property. Also emit <b>"render"</b> event after end of iteration.
+end note
+note left of MVPView::_fixOptions
+  Iterates through <b>"_fix<key>Option()"</b> methods using <b>"_theOrderOfIteratingThroughTheOptions"</b> property
+end note
+note left of MVPView::_fixState
+   Iterates through <b>"_fix<key>State()"</b> methods using <b>"_theOrderOfIteratingThroughTheOptions"</b> property.
+end note
+note left of MVPView::_render
+  Emit <b>"render"</b> event
+end note
+note left of MVPView::templateOfRemoving
+  Just template with empty result for removing
+end note
+@enduml
