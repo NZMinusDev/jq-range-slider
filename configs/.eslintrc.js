@@ -5,8 +5,8 @@ module.exports = {
    */
   parser: "@typescript-eslint/parser",
   extends: [
-    // List of recommended rules by https://github.com/iamturns/eslint-config-airbnb-typescript
-    "airbnb-base",
+    "airbnb-base", // List of recommended rules by https://github.com/iamturns/eslint-config-airbnb-typescript
+    "plugin:fsd/all", // some rules from https://github.com/fullstack-development/front-end-best-practices/tree/master/JS
     "plugin:sonarjs/recommended", // detect bugs and suspicious patterns in your code (huge unreadable blocks of code)
     "plugin:no-use-extend-native/recommended", // prevent use of extended native objects
     /**
@@ -21,7 +21,7 @@ module.exports = {
      */
     "plugin:prettier/recommended",
   ],
-  plugins: ["no-loops", "promise", "lit"],
+  plugins: ["no-loops", "promise", "lit", "fsd"],
   rules: {
     "no-loops/no-loops": 2, // Disallow use of loops (for, for-in, while, do-while, for-of) - we have forEach, map etc.
     /**
