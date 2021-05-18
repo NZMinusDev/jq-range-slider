@@ -46,13 +46,7 @@ module.exports = {
         map: [
           ["@pug", "./app/src/pug"],
           ["@layouts", "./app/src/layouts"],
-          ["@library.blocks", "./app/src/components/library.blocks/"],
           ["@common.blocks", "./app/src/components/common.blocks/"],
-          ["@thematic", "./app/src/components/thematic/"],
-          ["@experiments", "./app/src/components/experimental/"],
-          ["@images", "./app/src/assets/pictures/images/"],
-          ["@contents", "./app/src/assets/pictures/contents/"],
-          ["@fonts", "./app/src/assets/fonts/"],
           ["@utils", "./app/src/utils/"],
         ],
         extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],

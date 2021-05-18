@@ -3,10 +3,6 @@ import { ClassInfo } from "lit-html/directives/class-map";
 import { StyleInfo } from "lit-html/directives/style-map";
 import defaultsDeep from "lodash-es/defaultsDeep";
 
-export interface Plugin {
-  readonly dom: { self: HTMLElement | null };
-}
-
 /**
  * Add events processing inside class without inheritances and make child's handlers inside one class
  * @example
@@ -54,9 +50,10 @@ export class EventManagerMixin<TEvents extends string> {
 
     return this;
   }
+
   // Cancel subscribe
   off(eventName: TEvents, handler: (...args: any) => void) {
-    let handlers = this._eventHandlers && this._eventHandlers[eventName];
+    const handlers = this._eventHandlers && this._eventHandlers[eventName];
     if (!handlers) return this;
     for (let i = 0; i < handlers.length; i++) {
       if (handlers[i] === handler) {
@@ -66,6 +63,7 @@ export class EventManagerMixin<TEvents extends string> {
 
     return this;
   }
+
   // Generate the event with the specified name and data
   trigger(eventName: TEvents, ...args: any) {
     if (!this._eventHandlers || !this._eventHandlers[eventName]) {
@@ -85,7 +83,7 @@ export class EventManagerMixin<TEvents extends string> {
 
   handleEvent(event: Event) {
     // mousedown -> onMousedown
-    let method = "_on" + event.type[0].toUpperCase() + event.type.slice(1);
+    const method = `_on${event.type[0].toUpperCase()}${event.type.slice(1)}`;
     if (this[method]) this[method](event);
 
     return this;
@@ -107,12 +105,15 @@ export abstract class MVPView<
   TEvents extends string = ""
 > extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">> {
   readonly template: template = ({ classInfo, styleInfo, attributes } = {}, ...args) => html``;
+
   static readonly templateOfRemoving = () => html``;
 
   protected _options: TOptionsToGet;
+
   protected _state: TState;
 
   protected readonly _theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[];
+
   protected readonly _theOrderOfIteratingThroughTheState: Extract<keyof TState, string>[];
 
   constructor(
@@ -176,6 +177,7 @@ export abstract class MVPView<
 
     return options as TOptionsToGet;
   }
+
   setOptions(options?: TOptionsToSet) {
     const optionsToForEach = options === undefined ? this._options : options;
 
@@ -245,6 +247,7 @@ export abstract class MVPView<
 
     return this;
   }
+
   protected _fixState() {
     let fixStateMethodName;
     this._theOrderOfIteratingThroughTheState.forEach((state) => {
@@ -297,128 +300,4 @@ export interface MVPModel<State> {
   getState(): Promise<Required<State>>;
   setState(state?: Partial<State>): Promise<this>;
   whenStateIsChanged(callback: (state: Required<State>) => void): void;
-}
-
-export interface ListenersByPlugin {
-  currentTarget: HTMLElement | HTMLElement[];
-  eventType: keyof HTMLElementEventMap;
-  listener(this: Element, ev: HTMLElementEventMap[keyof HTMLElementEventMap]): unknown;
-  options?: boolean | AddEventListenerOptions;
-}
-export abstract class PluginDecorator {
-  protected plugin: Plugin;
-  protected listeners: ListenersByPlugin[];
-
-  constructor(plugin: Plugin, listeners: ListenersByPlugin[], modifierName: string) {
-    this.plugin = plugin;
-    this.listeners = listeners;
-
-    if (this.plugin.dom.self !== null) {
-      if (this.plugin.dom.self[modifierName]) {
-        this.plugin.dom.self[modifierName].cancel();
-      }
-
-      this.plugin.dom.self[modifierName] = this;
-      this.plugin.dom.self[modifierName].assign();
-    }
-  }
-
-  protected assign(): void {
-    if (this.listeners) {
-      this.listeners.forEach(function (listener) {
-        if (Array.isArray(listener.currentTarget)) {
-          listener.currentTarget.forEach((element) => {
-            element.addEventListener(listener.eventType, listener.listener, listener.options);
-          });
-        } else {
-          listener.currentTarget.addEventListener(
-            listener.eventType,
-            listener.listener,
-            listener.options
-          );
-        }
-      });
-    }
-  }
-  protected cancel(): void {
-    if (this.listeners) {
-      this.listeners.forEach(function (listener) {
-        if (Array.isArray(listener.currentTarget)) {
-          listener.currentTarget.forEach((element) => {
-            element.removeEventListener(listener.eventType, listener.listener, listener.options);
-          });
-        } else {
-          listener.currentTarget.removeEventListener(
-            listener.eventType,
-            listener.listener,
-            listener.options
-          );
-        }
-      });
-    }
-  }
-}
-
-/**
- *
- * @param event - event of handler
- * @param parent - HTMLElement with handlers
- * @param descendantSelector - necessary descendant
- * @returns result of checking
- */
-export function checkDelegatingEvents(
-  event: Event,
-  parent: HTMLElement,
-  descendantSelector: string
-) {
-  let descendant = (event.target as HTMLElement).closest(descendantSelector);
-
-  if (!descendant && !parent.contains(descendant)) return false;
-
-  return true;
-}
-
-/**
- * Apply mixins to derivedConstructor.
- * @param derivedConstructor - class/constructor to derived
- * @param mixinConstructors - classes/constructors adding functionality to derivedConstructor
- * @example
- * // Each mixin is a traditional ES class
- * class Jumpable {
- *  jump() {}
- * }
- *
- * class Duckable {
- *   duck() {}
- * }
- *
- * // Including the base
- * class Sprite {
- *   x = 0;
- *   y = 0;
- * }
- *
- * // Then you create an interface which merges
- * // the expected mixins with the same name as your base
- * interface Sprite extends Jumpable, Duckable {}
- * // Apply the mixins into the base class via the JS at runtime
- * applyMixins(Sprite, [Jumpable, Duckable]);
- *
- * let player = new Sprite();
- * player.jump();
- * console.log(player.x, player.y);
- */
-export function applyMixins<
-  TDerivedConstructor extends new (...args: unknown[]) => unknown,
-  TMixinConstructors extends new (...args: unknown[]) => unknown
->(derivedConstructor: TDerivedConstructor, mixinConstructors: TMixinConstructors[]) {
-  mixinConstructors.forEach((baseConstructor) => {
-    Object.getOwnPropertyNames(baseConstructor.prototype).forEach((name) => {
-      Object.defineProperty(
-        derivedConstructor.prototype,
-        name,
-        Object.getOwnPropertyDescriptor(baseConstructor.prototype, name) || Object.create(null)
-      );
-    });
-  });
 }

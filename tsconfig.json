@@ -14,12 +14,7 @@
     "strictPropertyInitialization": true,
     "baseUrl": "./app/src/",
     "paths": {
-      "@library.blocks/*": ["components/library.blocks/*"],
       "@common.blocks/*": ["components/common.blocks/*"],
-      "@thematic/*": ["components/thematic/*"],
-      "@experiments/*": ["components/experimental/*"],
-      "@images/*": ["assets/pictures/images/*"],
-      "@contents/*": ["assets/pictures/contents/*"],
       "@utils/*": ["utils/*"]
     },
     "plugins": [

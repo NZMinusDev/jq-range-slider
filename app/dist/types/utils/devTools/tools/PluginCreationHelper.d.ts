@@ -1,11 +1,6 @@
 import { TemplateResult } from "lit-html";
 import { ClassInfo } from "lit-html/directives/class-map";
 import { StyleInfo } from "lit-html/directives/style-map";
-export interface Plugin {
-    readonly dom: {
-        self: HTMLElement | null;
-    };
-}
 /**
  * Add events processing inside class without inheritances and make child's handlers inside one class
  * @example
@@ -86,55 +81,3 @@ export interface MVPModel<State> {
     setState(state?: Partial<State>): Promise<this>;
     whenStateIsChanged(callback: (state: Required<State>) => void): void;
 }
-export interface ListenersByPlugin {
-    currentTarget: HTMLElement | HTMLElement[];
-    eventType: keyof HTMLElementEventMap;
-    listener(this: Element, ev: HTMLElementEventMap[keyof HTMLElementEventMap]): unknown;
-    options?: boolean | AddEventListenerOptions;
-}
-export declare abstract class PluginDecorator {
-    protected plugin: Plugin;
-    protected listeners: ListenersByPlugin[];
-    constructor(plugin: Plugin, listeners: ListenersByPlugin[], modifierName: string);
-    protected assign(): void;
-    protected cancel(): void;
-}
-/**
- *
- * @param event - event of handler
- * @param parent - HTMLElement with handlers
- * @param descendantSelector - necessary descendant
- * @returns result of checking
- */
-export declare function checkDelegatingEvents(event: Event, parent: HTMLElement, descendantSelector: string): boolean;
-/**
- * Apply mixins to derivedConstructor.
- * @param derivedConstructor - class/constructor to derived
- * @param mixinConstructors - classes/constructors adding functionality to derivedConstructor
- * @example
- * // Each mixin is a traditional ES class
- * class Jumpable {
- *  jump() {}
- * }
- *
- * class Duckable {
- *   duck() {}
- * }
- *
- * // Including the base
- * class Sprite {
- *   x = 0;
- *   y = 0;
- * }
- *
- * // Then you create an interface which merges
- * // the expected mixins with the same name as your base
- * interface Sprite extends Jumpable, Duckable {}
- * // Apply the mixins into the base class via the JS at runtime
- * applyMixins(Sprite, [Jumpable, Duckable]);
- *
- * let player = new Sprite();
- * player.jump();
- * console.log(player.x, player.y);
- */
-export declare function applyMixins<TDerivedConstructor extends new (...args: unknown[]) => unknown, TMixinConstructors extends new (...args: unknown[]) => unknown>(derivedConstructor: TDerivedConstructor, mixinConstructors: TMixinConstructors[]): void;
