@@ -6,7 +6,7 @@
 
 ---
 
-It's jq-range-slider plugin using MVP on typescript.
+It's slider plugin using MVP pattern. It also contains script for connecting to JQuery.
 
 ## Demo
 
@@ -20,7 +20,7 @@ It's jq-range-slider plugin using MVP on typescript.
 
 ---
 
-_https://codesandbox.io/s/mvp-jq-range-slider-x14h1?file=/src/server/index.js_
+_<https://codesandbox.io/s/mvp-jq-range-slider-x14h1?file=/src/server/index.js>_
 
 ## Usage
 
@@ -212,7 +212,7 @@ const sliders = $(".slider-container").initRangeSlider(
 );
 ```
 
-## Сontribution
+## Contribution
 
 ---
 
@@ -224,18 +224,18 @@ const sliders = $(".slider-container").initRangeSlider(
 
 ### Installation
 
-Just clone this repository and execute:
-
 ```bash
+git clone https://github.com/NZMinusDev/jq-range-slider.git
+cd jq-range-slider
 npm i
 ```
 
-### Usage
+### Managing
 
-In [package.json](./package.json) you can find useful scripts for managing the project. To do this, use the following command:
+In [package.json](./package.json) you can find useful scripts for managing the project. To run script, use the following command:
 
 ```bash
-npm run {script-name}.
+npm run {script-name}
 ```
 
 Script-names:
@@ -244,14 +244,65 @@ Script-names:
 - **dev** - just builds bundles and place it into [dist](./app/dist) directory;
 - **build** - build minify bundles and place it into [dist](./app/dist) directory + run _types_ script;
 - **types** - generate d.ts files and place it into [dist/types](./app/dist/types) directory;
-- **UML** - generate .puml files and place it into [src](./app/src/components/common.blocks/primitives/range-slider/) directory. P.S.: you should work [with your hands](https://plantuml.com/en/class-diagram) a little cause of the [tool](https://github.com/bafolts/tplant) has bugs(["default" isn't keyword](https://github.com/bafolts/tplant/issues/66)[error when output directory doesn't exist](https://github.com/bafolts/tplant/issues/51), [Missing Aggregation/Composition](https://github.com/bafolts/tplant/issues/48), etc);
+- **UML** - generate .puml files and place it into [src](./app/src/components/common.blocks/primitives/range-slider) directory. P.S.: you should work [with your hands](https://plantuml.com/en/class-diagram) a little cause of the [tool](https://github.com/bafolts/tplant) has bugs(["default" isn't keyword](https://github.com/bafolts/tplant/issues/66), [error when output directory doesn't exist](https://github.com/bafolts/tplant/issues/51), [Missing Aggregation/Composition](https://github.com/bafolts/tplant/issues/48), etc);
 - **test** - run jest tests(matches .spec. or .test. files), P.S.: it can work in a separate console in parallel with **start** script;
 - **analyze** - visualize size of webpack output files with an interactive zoomable treemap using webpack-bundle-analyzer;
 - **ext** - install necessary VS Code extensions.
 
+### Technologies
+
+1. [Shared VS Code settings](./.vscode/settings.json).
+2. VS code extensions which increase comfort:
+   1. [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens).
+   2. [PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell).
+   3. [Ayu](https://marketplace.visualstudio.com/items?itemName=teabyii.ayu).
+   4. [Material Icon Theme](https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme).
+   5. [CSS Peek](https://marketplace.visualstudio.com/items?itemName=pranaygp.vscode-css-peek).
+   6. [HTML CSS Support](https://marketplace.visualstudio.com/items?itemName=ecmel.vscode-html-css).
+   7. [Path Autocomplete](https://marketplace.visualstudio.com/items?itemName=ionutvmi.path-autocomplete).
+   8. [Auto Complete Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-complete-tag).
+   9. [Change-Case](https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case).
+   10. [Bracket Pair Colorizer](https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer).
+   11. [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker).
+   12. [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight).
+   13. [Quokka.js](https://marketplace.visualstudio.com/items?itemName=WallabyJs.quokka-vscode).
+   14. [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
+   15. [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html).
+   16. [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
+   17. [Image preview](https://marketplace.visualstudio.com/items?itemName=kisstkondoros.vscode-gutter-preview).
+   18. [VSCode Map Preview](https://marketplace.visualstudio.com/items?itemName=jumpinjackie.vscode-map-preview).
+   19. [SVG](https://marketplace.visualstudio.com/items?itemName=jock.svg).
+   20. [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint).
+   21. [PlantUML](https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml).
+   22. [Sort Lines by Selection](https://marketplace.visualstudio.com/items?itemName=earshinov.sort-lines-by-selection).
+   23. [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer).
+   24. [Import Cost](https://marketplace.visualstudio.com/items?itemName=wix.vscode-import-cost).
+   25. [JavaScript (ES6) code snippets](https://marketplace.visualstudio.com/items?itemName=xabikos.JavaScriptSnippets).
+   26. [Webpack Snippets](https://marketplace.visualstudio.com/items?itemName=gogocrow.webpack-snippets).
+3. Preprocessors which speed up work:
+   1. [Pug](https://pugjs.org/api/getting-started.html).
+   2. [SCSS](https://sass-lang.com/).
+   3. [TypeScript](https://www.typescriptlang.org/).
+4. [Webpack](https://v4.webpack.js.org/concepts/) which kill your headaches:
+   1. You can simply import files at the entry point([dev](./app/src/pages/index/index.ts) or [build](./app/src/components/common.blocks/primitives/range-slider/range-slider-plugin.ts)) instead of manually connecting them using tags on the page.
+   2. [Pages](./app/src/pages/) only need to be created, and the collector can determine the entry points on its own.
+   3. No need to remember a bunch of css prefixes and what properties are supported thanks to [PostCSS Preset Env](https://github.com/csstools/postcss-preset-env) and [Autoprefixer](https://www.npmjs.com/package/autoprefixer).
+   4. Output files is minified in production mode.
+   5. There is no need to write relative paths for import when there are [excellent aliases](./configs/webpack.config.js) for the most popular paths in development.
+   6. During development, when changing files, the result is immediately visible without manual reboots and builds.
+   7. During the build, webpack will notify you if: there are circular dependencies, libraries of different versions are connected, there are unused files, there are css properties that browsers do not support. Displays the speed of source processing at each stage of the build.
+   8. It should work the same on different platforms.
+5. [ESLinter](https://eslint.org/) based on [Airbnb standarts](https://github.com/airbnb/javascript) integrated with prettier and typescript which protects your knee from :gun: and your life from wasting :clock2:.
+6. [Jest](https://jestjs.io/): delightful JavaScript Testing Framework with a focus on simplicity, it works fine with TypeScript.
+7. Pre-installed libraries:
+   1. [JQuery](https://jquery.com/).
+   2. [lodash-es](https://lodash.com/) to supplement the js standard. Tip: you should use only import of lodash-es(moreover, when importing, only care about the readability and strictness of the code, and not the optimization of the weight) instead of common lodash because ES6+ module syntax is supported by terser for optimization.
+   3. [lit-html](https://lit-html.polymer-project.org/guide) to highlight html inside js/ts and only update the parts of the template that have changed since the last render.
+8. Custom Tools: [ts shortcuts](./app/src/utils/devTools/tools/).
+
 ### How it works
 
-![UML Class Diagram](./app/src/components/common.blocks/primitives/range-slider/UML/UML.svg)
+![UML View Class Diagram](./app/src/components/common.blocks/primitives/range-slider/UML/UML.svg)
 
 ## License
 
