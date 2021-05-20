@@ -2,14 +2,12 @@
 include ~@pug/mixins/meta.pug
 include ~@pug/mixins/ico.pug
 include ~@pug/mixins/noscript-notification.pug
-include ~@common.blocks/specific/click-jacking-protector/click-jacking-protector.pug
 
 block variables
   -
     let title = 'Страница';
     let description = '';
     let keywords = '';
-    let haveClickJackingDivProtector = true;
 
 doctype html
 html(lang="ru")
@@ -17,8 +15,6 @@ html(lang="ru")
     +meta(keywords, description, title)
     +ico
   body
-    if haveClickJackingDivProtector
-      +click-jacking-protector
     +noscript
     block header
     block content
