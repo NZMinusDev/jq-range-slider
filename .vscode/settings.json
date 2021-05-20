@@ -95,7 +95,8 @@
     "@pug": "${folder}/app/src/pug",
     "@layouts": "${folder}/app/src/layouts",
     "@common.blocks": "${folder}/app/src//components/common.blocks/",
-    "@utils": "${folder}/app/src/utils/"
+    "@utils": "${folder}/app/src/utils/",
+    "@assets": "${folder}/app/src/assets/"
   },
   "path-autocomplete.triggerOutsideStrings": true,
   "path-autocomplete.enableFolderTrailingSlash": true,

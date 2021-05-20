@@ -15,5 +15,6 @@ module.exports = {
     "@layouts(.*)$": "<rootDir>/layouts/$1",
     "@common.blocks(.*)$": "<rootDir>/components/common.blocks/$1",
     "@utils(.*)$": "<rootDir>/utils/$1",
+    "@assets(.*)$": "<rootDir>/assets/$1",
   },
 };

@@ -1,5 +1,6 @@
 //- mixins
 include ~@pug/mixins/meta.pug
+include ~@pug/mixins/ico.pug
 include ~@pug/mixins/noscript-notification.pug
 include ~@common.blocks/specific/click-jacking-protector/click-jacking-protector.pug
 
@@ -14,6 +15,7 @@ doctype html
 html(lang="ru")
   head
     +meta(keywords, description, title)
+    +ico
   body
     if haveClickJackingDivProtector
       +click-jacking-protector

@@ -27,6 +27,7 @@ const PATHS = {
   src_absolute: path.resolve(__dirname, "../app/src/"),
   srcPages_absolute: path.resolve(__dirname, "../app/src/pages/"),
   dist_absolute: path.resolve(__dirname, "../app/dist/"),
+  ICO_DIST_ABSOLUTE: path.resolve(__dirname, "../app/dist/", "./assets/ico"),
 };
 
 const sharedAliases = {
@@ -34,6 +35,7 @@ const sharedAliases = {
   "@layouts": path.resolve(PATHS.src_absolute, "./layouts/"),
   "@common.blocks": path.resolve(PATHS.src_absolute, "./components/common.blocks/"),
   "@utils": path.resolve(PATHS.src_absolute, "./utils/"),
+  "@assets": path.resolve(PATHS.src_absolute, "./assets/"),
 };
 
 /**
@@ -72,7 +74,6 @@ class ResultOfTemplatesProcessing {
         new HTMLWebpackPlugin({
           template: `!!pug-loader!app/src/pages/${shortNameOfTemplate}/${nameOfTemplate}`,
           filename: hashedFileName(`./${shortNameOfTemplate}`, "html"),
-          favicon: "./assets/ico/favicon.ico",
           chunks: [shortNameOfTemplate],
         })
       );
@@ -96,51 +97,62 @@ const webpackPlugins = () => {
   if (isDev) {
     plugins.push(
       ...resultOfTemplatesProcessing.HTMLWebpackPlugins,
-      new ProvidePlugin({ $: "jquery", jQuery: "jquery" })
+      new ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(PATHS.src_absolute, "./assets/ico/android-chrome-192x192.png"),
+            to: PATHS.ICO_DIST_ABSOLUTE,
+          },
+          {
+            from: path.resolve(PATHS.src_absolute, "./assets/ico/android-chrome-256x256.png"),
+            to: PATHS.ICO_DIST_ABSOLUTE,
+          },
+          {
+            from: path.resolve(PATHS.src_absolute, "./assets/ico/mstile-150x150.png"),
+            to: PATHS.ICO_DIST_ABSOLUTE,
+          },
+        ],
+      })
     );
   }
 
   plugins.push(
     new MiniCssExtractPlugin({
       filename: isDev ? hashedFileName("styles/[name]/style", "css") : "range-slider.css",
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(
+            PATHS.src_absolute,
+            "./components/common.blocks/primitives/range-slider/jq-range-slider-plugin.js"
+          ),
+          to: path.resolve(PATHS.src_absolute, "./../dist"),
+        },
+        {
+          from: path.resolve(
+            PATHS.src_absolute,
+            "./components/common.blocks/primitives/range-slider/jq-range-slider-plugin.d.ts"
+          ),
+          to: path.resolve(
+            PATHS.src_absolute,
+            "./../dist/types/components/common.blocks/primitives/range-slider"
+          ),
+        },
+        {
+          from: path.resolve(
+            PATHS.src_absolute,
+            "./components/common.blocks/primitives/range-slider/range-slider-plugin.d.ts"
+          ),
+          to: path.resolve(
+            PATHS.src_absolute,
+            "./../dist/types/components/common.blocks/primitives/range-slider"
+          ),
+        },
+      ],
     })
   );
-
-  if (isProd) {
-    plugins.push(
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: path.resolve(
-              PATHS.src_absolute,
-              "./components/common.blocks/primitives/range-slider/jq-range-slider-plugin.js"
-            ),
-            to: path.resolve(PATHS.src_absolute, "./../dist"),
-          },
-          {
-            from: path.resolve(
-              PATHS.src_absolute,
-              "./components/common.blocks/primitives/range-slider/jq-range-slider-plugin.d.ts"
-            ),
-            to: path.resolve(
-              PATHS.src_absolute,
-              "./../dist/types/components/common.blocks/primitives/range-slider"
-            ),
-          },
-          {
-            from: path.resolve(
-              PATHS.src_absolute,
-              "./components/common.blocks/primitives/range-slider/range-slider-plugin.d.ts"
-            ),
-            to: path.resolve(
-              PATHS.src_absolute,
-              "./../dist/types/components/common.blocks/primitives/range-slider"
-            ),
-          },
-        ],
-      })
-    );
-  }
 
   if (process.env.MEASURE === "true") {
     plugins.push(new DuplicatesPlugin()); // writes data in stats.json as plain text, shouldn't be in dev mod)
@@ -241,6 +253,28 @@ const jsLoaders = (extraPreset) => {
 };
 
 /**
+ * loads assets using file-loader
+ * @param { object } extraLoader - loader with options
+ * @returns { object[] }
+ */
+const assetsLoaders = (extraLoader) => {
+  const loaders = [
+    {
+      loader: "file-loader",
+      options: {
+        name: "[path]/[name].[ext]",
+      },
+    },
+  ];
+
+  if (extraLoader) {
+    loaders.push(extraLoader);
+  }
+
+  return loaders;
+};
+
+/**
  * Some useful optimizations for bundles by webpack optimization property
  */
 const optimization = () => {
@@ -303,6 +337,10 @@ module.exports = smp.wrap({
             },
           },
         }),
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg|ico|webmanifest|xml)$/,
+        use: assetsLoaders(),
       },
       {
         test: /\.js$/,

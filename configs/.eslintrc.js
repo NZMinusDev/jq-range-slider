@@ -48,6 +48,7 @@ module.exports = {
           ["@layouts", "./app/src/layouts"],
           ["@common.blocks", "./app/src/components/common.blocks/"],
           ["@utils", "./app/src/utils/"],
+          ["@assets", "./app/src/assets/"],
         ],
         extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
       },

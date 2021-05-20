@@ -1,0 +1,24 @@
+mixin ico
+  link(
+    rel="apple-touch-icon",
+    sizes="180x180",
+    href=require('@assets/ico/apple-touch-icon.png').default
+  )
+  link(
+    rel="icon",
+    type="image/png",
+    sizes="32x32",
+    href=require('@assets/ico/favicon-32x32.png').default
+  )
+  link(
+    rel="icon",
+    type="image/png",
+    sizes="16x16",
+    href=require('@assets/ico/favicon-16x16.png').default
+  )
+  link(rel="manifest", href=require('@assets/ico/site.webmanifest').default)
+  link(rel="mask-icon", href=require('@assets/ico/safari-pinned-tab.svg').default color="#ff0000")
+  link(rel="shortcut icon", href=require('@assets/ico/favicon.ico').default)
+  meta(name="msapplication-TileColor", content="#ffffff")
+  meta(name="msapplication-config", content=require('@assets/ico/browserconfig.xml').default)
+  meta(name="theme-color", content="#ffffff")
