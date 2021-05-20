@@ -13,7 +13,7 @@ $triangleSize: 5px;
   cursor: initial;
 
   &:before {
-    content: "";
+    content: '';
     position: absolute;
     border-width: $triangleSize;
     border-style: solid;
