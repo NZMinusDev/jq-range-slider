@@ -3,12 +3,10 @@ $valuePipLength: 1em;
 $markerPipLength: 0.5em;
 
 .range-slider__pips {
-  display: inline-block;
   position: relative;
   color: grey;
 }
 
-.range-slider__pips-value,
 .range-slider__pips-marker {
   background: burlywood;
 }
@@ -27,6 +25,8 @@ $markerPipLength: 0.5em;
 }
 
 .range-slider__pips_orientation-horizontal {
+  display: block;
+
   .range-slider__pips-value,
   .range-slider__pips-marker {
     display: inline-block;
@@ -34,21 +34,27 @@ $markerPipLength: 0.5em;
   }
 
   .range-slider__pips-value {
-    height: #{$valuePipLength};
+    background-image: linear-gradient(180deg, burlywood 0%, burlywood 1em, transparent 1em);
 
+    &:first-child {
+      margin-right: #{-$pipThickness};
+    }
     &:not(:first-child) {
-      margin-left: -6px;
+      margin-left: #{-$pipThickness};
     }
 
     &:after {
-      transform: translate(-50%, #{$valuePipLength});
+      margin-top: #{$valuePipLength};
+      transform: translateX(-50%);
     }
   }
   .range-slider__pips-marker {
     height: #{$markerPipLength};
+    margin-left: #{-$pipThickness};
   }
 }
 .range-slider__pips_orientation-vertical {
+  display: inline-block;
   height: 100%;
 
   .range-slider__pips-value,
@@ -57,18 +63,23 @@ $markerPipLength: 0.5em;
     height: #{$pipThickness};
   }
   .range-slider__pips-value {
-    width: #{$valuePipLength};
+    background-image: linear-gradient(90deg, burlywood 0%, burlywood 1em, transparent 1em);
 
+    &:first-child {
+      margin-bottom: #{-$pipThickness * 2};
+    }
     &:not(:first-child) {
-      margin-top: -2px;
+      margin-top: #{-$pipThickness};
     }
 
     &:after {
-      transform: translate(#{$valuePipLength}, -50%);
+      transform: translateY(-50%);
+      margin-left: #{$valuePipLength};
     }
   }
   .range-slider__pips-marker {
     width: #{$markerPipLength};
+    margin-top: #{-$pipThickness};
   }
 }
 

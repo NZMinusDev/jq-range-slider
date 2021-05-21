@@ -6,15 +6,15 @@
 }
 
 .range-slider {
-  width: 100%;
-  height: 100%;
   display: inline-flex;
   position: relative;
 }
 
 .range-slider_orientation-horizontal {
+  width: 100%;
   flex-direction: column;
 }
 .range-slider_orientation-vertical {
+  height: 100%;
   flex-direction: row;
 }

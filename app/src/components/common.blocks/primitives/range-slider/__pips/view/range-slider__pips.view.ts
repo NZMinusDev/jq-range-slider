@@ -154,13 +154,12 @@ export default class RangeSliderPipsView
         rangeShift = +(values[index + 1].percent - value.percent);
       }
 
-      return html`${markers}
-        <div
+      return html`${markers}<div
           class=${classMap(valueClasses)}
           style=${styleMap(valueStyles)}
           data-value=${value.value}
           data-formatted-value="${this._options.formatter(value.value)}"
-        ></div> `;
+        ></div>`;
     });
   }
 }
