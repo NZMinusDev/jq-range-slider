@@ -4,7 +4,7 @@
   $.fn.initRangeSlider = function (viewOptions, rangeSliderModel) {
     const presenters = [];
     this.each(function () {
-      presenters.push(new RangeSliderPresenter(this, [viewOptions], rangeSliderModel));
+      presenters.push(new RangeSliderPresenter(this, viewOptions, rangeSliderModel));
     });
 
     return presenters;
