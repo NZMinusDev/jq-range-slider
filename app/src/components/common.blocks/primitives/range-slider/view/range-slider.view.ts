@@ -964,7 +964,7 @@ export default class RangeSliderView
   }
   protected _thumbValueToPositionOnTrack(thumbIndex: number) {
     const TRACK_RELATIVE_SIZE_IN_PERCENT = 100;
-    const ORIGIN_THUMB_RELATIVE_SIZE_IN_PERCENT = 5;
+    const ORIGIN_THUMB_RELATIVE_SIZE_IN_PERCENT = 10;
     const THUMB_SCALE_FACTOR =
       TRACK_RELATIVE_SIZE_IN_PERCENT / ORIGIN_THUMB_RELATIVE_SIZE_IN_PERCENT;
 

@@ -1,3 +1,7 @@
+$originSize: 10%;
+$originOffset: 50%;
+$thumbSize: 2em;
+
 .range-slider__thumb-origin,
 .range-slider__thumb {
   display: inline-flex;
@@ -9,9 +13,9 @@
   position: absolute;
   will-change: transform;
 }
-
 .range-slider__thumb {
   $bgColor: black;
+  position: absolute;
 
   background-color: $bgColor;
   transition: box-shadow 0.25s ease-in-out;
@@ -32,13 +36,13 @@
 }
 
 .range-slider__thumb-origin_orientation-horizontal {
-  width: 5%;
-  height: 200%;
-  top: -50%;
+  width: #{$originSize};
+  height: 0;
+  top: #{$originOffset};
 
   .range-slider__thumb {
-    width: 2em;
-    height: 100%;
+    width: #{$thumbSize};
+    height: #{$thumbSize};
     flex-direction: row;
     cursor: ew-resize;
 
@@ -50,13 +54,13 @@
   }
 }
 .range-slider__thumb-origin_orientation-vertical {
-  width: 200%;
-  height: 5%;
-  left: -50%;
+  width: 0;
+  height: #{$originSize};
+  left: #{$originOffset};
 
   .range-slider__thumb {
-    width: 100%;
-    height: 2em;
+    width: #{$thumbSize};
+    height: #{$thumbSize};
     flex-direction: column;
     cursor: ns-resize;
 
