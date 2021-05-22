@@ -52,8 +52,9 @@ export default class RangeSliderThumbView
         aria-valuenow="${+this._state.ariaValueNow.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
         aria-valuetext="${this._state.ariaValueText}"
         @dragstart=${this}
-      ></div>
-      ${innerHTML}
+      >
+        ${innerHTML}
+      </div>
     </div>`;
 
   constructor(options: ThumbOptions = DEFAULT_OPTIONS, state: ThumbState = DEFAULT_STATE) {
