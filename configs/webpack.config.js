@@ -1,41 +1,41 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { HashedModuleIdsPlugin, ProvidePlugin } = require("webpack");
-const path = require("path");
-const fs = require("fs");
-const HTMLWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const DartSASS = require("sass");
-const fibers = require("fibers");
-const DoIUse = require("doiuse");
-const PostcssFlexbugsFixes = require("postcss-flexbugs-fixes");
-const Autoprefixer = require("autoprefixer");
-const PostCSSPresetEnv = require("postcss-preset-env");
-const PostCSSNormalize = require("postcss-normalize");
-const OptimizeCssAssetWebpackPlugin = require("optimize-css-assets-webpack-plugin");
-const TerserWebpackPlugin = require("terser-webpack-plugin");
-const { UnusedFilesWebpackPlugin } = require("unused-files-webpack-plugin");
-const { DuplicatesPlugin } = require("inspectpack/plugin");
-const CircularDependencyPlugin = require("circular-dependency-plugin");
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const { HashedModuleIdsPlugin, ProvidePlugin } = require('webpack');
+const path = require('path');
+const fs = require('fs');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const DartSASS = require('sass');
+const fibers = require('fibers');
+const DoIUse = require('doiuse');
+const PostcssFlexbugsFixes = require('postcss-flexbugs-fixes');
+const Autoprefixer = require('autoprefixer');
+const PostCSSPresetEnv = require('postcss-preset-env');
+const PostCSSNormalize = require('postcss-normalize');
+const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
+const { UnusedFilesWebpackPlugin } = require('unused-files-webpack-plugin');
+const { DuplicatesPlugin } = require('inspectpack/plugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 
-const isDev = process.env.NODE_ENV === "development";
+const isDev = process.env.NODE_ENV === 'development';
 const isProd = !isDev;
 
 const PATHS = {
-  src_absolute: path.resolve(__dirname, "../app/src/"),
-  srcPages_absolute: path.resolve(__dirname, "../app/src/pages/"),
-  dist_absolute: path.resolve(__dirname, "../app/dist/"),
-  ICO_DIST_ABSOLUTE: path.resolve(__dirname, "../app/dist/", "./assets/ico"),
+  src_absolute: path.resolve(__dirname, '../app/src/'),
+  srcPages_absolute: path.resolve(__dirname, '../app/src/pages/'),
+  dist_absolute: path.resolve(__dirname, '../app/dist/'),
+  ICO_DIST_ABSOLUTE: path.resolve(__dirname, '../app/dist/', './assets/ico'),
 };
 
 const sharedAliases = {
-  "@pug": path.resolve(PATHS.src_absolute, "./pug/"),
-  "@layouts": path.resolve(PATHS.src_absolute, "./layouts/"),
-  "@common.blocks": path.resolve(PATHS.src_absolute, "./components/common.blocks/"),
-  "@utils": path.resolve(PATHS.src_absolute, "./utils/"),
-  "@assets": path.resolve(PATHS.src_absolute, "./assets/"),
+  '@pug': path.resolve(PATHS.src_absolute, './pug/'),
+  '@layouts': path.resolve(PATHS.src_absolute, './layouts/'),
+  '@common.blocks': path.resolve(PATHS.src_absolute, './components/common.blocks/'),
+  '@utils': path.resolve(PATHS.src_absolute, './utils/'),
+  '@assets': path.resolve(PATHS.src_absolute, './assets/'),
 };
 
 /**
@@ -64,7 +64,7 @@ class ResultOfTemplatesProcessing {
     this.entries = {};
     this.HTMLWebpackPlugins = [];
     namesOfTemplates.forEach((nameOfTemplate) => {
-      const shortNameOfTemplate = nameOfTemplate.replace(/\.pug/, "");
+      const shortNameOfTemplate = nameOfTemplate.replace(/\.pug/, '');
 
       this.entries[shortNameOfTemplate] = [
         `./pages/${shortNameOfTemplate}/${shortNameOfTemplate}.ts`,
@@ -73,7 +73,7 @@ class ResultOfTemplatesProcessing {
       this.HTMLWebpackPlugins.push(
         new HTMLWebpackPlugin({
           template: `!!pug-loader!app/src/pages/${shortNameOfTemplate}/${nameOfTemplate}`,
-          filename: hashedFileName(`./${shortNameOfTemplate}`, "html"),
+          filename: hashedFileName(`./${shortNameOfTemplate}`, 'html'),
           chunks: [shortNameOfTemplate],
         })
       );
@@ -97,19 +97,19 @@ const webpackPlugins = () => {
   if (isDev) {
     plugins.push(
       ...resultOfTemplatesProcessing.HTMLWebpackPlugins,
-      new ProvidePlugin({ $: "jquery", jQuery: "jquery" }),
+      new ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }),
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: path.resolve(PATHS.src_absolute, "./assets/ico/android-chrome-192x192.png"),
+            from: path.resolve(PATHS.src_absolute, './assets/ico/android-chrome-192x192.png'),
             to: PATHS.ICO_DIST_ABSOLUTE,
           },
           {
-            from: path.resolve(PATHS.src_absolute, "./assets/ico/android-chrome-256x256.png"),
+            from: path.resolve(PATHS.src_absolute, './assets/ico/android-chrome-256x256.png'),
             to: PATHS.ICO_DIST_ABSOLUTE,
           },
           {
-            from: path.resolve(PATHS.src_absolute, "./assets/ico/mstile-150x150.png"),
+            from: path.resolve(PATHS.src_absolute, './assets/ico/mstile-150x150.png'),
             to: PATHS.ICO_DIST_ABSOLUTE,
           },
         ],
@@ -119,51 +119,51 @@ const webpackPlugins = () => {
 
   plugins.push(
     new MiniCssExtractPlugin({
-      filename: isDev ? hashedFileName("styles/[name]/style", "css") : "range-slider.css",
+      filename: isDev ? hashedFileName('styles/[name]/style', 'css') : 'range-slider.css',
     }),
     new CopyWebpackPlugin({
       patterns: [
         {
           from: path.resolve(
             PATHS.src_absolute,
-            "./components/common.blocks/primitives/range-slider/jq-range-slider-plugin.js"
+            './components/common.blocks/primitives/range-slider/jq-range-slider-plugin.js'
           ),
-          to: path.resolve(PATHS.src_absolute, "./../dist"),
+          to: path.resolve(PATHS.src_absolute, './../dist'),
         },
         {
           from: path.resolve(
             PATHS.src_absolute,
-            "./components/common.blocks/primitives/range-slider/jq-range-slider-plugin.d.ts"
+            './components/common.blocks/primitives/range-slider/jq-range-slider-plugin.d.ts'
           ),
           to: path.resolve(
             PATHS.src_absolute,
-            "./../dist/types/components/common.blocks/primitives/range-slider"
+            './../dist/types/components/common.blocks/primitives/range-slider'
           ),
         },
         {
           from: path.resolve(
             PATHS.src_absolute,
-            "./components/common.blocks/primitives/range-slider/range-slider-plugin.d.ts"
+            './components/common.blocks/primitives/range-slider/range-slider-plugin.d.ts'
           ),
           to: path.resolve(
             PATHS.src_absolute,
-            "./../dist/types/components/common.blocks/primitives/range-slider"
+            './../dist/types/components/common.blocks/primitives/range-slider'
           ),
         },
       ],
     })
   );
 
-  if (process.env.MEASURE === "true") {
+  if (process.env.MEASURE === 'true') {
     plugins.push(new DuplicatesPlugin()); // writes data in stats.json as plain text, shouldn't be in dev mod)
   }
 
   plugins.push(
     new CircularDependencyPlugin(),
-    new UnusedFilesWebpackPlugin({ patterns: ["**/*.scss", "**/*.ts"] }),
+    new UnusedFilesWebpackPlugin({ patterns: ['**/*.scss', '**/*.ts'] }),
     new HashedModuleIdsPlugin({
-      hashFunction: "md4",
-      hashDigest: "base64",
+      hashFunction: 'md4',
+      hashDigest: 'base64',
       hashDigestLength: 8,
     }),
     new CleanWebpackPlugin()
@@ -174,13 +174,12 @@ const webpackPlugins = () => {
 
 /**
  * Loaders contraction for templates.
- * @param { string[] } includedFilesExtensions - extensions for including into bundles from components' resources; example: ["scss", "ts"].
  */
-const templatesLoaders = (includedFilesExtensions = ["css", "js", "scss", "ts"]) => {
+const templatesLoaders = () => {
   return [
     {
       // convert pug to template function
-      loader: "pug-loader",
+      loader: 'pug-loader',
     },
   ];
 };
@@ -203,10 +202,10 @@ const cssLoaders = (extraLoader) => {
       },
     },
     {
-      loader: "css-loader",
+      loader: 'css-loader',
     },
     {
-      loader: "postcss-loader",
+      loader: 'postcss-loader',
       options: {
         postcssOptions: {
           plugins: [
@@ -235,9 +234,9 @@ const cssLoaders = (extraLoader) => {
  */
 const jsLoaders = (extraPreset) => {
   const babelOptions = {
-    presets: ["@babel/preset-env"],
-    plugins: ["@babel/plugin-proposal-class-properties"],
-    cacheDirectory: "./app/cache/webpack__babel",
+    presets: ['@babel/preset-env'],
+    plugins: ['@babel/plugin-proposal-class-properties'],
+    cacheDirectory: './app/cache/webpack__babel',
   };
 
   if (extraPreset) {
@@ -246,7 +245,7 @@ const jsLoaders = (extraPreset) => {
 
   return [
     {
-      loader: "babel-loader",
+      loader: 'babel-loader',
       options: babelOptions,
     },
   ];
@@ -260,9 +259,9 @@ const jsLoaders = (extraPreset) => {
 const assetsLoaders = (extraLoader) => {
   const loaders = [
     {
-      loader: "file-loader",
+      loader: 'file-loader',
       options: {
-        name: "[path]/[name].[ext]",
+        name: '[path]/[name].[ext]',
       },
     },
   ];
@@ -290,28 +289,28 @@ const optimization = () => {
 
 // measures speed of each plugin in bundling
 // writes data in stats.json as plain text, shouldn't be in dev mod
-const smp = new SpeedMeasurePlugin({ disable: process.env.MEASURE === "false" });
+const smp = new SpeedMeasurePlugin({ disable: process.env.MEASURE === 'false' });
 module.exports = smp.wrap({
   // The base directory, an absolute path, for resolving entry points and loaders
   context: PATHS.src_absolute,
-  mode: "development",
+  mode: 'development',
   // Declarations of used files in bundles
   entry: isDev
     ? resultOfTemplatesProcessing.entries
     : {
-        "range-slider-plugin": [
+        'range-slider-plugin': [
           `./components/common.blocks/primitives/range-slider/range-slider-plugin.ts`,
         ],
       },
   // Where to put bundles for every entry point
   output: {
-    filename: isDev ? hashedFileName("bundles/[id]/[name]", "js") : "[name].js",
+    filename: isDev ? hashedFileName('bundles/[id]/[name]', 'js') : '[name].js',
     path: PATHS.dist_absolute,
   },
   resolve: {
     // You can use it while using import in css and js
     alias: sharedAliases,
-    extensions: [".js", ".json", ".ts"],
+    extensions: ['.js', '.json', '.ts'],
   },
   plugins: webpackPlugins(),
   module: {
@@ -327,7 +326,7 @@ module.exports = smp.wrap({
       {
         test: /\.s[ac]ss$/,
         use: cssLoaders({
-          loader: "sass-loader",
+          loader: 'sass-loader',
           options: {
             // Prefer `dart-sass` instead `node-sass`
             implementation: DartSASS,
@@ -350,11 +349,11 @@ module.exports = smp.wrap({
       {
         test: /\.ts$/,
         exclude: /node_modules/,
-        use: jsLoaders("@babel/preset-typescript"),
+        use: jsLoaders('@babel/preset-typescript'),
       },
     ],
   },
-  devtool: isDev ? "source-map" : "", // show readable file names during development process
+  devtool: isDev ? 'source-map' : '', // show readable file names during development process
   optimization: optimization(),
   devServer: {
     port: 4200,

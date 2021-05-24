@@ -1,11 +1,11 @@
-import cloneDeep from "lodash-es/cloneDeep";
-import isPlainObject from "lodash-es/isPlainObject";
-import { TemplateResult } from "lit-html";
+import cloneDeep from 'lodash-es/cloneDeep';
+import isPlainObject from 'lodash-es/isPlainObject';
+import { TemplateResult } from 'lit-html';
 
-import { OptionalTupleValues, RequiredTupleValues } from "./TypingHelper";
-import { eachDeep, resolveLongBracketNotation } from "./ObjectHelper";
-import { isReferenceType } from "./TypeOf";
-import { renderMVPView } from "./PluginCreationHelper";
+import { OptionalTupleValues, RequiredTupleValues } from './TypingHelper';
+import { eachDeep, resolveLongBracketNotation } from './ObjectHelper';
+import { isReferenceType } from './TypeOf';
+import { renderMVPView } from './PluginCreationHelper';
 
 /**
  * Testing(expect non undefined bounded(by instancePropsExpecter) properties) of arguments of constructor by creating the instance with argsOfCreator
@@ -13,7 +13,7 @@ import { renderMVPView } from "./PluginCreationHelper";
  * @param argsOfCreator default arguments for constructor
  * @param instancePropsExpecter callback with expect calls
  */
-export function testInitDEFAULT_OPTIONS<
+export function testDefaultOptions<
   TCreator extends new (...args: TCreatorArgs) => TInstance,
   TCreatorArgs extends unknown[],
   TInstance extends object
@@ -22,7 +22,7 @@ export function testInitDEFAULT_OPTIONS<
   argsOfCreator: TCreatorArgs,
   instancePropsExpecter: InstancePropsExpecter<TCreatorArgs, TInstance>
 ) {
-  describe("DEFAULT_OPTIONS", () => {
+  describe('DEFAULT_OPTIONS', () => {
     expectValidInstanceProps(argsOfCreator, instancePropsExpecter, new Creator(...argsOfCreator));
   });
 }
@@ -181,12 +181,12 @@ export function testSetter<
     expecter: methodOfInstanceToTest.expecter,
   } as MethodOfInstanceToRun<TMethod, Parameters<TMethod>, TInstance>;
   describe(`${
-    typeof methodOfInstanceToTest.methodReference === "string"
+    typeof methodOfInstanceToTest.methodReference === 'string'
       ? methodOfInstanceToTest.methodReference
       : methodOfInstanceToTest.methodReference.name
   }`, () => {
     testInstance({
-      describeSentence: "reset (undefined is passed)",
+      describeSentence: 'reset (undefined is passed)',
       Creator,
       constructorArgs,
       instancePropsExpecter: instancePropsExpecter as InstancePropsExpecter<
@@ -226,9 +226,9 @@ export function testDOM<
     instance: InstanceType<TCreator>;
   }) => void)[];
 }) {
-  describe("DOM manipulation", () => {
+  describe('DOM manipulation', () => {
     callbacksWithTest.push(() => {
-      test("renders correctly", () => {
+      test('renders correctly', () => {
         expect(container).toMatchSnapshot();
       });
     });
@@ -295,9 +295,9 @@ function runMethodOfInstanceWithDifferentArguments<
   let methodOfInstanceToRun: MethodOfInstanceToRun<TMethod, TMethodArgs, TInstance> | undefined;
 
   describe(`${
-    typeof methodOfInstanceToTest?.methodReference === "string"
+    typeof methodOfInstanceToTest?.methodReference === 'string'
       ? methodOfInstanceToTest?.methodReference
-      : methodOfInstanceToTest?.methodReference.name || "init"
+      : methodOfInstanceToTest?.methodReference.name || 'init'
   }`, () => {
     if (methodOfInstanceToTest) {
       methodOfInstanceToRun = {
@@ -393,10 +393,10 @@ function eachOfDifferentArguments<TArgs extends unknown[]>(
           key,
           concreteDifferentArgs,
           index,
-          key === "validRequiredArguments" || key === "invalidRequiredArguments",
-          key === "validRequiredArguments" ||
-            key === "partialOptionalArguments" ||
-            key === "fullOptionalArguments"
+          key === 'validRequiredArguments' || key === 'invalidRequiredArguments',
+          key === 'validRequiredArguments' ||
+            key === 'partialOptionalArguments' ||
+            key === 'fullOptionalArguments'
         );
 
         counter++;
@@ -438,7 +438,7 @@ function testInstance<
     } else {
       const methodOfInstanceMock = jest.fn(
         instance[
-          typeof methodOfInstanceToRun.methodReference === "string"
+          typeof methodOfInstanceToRun.methodReference === 'string'
             ? methodOfInstanceToRun.methodReference
             : methodOfInstanceToRun.methodReference.name
         ]
@@ -454,7 +454,7 @@ function testInstance<
       }
       expectMethodOfInstance(
         `method ${
-          typeof methodOfInstanceToRun.methodReference === "string"
+          typeof methodOfInstanceToRun.methodReference === 'string'
             ? methodOfInstanceToRun.methodReference
             : methodOfInstanceToRun.methodReference.name
         } should pass methodOfInstanceToTest.expecter checks (possibly decorated)`,
@@ -547,7 +547,7 @@ function expectPropsAreApplied<TInstance extends object>(
         );
 
         eachDeep(argValue, ({ value, path }) => {
-          if (isReferenceType(value) && typeof value !== "function") {
+          if (isReferenceType(value) && typeof value !== 'function') {
             expect(
               resolveLongBracketNotation(`${pathToPropInInstance}.${path}`, instance)
             ).not.toBe(value);
@@ -585,7 +585,7 @@ function expectReturnedAreImmutable<TInstance extends object>(
       expect(returned).toStrictEqual(propOfInstanceValue);
 
       eachDeep(returned, ({ value, path }) => {
-        if (isReferenceType(value) && typeof value !== "function") {
+        if (isReferenceType(value) && typeof value !== 'function') {
           expect(resolveLongBracketNotation(`${returns}.${path}`, instance)).not.toBe(value);
           expect(resolveLongBracketNotation(`${returns}.${path}`, instance)).toMatchObject(
             value as {}

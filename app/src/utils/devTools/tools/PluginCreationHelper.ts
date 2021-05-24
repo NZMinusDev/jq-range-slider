@@ -1,7 +1,20 @@
-import { html, render, TemplateResult } from "lit-html";
-import { ClassInfo } from "lit-html/directives/class-map";
-import { StyleInfo } from "lit-html/directives/style-map";
-import defaultsDeep from "lodash-es/defaultsDeep";
+import { html, render, TemplateResult } from 'lit-html';
+import { ClassInfo } from 'lit-html/directives/class-map';
+import { StyleInfo } from 'lit-html/directives/style-map';
+import defaultsDeep from 'lodash-es/defaultsDeep';
+
+/**
+ * It's shortcut of default handleEvent in EventListenerObject
+ */
+export function handleEvent(event: Event) {
+  // mousedown -> onMousedown
+  const handlerName = `_on${event.type[0].toUpperCase()}${event.type.slice(1)}`;
+  if (this[handlerName]) {
+    this[handlerName](event);
+  }
+
+  return this;
+}
 
 /**
  * Add events processing inside class without inheritances and make child's handlers inside one class
@@ -71,7 +84,7 @@ export class EventManagerMixin<TEvents extends string> {
     }
     // calling the handlers
     this._eventHandlers[eventName].forEach((handler) => {
-      if (typeof handler === "function") {
+      if (typeof handler === 'function') {
         handler.apply(this, args);
       } else {
         handler.handleEvent(...args);
@@ -102,8 +115,8 @@ export abstract class MVPView<
   TOptionsToGet extends object,
   TOptionsToSet extends object,
   TState extends object,
-  TEvents extends string = ""
-> extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">> {
+  TEvents extends string = ''
+> extends EventManagerMixin<Exclude<TEvents | 'render' | 'remove', ''>> {
   readonly template: template = ({ classInfo, styleInfo, attributes } = {}, ...args) => html``;
 
   static readonly templateOfRemoving = () => html``;
@@ -208,7 +221,7 @@ export abstract class MVPView<
   }
 
   remove() {
-    this.trigger("remove");
+    this.trigger('remove');
 
     return this;
   }
@@ -259,7 +272,7 @@ export abstract class MVPView<
   }
 
   protected _render() {
-    this.trigger("render");
+    this.trigger('render');
 
     return this;
   }
@@ -286,10 +299,10 @@ export function renderMVPView<
   render(view.template(), container);
 
   view
-    .on("render", () => {
+    .on('render', () => {
       render(view.template(), container);
     })
-    .on("remove", () => {
+    .on('remove', () => {
       render((ViewCreator as any).templateOfRemoving(), container);
     });
 

@@ -1,5 +1,5 @@
-import IRangeSliderView, { RangeSliderOptions } from "./view/range-slider.view.coupling";
-import IRangeSliderModel from "./models/range-slider.model.coupling";
+import IRangeSliderView, { RangeSliderOptions } from './view/range-slider.view.coupling';
+import IRangeSliderModel from './models/range-slider.model.coupling';
 
 export default interface RangeSliderPresenter {
   view: IRangeSliderView;

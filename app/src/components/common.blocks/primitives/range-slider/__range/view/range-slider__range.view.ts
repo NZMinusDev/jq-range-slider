@@ -1,16 +1,16 @@
-import "./range-slider__range.scss";
+import './range-slider__range.scss';
+
+import { html } from 'lit-html';
+import { classMap } from 'lit-html/directives/class-map';
+import { styleMap } from 'lit-html/directives/style-map';
+import { spread } from '@open-wc/lit-helpers';
+
+import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 
 import IRangeSliderRangeView, {
   RangeOptions,
   RangeState,
-} from "./range-slider__range.view.coupling";
-
-import { html } from "lit-html";
-import { classMap } from "lit-html/directives/class-map";
-import { styleMap } from "lit-html/directives/style-map";
-import { spread } from "@open-wc/lit-helpers";
-
-import { MVPView } from "@utils/devTools/tools/PluginCreationHelper";
+} from './range-slider__range.view.coupling';
 
 export const DEFAULT_OPTIONS: Required<RangeOptions> = {
   isConnected: false,
@@ -24,8 +24,8 @@ export default class RangeSliderRangeView
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
     html`<div
       class=${classMap({
-        "range-slider__range": true,
-        "range-slider__range_isConnected": this._options.isConnected,
+        'range-slider__range': true,
+        'range-slider__range_isConnected': this._options.isConnected,
         ...classInfo,
       })}
       ...=${spread(attributes)}
@@ -34,7 +34,7 @@ export default class RangeSliderRangeView
 
   constructor(options: RangeOptions = DEFAULT_OPTIONS, state: RangeState = DEFAULT_STATE) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
-      theOrderOfIteratingThroughTheOptions: ["isConnected"],
+      theOrderOfIteratingThroughTheOptions: ['isConnected'],
     });
   }
 

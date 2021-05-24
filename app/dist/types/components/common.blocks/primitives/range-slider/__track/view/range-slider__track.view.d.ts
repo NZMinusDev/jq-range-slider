@@ -1,10 +1,11 @@
-import "./range-slider__track.scss";
-import IRangeSliderTrackView, { TrackOptions, FixedTrackOptions, TrackState } from "./range-slider__track.view.coupling";
-import { TemplateResult } from "lit-html";
+import './range-slider__track.scss';
+import { TemplateResult } from 'lit-html';
 import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
+import IRangeSliderTrackView, { TrackOptions, FixedTrackOptions, TrackState } from './range-slider__track.view.coupling';
 export declare const DEFAULT_OPTIONS: FixedTrackOptions;
 export declare const DEFAULT_STATE: TrackState;
 export default class RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> implements IRangeSliderTrackView {
+    static intervalsKeysCompareFunc(a: string, b: string): number;
     readonly template: ({ classInfo, styleInfo, attributes }?: {
         classInfo?: {} | undefined;
         styleInfo?: {} | undefined;
@@ -19,13 +20,17 @@ export default class RangeSliderTrackView extends MVPView<FixedTrackOptions, Tra
     };
     getStepsOption(): (number | "none")[];
     getPaddingOption(): [number, number];
-    setOrientationOption(orientation?: TrackOptions["orientation"]): this;
-    setIntervalsOption(intervals?: TrackOptions["intervals"]): this;
-    setStepsOption(steps?: TrackOptions["steps"]): this;
-    setPaddingOption(padding?: TrackOptions["padding"]): this;
+    setOrientationOption(orientation?: TrackOptions['orientation']): this;
+    setIntervalsOption(intervals?: TrackOptions['intervals']): this;
+    setStepsOption(steps?: TrackOptions['steps']): this;
+    setPaddingOption(padding?: TrackOptions['padding']): this;
     protected _fixIntervalsOption(): this;
+    protected _fixOrderOfIntervalsOption(): this;
+    protected _fixKeysOfIntervalsOption(): this;
+    protected _fixValuesOfIntervalsOption(): this;
     protected _fixStepsOption(): this;
+    protected _fixLengthOfStepsOption(): this;
+    protected _fixValuesOfStepsOption(): void;
     protected _fixPaddingOption(): this;
     protected _getSortedKeysOfIntervalsOption(): string[];
 }
-export declare const intervalsKeysCompareFunc: (a: any, b: any) => number;

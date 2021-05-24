@@ -1,7 +1,7 @@
-import "./range-slider__thumb.scss";
-import IRangeSliderThumbView, { ThumbOptions, ThumbState } from "./range-slider__thumb.view.coupling";
-import { TemplateResult } from "lit-html";
+import './range-slider__thumb.scss';
+import { TemplateResult } from 'lit-html';
 import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
+import IRangeSliderThumbView, { ThumbOptions, ThumbState } from './range-slider__thumb.view.coupling';
 export declare const DEFAULT_OPTIONS: Required<ThumbOptions>;
 export declare const DEFAULT_STATE: ThumbState;
 export default class RangeSliderThumbView extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> implements IRangeSliderThumbView {

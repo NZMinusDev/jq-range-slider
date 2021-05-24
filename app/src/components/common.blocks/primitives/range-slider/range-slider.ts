@@ -1,11 +1,10 @@
-import IRangeSliderPresenter from "./range-slider.coupling";
+import { renderMVPView } from '@utils/devTools/tools/PluginCreationHelper';
+import IRangeSliderPresenter from './range-slider.coupling';
 
-import IRangeSliderView, { RangeSliderOptions } from "./view/range-slider.view.coupling";
-import IRangeSliderModel from "./models/range-slider.model.coupling";
+import IRangeSliderView, { RangeSliderOptions } from './view/range-slider.view.coupling';
+import IRangeSliderModel from './models/range-slider.model.coupling';
 
-import RangeSliderView from "./view/range-slider.view";
-
-import { renderMVPView } from "@utils/devTools/tools/PluginCreationHelper";
+import RangeSliderView from './view/range-slider.view';
 
 export default class RangeSliderPresenter implements IRangeSliderPresenter {
   readonly view: IRangeSliderView;
@@ -22,14 +21,24 @@ export default class RangeSliderPresenter implements IRangeSliderPresenter {
         .getState()
         .then((state) => {
           this.view.set(state.value);
+
+          return this;
         })
         .then(() => {
-          this.view.on("set", () => {
+          const setHandler = () => {
             model.setState({ value: this.view.get() });
-          });
+          };
+
+          this.view.on('set', setHandler);
           model.whenStateIsChanged((state) => {
             this.view.set(state.value);
           });
+
+          return this;
+        })
+        .catch((reason) => {
+          // eslint-disable-next-line no-console
+          console.error(reason);
         });
     }
   }

@@ -2,6 +2,10 @@ import { TemplateResult } from "lit-html";
 import { ClassInfo } from "lit-html/directives/class-map";
 import { StyleInfo } from "lit-html/directives/style-map";
 /**
+ * It's shortcut of default handleEvent in EventListenerObject
+ */
+export declare function handleEvent(event: Event): any;
+/**
  * Add events processing inside class without inheritances and make child's handlers inside one class
  * @example
  * // example 1

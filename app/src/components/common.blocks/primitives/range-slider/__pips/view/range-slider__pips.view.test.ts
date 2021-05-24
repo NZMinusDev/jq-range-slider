@@ -1,29 +1,32 @@
-import RangeSliderPipsView, { DEFAULT_OPTIONS } from "./range-slider__pips.view";
+/* eslint-disable dot-notation */
 
 import {
   InstancePropsExpecter,
   testInit,
-  testInitDEFAULT_OPTIONS,
+  testDefaultOptions,
   testGetter,
   testSetter,
   DifferentArguments,
   testDOM,
-} from "@utils/devTools/tools/UnitTestingHelper";
-import { collapsingParseInt } from "@utils/devTools/tools/ParserHelper";
+} from '@utils/devTools/tools/UnitTestingHelper';
+import { collapsingParseInt } from '@utils/devTools/tools/ParserHelper';
+
+import RangeSliderPipsView, { DEFAULT_OPTIONS } from './range-slider__pips.view';
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderPipsView>,
   RangeSliderPipsView
-> = function ({ instance }) {
-  instance["_options"].values.forEach((value, index, self) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+> = function viewPropertiesExpecter({ instance, passedArgs }) {
+  instance['_options'].values.forEach((value, index, self) => {
     if (index > 0) expect(value.percent > self[index - 1].percent);
     expect(value.percent).toBeGreaterThanOrEqual(0);
     expect(value.percent).toBeLessThanOrEqual(100);
   });
 
-  expect(instance["_options"].density).toBeGreaterThanOrEqual(0);
-  expect(instance["_options"].density).toEqual(
-    collapsingParseInt(`${instance["_options"].density}`)
+  expect(instance['_options'].density).toBeGreaterThanOrEqual(0);
+  expect(instance['_options'].density).toEqual(
+    collapsingParseInt(`${instance['_options'].density}`)
   );
 };
 
@@ -67,7 +70,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [
     [
       {
-        orientation: "horizontal",
+        orientation: 'horizontal',
         isHidden: true,
         values: [
           { value: -200, percent: 0 },
@@ -82,7 +85,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
   ],
 };
 
-testInitDEFAULT_OPTIONS(RangeSliderPipsView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
+testDefaultOptions(RangeSliderPipsView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderPipsView,
@@ -93,14 +96,14 @@ testInit({
     >),
   },
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set("_options", 1),
+  propsToSet: new Map().set('_options', 1),
 });
-describe("init", () => {
-  describe("with default options", () => {
+describe('init', () => {
+  describe('with default options', () => {
     test("the instance's func options should be to have returned", () => {
       const instance = new RangeSliderPipsView();
 
-      const formatterMock = jest.fn(instance["_options"].formatter);
+      const formatterMock = jest.fn(instance['_options'].formatter);
       formatterMock(1);
       expect(formatterMock).toHaveReturned();
 
@@ -117,8 +120,10 @@ testGetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderPipsView.prototype.getOptions,
-    expecter: ({ mock, passedArgs, instance }) => {},
-    returns: "_options",
+    expecter: () => {
+      // some expect calls
+    },
+    returns: '_options',
   },
 });
 testSetter({
@@ -127,11 +132,13 @@ testSetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderPipsView.prototype.setOptions,
-    expecter: ({ mock, passedArgs, instance }) => {},
+    expecter: () => {
+      // some expect calls
+    },
     differentArguments: differentOptionsArg,
   },
-  propsToSet: new Map().set("_options", 0),
-  resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
+  propsToSet: new Map().set('_options', 0),
+  resetPropsTo: new Map().set('_options', DEFAULT_OPTIONS),
 });
 
 testDOM({

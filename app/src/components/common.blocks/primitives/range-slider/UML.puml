@@ -97,9 +97,15 @@ class RangeSliderTrackView extends MVPView implements IRangeSliderTrackView {
     +setStepsOption(steps?: number | "none" | (number | "none")[] | undefined): this
     +setPaddingOption(padding?: number | [number, number] | undefined): this
     #_fixIntervalsOption(): this
+    #_fixOrderOfIntervalsOption(): this
+    #_fixKeysOfIntervalsOption(): this
+    #_fixValuesOfIntervalsOption(): this
     #_fixStepsOption(): this
+    #_fixLengthOfStepsOption(): this
+    #_fixValuesOfStepsOption(): void
     #_fixPaddingOption(): this
     #_getSortedKeysOfIntervalsOption(): string[]
+    +{static} intervalsKeysCompareFunc(a: string, b: string): number
 }
 class RangeSliderRangeView extends MVPView implements IRangeSliderRangeView {
     +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
@@ -155,7 +161,7 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     +setFormatterOption(formatter?: Formatter | undefined): this
     +setTooltipsOption(tooltips?: boolean | (boolean | Formatter)[] | undefined): this
     +setPipsOption(pips?: (Omit<PipsOptions, "orientation" | "formatter" | "values"> & { mode?: Mode | undefined; values?: number | number[] | undefined; }) | undefined): this
-    +setOptions(options?: RangeSliderOptions): this
+    +setOptions(options?: RangeSliderOptions | undefined): this
     +get(): number[]
     +set(value?: number | number[] | undefined): this
     #_setValueState(value?: number[]): this
@@ -164,6 +170,11 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_fixStartOption(): this
     #_fixStepsOption(): this
     #_fixPipsOption(): this
+    #_fixPipsOptionDependOnMode(): void
+    #_fixPipsOptionWithIntervalsMode(): void
+    #_fixPipsOptionWithCountMode(): void
+    #_fixPipsOptionWithPositionsMode(): void
+    #_fixPipsOptionWithValuesMode(): void
     #_fixConnectOption(): this
     #_fixTooltipsOption(): this
     #_fixValueState(): this
@@ -171,7 +182,6 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_getValueBorderOfTrack(): { min: number; max: number; }
     #_getLinearPercentBorderOfTrack(): { min: number; max: number; }
     #_getIntervalInfoByPoint(value: number, __1?: { isIncludedInSupremum?: boolean | undefined; }): { keyOfInfimum: string; keyOfSupremum?: undefined; valueSize?: undefined; percentSize?: undefined; magnificationFactor?: undefined; step?: undefined; } | { keyOfSupremum: string; keyOfInfimum?: undefined; valueSize?: undefined; percentSize?: undefined; magnificationFactor?: undefined; step?: undefined; } | { ...; }
-    #_getIntervalKeyAsNumber(key: string | number): number
     #_toTrackPercent(valueOnTrack: number): number
     #_toTrackValue(linearPercentOnTrack: number): number
     #_toTrackOptions(): FixedTrackOptions
@@ -181,14 +191,15 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_toPipsOptions(): Required<PipsOptions>
     #_toThumbState(index: number): ThumbState
     #_toTooltipState(index: number): TooltipState
-    #_thumbEventListenerObject: { handleEvent: (event: Event) => void; }
-    #_getThumbConstants(thumbElem: HTMLElement): { trackElem: HTMLElement; thumbIndex: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { valuePerPx: number; }; }
-    #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | "none"; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): { thumbValueAfterIncrementation: number; increments: number[]; currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | "none"; }; }
-    #_toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): number
+    #_thumbEventListenerObject: { cache: WeakMap<HTMLElement, { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }>; ... 4 more ...; getOrigin(event: Event): HTMLElement; }
+    #_initThumbCache(origin: HTMLElement): { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }
+    #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | 'none'; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): any
     #_thumbValueToPositionOnTrack(thumbIndex: number): { offsetOnTrackInPercent: number; THUMB_SCALE_FACTOR: number; THUMB_TO_CENTER_OFFSET: number; }
-    #_trackEventListenerObject: { handleEvent: (event: Event) => void; }
+    #_trackEventListenerObject: { cache: { trackElem: HTMLElement; }; handleEvent: (event: Event) => void; _onClick: (event: MouseEvent) => void; }
     #_getNearestThumb(value: number): number
-    #_pipsEventListenerObject: { handleEvent: (event: Event) => void; }
+    #_pipsEventListenerObject: { handleEvent: (event: Event) => void; _onClick: (event: MouseEvent) => void; }
+    #{static} _getIntervalKeyAsNumber(key: string | number): number
+    #{static} _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): number
 }
 class RangeSliderPresenter implements IRangeSliderPresenter {
     +view: IRangeSliderView

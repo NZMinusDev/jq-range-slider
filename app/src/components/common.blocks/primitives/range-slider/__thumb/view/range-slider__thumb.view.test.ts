@@ -1,18 +1,22 @@
-import RangeSliderThumbView, { DEFAULT_OPTIONS } from "./range-slider__thumb.view";
 import {
   InstancePropsExpecter,
   testInit,
-  testInitDEFAULT_OPTIONS,
+  testDefaultOptions,
   testGetter,
   testSetter,
   DifferentArguments,
   testDOM,
-} from "@utils/devTools/tools/UnitTestingHelper";
+} from '@utils/devTools/tools/UnitTestingHelper';
+
+import RangeSliderThumbView, { DEFAULT_OPTIONS } from './range-slider__thumb.view';
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderThumbView>,
   RangeSliderThumbView
-> = function ({ instance }) {};
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+> = function viewPropertiesExpecter({ instance, passedArgs }) {
+  // some expect calls
+};
 
 const differentOptionsArg: DifferentArguments<Parameters<
   typeof RangeSliderThumbView.prototype.setOptions
@@ -21,7 +25,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
   fullOptionalArguments: [],
 };
 
-testInitDEFAULT_OPTIONS(RangeSliderThumbView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
+testDefaultOptions(RangeSliderThumbView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderThumbView,
@@ -32,10 +36,10 @@ testInit({
     >),
   },
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set("_options", 1),
+  propsToSet: new Map().set('_options', 1),
 });
-describe("init", () => {
-  describe("with default options", () => {
+describe('init', () => {
+  describe('with default options', () => {
     test("the instance's func options should be to have returned", () => {
       const instance = new RangeSliderThumbView();
 
@@ -52,8 +56,11 @@ testGetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderThumbView.prototype.getOptions,
-    expecter: ({ mock, passedArgs, instance }) => {},
-    returns: "_options",
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    expecter: ({ mock, passedArgs, instance }) => {
+      // some expect calls
+    },
+    returns: '_options',
   },
 });
 testSetter({
@@ -62,11 +69,14 @@ testSetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderThumbView.prototype.setOptions,
-    expecter: ({ mock, passedArgs, instance }) => {},
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    expecter: ({ mock, passedArgs, instance }) => {
+      // some expect calls
+    },
     differentArguments: differentOptionsArg,
   },
-  propsToSet: new Map().set("_options", 0),
-  resetPropsTo: new Map().set("_options", DEFAULT_OPTIONS),
+  propsToSet: new Map().set('_options', 0),
+  resetPropsTo: new Map().set('_options', DEFAULT_OPTIONS),
 });
 
 testDOM({
@@ -75,10 +85,10 @@ testDOM({
   templatesArgs: [],
   callbacksWithTest: [
     ({ container, instance }) => {
-      test("ondragstart should be nooped", () => {
-        const target = container.querySelector(".range-slider__thumb") as HTMLElement;
-        const event = new Event("dragstart");
-        const noopMock = jest.spyOn(instance as any, "_onDragstart");
+      test('ondragstart should be nooped', () => {
+        const target = container.querySelector('.range-slider__thumb') as HTMLElement;
+        const event = new Event('dragstart');
+        const noopMock = jest.spyOn(Object.getPrototypeOf(instance), '_onDragstart');
 
         target.dispatchEvent(event);
 
