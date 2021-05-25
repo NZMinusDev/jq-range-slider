@@ -477,6 +477,11 @@ export default class RangeSliderView
   }
 
   protected _fixValueState() {
+    fixLength(this._state.value, this._options.start.length, NaN);
+    this._state.value = this._state.value.map((val) =>
+      Number.isNaN(val) ? this._options.start[this._state.value.length - 1] : val
+    );
+
     const trackBorder = this._getValueBorderOfTrack();
     this._state.value = this._state.value.map((value) => {
       if (value < trackBorder.min) {
@@ -487,11 +492,6 @@ export default class RangeSliderView
       }
       return value;
     });
-
-    fixLength(this._state.value, this._options.start.length, NaN);
-    this._state.value.map((val) =>
-      Number.isNaN(val) ? this._options.start[this._state.value.length] : val
-    );
 
     this._state.value.sort(ascending);
 

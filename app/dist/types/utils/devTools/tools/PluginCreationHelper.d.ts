@@ -1,6 +1,6 @@
-import { TemplateResult } from "lit-html";
-import { ClassInfo } from "lit-html/directives/class-map";
-import { StyleInfo } from "lit-html/directives/style-map";
+import { TemplateResult } from 'lit-html';
+import { ClassInfo } from 'lit-html/directives/class-map';
+import { StyleInfo } from 'lit-html/directives/style-map';
 /**
  * It's shortcut of default handleEvent in EventListenerObject
  */
@@ -53,7 +53,7 @@ export interface CustomEventListenerObject {
     [key: string]: any;
 }
 export declare type handler = CustomEventListener | CustomEventListenerObject;
-export declare abstract class MVPView<TOptionsToGet extends object, TOptionsToSet extends object, TState extends object, TEvents extends string = ""> extends EventManagerMixin<Exclude<TEvents | "render" | "remove", "">> {
+export declare abstract class MVPView<TOptionsToGet extends object, TOptionsToSet extends object, TState extends object, TEvents extends string = ''> extends EventManagerMixin<Exclude<TEvents | 'render' | 'remove', ''>> {
     readonly template: template;
     static readonly templateOfRemoving: () => TemplateResult;
     protected _options: TOptionsToGet;
