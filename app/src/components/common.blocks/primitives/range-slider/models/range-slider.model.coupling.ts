@@ -1,8 +1,10 @@
 import type { MVPModel } from '@utils/devTools/tools/PluginCreationHelper';
 
-export type RangeSliderState = {
+type RangeSliderState = {
   value: number[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export default interface RangeSliderModel extends MVPModel<RangeSliderState> {}
+interface RangeSliderModel extends MVPModel<RangeSliderState> {}
+
+export { RangeSliderModel as default, RangeSliderState };

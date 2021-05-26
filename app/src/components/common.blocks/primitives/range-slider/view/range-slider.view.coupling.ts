@@ -1,13 +1,14 @@
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
+
 import { TrackOptions, FixedTrackOptions } from '../__track/view/range-slider__track.view.coupling';
 import { RangeOptions } from '../__range/view/range-slider__range.view.coupling';
 import { TooltipOptions } from '../__tooltip/view/range-slider__tooltip.view.coupling';
 import { PipsOptions } from '../__pips/view/range-slider__pips.view.coupling';
 
-export type Formatter = (value: number) => string;
-export type Mode = 'intervals' | 'count' | 'positions' | 'values';
+type Formatter = (value: number) => string;
+type Mode = 'intervals' | 'count' | 'positions' | 'values';
 
-export type RangeSliderOptions = {
+type RangeSliderOptions = {
   intervals?: TrackOptions['intervals'];
   start?: number | number[];
   steps?: TrackOptions['steps'];
@@ -21,7 +22,7 @@ export type RangeSliderOptions = {
     values?: number | number[];
   };
 };
-export type FixedRangeSliderOptions = {
+type FixedRangeSliderOptions = {
   intervals: Required<RangeSliderOptions>['intervals'];
   start: number[];
   steps: FixedTrackOptions['steps'];
@@ -33,12 +34,12 @@ export type FixedRangeSliderOptions = {
   pips: NonNullable<Required<RangeSliderOptions['pips']>>;
 };
 
-export type RangeSliderState = {
+type RangeSliderState = {
   value: FixedRangeSliderOptions['start'];
   isActiveThumbs: boolean[];
 };
 
-export default interface RangeSliderView
+interface RangeSliderView
   extends MVPView<
     FixedRangeSliderOptions,
     RangeSliderOptions,
@@ -67,3 +68,12 @@ export default interface RangeSliderView
   get(): FixedRangeSliderOptions['start'];
   set(value?: RangeSliderOptions['start']): this;
 }
+
+export {
+  RangeSliderView as default,
+  Formatter,
+  Mode,
+  RangeSliderOptions,
+  FixedRangeSliderOptions,
+  RangeSliderState,
+};

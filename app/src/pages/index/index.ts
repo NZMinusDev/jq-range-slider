@@ -1,9 +1,9 @@
-import './index.pug';
-import './index.scss';
-
 import '@common.blocks/primitives/range-slider/range-slider-plugin';
 import '@common.blocks/primitives/range-slider/jq-range-slider-plugin';
 import { RangeSliderOptions } from '@common.blocks/primitives/range-slider/view/range-slider.view.coupling';
+
+import './index.pug';
+import './index.scss';
 
 const RANGE_SLIDER_OPTIONS: RangeSliderOptions = {};
 
@@ -311,8 +311,8 @@ const resetOnClickHandler = () => {
   configurableSlider.view.set();
 };
 
-setFormElements.submitBtn.addEventListener('click', submitOnClickHandler);
-setFormElements.resetBtn.addEventListener('click', resetOnClickHandler);
+setForm.addEventListener('submit', submitOnClickHandler);
+setForm.addEventListener('submit', resetOnClickHandler);
 
 // Tip: set options (it doesn't run render. If you need rerender use setOptions(options) method instead)
 Object.values(configElements).forEach((configElement) => {

@@ -4,7 +4,15 @@ import { StyleInfo } from 'lit-html/directives/style-map';
 /**
  * It's shortcut of default handleEvent in EventListenerObject
  */
-export declare function handleEvent(event: Event): any;
+declare function handleEvent(event: Event): any;
+interface CustomEventListener {
+    (...args: any): void;
+}
+interface CustomEventListenerObject {
+    handleEvent(...args: any): void;
+    [key: string]: any;
+}
+declare type handler = CustomEventListener | CustomEventListenerObject;
 /**
  * Add events processing inside class without inheritances and make child's handlers inside one class
  * @example
@@ -36,24 +44,23 @@ export declare function handleEvent(event: Event): any;
  * btn.addEventListener('mousedown', menu);
  * btn.addEventListener('mouseup', menu);
  */
-export declare class EventManagerMixin<TEvents extends string> {
+declare class EventManagerMixin<TEvents extends string> {
     protected _eventHandlers: {
         [key: string]: handler[];
     };
-    on(eventName: TEvents, handler: handler): this;
-    off(eventName: TEvents, handler: (...args: any) => void): this;
+    on(eventName: TEvents, eventHandler: handler): this;
+    off(eventName: TEvents, eventHandler: (...args: any) => void): this;
     trigger(eventName: TEvents, ...args: any): this;
     handleEvent(event: Event): this;
 }
-export interface CustomEventListener {
-    (...args: any): void;
-}
-export interface CustomEventListenerObject {
-    handleEvent(...args: any): void;
-    [key: string]: any;
-}
-export declare type handler = CustomEventListener | CustomEventListenerObject;
-export declare abstract class MVPView<TOptionsToGet extends object, TOptionsToSet extends object, TState extends object, TEvents extends string = ''> extends EventManagerMixin<Exclude<TEvents | 'render' | 'remove', ''>> {
+declare type template = (attributes?: {
+    classInfo?: ClassInfo;
+    styleInfo?: StyleInfo;
+    attributes?: {
+        [key: string]: unknown;
+    };
+}, ...args: any | undefined) => TemplateResult;
+declare abstract class MVPView<TOptionsToGet extends Record<string, unknown>, TOptionsToSet extends Record<string, unknown>, TState extends Record<string, unknown>, TEvents extends string = ''> extends EventManagerMixin<Exclude<TEvents | 'render' | 'remove', ''>> {
     readonly template: template;
     static readonly templateOfRemoving: () => TemplateResult;
     protected _options: TOptionsToGet;
@@ -72,16 +79,10 @@ export declare abstract class MVPView<TOptionsToGet extends object, TOptionsToSe
     protected _fixState(): this;
     protected _render(): this;
 }
-export declare type template = (attributes?: {
-    classInfo?: ClassInfo;
-    styleInfo?: StyleInfo;
-    attributes?: {
-        [key: string]: unknown;
-    };
-}, ...args: any | undefined) => TemplateResult;
-export declare function renderMVPView<TMVPViewCreator extends new (...args: TArguments) => TInstance, TArguments extends unknown[], TInstance extends MVPView<any, any, any>>(ViewCreator: TMVPViewCreator, viewParameters: TArguments, container: HTMLElement | DocumentFragment): TInstance;
-export interface MVPModel<State> {
+declare const renderMVPView: <TArguments extends unknown[], TInstance extends MVPView<any, any, any, "">, TMVPViewCreator extends new (...args: TArguments) => TInstance>(ViewCreator: TMVPViewCreator, viewParameters: TArguments, container: HTMLElement | DocumentFragment) => TInstance;
+interface MVPModel<State> {
     getState(): Promise<Required<State>>;
     setState(state?: Partial<State>): Promise<this>;
     whenStateIsChanged(callback: (state: Required<State>) => void): void;
 }
+export { handleEvent, CustomEventListener, CustomEventListenerObject, handler, EventManagerMixin, template, MVPView, renderMVPView, MVPModel, };

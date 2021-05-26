@@ -1,5 +1,3 @@
-import './range-slider__tooltip.scss';
-
 import { html } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
@@ -7,22 +5,23 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 
+import './range-slider__tooltip.scss';
 import IRangeSliderTooltipView, {
   TooltipOptions,
   TooltipState,
 } from './range-slider__tooltip.view.coupling';
 
-export const DEFAULT_OPTIONS: Required<TooltipOptions> = {
+const DEFAULT_OPTIONS: Required<TooltipOptions> = {
   orientation: 'top',
   isHidden: false,
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
 };
 
-export const DEFAULT_STATE: TooltipState = {
+const DEFAULT_STATE: TooltipState = {
   value: -1,
 };
 
-export default class RangeSliderTooltipView
+class RangeSliderTooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState>
   implements IRangeSliderTooltipView {
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
@@ -70,3 +69,5 @@ export default class RangeSliderTooltipView
     return this;
   }
 }
+
+export { RangeSliderTooltipView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

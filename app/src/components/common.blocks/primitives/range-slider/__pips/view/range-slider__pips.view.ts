@@ -1,5 +1,3 @@
-import './range-slider__pips.scss';
-
 import defaultsDeep from 'lodash-es/defaultsDeep';
 import { html } from 'lit-html';
 import { ClassInfo, classMap } from 'lit-html/directives/class-map';
@@ -9,9 +7,10 @@ import { spread } from '@open-wc/lit-helpers';
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 import { collapsingParseInt } from '@utils/devTools/tools/ParserHelper';
 
+import './range-slider__pips.scss';
 import IRangeSliderPipsView, { PipsOptions, PipsState } from './range-slider__pips.view.coupling';
 
-export const DEFAULT_OPTIONS: Required<PipsOptions> = {
+const DEFAULT_OPTIONS: Required<PipsOptions> = {
   orientation: 'horizontal',
   isHidden: false,
   values: [],
@@ -19,9 +18,9 @@ export const DEFAULT_OPTIONS: Required<PipsOptions> = {
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
 };
 
-export const DEFAULT_STATE: PipsState = {};
+const DEFAULT_STATE: PipsState = {};
 
-export default class RangeSliderPipsView
+class RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
   implements IRangeSliderPipsView {
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
@@ -109,20 +108,13 @@ export default class RangeSliderPipsView
     }
 
     const valueClasses: ClassInfo = { 'range-slider__pips-value': true };
-    const markerClasses: ClassInfo = { 'range-slider__pips-marker': true };
 
     const positionKey = this._options.orientation === 'horizontal' ? 'left' : 'top';
 
-    /** values */
     let valuePosition = 0;
     let rangeShift = this._options.values[0].percent;
 
-    /** density */
-    const rangeBetweenMarkers = 1 / this._options.density;
-    let markerPosition = this._options.values[0].percent;
-
     return this._options.values.map((value, index, values) => {
-      /** values */
       const valueStyles = {
         [positionKey]: `${(valuePosition += rangeShift)}%`,
       };
@@ -133,20 +125,10 @@ export default class RangeSliderPipsView
         data-formatted-value="${this._options.formatter(value.value)}"
       ></div>`;
 
-      /** density */
-      const amountOfMarkers = Math.floor(rangeShift * this._options.density);
-      const markersTemplate = new Array(amountOfMarkers).fill(``).map(() => {
-        markerPosition += rangeBetweenMarkers;
-        if (markerPosition > valuePosition) {
-          markerPosition = valuePosition;
-        }
-
-        const markerStyles = {
-          [positionKey]: `${markerPosition}%`,
-        };
-
-        return html`<div class=${classMap(markerClasses)} style=${styleMap(markerStyles)}></div>`;
-      });
+      let markersTemplate;
+      if (index > 0) {
+        markersTemplate = this._getMarkersRender(valuePosition, rangeShift, positionKey);
+      }
 
       if (values[index + 1] !== undefined) {
         rangeShift = values[index + 1].percent - value.percent;
@@ -155,4 +137,24 @@ export default class RangeSliderPipsView
       return html`${markersTemplate}${valueTemplate}`;
     });
   }
+  protected _getMarkersRender(endPosition: number, range: number, positionKey: 'left' | 'top') {
+    const markerClasses: ClassInfo = { 'range-slider__pips-marker': true };
+
+    const amountOfMarkers = Math.floor(range * this._options.density);
+    const rangeBetweenMarkers = 1 / this._options.density;
+    const startPosition = endPosition - range;
+    let markerPosition = startPosition;
+
+    return new Array(amountOfMarkers).fill(``).map(() => {
+      markerPosition += rangeBetweenMarkers;
+
+      const markerStyles = {
+        [positionKey]: `${markerPosition}%`,
+      };
+
+      return html`<div class=${classMap(markerClasses)} style=${styleMap(markerStyles)}></div>`;
+    });
+  }
 }
+
+export { RangeSliderPipsView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

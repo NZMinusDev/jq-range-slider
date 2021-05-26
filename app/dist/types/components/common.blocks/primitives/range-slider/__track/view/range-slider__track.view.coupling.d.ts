@@ -1,5 +1,5 @@
 import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
-export declare type TrackOptions = {
+declare type TrackOptions = {
     orientation?: 'horizontal' | 'vertical';
     intervals?: {
         min: number;
@@ -9,14 +9,14 @@ export declare type TrackOptions = {
     steps?: 'none' | number | ('none' | number)[];
     padding?: number | [number, number];
 };
-export declare type FixedTrackOptions = {
+declare type FixedTrackOptions = {
     orientation: Required<TrackOptions>['orientation'];
     intervals: Required<TrackOptions>['intervals'];
     steps: ('none' | number)[];
     padding: [number, number];
 };
-export declare type TrackState = {};
-export default interface RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
+declare type TrackState = {};
+interface RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
     getIntervalsOption(): FixedTrackOptions['intervals'];
     getStepsOption(): FixedTrackOptions['steps'];
     getPaddingOption(): FixedTrackOptions['padding'];
@@ -24,3 +24,4 @@ export default interface RangeSliderTrackView extends MVPView<FixedTrackOptions,
     setStepsOption(steps?: TrackOptions['steps']): this;
     setPaddingOption(padding?: TrackOptions['padding']): this;
 }
+export { RangeSliderTrackView as default, TrackOptions, FixedTrackOptions, TrackState };

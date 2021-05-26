@@ -1,14 +1,14 @@
-import './range-slider.scss';
 import { MVPView } from "../../../../../utils/devTools/tools/PluginCreationHelper";
+import './range-slider.scss';
 import IRangeSliderView, { RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState } from './range-slider.view.coupling';
 import { FixedTrackOptions, TrackOptions } from '../__track/view/range-slider__track.view.coupling';
 import { RangeOptions } from '../__range/view/range-slider__range.view.coupling';
 import { ThumbOptions, ThumbState } from '../__thumb/view/range-slider__thumb.view.coupling';
 import { TooltipOptions, TooltipState } from '../__tooltip/view/range-slider__tooltip.view.coupling';
 import { PipsOptions } from '../__pips/view/range-slider__pips.view.coupling';
-export declare const DEFAULT_OPTIONS: FixedRangeSliderOptions;
-export declare const DEFAULT_STATE: RangeSliderState;
-export default class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> implements IRangeSliderView {
+declare const DEFAULT_OPTIONS: FixedRangeSliderOptions;
+declare const DEFAULT_STATE: RangeSliderState;
+declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> implements IRangeSliderView {
     readonly template: ({ classInfo, styleInfo, attributes }?: {
         classInfo?: {} | undefined;
         styleInfo?: {} | undefined;
@@ -149,3 +149,4 @@ export default class RangeSliderView extends MVPView<FixedRangeSliderOptions, Ra
         _onClick: (event: MouseEvent) => void;
     };
 }
+export { RangeSliderView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

@@ -1,14 +1,15 @@
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 
-export type RangeOptions = {
+type RangeOptions = {
   isConnected?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type RangeState = {};
+type RangeState = {};
 
-export default interface RangeSliderRangeView
-  extends MVPView<Required<RangeOptions>, RangeOptions, RangeState> {
+interface RangeSliderRangeView extends MVPView<Required<RangeOptions>, RangeOptions, RangeState> {
   getIsConnectedOption(): RangeOptions['isConnected'];
   setIsConnectedOption(connect?: RangeOptions['isConnected']): this;
 }
+
+export { RangeSliderRangeView as default, RangeOptions, RangeState };

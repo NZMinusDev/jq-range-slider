@@ -1,5 +1,3 @@
-import './range-slider__range.scss';
-
 import { html } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
@@ -7,18 +5,19 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 
+import './range-slider__range.scss';
 import IRangeSliderRangeView, {
   RangeOptions,
   RangeState,
 } from './range-slider__range.view.coupling';
 
-export const DEFAULT_OPTIONS: Required<RangeOptions> = {
+const DEFAULT_OPTIONS: Required<RangeOptions> = {
   isConnected: false,
 };
 
-export const DEFAULT_STATE: RangeState = {};
+const DEFAULT_STATE: RangeState = {};
 
-export default class RangeSliderRangeView
+class RangeSliderRangeView
   extends MVPView<Required<RangeOptions>, RangeOptions, RangeState>
   implements IRangeSliderRangeView {
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
@@ -48,3 +47,5 @@ export default class RangeSliderRangeView
     return this;
   }
 }
+
+export { RangeSliderRangeView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

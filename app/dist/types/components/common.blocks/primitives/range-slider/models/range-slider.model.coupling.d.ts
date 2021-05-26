@@ -1,6 +1,7 @@
 import type { MVPModel } from "../../../../../utils/devTools/tools/PluginCreationHelper";
-export declare type RangeSliderState = {
+declare type RangeSliderState = {
     value: number[];
 };
-export default interface RangeSliderModel extends MVPModel<RangeSliderState> {
+interface RangeSliderModel extends MVPModel<RangeSliderState> {
 }
+export { RangeSliderModel as default, RangeSliderState };

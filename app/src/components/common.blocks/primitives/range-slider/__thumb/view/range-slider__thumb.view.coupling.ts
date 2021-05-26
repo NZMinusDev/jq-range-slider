@@ -1,9 +1,9 @@
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type ThumbOptions = {};
+type ThumbOptions = {};
 
-export type ThumbState = {
+type ThumbState = {
   ariaOrientation: 'horizontal' | 'vertical';
   ariaValueMin: number;
   ariaValueMax: number;
@@ -12,5 +12,6 @@ export type ThumbState = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export default interface RangeSliderThumbView
-  extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {}
+interface RangeSliderThumbView extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {}
+
+export { RangeSliderThumbView as default, ThumbOptions, ThumbState };

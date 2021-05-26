@@ -1,5 +1,3 @@
-import './range-slider__thumb.scss';
-
 import { html, TemplateResult } from 'lit-html';
 import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
@@ -7,14 +5,15 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 
+import './range-slider__thumb.scss';
 import IRangeSliderThumbView, {
   ThumbOptions,
   ThumbState,
 } from './range-slider__thumb.view.coupling';
 
-export const DEFAULT_OPTIONS: Required<ThumbOptions> = {};
+const DEFAULT_OPTIONS: Required<ThumbOptions> = {};
 
-export const DEFAULT_STATE: ThumbState = {
+const DEFAULT_STATE: ThumbState = {
   ariaOrientation: 'horizontal',
   ariaValueMin: -1,
   ariaValueMax: -1,
@@ -24,13 +23,15 @@ export const DEFAULT_STATE: ThumbState = {
 
 const ARIA_ATTRIBUTE_PRECISION = 2;
 
-export default class RangeSliderThumbView
+class RangeSliderThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
   implements IRangeSliderThumbView {
   readonly template = (
     { classInfo = {}, styleInfo = {}, attributes = {} } = {},
-    innerHTML: TemplateResult | TemplateResult[] = html``,
-    isActive = false
+    { innerHTML, isActive }: { innerHTML: TemplateResult | TemplateResult[]; isActive: boolean } = {
+      innerHTML: html``,
+      isActive: false,
+    }
   ) =>
     html`<div
       class=${classMap({
@@ -66,3 +67,5 @@ export default class RangeSliderThumbView
     return false;
   }
 }
+
+export { RangeSliderThumbView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

@@ -1,5 +1,3 @@
-import './range-slider.scss';
-
 import defaultsDeep from 'lodash-es/defaultsDeep';
 import { html } from 'lit-html';
 import { styleMap } from 'lit-html/directives/style-map';
@@ -10,6 +8,7 @@ import { handleEvent, MVPView } from '@utils/devTools/tools/PluginCreationHelper
 import { ascending } from '@utils/devTools/tools/ProcessingOfPrimitiveDataHelper';
 import { fixLength } from '@utils/devTools/tools/ArrayHelper';
 
+import './range-slider.scss';
 import IRangeSliderView, {
   RangeSliderOptions,
   FixedRangeSliderOptions,
@@ -36,7 +35,7 @@ import RangeSliderPipsView, {
   DEFAULT_OPTIONS as PIPS_DEFAULT_OPTIONS,
 } from '../__pips/view/range-slider__pips.view';
 
-export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
+const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,
   start: [0],
   steps: TRACK_DEFAULT_OPTIONS.steps,
@@ -53,12 +52,12 @@ export const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   },
 };
 
-export const DEFAULT_STATE: RangeSliderState = {
+const DEFAULT_STATE: RangeSliderState = {
   value: DEFAULT_OPTIONS.start,
   isActiveThumbs: new Array(DEFAULT_OPTIONS.start.length).fill(false),
 };
 
-export default class RangeSliderView
+class RangeSliderView
   extends MVPView<
     FixedRangeSliderOptions,
     RangeSliderOptions,
@@ -141,11 +140,13 @@ export default class RangeSliderView
                 },
                 attributes: { '@pointerdown': this._thumbEventListenerObject },
               },
-              new RangeSliderTooltipView(
-                this._toTooltipOptions(index),
-                this._toTooltipState(index)
-              ).template(),
-              this._state.isActiveThumbs[index]
+              {
+                innerHTML: new RangeSliderTooltipView(
+                  this._toTooltipOptions(index),
+                  this._toTooltipState(index)
+                ).template(),
+                isActive: this._state.isActiveThumbs[index],
+              }
             );
           }),
       ]
@@ -1077,3 +1078,5 @@ export default class RangeSliderView
     },
   };
 }
+
+export { RangeSliderView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

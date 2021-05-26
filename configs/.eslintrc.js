@@ -86,6 +86,7 @@ module.exports = {
       { blankLine: 'always', prev: ['block-like'], next: '*' },
       { blankLine: 'any', prev: ['case'], next: 'case' },
       { blankLine: 'always', prev: '*', next: ['return', 'break', 'debugger'] },
+      { blankLine: 'always', prev: '*', next: 'export' },
     ],
 
     // Disallow use of loops (for, for-in, while, do-while, for-of) - we have forEach, map etc.

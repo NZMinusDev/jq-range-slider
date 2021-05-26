@@ -3,9 +3,9 @@ import { TrackOptions, FixedTrackOptions } from '../__track/view/range-slider__t
 import { RangeOptions } from '../__range/view/range-slider__range.view.coupling';
 import { TooltipOptions } from '../__tooltip/view/range-slider__tooltip.view.coupling';
 import { PipsOptions } from '../__pips/view/range-slider__pips.view.coupling';
-export declare type Formatter = (value: number) => string;
-export declare type Mode = 'intervals' | 'count' | 'positions' | 'values';
-export declare type RangeSliderOptions = {
+declare type Formatter = (value: number) => string;
+declare type Mode = 'intervals' | 'count' | 'positions' | 'values';
+declare type RangeSliderOptions = {
     intervals?: TrackOptions['intervals'];
     start?: number | number[];
     steps?: TrackOptions['steps'];
@@ -19,7 +19,7 @@ export declare type RangeSliderOptions = {
         values?: number | number[];
     };
 };
-export declare type FixedRangeSliderOptions = {
+declare type FixedRangeSliderOptions = {
     intervals: Required<RangeSliderOptions>['intervals'];
     start: number[];
     steps: FixedTrackOptions['steps'];
@@ -30,11 +30,11 @@ export declare type FixedRangeSliderOptions = {
     tooltips: (Required<TooltipOptions>['formatter'] | boolean)[];
     pips: NonNullable<Required<RangeSliderOptions['pips']>>;
 };
-export declare type RangeSliderState = {
+declare type RangeSliderState = {
     value: FixedRangeSliderOptions['start'];
     isActiveThumbs: boolean[];
 };
-export default interface RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> {
+interface RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> {
     getIntervalsOption(): FixedRangeSliderOptions['intervals'];
     getStartOption(): FixedRangeSliderOptions['start'];
     getStepsOption(): FixedRangeSliderOptions['steps'];
@@ -56,3 +56,4 @@ export default interface RangeSliderView extends MVPView<FixedRangeSliderOptions
     get(): FixedRangeSliderOptions['start'];
     set(value?: RangeSliderOptions['start']): this;
 }
+export { RangeSliderView as default, Formatter, Mode, RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState, };

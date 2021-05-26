@@ -1,8 +1,8 @@
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 
-export type Formatter = (value: number) => string;
+type Formatter = (value: number) => string;
 
-export type PipsOptions = {
+type PipsOptions = {
   orientation?: 'horizontal' | 'vertical';
   isHidden?: boolean;
   values?: { percent: number; value: number }[];
@@ -11,10 +11,9 @@ export type PipsOptions = {
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type PipsState = {};
+type PipsState = {};
 
-export default interface RangeSliderPipsView
-  extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
+interface RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
   getOrientationOption(): PipsOptions['orientation'];
   getIsHiddenOption(): PipsOptions['isHidden'];
   getValuesOption(): PipsOptions['values'];
@@ -26,3 +25,5 @@ export default interface RangeSliderPipsView
   setDensityOption(density?: PipsOptions['density']): this;
   setFormatterOption(formatter?: PipsOptions['formatter']): this;
 }
+
+export { RangeSliderPipsView as default, Formatter, PipsOptions, PipsState };

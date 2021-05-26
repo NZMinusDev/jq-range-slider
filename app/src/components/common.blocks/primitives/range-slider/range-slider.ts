@@ -1,12 +1,12 @@
 import { renderMVPView } from '@utils/devTools/tools/PluginCreationHelper';
-import IRangeSliderPresenter from './range-slider.coupling';
 
 import IRangeSliderView, { RangeSliderOptions } from './view/range-slider.view.coupling';
 import IRangeSliderModel from './models/range-slider.model.coupling';
+import IRangeSliderPresenter from './range-slider.coupling';
 
 import RangeSliderView from './view/range-slider.view';
 
-export default class RangeSliderPresenter implements IRangeSliderPresenter {
+class RangeSliderPresenter implements IRangeSliderPresenter {
   readonly view: IRangeSliderView;
 
   constructor(
@@ -43,3 +43,5 @@ export default class RangeSliderPresenter implements IRangeSliderPresenter {
     }
   }
 }
+
+export default RangeSliderPresenter;
