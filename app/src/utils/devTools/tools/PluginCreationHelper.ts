@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { html, render, TemplateResult } from 'lit-html';
 import { ClassInfo } from 'lit-html/directives/class-map';
 import { StyleInfo } from 'lit-html/directives/style-map';
@@ -6,7 +7,8 @@ import defaultsDeep from 'lodash-es/defaultsDeep';
 /**
  * It's shortcut of default handleEvent in EventListenerObject
  */
-export function handleEvent(event: Event) {
+// eslint-disable-next-line func-style
+function handleEvent(event: Event) {
   // mousedown -> onMousedown
   const handlerName = `_on${event.type[0].toUpperCase()}${event.type.slice(1)}`;
   if (this[handlerName]) {
@@ -15,6 +17,17 @@ export function handleEvent(event: Event) {
 
   return this;
 }
+
+interface CustomEventListener {
+  (...args: any): void;
+}
+
+interface CustomEventListenerObject {
+  handleEvent(...args: any): void;
+  [key: string]: any;
+}
+
+type handler = CustomEventListener | CustomEventListenerObject;
 
 /**
  * Add events processing inside class without inheritances and make child's handlers inside one class
@@ -47,47 +60,50 @@ export function handleEvent(event: Event) {
  * btn.addEventListener('mousedown', menu);
  * btn.addEventListener('mouseup', menu);
  */
-export class EventManagerMixin<TEvents extends string> {
+class EventManagerMixin<TEvents extends string> {
   protected _eventHandlers: {
     [key: string]: handler[];
   } = {};
 
   // Subscribe to the event
-  on(eventName: TEvents, handler: handler) {
+  on(eventName: TEvents, eventHandler: handler) {
     if (!this._eventHandlers[eventName]) {
       this._eventHandlers[eventName] = [];
     }
-    if (!this._eventHandlers[eventName].includes(handler)) {
-      this._eventHandlers[eventName].push(handler);
+
+    if (!this._eventHandlers[eventName].includes(eventHandler)) {
+      this._eventHandlers[eventName].push(eventHandler);
     }
 
     return this;
   }
 
   // Cancel subscribe
-  off(eventName: TEvents, handler: (...args: any) => void) {
+  off(eventName: TEvents, eventHandler: (...args: any) => void) {
     const handlers = this._eventHandlers && this._eventHandlers[eventName];
-    if (!handlers) return this;
-    for (let i = 0; i < handlers.length; i++) {
-      if (handlers[i] === handler) {
-        handlers.splice(i--, 1);
-      }
+
+    if (!handlers) {
+      return this;
     }
+
+    handlers.splice(handlers.findIndex(eventHandler), 1);
 
     return this;
   }
 
   // Generate the event with the specified name and data
   trigger(eventName: TEvents, ...args: any) {
+    // no handlers
     if (!this._eventHandlers || !this._eventHandlers[eventName]) {
-      return this; // no handlers
+      return this;
     }
+
     // calling the handlers
-    this._eventHandlers[eventName].forEach((handler) => {
-      if (typeof handler === 'function') {
-        handler.apply(this, args);
+    this._eventHandlers[eventName].forEach((eventHandler) => {
+      if (typeof eventHandler === 'function') {
+        eventHandler.apply(this, args);
       } else {
-        handler.handleEvent(...args);
+        eventHandler.handleEvent(...args);
       }
     });
 
@@ -102,19 +118,20 @@ export class EventManagerMixin<TEvents extends string> {
     return this;
   }
 }
-export interface CustomEventListener {
-  (...args: any): void;
-}
-export interface CustomEventListenerObject {
-  handleEvent(...args: any): void;
-  [key: string]: any;
-}
-export type handler = CustomEventListener | CustomEventListenerObject;
 
-export abstract class MVPView<
-  TOptionsToGet extends object,
-  TOptionsToSet extends object,
-  TState extends object,
+type template = (
+  attributes?: {
+    classInfo?: ClassInfo;
+    styleInfo?: StyleInfo;
+    attributes?: { [key: string]: unknown };
+  },
+  ...args: any | undefined
+) => TemplateResult;
+
+abstract class MVPView<
+  TOptionsToGet extends Record<string, unknown>,
+  TOptionsToSet extends Record<string, unknown>,
+  TState extends Record<string, unknown>,
   TEvents extends string = ''
 > extends EventManagerMixin<Exclude<TEvents | 'render' | 'remove', ''>> {
   readonly template: template = ({ classInfo, styleInfo, attributes } = {}, ...args) => html``;
@@ -277,40 +294,46 @@ export abstract class MVPView<
     return this;
   }
 }
-export type template = (
-  attributes?: {
-    classInfo?: ClassInfo;
-    styleInfo?: StyleInfo;
-    attributes?: { [key: string]: unknown };
-  },
-  ...args: any | undefined
-) => TemplateResult;
 
-export function renderMVPView<
-  TMVPViewCreator extends new (...args: TArguments) => TInstance,
+const renderMVPView = <
   TArguments extends unknown[],
-  TInstance extends MVPView<any, any, any>
+  TInstance extends MVPView<any, any, any>,
+  TMVPViewCreator extends new (...args: TArguments) => TInstance
 >(
   ViewCreator: TMVPViewCreator,
   viewParameters: TArguments,
   container: HTMLElement | DocumentFragment
-) {
+) => {
   const view = new ViewCreator(...viewParameters);
   render(view.template(), container);
 
-  view
-    .on('render', () => {
-      render(view.template(), container);
-    })
-    .on('remove', () => {
-      render((ViewCreator as any).templateOfRemoving(), container);
-    });
+  const renderHandler = () => {
+    render(view.template(), container);
+  };
+
+  const removeHandler = () => {
+    render((ViewCreator as any).templateOfRemoving(), container);
+  };
+
+  view.on('render', renderHandler).on('remove', removeHandler);
 
   return view;
-}
+};
 
-export interface MVPModel<State> {
+interface MVPModel<State> {
   getState(): Promise<Required<State>>;
   setState(state?: Partial<State>): Promise<this>;
   whenStateIsChanged(callback: (state: Required<State>) => void): void;
 }
+
+export {
+  handleEvent,
+  CustomEventListener,
+  CustomEventListenerObject,
+  handler,
+  EventManagerMixin,
+  template,
+  MVPView,
+  renderMVPView,
+  MVPModel,
+};

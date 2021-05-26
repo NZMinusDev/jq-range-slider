@@ -1,4 +1,4 @@
-import isPlainObject from "lodash-es/isPlainObject";
+import isPlainObject from 'lodash-es/isPlainObject';
 
 /**
  *
@@ -15,11 +15,10 @@ import isPlainObject from "lodash-es/isPlainObject";
  * // returns null when intermediate properties are not defined:
  * resolveLongBracketNotation('properties.that.do.not.exist', {hello:'world'})
  */
-export function resolveLongBracketNotation(path: string, obj: object = globalThis): unknown | null {
-  return path.split(".").reduce(function (prev, curr) {
-    return prev ? prev[curr] : null;
-  }, obj);
-}
+const resolveLongBracketNotation = (
+  path: string,
+  obj: Record<string, any> = globalThis
+): unknown | null => path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj);
 
 /**
  * Recursively iterates iterable properties by deep-first algorithm
@@ -48,11 +47,12 @@ export function resolveLongBracketNotation(path: string, obj: object = globalThi
  * prop4.prop5: foo
  * prop4.prop6: bar
  */
-export function eachDeep<TSubject>(
+const eachDeep = <TSubject>(
   subject: TSubject,
   fn: ({
     value,
     key,
+    // eslint-disable-next-line no-shadow
     subject,
     path,
   }: {
@@ -62,7 +62,7 @@ export function eachDeep<TSubject>(
     path: string;
   }) => void,
   path?: string
-) {
+) => {
   let deepPath;
   Object.entries(subject).forEach(([key, value]) => {
     deepPath = path ? `${path}.${key}` : key;
@@ -73,4 +73,6 @@ export function eachDeep<TSubject>(
       eachDeep(value, fn, deepPath);
     }
   });
-}
+};
+
+export { eachDeep, resolveLongBracketNotation };

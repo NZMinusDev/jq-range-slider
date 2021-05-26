@@ -1,6 +1,7 @@
 /**
  * Callback function for Array<number>.prototype.sort()
  */
-export function ascending(a: number, b: number) {
-  return a - b;
-}
+const ascending = (a: number, b: number) => a - b;
+
+// eslint-disable-next-line import/prefer-default-export
+export { ascending };
