@@ -35,7 +35,7 @@ block append content
         .logger__firefly Set
         .logger__firefly End
         .logger__firefly Render
-      form(action='/', name='submit', method='post')
+      form.submit(action='/', name='submit', method='post')
         input(type='text', name='setter')
         input.btn.btn_type-set(type='button', name='set', value='.set(...values)')
         input.btn(type='button', name='reset', value='reset slider value')

@@ -62,7 +62,7 @@ input[type='radio'] {
 .colorpicker {
   display: grid;
   grid: 200px / 1fr 1fr 1fr 200px;
-  grid-column-gap: var(--default-gap);
+  grid-column-gap: calc(2 * var(--default-gap));
 }
 #colorpicker-red .range-slider__range_isConnected {
   background-color: red;
@@ -107,6 +107,12 @@ input[type='radio'] {
 }
 .logger__firefly_isActive {
   background-color: var(--primary-color);
+}
+
+.submit{
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: var(--default-gap);
 }
 
 .btn {
@@ -206,6 +212,7 @@ input[type='radio'] {
 }
 
 .sign {
+  padding: var(--default-padding);
   text-align: center;
   font-style: italic;
 }
