@@ -214,7 +214,11 @@ class RangeSliderView
   setIntervalsOption(intervals: RangeSliderOptions['intervals'] = DEFAULT_OPTIONS.intervals) {
     this._options.intervals = { ...intervals };
 
-    this._fixIntervalsOption()._fixStartOption()._fixPipsOption()._fixValueState();
+    this._fixIntervalsOption()
+      ._fixStartOption()
+      ._fixStepsOption()
+      ._fixPipsOption()
+      ._fixValueState();
 
     return this;
   }
