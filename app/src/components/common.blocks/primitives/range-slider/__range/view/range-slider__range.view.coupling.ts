@@ -4,9 +4,8 @@ export type RangeOptions = {
   isConnected?: boolean;
 };
 
-export type RangeState = {
-  // state
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type RangeState = {};
 
 export default interface RangeSliderRangeView
   extends MVPView<Required<RangeOptions>, RangeOptions, RangeState> {

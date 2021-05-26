@@ -22,20 +22,22 @@ const viewPropertiesExpecter: InstancePropsExpecter<
     if (a === 'min' || b === 'max') {
       return -1;
     }
+
     if (a === 'max' || b === 'min') {
       return 1;
     }
+
     return collapsingParseFloat(a) - collapsingParseFloat(b);
   });
-  let parsedKey;
 
   expect(instance['_options'].steps.length).toBe(keysOfIntervals.length - 1);
 
   expect(instance['_options'].intervals.min).toBeLessThan(instance['_options'].intervals.max);
   expect(instance['_options'].intervals.min).toBeGreaterThanOrEqual(Number.MIN_SAFE_INTEGER);
   expect(instance['_options'].intervals.max).toBeLessThanOrEqual(Number.MAX_SAFE_INTEGER);
+
   keysOfIntervals.forEach((key, index, keys) => {
-    parsedKey = collapsingParseFloat(key);
+    const parsedKey = collapsingParseFloat(key);
 
     if (key !== 'min' && key !== 'max') {
       expect(key).toBe(`${parsedKey}%`);
@@ -64,7 +66,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
 
   instance['_options'].padding.forEach((pad) => {
     expect(pad).toBeLessThanOrEqual(
-      +Math.abs(
+      Math.abs(
         (instance['_options'].intervals[keysOfIntervals[keysOfIntervals.length - 1]] -
           instance['_options'].intervals[keysOfIntervals[0]]) /
           2

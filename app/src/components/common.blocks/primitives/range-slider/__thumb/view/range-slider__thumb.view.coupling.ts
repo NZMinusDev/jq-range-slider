@@ -1,8 +1,7 @@
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
 
-export type ThumbOptions = {
-  // options
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type ThumbOptions = {};
 
 export type ThumbState = {
   ariaOrientation: 'horizontal' | 'vertical';

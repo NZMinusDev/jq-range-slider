@@ -52,6 +52,7 @@ const hashedFileName = (name, ext) => (isDev ? `${name}.${ext}` : `${name}.[hash
 class ResultOfTemplatesProcessing {
   constructor() {
     const foldersOfPages = fs.readdirSync(PATHS.srcPages_absolute);
+
     // get all pug templates from each page folder
     const namesOfTemplates = [].concat(
       ...foldersOfPages.map((folder) =>
@@ -155,7 +156,8 @@ const webpackPlugins = () => {
   );
 
   if (process.env.MEASURE === 'true') {
-    plugins.push(new DuplicatesPlugin()); // writes data in stats.json as plain text, shouldn't be in dev mod)
+    // writes data in stats.json as plain text, shouldn't be in dev mod)
+    plugins.push(new DuplicatesPlugin());
   }
 
   plugins.push(
@@ -175,14 +177,12 @@ const webpackPlugins = () => {
 /**
  * Loaders contraction for templates.
  */
-const templatesLoaders = () => {
-  return [
-    {
-      // convert pug to template function
-      loader: 'pug-loader',
-    },
-  ];
-};
+const templatesLoaders = () => [
+  {
+    // convert pug to template function
+    loader: 'pug-loader',
+  },
+];
 
 /**
  * Loaders contraction that loads autoprefixed normalize css with converting modern CSS into something most browsers can understand.
@@ -197,6 +197,7 @@ const cssLoaders = (extraLoader) => {
       loader: MiniCssExtractPlugin.loader,
       options: {
         hmr: isDev,
+
         // if hmr does not work, this is a forceful method.
         reloadAll: true,
       },
@@ -287,13 +288,16 @@ const optimization = () => {
   return config;
 };
 
-// measures speed of each plugin in bundling
-// writes data in stats.json as plain text, shouldn't be in dev mod
+/*
+ * measures speed of each plugin in bundling
+ * writes data in stats.json as plain text, shouldn't be in dev mod
+ */
 const smp = new SpeedMeasurePlugin({ disable: process.env.MEASURE === 'false' });
 module.exports = smp.wrap({
   // The base directory, an absolute path, for resolving entry points and loaders
   context: PATHS.src_absolute,
   mode: 'development',
+
   // Declarations of used files in bundles
   entry: isDev
     ? resultOfTemplatesProcessing.entries
@@ -302,6 +306,7 @@ module.exports = smp.wrap({
           `./components/common.blocks/primitives/range-slider/range-slider-plugin.ts`,
         ],
       },
+
   // Where to put bundles for every entry point
   output: {
     filename: isDev ? hashedFileName('bundles/[id]/[name]', 'js') : '[name].js',
@@ -330,6 +335,7 @@ module.exports = smp.wrap({
           options: {
             // Prefer `dart-sass` instead `node-sass`
             implementation: DartSASS,
+
             /* compilation faster with fiber on */
             sassOptions: {
               fiber: fibers,
@@ -353,11 +359,16 @@ module.exports = smp.wrap({
       },
     ],
   },
-  devtool: isDev ? 'source-map' : '', // show readable file names during development process
+
+  // show readable file names during development process
+  devtool: isDev ? 'source-map' : '',
+
   optimization: optimization(),
   devServer: {
     port: 4200,
     hot: isDev,
-    watchContentBase: true, // watch html
+
+    // watch html
+    watchContentBase: true,
   },
 });

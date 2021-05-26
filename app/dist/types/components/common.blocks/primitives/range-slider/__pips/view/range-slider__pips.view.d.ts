@@ -1,5 +1,4 @@
 import './range-slider__pips.scss';
-import { TemplateResult } from 'lit-html';
 import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
 import IRangeSliderPipsView, { PipsOptions, PipsState } from './range-slider__pips.view.coupling';
 export declare const DEFAULT_OPTIONS: Required<PipsOptions>;
@@ -9,7 +8,7 @@ export default class RangeSliderPipsView extends MVPView<Required<PipsOptions>, 
         classInfo?: {} | undefined;
         styleInfo?: {} | undefined;
         attributes?: {} | undefined;
-    }) => TemplateResult;
+    }) => import("lit-html").TemplateResult;
     constructor(options?: PipsOptions, state?: PipsState);
     getOrientationOption(): "horizontal" | "vertical";
     getIsHiddenOption(): boolean;
@@ -26,5 +25,5 @@ export default class RangeSliderPipsView extends MVPView<Required<PipsOptions>, 
     setFormatterOption(formatter?: PipsOptions['formatter']): this;
     protected _fixValuesOption(): this;
     protected _fixDensityOption(): this;
-    protected _getPipsRender(): TemplateResult | TemplateResult[];
+    protected _getPipsRender(): import("lit-html").TemplateResult | import("lit-html").TemplateResult[];
 }

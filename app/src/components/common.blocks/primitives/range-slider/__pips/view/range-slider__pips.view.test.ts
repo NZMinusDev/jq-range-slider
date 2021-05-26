@@ -19,7 +19,10 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 > = function viewPropertiesExpecter({ instance, passedArgs }) {
   instance['_options'].values.forEach((value, index, self) => {
-    if (index > 0) expect(value.percent > self[index - 1].percent);
+    if (index > 0) {
+      expect(value.percent > self[index - 1].percent);
+    }
+
     expect(value.percent).toBeGreaterThanOrEqual(0);
     expect(value.percent).toBeLessThanOrEqual(100);
   });

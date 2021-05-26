@@ -13,9 +13,8 @@ export type FixedTrackOptions = {
   padding: [number, number];
 };
 
-export type TrackState = {
-  // state
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type TrackState = {};
 export default interface RangeSliderTrackView
   extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
   getIntervalsOption(): FixedTrackOptions['intervals'];

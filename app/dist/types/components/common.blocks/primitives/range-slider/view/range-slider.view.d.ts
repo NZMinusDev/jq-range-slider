@@ -1,7 +1,6 @@
 import './range-slider.scss';
-import { TemplateResult } from 'lit-html';
 import { MVPView } from "../../../../../utils/devTools/tools/PluginCreationHelper";
-import IRangeSliderView, { RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState, Formatter } from './range-slider.view.coupling';
+import IRangeSliderView, { RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState } from './range-slider.view.coupling';
 import { FixedTrackOptions, TrackOptions } from '../__track/view/range-slider__track.view.coupling';
 import { RangeOptions } from '../__range/view/range-slider__range.view.coupling';
 import { ThumbOptions, ThumbState } from '../__thumb/view/range-slider__thumb.view.coupling';
@@ -14,7 +13,7 @@ export default class RangeSliderView extends MVPView<FixedRangeSliderOptions, Ra
         classInfo?: {} | undefined;
         styleInfo?: {} | undefined;
         attributes?: {} | undefined;
-    }) => TemplateResult;
+    }) => import("lit-html").TemplateResult;
     constructor(options?: RangeSliderOptions, state?: RangeSliderState);
     getIntervalsOption(): {
         [x: string]: number;
@@ -26,8 +25,8 @@ export default class RangeSliderView extends MVPView<FixedRangeSliderOptions, Ra
     getConnectOption(): boolean[];
     getOrientationOption(): "horizontal" | "vertical";
     getPaddingOption(): [number, number];
-    getFormatterOption(): Formatter;
-    getTooltipsOption(): (boolean | Formatter)[];
+    getFormatterOption(): import("./range-slider.view.coupling").Formatter;
+    getTooltipsOption(): (boolean | import("../__tooltip/view/range-slider__tooltip.view.coupling").Formatter)[];
     getPipsOption(): any;
     setIntervalsOption(intervals?: RangeSliderOptions['intervals']): this;
     setStartOption(start?: RangeSliderOptions['start']): this;

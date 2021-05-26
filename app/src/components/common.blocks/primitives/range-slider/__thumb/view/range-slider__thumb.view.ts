@@ -47,9 +47,9 @@ export default class RangeSliderThumbView
         role="slider"
         tabindex="0"
         aria-orientation="${this._state.ariaOrientation}"
-        aria-valuemin="${+this._state.ariaValueMin.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
-        aria-valuemax="${+this._state.ariaValueMax.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
-        aria-valuenow="${+this._state.ariaValueNow.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuemin="${this._state.ariaValueMin.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuemax="${this._state.ariaValueMax.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuenow="${this._state.ariaValueNow.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
         aria-valuetext="${this._state.ariaValueText}"
         @dragstart=${this}
       >

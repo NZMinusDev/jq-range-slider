@@ -10,9 +10,9 @@ export type PipsOptions = {
   formatter?: Formatter;
 };
 
-export type PipsState = {
-  // state
-};
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type PipsState = {};
+
 export default interface RangeSliderPipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
   getOrientationOption(): PipsOptions['orientation'];

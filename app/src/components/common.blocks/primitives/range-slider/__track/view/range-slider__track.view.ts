@@ -31,9 +31,11 @@ export default class RangeSliderTrackView
     if (a === 'min' || b === 'max') {
       return -1;
     }
+
     if (a === 'max' || b === 'min') {
       return 1;
     }
+
     return collapsingParseFloat(a) - collapsingParseFloat(b);
   }
 
@@ -66,10 +68,10 @@ export default class RangeSliderTrackView
     return { ...this._options.intervals };
   }
   getStepsOption() {
-    return ([] as FixedTrackOptions['steps']).concat(this._options.steps);
+    return [...this._options.steps];
   }
   getPaddingOption() {
-    return ([] as number[]).concat(this._options.padding) as FixedTrackOptions['padding'];
+    return [...this._options.padding] as FixedTrackOptions['padding'];
   }
 
   setOrientationOption(orientation: TrackOptions['orientation'] = DEFAULT_OPTIONS.orientation) {
@@ -85,9 +87,7 @@ export default class RangeSliderTrackView
     return this;
   }
   setStepsOption(steps: TrackOptions['steps'] = DEFAULT_OPTIONS.steps) {
-    this._options.steps = Array.isArray(steps)
-      ? ([] as FixedTrackOptions['steps']).concat(steps)
-      : this._options.steps.fill(steps);
+    this._options.steps = Array.isArray(steps) ? [...steps] : this._options.steps.fill(steps);
 
     this._fixStepsOption();
 
@@ -95,7 +95,7 @@ export default class RangeSliderTrackView
   }
   setPaddingOption(padding: TrackOptions['padding'] = DEFAULT_OPTIONS.padding) {
     this._options.padding = Array.isArray(padding)
-      ? (([] as number[]).concat(padding) as FixedTrackOptions['padding'])
+      ? [...padding]
       : this._options.padding.fill(padding);
 
     this._fixPaddingOption()._fixStepsOption();
@@ -111,9 +111,7 @@ export default class RangeSliderTrackView
   protected _fixOrderOfIntervalsOption() {
     const intervalsKeys = this._getSortedKeysOfIntervalsOption();
     const intervalsValues = Object.values(this._options.intervals);
-    intervalsValues.sort((a, b) => {
-      return a - b;
-    });
+    intervalsValues.sort((a, b) => a - b);
 
     const entries: [string, number][] = [];
     intervalsKeys.forEach((key, index) => {
@@ -125,8 +123,7 @@ export default class RangeSliderTrackView
   }
   protected _fixKeysOfIntervalsOption() {
     Object.entries(this._options.intervals).forEach(([key, val]) => {
-      let validKey: string | undefined;
-
+      let validKey: string;
       if (!(key === 'min' || key === 'max')) {
         const parsedKey = collapsingParseFloat(key);
 
@@ -147,13 +144,14 @@ export default class RangeSliderTrackView
       if (val > Number.MAX_SAFE_INTEGER) {
         this._options.intervals[key] = Number.MAX_SAFE_INTEGER;
       }
+
       if (val < Number.MIN_SAFE_INTEGER) {
         this._options.intervals[key] = Number.MIN_SAFE_INTEGER;
       }
     });
 
     if (this._options.intervals.min === this._options.intervals.max) {
-      this._options.intervals.max++;
+      this._options.intervals.max += 1;
     }
 
     return this;
@@ -166,12 +164,6 @@ export default class RangeSliderTrackView
   }
   protected _fixLengthOfStepsOption() {
     if (Array.isArray(this._options.steps)) {
-      // const difference = Object.keys(this._options.intervals).length - this._options.steps.length;
-      // const previousLength = this._options.steps.length;
-      // if (difference !== 1) {
-      //   this._options.steps.length += difference - 1;
-      //   this._options.steps = this._options.steps.fill(DEFAULT_OPTIONS.steps[0], previousLength);
-      // }
       fixLength(
         this._options.steps,
         Object.keys(this._options.intervals).length - 1,
@@ -187,10 +179,12 @@ export default class RangeSliderTrackView
   protected _fixValuesOfStepsOption() {
     const intervalsKeys = this._getSortedKeysOfIntervalsOption();
     this._options.steps = this._options.steps.map((step, index, steps) => {
-      if (step === 'none') return step;
+      if (step === 'none') {
+        return step;
+      }
 
       const maxStep =
-        +Math.abs(
+        Math.abs(
           this._options.intervals[intervalsKeys[index]] -
             this._options.intervals[intervalsKeys[index + 1]]
         ) -
@@ -221,8 +215,13 @@ export default class RangeSliderTrackView
           this._options.intervals[intervalsKeys[0]]) /
         2;
 
-      if (padding < 0) return 0;
-      if (padding > maxPad) return maxPad;
+      if (padding < 0) {
+        return 0;
+      }
+
+      if (padding > maxPad) {
+        return maxPad;
+      }
 
       return this._options.padding[index];
     }) as FixedTrackOptions['padding'];

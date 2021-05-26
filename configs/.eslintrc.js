@@ -1,19 +1,29 @@
 module.exports = {
   env: { browser: true },
+
   /**
    * Alternative to "Espree" parser that can read Typescript code and produce said ESTree(the language ESLint can understand)
    */
   parser: '@typescript-eslint/parser',
   extends: [
-    'airbnb-base', // List of recommended rules by https://github.com/iamturns/eslint-config-airbnb-typescript
-    'plugin:fsd/all', // some rules from https://github.com/fullstack-development/front-end-best-practices/tree/master/JS
-    'plugin:sonarjs/recommended', // detect bugs and suspicious patterns in your code (huge unreadable blocks of code)
-    'plugin:no-use-extend-native/recommended', // prevent use of extended native objects
+    // List of recommended rules by https://github.com/iamturns/eslint-config-airbnb-typescript
+    'airbnb-base',
+
+    // some rules from https://github.com/fullstack-development/front-end-best-practices/tree/master/JS
+    'plugin:fsd/all',
+
+    // detect bugs and suspicious patterns in your code (huge unreadable blocks of code)
+    'plugin:sonarjs/recommended',
+
+    // prevent use of extended native objects
+    'plugin:no-use-extend-native/recommended',
+
     /**
      * List of recommended rules for TypeScript from "@typescript-eslint" plugin
      */
     'plugin:@typescript-eslint/recommended',
     'plugin:lit/recommended',
+
     /**
      * Enables (eslint-plugin-prettier), which run Prettier analysis as part of ESLint.
      * Disable any linting rule that might interfere with an existing Prettier rule using(eslint-config-prettier).
@@ -25,11 +35,62 @@ module.exports = {
   rules: {
     // FIXME: if you know how to make it works with chaining calls of several methods use['error', { allowAfterThis: true }]
     'no-underscore-dangle': 0,
-    'no-plusplus': 0,
+
     'lines-between-class-members': 0,
     '@typescript-eslint/explicit-module-boundary-types': 0,
+
+    // https://github.com/airbnb/javascript#destructuring--object
+    'prefer-destructuring': [
+      'error',
+      {
+        array: true,
+        object: true,
+      },
+    ],
+
+    // https://github.com/airbnb/javascript#functions--declarations
+    'func-style': ['error', 'expression'],
+
+    // https://github.com/airbnb/javascript#functions--defaults-last
+    'default-param-last': ['error'],
+
+    // https://github.com/airbnb/javascript#arrows--use-them
+    'prefer-arrow-callback': ['error', { allowNamedFunctions: false, allowUnboundThis: false }],
+
+    // https://github.com/airbnb/javascript#arrows--implicit-return
+    'arrow-body-style': ['error', 'as-needed'],
+
+    // https://github.com/airbnb/javascript#comments--multiline
+    'multiline-comment-style': ['error', 'starred-block'],
+
+    // https://github.com/airbnb/javascript#comments--singleline
+    'line-comment-position': ['error', { position: 'above' }],
+    'lines-around-comment': [
+      'error',
+      {
+        beforeBlockComment: true,
+        beforeLineComment: true,
+        allowBlockStart: true,
+        allowClassStart: true,
+        allowObjectStart: true,
+        allowArrayStart: true,
+      },
+    ],
+
+    // https://github.com/airbnb/javascript#whitespace--chains
+    'newline-per-chained-call': ['error', { ignoreChainWithDepth: 4 }],
+
+    // https://github.com/airbnb/javascript#whitespace--after-blocks
+    'padding-line-between-statements': [
+      'error',
+      { blankLine: 'always', prev: ['block-like'], next: '*' },
+      { blankLine: 'any', prev: ['case'], next: 'case' },
+      { blankLine: 'always', prev: '*', next: ['return', 'break', 'debugger'] },
+    ],
+
     // Disallow use of loops (for, for-in, while, do-while, for-of) - we have forEach, map etc.
     'no-loops/no-loops': 2,
+
     /**
      * Enforce best practices for JavaScript promises.
      */
@@ -45,6 +106,7 @@ module.exports = {
     'promise/no-new-statics': 'error',
     'promise/no-return-in-finally': 'warn',
     'promise/valid-params': 'warn',
+
     // https://github.com/airbnb/javascript/blob/master/packages/eslint-config-airbnb-base/rules/imports.js#L139
     'import/extensions': [
       'error',

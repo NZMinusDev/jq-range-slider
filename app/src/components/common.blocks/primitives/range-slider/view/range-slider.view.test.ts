@@ -54,6 +54,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
             value <= instance['_options'].intervals.max
         )
       );
+
       break;
     }
 
@@ -347,11 +348,13 @@ testDOM({
       const thumbsElements = container.querySelectorAll<HTMLElement>('.range-slider__thumb');
       const originsElements = Array.from<HTMLElement>(thumbsElements).map((thumbElem) => {
         const originElem = thumbElem.closest('.range-slider__thumb-origin') as HTMLElement;
+
         // https://github.com/jsdom/jsdom/pull/2666
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         originElem.setPointerCapture = function setPointerCapture(pointerId: number) {
           // it's noop
         };
+
         return originElem;
       });
       const infimumThumb = thumbsElements.item(0);
@@ -360,12 +363,12 @@ testDOM({
 
       const VALUE_NOW_QUALIFIED_NAME = 'aria-valuenow';
 
-      function runThroughAllIntervals(
+      const runThroughAllIntervals = (
         movementAcc: number,
         increment: number,
         expecters: ((newValue: number, valueBefore: number) => void)[],
         end = MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB
-      ) {
+      ) => {
         if (Math.abs(movementAcc) < end - 1) {
           runThroughAllIntervals(movementAcc + increment, increment, expecters, end);
         }
@@ -396,27 +399,27 @@ testDOM({
         if (isInsideTheFirstInterval && moreValue < INTERVALS['80%']) {
           expecters[0](newValue, valueBefore);
         }
+
         if (isInsideTheSecondInterval && moreValue < INTERVALS['90%']) {
           expecters[1](newValue, valueBefore);
         }
+
         if (isInsideTheThirdInterval && moreValue < MAX_TRACK_VALUE) {
           expecters[2](newValue, valueBefore);
         }
-      }
-
-      trackElem.getBoundingClientRect = () => {
-        return {
-          width: TRACK_PX_SIZE,
-          height: TRACK_PX_SIZE,
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          x: 0,
-          y: 0,
-          toJSON: () => ``,
-        };
       };
+
+      trackElem.getBoundingClientRect = () => ({
+        width: TRACK_PX_SIZE,
+        height: TRACK_PX_SIZE,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        x: 0,
+        y: 0,
+        toJSON: () => ``,
+      });
 
       test('should be only one render for each pointermove where abs(movement) > 0', () => {
         const renderMock = jest.spyOn(Object.getPrototypeOf(instance), '_render');
@@ -505,7 +508,8 @@ testDOM({
           })
         );
 
-        let increment = 1;
+        const increment = 1;
+        const decrement = -1;
 
         const expecters = [
           (newValue, valueBefore) => {
@@ -526,8 +530,7 @@ testDOM({
         ];
 
         runThroughAllIntervals(0, increment, expecters);
-        increment = -1;
-        runThroughAllIntervals(0, increment, expecters);
+        runThroughAllIntervals(0, decrement, expecters);
 
         innerThumb.dispatchEvent(
           new PointerEvent('lostpointercapture', {
