@@ -694,16 +694,17 @@ export default class RangeSliderView
       case 'count': {
         const amountOfPipsValues = this._options.pips.values as number;
         if (amountOfPipsValues > 0) {
-          const shift = (valueBorderOfTrack.max - valueBorderOfTrack.min) / amountOfPipsValues;
+          const shift =
+            (valueBorderOfTrack.max - valueBorderOfTrack.min) / (amountOfPipsValues - 1);
 
-          let value = valueBorderOfTrack.min - shift;
-          pipsValues = new Array(amountOfPipsValues + 1)
-            .fill({ percent: NaN, value: NaN })
-            .map(() => {
-              value += shift;
+          let value = valueBorderOfTrack.min;
+          pipsValues = new Array(amountOfPipsValues).fill({ percent: NaN, value: NaN }).map(() => {
+            const pip = { percent: this._toTrackPercent(value), value };
 
-              return { percent: this._toTrackPercent(value), value };
-            });
+            value += shift;
+
+            return pip;
+          });
         }
 
         break;
