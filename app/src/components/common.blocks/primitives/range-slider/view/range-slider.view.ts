@@ -1077,7 +1077,11 @@ class RangeSliderView
   protected _getNearestThumb(value: number) {
     const distances = this._state.value.map((thumbValue) => Math.abs(thumbValue - value));
 
-    return distances.indexOf(Math.min(...distances));
+    const minDistance = Math.min(...distances);
+    const theLeastIndexOfNearestThumb = distances.indexOf(Math.min(...distances));
+    const nearestValue = this._state.value[theLeastIndexOfNearestThumb];
+
+    return value < nearestValue ? theLeastIndexOfNearestThumb : distances.lastIndexOf(minDistance);
   }
 
   protected _pipsEventListenerObject = {

@@ -868,10 +868,29 @@ testDOM({
         );
         expect(instance['_state'].value).toStrictEqual([-1000, -600, 1300]);
 
-        pipsValueElements.item(0).dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        pipsValueElements.item(3).dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        const theLeftMostPip = pipsValueElements.item(0);
+        const theRightMostPip = pipsValueElements.item(3);
+
+        theLeftMostPip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        theRightMostPip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
         expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject(START);
+      });
+
+      test('nearest thumb should be calculated by ordered distance', () => {
+        instance.set([-1000, -1000, -1000]);
+
+        const theLeftMostPip = pipsValueElements.item(0);
+        const theRightMostPip = pipsValueElements.item(3);
+
+        theLeftMostPip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        theRightMostPip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+        expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject([
+          -1150,
+          -1000,
+          1400,
+        ]);
       });
     },
   ],
