@@ -192,6 +192,9 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_toPipsOptions(): Required<PipsOptions>
     #_toThumbState(index: number): ThumbState
     #_toTooltipState(index: number): TooltipState
+    #_getRangeTransform(index: number): string
+    #_getThumbTransform(index: number): string
+    #_getThumbZIndex(index: number): string
     #_thumbEventListenerObject: { cache: WeakMap<HTMLElement, { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }>; ... 4 more ...; getOrigin(event: Event): HTMLElement; }
     #_initThumbCache(origin: HTMLElement): { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }
     #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | 'none'; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): { thumbValueAfterIncrementation: number; theLastIncrement: number; currentIntervalInfo: {    keyOfInfimum: string;    keyOfSupremum: string;    magnificationFactor: number;    step: number | 'none';}; }

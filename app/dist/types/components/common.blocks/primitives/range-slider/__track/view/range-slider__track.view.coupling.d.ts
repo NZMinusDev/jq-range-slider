@@ -16,7 +16,7 @@ declare type FixedTrackOptions = {
     padding: [number, number];
 };
 declare type TrackState = {};
-interface RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
+interface IRangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
     getIntervalsOption(): FixedTrackOptions['intervals'];
     getStepsOption(): FixedTrackOptions['steps'];
     getPaddingOption(): FixedTrackOptions['padding'];
@@ -24,4 +24,4 @@ interface RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, 
     setStepsOption(steps?: TrackOptions['steps']): this;
     setPaddingOption(padding?: TrackOptions['padding']): this;
 }
-export { RangeSliderTrackView as default, TrackOptions, FixedTrackOptions, TrackState };
+export { IRangeSliderTrackView as default, TrackOptions, FixedTrackOptions, TrackState };

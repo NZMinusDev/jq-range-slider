@@ -2,6 +2,6 @@ import type { MVPModel } from "../../../../../utils/devTools/tools/PluginCreatio
 declare type RangeSliderState = {
     value: number[];
 };
-interface RangeSliderModel extends MVPModel<RangeSliderState> {
+interface IRangeSliderModel extends MVPModel<RangeSliderState> {
 }
-export { RangeSliderModel as default, RangeSliderState };
+export { IRangeSliderModel as default, RangeSliderState };

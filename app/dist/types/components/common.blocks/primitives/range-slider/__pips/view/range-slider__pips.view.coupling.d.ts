@@ -11,7 +11,7 @@ declare type PipsOptions = {
     formatter?: Formatter;
 };
 declare type PipsState = {};
-interface RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
+interface IRangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
     getOrientationOption(): PipsOptions['orientation'];
     getIsHiddenOption(): PipsOptions['isHidden'];
     getValuesOption(): PipsOptions['values'];
@@ -23,4 +23,4 @@ interface RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions
     setDensityOption(density?: PipsOptions['density']): this;
     setFormatterOption(formatter?: PipsOptions['formatter']): this;
 }
-export { RangeSliderPipsView as default, Formatter, PipsOptions, PipsState };
+export { IRangeSliderPipsView as default, Formatter, PipsOptions, PipsState };

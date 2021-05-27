@@ -7,6 +7,6 @@ declare type ThumbState = {
     ariaValueNow: number;
     ariaValueText: string;
 };
-interface RangeSliderThumbView extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {
+interface IRangeSliderThumbView extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {
 }
-export { RangeSliderThumbView as default, ThumbOptions, ThumbState };
+export { IRangeSliderThumbView as default, ThumbOptions, ThumbState };

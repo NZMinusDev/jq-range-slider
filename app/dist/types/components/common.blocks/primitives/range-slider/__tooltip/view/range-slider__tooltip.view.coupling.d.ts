@@ -8,7 +8,7 @@ declare type TooltipOptions = {
 declare type TooltipState = {
     value: number;
 };
-interface RangeSliderTooltipView extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> {
+interface IRangeSliderTooltipView extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> {
     getOrientationOption(): TooltipOptions['orientation'];
     getIsHiddenOption(): TooltipOptions['isHidden'];
     getFormatterOption(): TooltipOptions['formatter'];
@@ -16,4 +16,4 @@ interface RangeSliderTooltipView extends MVPView<Required<TooltipOptions>, Toolt
     setIsHiddenOption(isHidden?: TooltipOptions['isHidden']): this;
     setFormatterOption(formatter?: TooltipOptions['formatter']): this;
 }
-export { RangeSliderTooltipView as default, Formatter, TooltipOptions, TooltipState };
+export { IRangeSliderTooltipView as default, Formatter, TooltipOptions, TooltipState };

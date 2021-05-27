@@ -79,67 +79,32 @@ class RangeSliderView
       [
         ...this._options.connect
           .map((isConnected, index) => new RangeSliderRangeView(this._toRangeOptions(index)))
-          .map((rangeView, index) => {
-            const lowerOffset =
-              index === 0 ? 0 : this._thumbValueToPositionOnTrack(index - 1).offsetInPercent;
-            const greaterOffset = this._thumbValueToPositionOnTrack(index).offsetInPercent;
-
-            return rangeView.template({
+          .map((rangeView, index) =>
+            rangeView.template({
               classInfo: {
                 'range-slider__range_animate-tap':
                   (this._state.isActiveThumbs[index] ?? false) ===
                   (this._state.isActiveThumbs[index - 1] ?? false),
               },
               styleInfo: {
-                transform:
-                  this._options.orientation === 'horizontal'
-                    ? `translate(${lowerOffset}%, 0) scale(${
-                        (greaterOffset - lowerOffset) / 100
-                      }, 1)`
-                    : `translate(0, ${lowerOffset}%) scale(1, ${
-                        (greaterOffset - lowerOffset) / 100
-                      })`,
+                transform: this._getRangeTransform(index),
               },
-            });
-          }),
+            })
+          ),
         ...this._state.value
           .map(
             (thumbValue, index) =>
               new RangeSliderThumbView(this._toThumbOptions(index), this._toThumbState(index))
           )
-          .map((thumbView, index, views) => {
-            const BASE_Z = 2;
-            const nextIndex = index + 1;
-            const previousIndex = index - 1;
-            const epsilon = (this._options.intervals.max - this._options.intervals.min) * 0.02;
-            const trackBorder = this._getValueBorderOfTrack();
-            const infimum =
-              views[previousIndex] !== undefined
-                ? this._state.value[previousIndex]
-                : trackBorder.min;
-            const supremum =
-              views[nextIndex] !== undefined ? this._state.value[nextIndex] : trackBorder.max;
-
-            const thumbOffset = this._thumbValueToPositionOnTrack(index);
-            const thumbTranslate =
-              thumbOffset.offsetInPercent * thumbOffset.THUMB_SCALE_FACTOR -
-              thumbOffset.THUMB_TO_CENTER_OFFSET;
-
-            return thumbView.template(
+          .map((thumbView, index) =>
+            thumbView.template(
               {
                 classInfo: {
                   'range-slider__thumb-origin_animate-tap': !this._state.isActiveThumbs[index],
                 },
                 styleInfo: {
-                  zIndex:
-                    this._state.value[index] >= supremum - epsilon &&
-                    this._state.value[index] >= infimum + epsilon
-                      ? `${BASE_Z + 2 * views.length - index - 2}`
-                      : `${BASE_Z + index}`,
-                  transform:
-                    this._options.orientation === 'horizontal'
-                      ? `translate(${thumbTranslate}%, 0)`
-                      : `translate(0, ${thumbTranslate}%)`,
+                  transform: this._getThumbTransform(index),
+                  zIndex: this._getThumbZIndex(index),
                 },
                 attributes: { '@pointerdown': this._thumbEventListenerObject },
               },
@@ -150,8 +115,8 @@ class RangeSliderView
                 ).template(),
                 isActive: this._state.isActiveThumbs[index],
               }
-            );
-          }),
+            )
+          ),
       ]
     )}
     ${new RangeSliderPipsView(this._toPipsOptions()).template({
@@ -764,6 +729,41 @@ class RangeSliderView
     return {
       value: this._state.value[index],
     };
+  }
+
+  protected _getRangeTransform(index: number) {
+    const lowerOffset =
+      index === 0 ? 0 : this._thumbValueToPositionOnTrack(index - 1).offsetInPercent;
+    const greaterOffset = this._thumbValueToPositionOnTrack(index).offsetInPercent;
+
+    return this._options.orientation === 'horizontal'
+      ? `translate(${lowerOffset}%, 0) scale(${(greaterOffset - lowerOffset) / 100}, 1)`
+      : `translate(0, ${lowerOffset}%) scale(1, ${(greaterOffset - lowerOffset) / 100})`;
+  }
+
+  protected _getThumbTransform(index: number) {
+    const thumbOffset = this._thumbValueToPositionOnTrack(index);
+    const thumbTranslate =
+      thumbOffset.offsetInPercent * thumbOffset.THUMB_SCALE_FACTOR -
+      thumbOffset.THUMB_TO_CENTER_OFFSET;
+
+    return this._options.orientation === 'horizontal'
+      ? `translate(${thumbTranslate}%, 0)`
+      : `translate(0, ${thumbTranslate}%)`;
+  }
+  protected _getThumbZIndex(index: number) {
+    const BASE_Z = 2;
+    const nextIndex = index + 1;
+    const previousIndex = index - 1;
+    const epsilon = (this._options.intervals.max - this._options.intervals.min) * 0.02;
+    const trackBorder = this._getValueBorderOfTrack();
+    const infimum = this._state.value[previousIndex] ?? trackBorder.min;
+    const supremum = this._state.value[nextIndex] ?? trackBorder.max;
+
+    return this._state.value[index] >= supremum - epsilon &&
+      this._state.value[index] >= infimum + epsilon
+      ? `${BASE_Z + 2 * this._state.value.length - index - 2}`
+      : `${BASE_Z + index}`;
   }
 
   protected _thumbEventListenerObject = {

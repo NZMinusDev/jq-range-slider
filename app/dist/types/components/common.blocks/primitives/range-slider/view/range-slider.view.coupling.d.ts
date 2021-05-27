@@ -34,7 +34,7 @@ declare type RangeSliderState = {
     value: FixedRangeSliderOptions['start'];
     isActiveThumbs: boolean[];
 };
-interface RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> {
+interface IRangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> {
     getIntervalsOption(): FixedRangeSliderOptions['intervals'];
     getStartOption(): FixedRangeSliderOptions['start'];
     getStepsOption(): FixedRangeSliderOptions['steps'];
@@ -56,4 +56,4 @@ interface RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOp
     get(): FixedRangeSliderOptions['start'];
     set(value?: RangeSliderOptions['start']): this;
 }
-export { RangeSliderView as default, Formatter, Mode, RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState, };
+export { IRangeSliderView as default, Formatter, Mode, RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState, };

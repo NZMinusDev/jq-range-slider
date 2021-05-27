@@ -97,6 +97,9 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
     protected _toPipsOptions(): Required<PipsOptions>;
     protected _toThumbState(index: number): ThumbState;
     protected _toTooltipState(index: number): TooltipState;
+    protected _getRangeTransform(index: number): string;
+    protected _getThumbTransform(index: number): string;
+    protected _getThumbZIndex(index: number): string;
     protected _thumbEventListenerObject: {
         cache: WeakMap<HTMLElement, {
             trackElem: HTMLElement;
