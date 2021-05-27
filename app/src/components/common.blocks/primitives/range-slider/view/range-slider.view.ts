@@ -79,12 +79,12 @@ class RangeSliderView
       [
         ...this._options.connect
           .map((isConnected, index) => new RangeSliderRangeView(this._toRangeOptions(index)))
-          .map((view, index) => {
-            const a =
-              index === 0 ? 0 : this._thumbValueToPositionOnTrack(index - 1).offsetOnTrackInPercent;
-            const b = this._thumbValueToPositionOnTrack(index).offsetOnTrackInPercent;
+          .map((rangeView, index) => {
+            const lowerOffset =
+              index === 0 ? 0 : this._thumbValueToPositionOnTrack(index - 1).offsetInPercent;
+            const greaterOffset = this._thumbValueToPositionOnTrack(index).offsetInPercent;
 
-            return view.template({
+            return rangeView.template({
               classInfo: {
                 'range-slider__range_animate-tap':
                   (this._state.isActiveThumbs[index] ?? false) ===
@@ -93,8 +93,12 @@ class RangeSliderView
               styleInfo: {
                 transform:
                   this._options.orientation === 'horizontal'
-                    ? `translate(${a}%, 0) scale(${(b - a) / 100}, 1)`
-                    : `translate(0, ${a}%) scale(1, ${(b - a) / 100})`,
+                    ? `translate(${lowerOffset}%, 0) scale(${
+                        (greaterOffset - lowerOffset) / 100
+                      }, 1)`
+                    : `translate(0, ${lowerOffset}%) scale(1, ${
+                        (greaterOffset - lowerOffset) / 100
+                      })`,
               },
             });
           }),
@@ -103,12 +107,11 @@ class RangeSliderView
             (thumbValue, index) =>
               new RangeSliderThumbView(this._toThumbOptions(index), this._toThumbState(index))
           )
-          .map((view, index, views) => {
-            const baseZIndex = 2;
+          .map((thumbView, index, views) => {
+            const BASE_Z = 2;
             const nextIndex = index + 1;
             const previousIndex = index - 1;
-            const rangeOfSwapZIndex =
-              (this._options.intervals.max - this._options.intervals.min) * 0.02;
+            const epsilon = (this._options.intervals.max - this._options.intervals.min) * 0.02;
             const trackBorder = this._getValueBorderOfTrack();
             const infimum =
               views[previousIndex] !== undefined
@@ -117,22 +120,22 @@ class RangeSliderView
             const supremum =
               views[nextIndex] !== undefined ? this._state.value[nextIndex] : trackBorder.max;
 
-            const thumbOffsetOperands = this._thumbValueToPositionOnTrack(index);
+            const thumbOffset = this._thumbValueToPositionOnTrack(index);
             const thumbTranslate =
-              thumbOffsetOperands.offsetOnTrackInPercent * thumbOffsetOperands.THUMB_SCALE_FACTOR -
-              thumbOffsetOperands.THUMB_TO_CENTER_OFFSET;
+              thumbOffset.offsetInPercent * thumbOffset.THUMB_SCALE_FACTOR -
+              thumbOffset.THUMB_TO_CENTER_OFFSET;
 
-            return view.template(
+            return thumbView.template(
               {
                 classInfo: {
                   'range-slider__thumb-origin_animate-tap': !this._state.isActiveThumbs[index],
                 },
                 styleInfo: {
                   zIndex:
-                    this._state.value[index] >= supremum - rangeOfSwapZIndex &&
-                    this._state.value[index] >= infimum + rangeOfSwapZIndex
-                      ? `${baseZIndex + 2 * views.length - index - 2}`
-                      : `${baseZIndex + index}`,
+                    this._state.value[index] >= supremum - epsilon &&
+                    this._state.value[index] >= infimum + epsilon
+                      ? `${BASE_Z + 2 * views.length - index - 2}`
+                      : `${BASE_Z + index}`,
                   transform:
                     this._options.orientation === 'horizontal'
                       ? `translate(${thumbTranslate}%, 0)`
@@ -504,9 +507,11 @@ class RangeSliderView
   }
 
   protected _getValueBorderOfTrack() {
+    const [leftPad, rightPad] = this._options.padding;
+
     return {
-      min: this._options.intervals.min + this._options.padding[0],
-      max: this._options.intervals.max - this._options.padding[1],
+      min: this._options.intervals.min + leftPad,
+      max: this._options.intervals.max - rightPad,
     };
   }
   protected _getLinearPercentBorderOfTrack() {
@@ -518,7 +523,7 @@ class RangeSliderView
     };
   }
   protected _getIntervalInfoByPoint(value: number, { isIncludedInSupremum = false } = {}) {
-    const intervalKeys = Object.keys(this._options.intervals).sort(
+    const intervalsKeys = Object.keys(this._options.intervals).sort(
       RangeSliderTrackView.intervalsKeysCompareFunc
     );
 
@@ -531,14 +536,14 @@ class RangeSliderView
     }
 
     let indexOfSupremum = isIncludedInSupremum
-      ? intervalKeys.findIndex((key) => this._options.intervals[key] >= value)
-      : intervalKeys.findIndex((key) => this._options.intervals[key] > value);
+      ? intervalsKeys.findIndex((key) => this._options.intervals[key] >= value)
+      : intervalsKeys.findIndex((key) => this._options.intervals[key] > value);
     if (value === this._options.intervals.max) {
-      indexOfSupremum = intervalKeys.length - 1;
+      indexOfSupremum = intervalsKeys.length - 1;
     }
 
-    const keyOfInfimum = intervalKeys[indexOfSupremum - 1];
-    const keyOfSupremum = intervalKeys[indexOfSupremum];
+    const keyOfInfimum = intervalsKeys[indexOfSupremum - 1];
+    const keyOfSupremum = intervalsKeys[indexOfSupremum];
 
     const valueSize =
       this._options.intervals[keyOfSupremum] - this._options.intervals[keyOfInfimum];
@@ -574,55 +579,55 @@ class RangeSliderView
     return Number.parseFloat(`${key}`);
   }
   protected _toTrackPercent(valueOnTrack: number) {
-    const intervalKeys = Object.keys(this._options.intervals).sort(
+    const intervalsKeys = Object.keys(this._options.intervals).sort(
       RangeSliderTrackView.intervalsKeysCompareFunc
     );
 
-    let offsetOnTrackInPercent = 0;
+    let offsetInPercent = 0;
     let isStopOffset = false;
-    intervalKeys.forEach((intervalKey, index) => {
-      if (!isStopOffset && intervalKeys[index + 1] !== undefined) {
+    intervalsKeys.forEach((intervalKey, index) => {
+      if (!isStopOffset && intervalsKeys[index + 1] !== undefined) {
         const intervalValueSize =
-          this._options.intervals[intervalKeys[index + 1]] - this._options.intervals[intervalKey];
+          this._options.intervals[intervalsKeys[index + 1]] - this._options.intervals[intervalKey];
         const intervalPercentSize =
-          RangeSliderView._getIntervalKeyAsNumber(intervalKeys[index + 1]) -
-          RangeSliderView._getIntervalKeyAsNumber(intervalKeys[index]);
+          RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index + 1]) -
+          RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index]);
         const valuePerPercentInInterval = intervalValueSize / intervalPercentSize;
 
         if (
           valueOnTrack >= this._options.intervals[intervalKey] &&
-          valueOnTrack < this._options.intervals[intervalKeys[index + 1]]
+          valueOnTrack < this._options.intervals[intervalsKeys[index + 1]]
         ) {
-          offsetOnTrackInPercent +=
+          offsetInPercent +=
             (valueOnTrack - this._options.intervals[intervalKey]) / valuePerPercentInInterval;
           isStopOffset = true;
         } else {
-          offsetOnTrackInPercent += intervalPercentSize;
+          offsetInPercent += intervalPercentSize;
         }
       }
     });
 
-    return offsetOnTrackInPercent;
+    return offsetInPercent;
   }
   protected _toTrackValue(linearPercentOnTrack: number) {
-    const intervalKeys = Object.keys(this._options.intervals).sort(
+    const intervalsKeys = Object.keys(this._options.intervals).sort(
       RangeSliderTrackView.intervalsKeysCompareFunc
     );
 
     let trackValue = this._options.intervals.min;
     let isStopOffset = false;
-    intervalKeys.forEach((intervalKey, index) => {
-      if (!isStopOffset && intervalKeys[index + 1] !== undefined) {
+    intervalsKeys.forEach((intervalKey, index) => {
+      if (!isStopOffset && intervalsKeys[index + 1] !== undefined) {
         const intervalValueSize =
-          this._options.intervals[intervalKeys[index + 1]] - this._options.intervals[intervalKey];
+          this._options.intervals[intervalsKeys[index + 1]] - this._options.intervals[intervalKey];
         const intervalPercentSize =
-          RangeSliderView._getIntervalKeyAsNumber(intervalKeys[index + 1]) -
-          RangeSliderView._getIntervalKeyAsNumber(intervalKeys[index]);
+          RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index + 1]) -
+          RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index]);
         const valuePerPercentInInterval = intervalValueSize / intervalPercentSize;
 
         if (
           linearPercentOnTrack >= RangeSliderView._getIntervalKeyAsNumber(intervalKey) &&
-          linearPercentOnTrack < RangeSliderView._getIntervalKeyAsNumber(intervalKeys[index + 1])
+          linearPercentOnTrack < RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index + 1])
         ) {
           trackValue +=
             (linearPercentOnTrack - RangeSliderView._getIntervalKeyAsNumber(intervalKey)) *
@@ -670,12 +675,10 @@ class RangeSliderView
     let pipsValues: NonNullable<PipsOptions['values']> = [];
     switch (this._options.pips.mode) {
       case 'intervals': {
-        const leftPadInPercent = this._toTrackPercent(
-          this._options.intervals.min + this._options.padding[0]
-        );
-        const rightPadInPercent = this._toTrackPercent(
-          this._options.intervals.max - this._options.padding[1]
-        );
+        const [leftPad, rightPad] = this._options.padding;
+
+        const minPercent = this._toTrackPercent(this._options.intervals.min + leftPad);
+        const manPercent = this._toTrackPercent(this._options.intervals.max - rightPad);
 
         values[0] = valueBorderOfTrack.min;
         values[values.length - 1] = valueBorderOfTrack.max;
@@ -684,9 +687,9 @@ class RangeSliderView
         let percent: number;
         values.forEach((value, index) => {
           if (index === 0) {
-            percent = leftPadInPercent;
+            percent = minPercent;
           } else if (index === lastIndex) {
-            percent = rightPadInPercent;
+            percent = manPercent;
           } else {
             percent = this._toTrackPercent(value);
           }
@@ -893,9 +896,9 @@ class RangeSliderView
     const trackElem = origin.closest('.range-slider__track') as HTMLElement;
     const trackValueSize = this._options.intervals.max - this._options.intervals.min;
     const thumbIndex = Array.from(
-      trackElem.querySelectorAll<HTMLElement>('.range-slider__thumb-origin')
+      trackElem.querySelectorAll<HTMLElement>('.js-range-slider__thumb-origin')
     ).indexOf(origin);
-    const ranges = trackElem.querySelectorAll<HTMLElement>('.range-slider__range');
+    const ranges = trackElem.querySelectorAll<HTMLElement>('.js-range-slider__range');
     const siblingRanges = [ranges.item(thumbIndex), ranges.item(thumbIndex + 1)] as [
       HTMLElement,
       HTMLElement
@@ -1012,9 +1015,9 @@ class RangeSliderView
 
     const THUMB_TO_CENTER_OFFSET = 50;
 
-    const offsetOnTrackInPercent = this._toTrackPercent(this._state.value[thumbIndex]);
+    const offsetInPercent = this._toTrackPercent(this._state.value[thumbIndex]);
 
-    return { offsetOnTrackInPercent, THUMB_SCALE_FACTOR, THUMB_TO_CENTER_OFFSET };
+    return { offsetInPercent, THUMB_SCALE_FACTOR, THUMB_TO_CENTER_OFFSET };
   }
 
   protected _trackEventListenerObject = {

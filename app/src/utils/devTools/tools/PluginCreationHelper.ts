@@ -112,8 +112,8 @@ class EventManagerMixin<TEvents extends string> {
 
   handleEvent(event: Event) {
     // mousedown -> onMousedown
-    const method = `_on${event.type[0].toUpperCase()}${event.type.slice(1)}`;
-    if (this[method]) this[method](event);
+    const methodName = `_on${event.type[0].toUpperCase()}${event.type.slice(1)}`;
+    if (this[methodName]) this[methodName](event);
 
     return this;
   }

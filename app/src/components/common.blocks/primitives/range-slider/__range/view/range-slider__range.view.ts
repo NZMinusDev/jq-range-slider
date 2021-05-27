@@ -24,6 +24,7 @@ class RangeSliderRangeView
     html`<div
       class=${classMap({
         'range-slider__range': true,
+        'js-range-slider__range': true,
         'range-slider__range_isConnected': this._options.isConnected,
         ...classInfo,
       })}

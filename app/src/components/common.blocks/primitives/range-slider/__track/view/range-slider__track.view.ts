@@ -45,6 +45,7 @@ class RangeSliderTrackView
     html`<div
       class=${classMap({
         'range-slider__track': true,
+        'js-range-slider__track': true,
         [`range-slider__track_orientation-${this._options.orientation}`]: true,
         ...classInfo,
       })}
@@ -108,13 +109,13 @@ class RangeSliderTrackView
     return this;
   }
   protected _fixOrderOfIntervalsOption() {
-    const intervalsKeys = this._getSortedKeysOfIntervalsOption();
-    const intervalsValues = Object.values(this._options.intervals);
-    intervalsValues.sort((a, b) => a - b);
+    const keys = this._getSortedKeysOfIntervalsOption();
+    const values = Object.values(this._options.intervals);
+    values.sort((a, b) => a - b);
 
     const entries: [string, number][] = [];
-    intervalsKeys.forEach((key, index) => {
-      entries[index] = [key, intervalsValues[index]];
+    keys.forEach((key, index) => {
+      entries[index] = [key, values[index]];
     });
     this._options.intervals = Object.fromEntries(entries) as FixedTrackOptions['intervals'];
 
@@ -177,6 +178,8 @@ class RangeSliderTrackView
   }
   protected _fixValuesOfStepsOption() {
     const intervalsKeys = this._getSortedKeysOfIntervalsOption();
+    const [leftPad, rightPad] = this._options.padding;
+
     this._options.steps = this._options.steps.map((step, index, steps) => {
       if (step === 'none') {
         return step;
@@ -187,8 +190,8 @@ class RangeSliderTrackView
           this._options.intervals[intervalsKeys[index]] -
             this._options.intervals[intervalsKeys[index + 1]]
         ) -
-        (index === 0 ? this._options.padding[0] : 0) -
-        (index === steps.length - 1 ? this._options.padding[1] : 0);
+        (index === 0 ? leftPad : 0) -
+        (index === steps.length - 1 ? rightPad : 0);
 
       if (step > maxStep) {
         return maxStep;

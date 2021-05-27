@@ -86,7 +86,7 @@ testDOM({
   callbacksWithTest: [
     ({ container, instance }) => {
       test('ondragstart should be nooped', () => {
-        const target = container.querySelector('.range-slider__thumb') as HTMLElement;
+        const target = container.querySelector('.js-range-slider__thumb') as HTMLElement;
         const event = new Event('dragstart');
         const noopMock = jest.spyOn(Object.getPrototypeOf(instance), '_onDragstart');
 

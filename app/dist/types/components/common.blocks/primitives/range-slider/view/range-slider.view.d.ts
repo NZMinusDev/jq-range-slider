@@ -132,7 +132,7 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
     }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): any;
     protected static _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | 'none'): number;
     protected _thumbValueToPositionOnTrack(thumbIndex: number): {
-        offsetOnTrackInPercent: number;
+        offsetInPercent: number;
         THUMB_SCALE_FACTOR: number;
         THUMB_TO_CENTER_OFFSET: number;
     };

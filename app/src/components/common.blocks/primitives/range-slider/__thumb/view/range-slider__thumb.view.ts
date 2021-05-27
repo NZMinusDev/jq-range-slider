@@ -36,6 +36,7 @@ class RangeSliderThumbView
     html`<div
       class=${classMap({
         'range-slider__thumb-origin': true,
+        'js-range-slider__thumb-origin': true,
         [`range-slider__thumb-origin_orientation-${this._state.ariaOrientation}`]: true,
         'range-slider__thumb-origin_isActive': isActive,
         ...classInfo,
@@ -44,7 +45,7 @@ class RangeSliderThumbView
       style=${styleMap({ ...styleInfo })}
     >
       <div
-        class=${classMap({ 'range-slider__thumb': true })}
+        class=${classMap({ 'range-slider__thumb': true, 'js-range-slider__thumb': true })}
         role="slider"
         tabindex="0"
         aria-orientation="${this._state.ariaOrientation}"

@@ -19,13 +19,10 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   expect(instance['_options'].connect.length).toBe(instance['_options'].start.length + 1);
   expect(instance['_options'].tooltips.length).toBe(instance['_options'].start.length);
 
+  const [leftPad, rightPad] = instance['_options'].padding;
   instance['_options'].start.forEach((startValue, index) => {
-    expect(startValue).toBeGreaterThanOrEqual(
-      instance['_options'].intervals.min + instance['_options'].padding[0]
-    );
-    expect(startValue).toBeLessThanOrEqual(
-      instance['_options'].intervals.max - instance['_options'].padding[1]
-    );
+    expect(startValue).toBeGreaterThanOrEqual(instance['_options'].intervals.min + leftPad);
+    expect(startValue).toBeLessThanOrEqual(instance['_options'].intervals.max - rightPad);
 
     if (index > 0) {
       expect(startValue).toBeGreaterThanOrEqual(instance['_options'].start[index - 1]);
@@ -162,16 +159,16 @@ testInit({
 describe('init', () => {
   describe("with start, tooltips, connect options aren't array", () => {
     test("the instance's options should be correct arrays", () => {
-      const sliderOptions = new RangeSliderView({
+      const options = new RangeSliderView({
         intervals: { min: -200, max: 200, '50%': -100 },
         start: -100,
         tooltips: false,
         connect: true,
       })['_options'];
 
-      expect(sliderOptions.start).toStrictEqual([-100]);
-      expect(sliderOptions.tooltips).toStrictEqual([false]);
-      expect(sliderOptions.connect).toStrictEqual([true, true]);
+      expect(options.start).toStrictEqual([-100]);
+      expect(options.tooltips).toStrictEqual([false]);
+      expect(options.connect).toStrictEqual([true, true]);
     });
   });
 });
@@ -248,7 +245,7 @@ testSetter({
 describe('setOptions', () => {
   describe("with start, tooltips, connect options aren't array", () => {
     test("the instance's options should be correct arrays", () => {
-      const sliderOptions = new RangeSliderView({
+      const options = new RangeSliderView({
         intervals: { min: -2000, max: 2000, '50%': -1000, '75%': 1800 },
         start: [-100, -50, 0, 50],
         tooltips: [true, false, true, false],
@@ -259,9 +256,9 @@ describe('setOptions', () => {
         connect: true,
       })['_options'];
 
-      expect(sliderOptions.start).toStrictEqual([-100, -100, -100, -100]);
-      expect(sliderOptions.tooltips).toStrictEqual([false, false, false, false]);
-      expect(sliderOptions.connect).toStrictEqual([true, true, true, true, true]);
+      expect(options.start).toStrictEqual([-100, -100, -100, -100]);
+      expect(options.tooltips).toStrictEqual([false, false, false, false]);
+      expect(options.connect).toStrictEqual([true, true, true, true, true]);
     });
   });
 });
@@ -339,13 +336,15 @@ testDOM({
       const VALUE_PER_PX = TRACK_VALUE_SIZE / TRACK_PX_SIZE;
       const MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB = 29;
 
-      const trackElem = container.querySelector<HTMLElement>('.range-slider__track') as HTMLElement;
-      const pipsElement = container.querySelector('.range-slider__pips') as HTMLElement;
-      const pipsValuesElements = pipsElement.querySelectorAll<HTMLElement>(
-        '.range-slider__pips-value'
+      const trackElem = container.querySelector<HTMLElement>(
+        '.js-range-slider__track'
+      ) as HTMLElement;
+      const pipsElement = container.querySelector('.js-range-slider__pips') as HTMLElement;
+      const pipsValueElements = pipsElement.querySelectorAll<HTMLElement>(
+        '.js-range-slider__pips-value'
       );
 
-      const thumbsElements = container.querySelectorAll<HTMLElement>('.range-slider__thumb');
+      const thumbsElements = container.querySelectorAll<HTMLElement>('.js-range-slider__thumb');
       const originsElements = Array.from<HTMLElement>(thumbsElements).map((thumbElem) => {
         const originElem = thumbElem.closest('.range-slider__thumb-origin') as HTMLElement;
 
@@ -384,9 +383,9 @@ testDOM({
         const newValue = +(innerThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string);
 
         let lowerValue = valueBefore;
-        let moreValue = newValue;
+        let greaterValue = newValue;
         if (increment < 0) {
-          [lowerValue, moreValue] = [moreValue, lowerValue];
+          [lowerValue, greaterValue] = [greaterValue, lowerValue];
         }
 
         const isInsideTheFirstInterval =
@@ -396,15 +395,15 @@ testDOM({
         const isInsideTheThirdInterval =
           lowerValue >= INTERVALS['90%'] && lowerValue < MAX_TRACK_VALUE;
 
-        if (isInsideTheFirstInterval && moreValue < INTERVALS['80%']) {
+        if (isInsideTheFirstInterval && greaterValue < INTERVALS['80%']) {
           expecters[0](newValue, valueBefore);
         }
 
-        if (isInsideTheSecondInterval && moreValue < INTERVALS['90%']) {
+        if (isInsideTheSecondInterval && greaterValue < INTERVALS['90%']) {
           expecters[1](newValue, valueBefore);
         }
 
-        if (isInsideTheThirdInterval && moreValue < MAX_TRACK_VALUE) {
+        if (isInsideTheThirdInterval && greaterValue < MAX_TRACK_VALUE) {
           expecters[2](newValue, valueBefore);
         }
       };
@@ -815,13 +814,13 @@ testDOM({
       test('click on valuable pip should be handled', () => {
         instance.set([-1000, -600, 1300]);
 
-        (pipsElement.querySelector('.range-slider__pips-marker') as HTMLElement).dispatchEvent(
+        (pipsElement.querySelector('.js-range-slider__pips-marker') as HTMLElement).dispatchEvent(
           new MouseEvent('click', { bubbles: true })
         );
         expect(instance['_state'].value).toStrictEqual([-1000, -600, 1300]);
 
-        pipsValuesElements.item(0).dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        pipsValuesElements.item(3).dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        pipsValueElements.item(0).dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        pipsValueElements.item(3).dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
         expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject(START);
       });

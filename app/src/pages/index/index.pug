@@ -28,13 +28,13 @@ block append content
       h2 Playground
       .demo__slider
       #logger.logger
-        .logger__firefly Start
-        .logger__firefly Slide
-        .logger__firefly Update
-        .logger__firefly Change
-        .logger__firefly Set
-        .logger__firefly End
-        .logger__firefly Render
+        .logger__firefly.js-logger__firefly Start
+        .logger__firefly.js-logger__firefly Slide
+        .logger__firefly.js-logger__firefly Update
+        .logger__firefly.js-logger__firefly Change
+        .logger__firefly.js-logger__firefly Set
+        .logger__firefly.js-logger__firefly End
+        .logger__firefly.js-logger__firefly Render
       form.submit(action='/', name='submit', method='post')
         input(type='text', name='setter')
         input.btn.btn_type-set(type='button', name='set', value='.set(...values)')

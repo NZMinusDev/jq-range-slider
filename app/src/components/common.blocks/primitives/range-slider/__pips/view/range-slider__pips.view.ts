@@ -27,6 +27,7 @@ class RangeSliderPipsView
     html`<div
       class=${classMap({
         'range-slider__pips': true,
+        'js-range-slider__pips': true,
         [`range-slider__pips_orientation-${this._options.orientation}`]: true,
         'range-slider__pips_isHidden': this._options.isHidden,
         ...classInfo,
@@ -107,7 +108,10 @@ class RangeSliderPipsView
       return html``;
     }
 
-    const valueClasses: ClassInfo = { 'range-slider__pips-value': true };
+    const valueClasses: ClassInfo = {
+      'range-slider__pips-value': true,
+      'js-range-slider__pips-value': true,
+    };
 
     const positionKey = this._options.orientation === 'horizontal' ? 'left' : 'top';
 
@@ -137,22 +141,25 @@ class RangeSliderPipsView
       return html`${markersTemplate}${valueTemplate}`;
     });
   }
-  protected _getMarkersRender(endPosition: number, range: number, positionKey: 'left' | 'top') {
-    const markerClasses: ClassInfo = { 'range-slider__pips-marker': true };
+  protected _getMarkersRender(end: number, range: number, positionKey: 'left' | 'top') {
+    const classes: ClassInfo = {
+      'range-slider__pips-marker': true,
+      'js-range-slider__pips-marker': true,
+    };
 
-    const amountOfMarkers = Math.floor(range * this._options.density);
-    const rangeBetweenMarkers = 1 / this._options.density;
-    const startPosition = endPosition - range;
-    let markerPosition = startPosition;
+    const amount = Math.floor(range * this._options.density);
+    const shift = 1 / this._options.density;
+    const start = end - range;
+    let position = start;
 
-    return new Array(amountOfMarkers).fill(``).map(() => {
-      markerPosition += rangeBetweenMarkers;
+    return new Array(amount).fill(``).map(() => {
+      position += shift;
 
       const markerStyles = {
-        [positionKey]: `${markerPosition}%`,
+        [positionKey]: `${position}%`,
       };
 
-      return html`<div class=${classMap(markerClasses)} style=${styleMap(markerStyles)}></div>`;
+      return html`<div class=${classMap(classes)} style=${styleMap(markerStyles)}></div>`;
     });
   }
 }

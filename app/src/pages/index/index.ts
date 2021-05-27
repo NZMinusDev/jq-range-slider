@@ -56,8 +56,10 @@ const datesGreaterResultElem = datesForm.elements.namedItem(
 ) as HTMLInputElement;
 const currentYear = new Date().getUTCFullYear();
 const datesUpdateHandler = () => {
-  datesLowerResultElem.value = new Date(sliders[3].view.get()[0]).toString();
-  datesGreaterResultElem.value = new Date(sliders[3].view.get()[1]).toString();
+  const [lowerValue, greaterValue] = datesSlider.view.get();
+
+  datesLowerResultElem.value = new Date(lowerValue).toString();
+  datesGreaterResultElem.value = new Date(greaterValue).toString();
 };
 
 datesSlider.view
@@ -77,14 +79,15 @@ datesSlider.view
   })
   .set([timestamp(`${currentYear - 0.5}`), timestamp(`${currentYear + 0.5}`)])
   .on('update', datesUpdateHandler);
-datesLowerResultElem.value = new Date(sliders[3].view.get()[0]).toString();
-datesGreaterResultElem.value = new Date(sliders[3].view.get()[1]).toString();
+const [lowerValue, greaterValue] = datesSlider.view.get();
+datesLowerResultElem.value = new Date(lowerValue).toString();
+datesGreaterResultElem.value = new Date(greaterValue).toString();
 
 /* Playground */
 const IS_ACTIVE_FIREFLY_SELECTOR = 'logger__firefly_isActive';
 const FIREFLY_ANIMATION_DURATION = 250;
 const logger = document.getElementById('logger') as HTMLDivElement;
-const fireflyElements = logger.querySelectorAll<HTMLDivElement>('.logger__firefly');
+const fireflyElements = logger.querySelectorAll<HTMLDivElement>('.js-logger__firefly');
 const [
   startFirefly,
   slideFirefly,
@@ -265,8 +268,9 @@ const showConfig = () => {
     configurableSlider.view.getOrientationOption() === 'vertical';
   configElements.min.element.value = configurableSlider.view.getIntervalsOption().min.toString();
   configElements.max.element.value = configurableSlider.view.getIntervalsOption().max.toString();
-  configElements.padLeft.element.value = configurableSlider.view.getPaddingOption()[0].toString();
-  configElements.padRight.element.value = configurableSlider.view.getPaddingOption()[1].toString();
+  const [leftPad, rightPad] = configurableSlider.view.getPaddingOption();
+  configElements.padLeft.element.value = leftPad.toString();
+  configElements.padRight.element.value = rightPad.toString();
   configElements.start.element.value = `[${configurableSlider.view.getStartOption()}]`;
   configElements.steps.element.value = `[${configurableSlider.view.getStepsOption()}]`;
   configElements.connect.element.value = `[${configurableSlider.view.getConnectOption()}]`;

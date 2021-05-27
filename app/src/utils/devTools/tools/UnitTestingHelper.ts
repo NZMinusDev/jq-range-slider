@@ -82,7 +82,6 @@ type MethodOfInstanceToRun<
   returns?: PropToGet;
   expecter: InstanceMethodExpecter<TMethodArgs, TInstance>;
 };
-
 type MethodOfInstanceToTest<
   TMethodArgs extends unknown[],
   TMethod extends (...args: TMethodArgs) => unknown,

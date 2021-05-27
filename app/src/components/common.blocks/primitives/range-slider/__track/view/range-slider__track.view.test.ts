@@ -36,6 +36,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   expect(instance['_options'].intervals.min).toBeGreaterThanOrEqual(Number.MIN_SAFE_INTEGER);
   expect(instance['_options'].intervals.max).toBeLessThanOrEqual(Number.MAX_SAFE_INTEGER);
 
+  const [leftPad, rightPad] = instance['_options'].padding;
   keysOfIntervals.forEach((key, index, keys) => {
     const parsedKey = collapsingParseFloat(key);
 
@@ -53,13 +54,14 @@ const viewPropertiesExpecter: InstancePropsExpecter<
 
     if (index < instance['_options'].steps.length && instance['_options'].steps[index] !== 'none') {
       expect(instance['_options'].steps[index]).toBeGreaterThan(0);
+
       expect(instance['_options'].steps[index]).toBeLessThanOrEqual(
         Math.abs(
           instance['_options'].intervals[key] -
             instance['_options'].intervals[keysOfIntervals[index + 1]]
         ) -
-          (index === 0 ? instance['_options'].padding[0] : 0) -
-          (index === keys.length - 2 ? instance['_options'].padding[1] : 0)
+          (index === 0 ? leftPad : 0) -
+          (index === keys.length - 2 ? rightPad : 0)
       );
     }
   });
