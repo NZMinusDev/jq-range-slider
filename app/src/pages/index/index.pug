@@ -37,8 +37,8 @@ block append content
         .logger__firefly.js-logger__firefly Render
       form.submit(action='/', name='submit', method='post')
         input(type='text', name='setter')
-        input.btn.btn_type-set(type='button', name='set', value='.set(...values)')
-        input.btn(type='button', name='reset', value='reset slider value')
+        input.btn.btn_type-set(type='submit', name='set', value='.set(...values)')
+        input.btn(type='reset', name='reset', value='reset slider value')
       table.events-emission-panel
         thead.events-emission-panel__head
           tr.events-emission-panel__row

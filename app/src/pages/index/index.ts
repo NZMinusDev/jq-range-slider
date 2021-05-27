@@ -307,16 +307,20 @@ configurableSlider.view.on('end', makeFireflyAnimationHandler(endFirefly));
 configurableSlider.view.on('render', makeFireflyAnimationHandler(renderFirefly));
 
 // buttons
-const submitOnClickHandler = () => {
+const submitOnClickHandler = (event: Event) => {
+  event.preventDefault();
+
   configurableSlider.view.set(JSON.parse(setFormElements.textField.value));
 };
 
-const resetOnClickHandler = () => {
+const resetOnClickHandler = (event: Event) => {
+  event.preventDefault();
+
   configurableSlider.view.set();
 };
 
 setForm.addEventListener('submit', submitOnClickHandler);
-setForm.addEventListener('submit', resetOnClickHandler);
+setForm.addEventListener('reset', resetOnClickHandler);
 
 // Tip: set options (it doesn't run render. If you need rerender use setOptions(options) method instead)
 Object.values(configElements).forEach((configElement) => {
