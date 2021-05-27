@@ -5,6 +5,6 @@ type RangeSliderState = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface RangeSliderModel extends MVPModel<RangeSliderState> {}
+interface IRangeSliderModel extends MVPModel<RangeSliderState> {}
 
-export { RangeSliderModel as default, RangeSliderState };
+export { IRangeSliderModel as default, RangeSliderState };

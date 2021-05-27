@@ -39,7 +39,7 @@ type RangeSliderState = {
   isActiveThumbs: boolean[];
 };
 
-interface RangeSliderView
+interface IRangeSliderView
   extends MVPView<
     FixedRangeSliderOptions,
     RangeSliderOptions,
@@ -70,7 +70,7 @@ interface RangeSliderView
 }
 
 export {
-  RangeSliderView as default,
+  IRangeSliderView as default,
   Formatter,
   Mode,
   RangeSliderOptions,

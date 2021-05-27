@@ -13,7 +13,7 @@ type PipsOptions = {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type PipsState = {};
 
-interface RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
+interface IRangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
   getOrientationOption(): PipsOptions['orientation'];
   getIsHiddenOption(): PipsOptions['isHidden'];
   getValuesOption(): PipsOptions['values'];
@@ -26,4 +26,4 @@ interface RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions
   setFormatterOption(formatter?: PipsOptions['formatter']): this;
 }
 
-export { RangeSliderPipsView as default, Formatter, PipsOptions, PipsState };
+export { IRangeSliderPipsView as default, Formatter, PipsOptions, PipsState };

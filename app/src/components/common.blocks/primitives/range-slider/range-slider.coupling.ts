@@ -1,17 +1,17 @@
 import IRangeSliderView, { RangeSliderOptions } from './view/range-slider.view.coupling';
 import IRangeSliderModel from './models/range-slider.model.coupling';
 
-interface RangeSliderPresenter {
+interface IRangeSliderPresenter {
   view: IRangeSliderView;
   model?: IRangeSliderModel;
 }
 
-interface RangeSliderPresenterConstructor {
+interface IRangeSliderPresenterConstructor {
   new (
     container: HTMLElement,
     viewOptions?: RangeSliderOptions,
     model?: IRangeSliderModel
-  ): RangeSliderPresenter;
+  ): IRangeSliderPresenter;
 }
 
-export { RangeSliderPresenter as default, RangeSliderPresenterConstructor };
+export { IRangeSliderPresenter as default, IRangeSliderPresenterConstructor };

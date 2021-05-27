@@ -1,12 +1,12 @@
 @startuml
 class EventManagerMixin<TEvents extends string> {
     #_eventHandlers: { [key: string]: handler[]; }
-    +on(eventName: TEvents, handler: handler): this
-    +off(eventName: TEvents, handler: (...args: any) => void): this
+    +on(eventName: TEvents, eventHandler: handler): this
+    +off(eventName: TEvents, eventHandler: (...args: any) => void): this
     +trigger(eventName: TEvents, args: any): this
     +handleEvent(event: Event): this
 }
-abstract class MVPView<TOptionsToGet extends object, TOptionsToSet extends object, TState extends object, TEvents extends string> extends EventManagerMixin {
+abstract class MVPView<TOptionsToGet extends Record<string, unknown>, TOptionsToSet extends Record<string, unknown>, TState extends Record<string, unknown>, TEvents extends string> extends EventManagerMixin {
     +template: template
     #_options: TOptionsToGet
     #_state: TState
@@ -113,7 +113,7 @@ class RangeSliderRangeView extends MVPView implements IRangeSliderRangeView {
     +setIsConnectedOption(isConnected?: boolean): this
 }
 class RangeSliderThumbView extends MVPView implements IRangeSliderThumbView {
-    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, innerHTML?: TemplateResult | TemplateResult[], isActive?: boolean) => TemplateResult
+    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, { innerHTML, isActive }?: { innerHTML: TemplateResult | TemplateResult[]; isActive: boolean; }) => TemplateResult
     #_onDragstart(): boolean
 }
 class RangeSliderTooltipView extends MVPView implements IRangeSliderTooltipView {
@@ -140,6 +140,7 @@ class RangeSliderPipsView extends MVPView implements IRangeSliderPipsView {
     #_fixValuesOption(): this
     #_fixDensityOption(): this
     #_getPipsRender(): TemplateResult | TemplateResult[]
+    #_getMarkersRender(end: number, range: number, positionKey: "top" | "left"): TemplateResult[]
 }
 class RangeSliderView extends MVPView implements IRangeSliderView {
     +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
@@ -193,17 +194,18 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_toTooltipState(index: number): TooltipState
     #_thumbEventListenerObject: { cache: WeakMap<HTMLElement, { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }>; ... 4 more ...; getOrigin(event: Event): HTMLElement; }
     #_initThumbCache(origin: HTMLElement): { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }
-    #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | 'none'; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): any
-    #_thumbValueToPositionOnTrack(thumbIndex: number): { offsetOnTrackInPercent: number; THUMB_SCALE_FACTOR: number; THUMB_TO_CENTER_OFFSET: number; }
+    #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | 'none'; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): { thumbValueAfterIncrementation: number; theLastIncrement: number; currentIntervalInfo: {    keyOfInfimum: string;    keyOfSupremum: string;    magnificationFactor: number;    step: number | 'none';}; }
+    #_thumbValueToPositionOnTrack(thumbIndex: number): { offsetInPercent: number; THUMB_SCALE_FACTOR: number; THUMB_TO_CENTER_OFFSET: number; }
     #_trackEventListenerObject: { cache: { trackElem: HTMLElement; }; handleEvent: (event: Event) => void; _onClick: (event: MouseEvent) => void; }
     #_getNearestThumb(value: number): number
     #_pipsEventListenerObject: { handleEvent: (event: Event) => void; _onClick: (event: MouseEvent) => void; }
     #{static} _getIntervalKeyAsNumber(key: string | number): number
-    #{static} _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): number
+    #{static} _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): { stepped: number; remains: number; }
 }
 class RangeSliderPresenter implements IRangeSliderPresenter {
     +view: IRangeSliderView
     +model?: IRangeSliderModel | undefined
+    +setModel(model: IRangeSliderModel): this
 }
 RangeSliderView "1" *-- "1" RangeSliderTrackView : composes template using template of >
 RangeSliderView "1" *-- "*" RangeSliderRangeView : composes template using templates of >
