@@ -4,18 +4,18 @@ exports[`DOM manipulation renders correctly 1`] = `
 <DocumentFragment>
   <!---->
   <div
-    class="range-slider__thumb-origin range-slider__thumb-origin_orientation-horizontal"
+    class="range-slider__thumb-origin js-range-slider__thumb-origin range-slider__thumb-origin_orientation-horizontal"
     style=""
   >
     
       
     <div
       aria-orientation="horizontal"
-      aria-valuemax="-1"
-      aria-valuemin="-1"
-      aria-valuenow="-1"
+      aria-valuemax="-1.00"
+      aria-valuemin="-1.00"
+      aria-valuenow="-1.00"
       aria-valuetext="-1"
-      class="range-slider__thumb"
+      class="range-slider__thumb js-range-slider__thumb"
       role="slider"
       tabindex="0"
     >

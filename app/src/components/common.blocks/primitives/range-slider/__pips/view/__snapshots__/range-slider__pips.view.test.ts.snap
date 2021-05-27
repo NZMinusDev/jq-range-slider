@@ -4,7 +4,7 @@ exports[`DOM manipulation renders correctly 1`] = `
 <DocumentFragment>
   <!---->
   <div
-    class="range-slider__pips range-slider__pips_orientation-horizontal"
+    class="range-slider__pips js-range-slider__pips range-slider__pips_orientation-horizontal"
     style=""
   >
     
