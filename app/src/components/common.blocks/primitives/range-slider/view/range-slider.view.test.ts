@@ -507,29 +507,39 @@ testDOM({
           })
         );
 
-        const increment = 1;
-        const decrement = -1;
+        let movement = 1;
 
         const expecters = [
           (newValue, valueBefore) => {
+            const range = INTERVALS['80%'] - INTERVALS.min;
+            const PERCENT_SIZE = 80;
+
             expect(newValue - valueBefore).toBeCloseTo(
-              ((INTERVALS['80%'] - INTERVALS.min) / 80 / TRACK_RATIO) * VALUE_PER_PX * increment
+              (range / PERCENT_SIZE / TRACK_RATIO) * VALUE_PER_PX * movement
             );
           },
           (newValue, valueBefore) => {
+            const range = INTERVALS['90%'] - INTERVALS['80%'];
+            const PERCENT_SIZE = 10;
+
             expect(newValue - valueBefore).toBeCloseTo(
-              ((INTERVALS['90%'] - INTERVALS['80%']) / 10 / TRACK_RATIO) * VALUE_PER_PX * increment
+              (range / PERCENT_SIZE / TRACK_RATIO) * VALUE_PER_PX * movement
             );
           },
           (newValue, valueBefore) => {
+            const range = INTERVALS.max - INTERVALS['90%'];
+            const PERCENT_SIZE = 10;
+
             expect(newValue - valueBefore).toBeCloseTo(
-              ((INTERVALS.max - INTERVALS['90%']) / 10 / TRACK_RATIO) * VALUE_PER_PX * increment
+              (range / PERCENT_SIZE / TRACK_RATIO) * VALUE_PER_PX * movement
             );
           },
         ];
 
-        runThroughAllIntervals(0, increment, expecters);
-        runThroughAllIntervals(0, decrement, expecters);
+        runThroughAllIntervals(0, movement, expecters);
+
+        movement = -1;
+        runThroughAllIntervals(0, movement, expecters);
 
         innerThumb.dispatchEvent(
           new PointerEvent('lostpointercapture', {
@@ -603,6 +613,45 @@ testDOM({
           })
         );
         instance.set();
+        instance.setStepsOption();
+      });
+
+      test("repeated clicks on thumb shouldn't accumulate movement", () => {
+        const initialValue = instance.get();
+
+        const clickThumbRepeatedly = (clicks: number, movement: number) => {
+          if (clicks > 0) clickThumbRepeatedly(clicks - 1, movement);
+
+          innerThumb.dispatchEvent(
+            new PointerEvent('pointerdown', {
+              pointerId: 1,
+              bubbles: true,
+            })
+          );
+          innerThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 1,
+              movementX: movement,
+              bubbles: true,
+            })
+          );
+          innerThumb.dispatchEvent(
+            new PointerEvent('lostpointercapture', {
+              pointerId: 1,
+              bubbles: true,
+            })
+          );
+        };
+
+        clickThumbRepeatedly(10, 1);
+        clickThumbRepeatedly(10, -1);
+
+        instance.setStepsOption([50, 'none', 300]);
+
+        clickThumbRepeatedly(10, 1);
+
+        expect(instance.get()).toMatchObject(initialValue);
+
         instance.setStepsOption();
       });
 

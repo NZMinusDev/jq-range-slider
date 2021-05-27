@@ -828,8 +828,10 @@ class RangeSliderView
       const ariaValueMin = this._state.value[cache.thumbIndex - 1] ?? trackBorder.min;
       const ariaValueMax = this._state.value[cache.thumbIndex + 1] ?? trackBorder.max;
 
-      cache.movementAcc +=
+      const currentMovement =
         this._options.orientation === 'horizontal' ? event.movementX : event.movementY;
+      cache.movementAcc += currentMovement;
+
       const thumbValueIncrementation =
         (cache.movementAcc / window.devicePixelRatio) *
         newCalculated.valuePerPx *
@@ -854,9 +856,12 @@ class RangeSliderView
           shiftThroughIntervals.thumbValueAfterIncrementation -
           shiftThroughIntervals.theLastIncrement;
 
-        if (Math.abs(steppedIncrementation) > 0) {
-          thumbValue += steppedIncrementation;
-          cache.movementAcc = 0;
+        if (Math.abs(steppedIncrementation.stepped) > 0) {
+          thumbValue += steppedIncrementation.stepped;
+
+          const remainsFactor =
+            steppedIncrementation.remains / shiftThroughIntervals.theLastIncrement;
+          cache.movementAcc *= remainsFactor;
         }
       } else {
         thumbValue = shiftThroughIntervals.thumbValueAfterIncrementation;
@@ -883,6 +888,7 @@ class RangeSliderView
 
       origin.removeEventListener('pointermove', this._thumbEventListenerObject._onPointermove);
       this._state.isActiveThumbs[cache.thumbIndex] = false;
+      cache.movementAcc = 0;
       this._setState({});
       this.trigger('change').trigger('set').trigger('end');
     },
@@ -933,7 +939,16 @@ class RangeSliderView
     thumbValueIncrementation: number,
     movement: number,
     valuePerPx: number
-  ) {
+  ): {
+    thumbValueAfterIncrementation: number;
+    theLastIncrement: number;
+    currentIntervalInfo: {
+      keyOfInfimum: string;
+      keyOfSupremum: string;
+      magnificationFactor: number;
+      step: number | 'none';
+    };
+  } {
     const isMoreThanSupremum =
       currentIntervalInfo.keyOfSupremum !== undefined &&
       thumbValueAfterIncrementation > this._options.intervals[currentIntervalInfo.keyOfSupremum];
@@ -1000,12 +1015,15 @@ class RangeSliderView
     step: number | 'none'
   ) {
     if (step === 'none') {
-      return thumbIncrementationOfLastInterval;
+      return { stepped: thumbIncrementationOfLastInterval, remains: 0 };
     }
 
     const signFactor = thumbIncrementationOfLastInterval >= 0 ? 1 : -1;
+    const stepped =
+      signFactor * Math.floor(Math.abs(thumbIncrementationOfLastInterval) / step) * step;
+    const remains = thumbIncrementationOfLastInterval - stepped;
 
-    return signFactor * Math.floor(Math.abs(thumbIncrementationOfLastInterval) / step) * step;
+    return { stepped, remains };
   }
   protected _thumbValueToPositionOnTrack(thumbIndex: number) {
     const TRACK_RELATIVE_SIZE_IN_PERCENT = 100;

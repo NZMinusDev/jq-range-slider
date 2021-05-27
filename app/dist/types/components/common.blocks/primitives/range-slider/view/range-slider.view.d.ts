@@ -129,8 +129,20 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
         keyOfSupremum: string;
         magnificationFactor: number;
         step: number | 'none';
-    }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): any;
-    protected static _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | 'none'): number;
+    }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): {
+        thumbValueAfterIncrementation: number;
+        theLastIncrement: number;
+        currentIntervalInfo: {
+            keyOfInfimum: string;
+            keyOfSupremum: string;
+            magnificationFactor: number;
+            step: number | 'none';
+        };
+    };
+    protected static _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | 'none'): {
+        stepped: number;
+        remains: number;
+    };
     protected _thumbValueToPositionOnTrack(thumbIndex: number): {
         offsetInPercent: number;
         THUMB_SCALE_FACTOR: number;
