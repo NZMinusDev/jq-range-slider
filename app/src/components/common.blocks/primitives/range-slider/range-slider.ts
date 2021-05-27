@@ -17,30 +17,36 @@ class RangeSliderPresenter implements IRangeSliderPresenter {
     this.view = renderMVPView(RangeSliderView, [viewOptions] as [RangeSliderOptions], container);
 
     if (model !== undefined) {
-      model
-        .getState()
-        .then((state) => {
-          this.view.set(state.value);
-
-          return this;
-        })
-        .then(() => {
-          const setHandler = () => {
-            model.setState({ value: this.view.get() });
-          };
-
-          this.view.on('set', setHandler);
-          model.whenStateIsChanged((state) => {
-            this.view.set(state.value);
-          });
-
-          return this;
-        })
-        .catch((reason) => {
-          // eslint-disable-next-line no-console
-          console.error(reason);
-        });
+      this.setModel(model);
     }
+  }
+
+  setModel(model: IRangeSliderModel) {
+    model
+      .getState()
+      .then((state) => {
+        this.view.set(state.value);
+
+        return this;
+      })
+      .then(() => {
+        const setHandler = () => {
+          model.setState({ value: this.view.get() });
+        };
+
+        this.view.on('set', setHandler);
+        model.whenStateIsChanged((state) => {
+          this.view.set(state.value);
+        });
+
+        return this;
+      })
+      .catch((reason) => {
+        // eslint-disable-next-line no-console
+        console.error(reason);
+      });
+
+    return this;
   }
 }
 
