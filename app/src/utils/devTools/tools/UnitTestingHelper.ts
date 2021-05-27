@@ -593,10 +593,10 @@ const testDOM = <TCreator extends new (...args: any) => InstanceType<TCreator>>(
       testCallback({ container, instance });
     });
 
-    callbacksWithTest.push(() => {
-      test('renders correctly', () => {
-        expect(container).toMatchSnapshot();
-      });
+    container = new DocumentFragment();
+    renderMVPView(Creator, [], container);
+    test('renders correctly', () => {
+      expect(container).toMatchSnapshot();
     });
   });
 };
