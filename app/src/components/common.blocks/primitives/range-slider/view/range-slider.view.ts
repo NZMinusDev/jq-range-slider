@@ -899,11 +899,11 @@ class RangeSliderView
 
     getOrigin(event: Event) {
       // eslint-disable-next-line sonarjs/no-duplicate-string
-      return (event.target as HTMLElement).closest('.range-slider__thumb-origin') as HTMLElement;
+      return (event.target as HTMLElement).closest('.js-range-slider__thumb-origin') as HTMLElement;
     },
   };
   protected _initThumbCache(origin: HTMLElement) {
-    const trackElem = origin.closest('.range-slider__track') as HTMLElement;
+    const trackElem = origin.closest('.js-range-slider__track') as HTMLElement;
     const trackValueSize = this._options.intervals.max - this._options.intervals.min;
     const thumbIndex = Array.from(
       trackElem.querySelectorAll<HTMLElement>('.js-range-slider__thumb-origin')
@@ -1068,12 +1068,12 @@ class RangeSliderView
     cache: {} as { trackElem: HTMLElement },
 
     handleEvent: (event: Event) => {
-      if ((event.target as HTMLElement).closest('.range-slider__thumb-origin') !== null) {
+      if ((event.target as HTMLElement).closest('.js-range-slider__thumb-origin') !== null) {
         return;
       }
 
       this._trackEventListenerObject.cache.trackElem = (event.target as HTMLElement).closest(
-        '.range-slider__track'
+        '.js-range-slider__track'
       ) as HTMLElement;
 
       handleEvent.apply(this._trackEventListenerObject, [event]);
@@ -1117,7 +1117,7 @@ class RangeSliderView
 
     _onClick: (event: MouseEvent) => {
       const pipValueElem = (event.target as HTMLElement).closest(
-        '.range-slider__pips-value'
+        '.js-range-slider__pips-value'
       ) as HTMLElement;
 
       if (pipValueElem === null) {

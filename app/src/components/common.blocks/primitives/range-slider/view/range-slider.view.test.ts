@@ -348,7 +348,7 @@ testDOM({
 
       const thumbsElements = container.querySelectorAll<HTMLElement>('.js-range-slider__thumb');
       const originsElements = Array.from<HTMLElement>(thumbsElements).map((thumbElem) => {
-        const originElem = thumbElem.closest('.range-slider__thumb-origin') as HTMLElement;
+        const originElem = thumbElem.closest('.js-range-slider__thumb-origin') as HTMLElement;
 
         // https://github.com/jsdom/jsdom/pull/2666
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
