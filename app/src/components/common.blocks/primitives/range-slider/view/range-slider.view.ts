@@ -775,10 +775,10 @@ class RangeSliderView
         this._thumbEventListenerObject.cache.set(origin, this._initThumbCache(origin));
       }
 
-      handleEvent.apply(this._thumbEventListenerObject, [event]);
+      handleEvent.apply(this._thumbEventListenerObject, [event, 'thumb']);
     },
 
-    _onPointerdown: (event: PointerEvent) => {
+    _handleThumbPointerdown: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
       const cache = this._thumbEventListenerObject.cache.get(origin) as ReturnType<
@@ -791,14 +791,17 @@ class RangeSliderView
 
       this.trigger('start');
 
-      origin.addEventListener('pointermove', this._thumbEventListenerObject._onPointermove);
+      origin.addEventListener(
+        'pointermove',
+        this._thumbEventListenerObject._handleThumbPointermove
+      );
       origin.addEventListener(
         'lostpointercapture',
-        this._thumbEventListenerObject._onLostpointercapture,
+        this._thumbEventListenerObject._handleThumbLostpointercapture,
         { once: true }
       );
     },
-    _onPointermove: (event: PointerEvent) => {
+    _handleThumbPointermove: (event: PointerEvent) => {
       if (
         this._options.orientation === 'horizontal' ? event.movementX === 0 : event.movementY === 0
       ) {
@@ -882,14 +885,17 @@ class RangeSliderView
 
       this.trigger('slide').trigger('update');
     },
-    _onLostpointercapture: (event: PointerEvent) => {
+    _handleThumbLostpointercapture: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
       const cache = this._thumbEventListenerObject.cache.get(origin) as ReturnType<
         RangeSliderView['_initThumbCache']
       >;
 
-      origin.removeEventListener('pointermove', this._thumbEventListenerObject._onPointermove);
+      origin.removeEventListener(
+        'pointermove',
+        this._thumbEventListenerObject._handleThumbPointermove
+      );
       this._state.isActiveThumbs[cache.thumbIndex] = false;
       cache.movementAcc = 0;
       this._setState({});
@@ -1074,9 +1080,9 @@ class RangeSliderView
         '.js-range-slider__track'
       ) as HTMLElement;
 
-      handleEvent.apply(this._trackEventListenerObject, [event]);
+      handleEvent.apply(this._trackEventListenerObject, [event, 'track']);
     },
-    _onClick: (event: MouseEvent) => {
+    _handleTrackClick: (event: MouseEvent) => {
       const trackBoundingClientRect = this._trackEventListenerObject.cache.trackElem.getBoundingClientRect();
       const linearPercentTrackBorder = this._getLinearPercentBorderOfTrack();
 
@@ -1110,10 +1116,10 @@ class RangeSliderView
 
   protected _pipsEventListenerObject = {
     handleEvent: (event: Event) => {
-      handleEvent.apply(this._pipsEventListenerObject, [event]);
+      handleEvent.apply(this._pipsEventListenerObject, [event, 'pips']);
     },
 
-    _onClick: (event: MouseEvent) => {
+    _handlePipsClick: (event: MouseEvent) => {
       const pipValueElem = (event.target as HTMLElement).closest(
         '.js-range-slider__pips-value'
       ) as HTMLElement;
