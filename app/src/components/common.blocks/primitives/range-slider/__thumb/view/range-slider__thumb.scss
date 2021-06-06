@@ -4,18 +4,17 @@ $thumbSize: 2em;
 
 .range-slider__thumb-origin,
 .range-slider__thumb {
+  position: absolute;
   display: inline-flex;
   justify-content: space-evenly;
   align-items: center;
 }
 
 .range-slider__thumb-origin {
-  position: absolute;
   will-change: transform;
 }
 .range-slider__thumb {
   $bgColor: black;
-  position: absolute;
 
   background-color: $bgColor;
   transition: box-shadow 0.25s ease-in-out;
