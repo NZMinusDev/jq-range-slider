@@ -112,9 +112,9 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
             };
         }>;
         handleEvent: (event: Event) => void;
-        _handleThumbPointerdown: (event: PointerEvent) => void;
-        _handleThumbPointermove: (event: PointerEvent) => void;
-        _handleThumbLostpointercapture: (event: PointerEvent) => void;
+        handleThumbPointerdown: (event: PointerEvent) => void;
+        handleThumbPointermove: (event: PointerEvent) => void;
+        handleThumbLostpointercapture: (event: PointerEvent) => void;
         getOrigin(event: Event): HTMLElement;
     };
     protected _initThumbCache(origin: HTMLElement): {
@@ -157,12 +157,12 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
             trackElem: HTMLElement;
         };
         handleEvent: (event: Event) => void;
-        _handleTrackClick: (event: MouseEvent) => void;
+        handleTrackClick: (event: MouseEvent) => void;
     };
     protected _getNearestThumb(value: number): number;
     protected _pipsEventListenerObject: {
         handleEvent: (event: Event) => void;
-        _handlePipsClick: (event: MouseEvent) => void;
+        handlePipsClick: (event: MouseEvent) => void;
     };
 }
 export { RangeSliderView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

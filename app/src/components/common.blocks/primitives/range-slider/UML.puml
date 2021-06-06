@@ -202,9 +202,9 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_isMoveFromExteriorOfTrack(trackDOMRect: DOMRect, event: PointerEvent): any
     #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | 'none'; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): { thumbValueAfterIncrementation: number; theLastIncrement: number; currentIntervalInfo: {    keyOfInfimum: string;    keyOfSupremum: string;    magnificationFactor: number;    step: number | 'none';}; }
     #_thumbValueToPositionOnTrack(thumbIndex: number): { offsetInPercent: number; thumbScaleFactor: number; thumbToCenterOffset: number; }
-    #_trackEventListenerObject: { cache: { trackElem: HTMLElement; }; handleEvent: (event: Event) => void; _handleTrackClick: (event: MouseEvent) => void; }
+    #_trackEventListenerObject: { cache: { trackElem: HTMLElement; }; handleEvent: (event: Event) => void; handleTrackClick: (event: MouseEvent) => void; }
     #_getNearestThumb(value: number): number
-    #_pipsEventListenerObject: { handleEvent: (event: Event) => void; _handlePipsClick: (event: MouseEvent) => void; }
+    #_pipsEventListenerObject: { handleEvent: (event: Event) => void; handlePipsClick: (event: MouseEvent) => void; }
     #{static} _getIntervalKeyAsNumber(key: string | number): number
     #{static} _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): { stepped: number; remains: number; }
 }

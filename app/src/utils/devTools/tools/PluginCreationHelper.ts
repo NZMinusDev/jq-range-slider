@@ -12,7 +12,7 @@ function handleEvent(event: Event, elementName?: string) {
   const handlerName =
     elementName === undefined
       ? `_on${event.type[0].toUpperCase()}${event.type.slice(1)}`
-      : `_handle${elementName[0].toUpperCase()}${elementName.slice(
+      : `handle${elementName[0].toUpperCase()}${elementName.slice(
           1
         )}${event.type[0].toUpperCase()}${event.type.slice(1)}`;
 

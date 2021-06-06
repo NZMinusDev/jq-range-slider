@@ -778,7 +778,7 @@ class RangeSliderView
       handleEvent.apply(this._thumbEventListenerObject, [event, 'thumb']);
     },
 
-    _handleThumbPointerdown: (event: PointerEvent) => {
+    handleThumbPointerdown: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
       const cache = this._thumbEventListenerObject.cache.get(origin) as ReturnType<
@@ -791,17 +791,14 @@ class RangeSliderView
 
       this.trigger('start');
 
-      origin.addEventListener(
-        'pointermove',
-        this._thumbEventListenerObject._handleThumbPointermove
-      );
+      origin.addEventListener('pointermove', this._thumbEventListenerObject.handleThumbPointermove);
       origin.addEventListener(
         'lostpointercapture',
-        this._thumbEventListenerObject._handleThumbLostpointercapture,
+        this._thumbEventListenerObject.handleThumbLostpointercapture,
         { once: true }
       );
     },
-    _handleThumbPointermove: (event: PointerEvent) => {
+    handleThumbPointermove: (event: PointerEvent) => {
       if (
         this._options.orientation === 'horizontal' ? event.movementX === 0 : event.movementY === 0
       ) {
@@ -885,7 +882,7 @@ class RangeSliderView
 
       this.trigger('slide').trigger('update');
     },
-    _handleThumbLostpointercapture: (event: PointerEvent) => {
+    handleThumbLostpointercapture: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
       const cache = this._thumbEventListenerObject.cache.get(origin) as ReturnType<
@@ -894,7 +891,7 @@ class RangeSliderView
 
       origin.removeEventListener(
         'pointermove',
-        this._thumbEventListenerObject._handleThumbPointermove
+        this._thumbEventListenerObject.handleThumbPointermove
       );
       this._state.isActiveThumbs[cache.thumbIndex] = false;
       cache.movementAcc = 0;
@@ -1082,7 +1079,8 @@ class RangeSliderView
 
       handleEvent.apply(this._trackEventListenerObject, [event, 'track']);
     },
-    _handleTrackClick: (event: MouseEvent) => {
+
+    handleTrackClick: (event: MouseEvent) => {
       const trackBoundingClientRect = this._trackEventListenerObject.cache.trackElem.getBoundingClientRect();
       const linearPercentTrackBorder = this._getLinearPercentBorderOfTrack();
 
@@ -1119,7 +1117,7 @@ class RangeSliderView
       handleEvent.apply(this._pipsEventListenerObject, [event, 'pips']);
     },
 
-    _handlePipsClick: (event: MouseEvent) => {
+    handlePipsClick: (event: MouseEvent) => {
       const pipValueElem = (event.target as HTMLElement).closest(
         '.js-range-slider__pips-value'
       ) as HTMLElement;
