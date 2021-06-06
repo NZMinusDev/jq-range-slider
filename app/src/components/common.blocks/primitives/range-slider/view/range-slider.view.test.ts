@@ -892,6 +892,72 @@ testDOM({
           1400,
         ]);
       });
+
+      test('cursor movement from exterior of track should not be handled', () => {
+        instance.set();
+
+        const movement = 10;
+
+        infimumThumb.dispatchEvent(
+          new PointerEvent('pointerdown', {
+            pointerId: 1,
+            bubbles: true,
+          })
+        );
+        supremumThumb.dispatchEvent(
+          new PointerEvent('pointerdown', {
+            pointerId: 2,
+            bubbles: true,
+          })
+        );
+
+        infimumThumb.dispatchEvent(
+          new PointerEvent('pointermove', {
+            pointerId: 1,
+            movementX: -movement,
+            clientX: -movement,
+            bubbles: true,
+          })
+        );
+        infimumThumb.dispatchEvent(
+          new PointerEvent('pointermove', {
+            pointerId: 1,
+            movementX: movement,
+            clientX: 0,
+            bubbles: true,
+          })
+        );
+
+        supremumThumb.dispatchEvent(
+          new PointerEvent('pointermove', {
+            pointerId: 2,
+            movementX: movement,
+            clientX: TRACK_PX_SIZE + movement,
+            bubbles: true,
+          })
+        );
+        supremumThumb.dispatchEvent(
+          new PointerEvent('pointermove', {
+            pointerId: 2,
+            movementX: -movement,
+            clientX: TRACK_PX_SIZE,
+            bubbles: true,
+          })
+        );
+
+        infimumThumb.dispatchEvent(
+          new PointerEvent('lostpointercapture', {
+            pointerId: 1,
+            bubbles: true,
+          })
+        );
+        supremumThumb.dispatchEvent(
+          new PointerEvent('lostpointercapture', {
+            pointerId: 2,
+            bubbles: true,
+          })
+        );
+      });
     },
   ],
 });

@@ -812,6 +812,10 @@ class RangeSliderView
         RangeSliderView['_initThumbCache']
       >;
 
+      if (this._isMoveFromExteriorOfTrack(cache.trackElem.getBoundingClientRect(), event)) {
+        return;
+      }
+
       const newCalculated = cache.getCalculated();
 
       let thumbValue = this._state.value[cache.thumbIndex];
@@ -927,6 +931,28 @@ class RangeSliderView
         };
       },
     };
+  }
+  protected _isMoveFromExteriorOfTrack(trackDOMRect: DOMRect, event: PointerEvent) {
+    let isCursorMore;
+    let isCursorLess;
+    let isReverseMovement;
+    if (this._options.orientation === 'horizontal') {
+      isCursorMore = event.clientX > trackDOMRect.right;
+      isCursorLess = event.clientX < trackDOMRect.left;
+    } else {
+      isCursorMore = event.clientY > trackDOMRect.bottom;
+      isCursorLess = event.clientY < trackDOMRect.top;
+    }
+
+    if (isCursorMore) {
+      isReverseMovement = event.movementX < 0 || event.movementY < 0;
+    } else if (isCursorLess) {
+      isReverseMovement = event.movementX > 0 || event.movementY > 0;
+    }
+
+    const isNotOnTrack = isCursorMore || isCursorLess;
+
+    return isNotOnTrack && isReverseMovement;
   }
   protected _fixNonLinearShiftThroughIntervals(
     currentIntervalInfo: {
