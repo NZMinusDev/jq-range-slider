@@ -5,12 +5,12 @@ import { RangeSliderOptions } from '@common.blocks/primitives/range-slider/view/
 import './index.pug';
 import './index.scss';
 
-const RANGE_SLIDER_OPTIONS: RangeSliderOptions = {};
+const rangeSliderOptions: RangeSliderOptions = {};
 
 const $sliderContainers = $('.demo__slider');
 
 // Demonstration of the independence of the sliders, but you can initialize it with other options for each container manually or reset options later.
-const sliders = $sliderContainers.initRangeSlider(RANGE_SLIDER_OPTIONS);
+const sliders = $sliderContainers.initRangeSlider(rangeSliderOptions);
 
 const [
   redColorSlider,
@@ -46,7 +46,7 @@ const colors = [0, 0, 0];
 });
 
 /* Dates */
-const WEEK_TIME = 7 * 24 * 60 * 60 * 1000;
+const weekTime = 7 * 24 * 60 * 60 * 1000;
 const timestamp = (str) => new Date(str).getTime();
 
 const datesForm = document.forms.namedItem('dates') as HTMLFormElement;
@@ -68,7 +68,7 @@ datesSlider.view
       min: timestamp(`${currentYear - 1}`),
       max: timestamp(`${currentYear + 1}`),
     },
-    steps: WEEK_TIME,
+    steps: weekTime,
     start: [timestamp(`${currentYear - 0.5}`), timestamp(`${currentYear + 0.5}`)],
     formatter: (number) => new Date(number).toString(),
     tooltips: false,
@@ -84,8 +84,8 @@ datesLowerResultElem.value = new Date(lowerValue).toString();
 datesGreaterResultElem.value = new Date(greaterValue).toString();
 
 /* Playground */
-const IS_ACTIVE_FIREFLY_SELECTOR = 'logger__firefly_isActive';
-const FIREFLY_ANIMATION_DURATION = 250;
+const isActiveFireflySelector = 'logger__firefly_isActive';
+const fireflyAnimationDuration = 250;
 const logger = document.getElementById('logger') as HTMLDivElement;
 const fireflyElements = logger.querySelectorAll<HTMLDivElement>('.js-logger__firefly');
 const [
@@ -100,11 +100,11 @@ const [
 const makeFireflyAnimationHandler = (fireflyElement: HTMLDivElement) => {
   const handlers = {
     start: () => {
-      fireflyElement.classList.add(IS_ACTIVE_FIREFLY_SELECTOR);
-      setTimeout(handlers.end, FIREFLY_ANIMATION_DURATION);
+      fireflyElement.classList.add(isActiveFireflySelector);
+      setTimeout(handlers.end, fireflyAnimationDuration);
     },
     end: () => {
-      fireflyElement.classList.remove(IS_ACTIVE_FIREFLY_SELECTOR);
+      fireflyElement.classList.remove(isActiveFireflySelector);
     },
   };
 
@@ -122,13 +122,13 @@ const setFormOnSetSliderHandler = () => {
 };
 
 const configForm = document.forms.namedItem('config') as HTMLFormElement;
-const UPDATE_SLIDER_OPTION_ON_CHANGE_KEY = 'updateSliderOptionOnChange';
+const updateSliderOptionOnChangeKey = 'updateSliderOptionOnChange';
 const configElements = {
   orientationHorizontal: {
     element: (configForm.elements.namedItem('orientation') as RadioNodeList).item(
       0
     ) as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       $sliderContainers.get(4).style.height = '';
       configurableSlider.view.setOrientationOption('horizontal');
     }),
@@ -137,14 +137,14 @@ const configElements = {
     element: (configForm.elements.namedItem('orientation') as RadioNodeList).item(
       1
     ) as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       $sliderContainers.get(4).style.height = '300px';
       configurableSlider.view.setOrientationOption('vertical');
     }),
   },
   min: {
     element: configForm.elements.namedItem('min') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       const intervals = configurableSlider.view.getIntervalsOption();
       intervals.min = Number.parseFloat(e.target.value);
       configurableSlider.view.setIntervalsOption(intervals);
@@ -152,7 +152,7 @@ const configElements = {
   },
   max: {
     element: configForm.elements.namedItem('max') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       const intervals = configurableSlider.view.getIntervalsOption();
       intervals.max = Number.parseFloat(e.target.value);
       configurableSlider.view.setIntervalsOption(intervals);
@@ -160,7 +160,7 @@ const configElements = {
   },
   padLeft: {
     element: configForm.elements.namedItem('pad-left') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       const padding = configurableSlider.view.getPaddingOption();
       padding[0] = Number.parseFloat(e.target.value);
       configurableSlider.view.setPaddingOption(padding);
@@ -168,7 +168,7 @@ const configElements = {
   },
   padRight: {
     element: configForm.elements.namedItem('pad-right') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       const padding = configurableSlider.view.getPaddingOption();
       padding[1] = Number.parseFloat(e.target.value);
       configurableSlider.view.setPaddingOption(padding);
@@ -176,25 +176,25 @@ const configElements = {
   },
   start: {
     element: configForm.elements.namedItem('start') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setStartOption(JSON.parse(e.target.value));
     }),
   },
   steps: {
     element: configForm.elements.namedItem('steps') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setStepsOption(JSON.parse(e.target.value));
     }),
   },
   connect: {
     element: configForm.elements.namedItem('connect') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setConnectOption(JSON.parse(e.target.value));
     }),
   },
   intervals: {
     element: configForm.elements.namedItem('intervals') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       const intervals = configurableSlider.view.getIntervalsOption();
       Object.entries(JSON.parse(e.target.value)).forEach(([key, val]) => {
         intervals[key] = val as number;
@@ -204,49 +204,49 @@ const configElements = {
   },
   tooltips: {
     element: configForm.elements.namedItem('tooltips') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setTooltipsOption(JSON.parse(e.target.value));
     }),
   },
   modeIntervals: {
     element: (configForm.elements.namedItem('mode') as RadioNodeList).item(0) as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setPipsOption({ mode: 'intervals' });
     }),
   },
   modeCount: {
     element: (configForm.elements.namedItem('mode') as RadioNodeList).item(1) as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setPipsOption({ mode: 'count' });
     }),
   },
   modePositions: {
     element: (configForm.elements.namedItem('mode') as RadioNodeList).item(2) as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setPipsOption({ mode: 'positions' });
     }),
   },
   modeValues: {
     element: (configForm.elements.namedItem('mode') as RadioNodeList).item(3) as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setPipsOption({ mode: 'values' });
     }),
   },
   pipsDensity: {
     element: configForm.elements.namedItem('pips-density') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setPipsOption({ density: e.target.value });
     }),
   },
   pipsValues: {
     element: configForm.elements.namedItem('pips-values') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setPipsOption({ values: JSON.parse(e.target.value) });
     }),
   },
   pipsIsHidden: {
     element: configForm.elements.namedItem('pips-isHidden') as HTMLInputElement,
-    handlers: new Map().set(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY, (e) => {
+    handlers: new Map().set(updateSliderOptionOnChangeKey, (e) => {
       configurableSlider.view.setPipsOption({ isHidden: e.target.checked });
     }),
   },
@@ -326,7 +326,7 @@ setForm.addEventListener('reset', resetOnClickHandler);
 Object.values(configElements).forEach((configElement) => {
   configElement.element.addEventListener(
     'change',
-    configElement.handlers.get(UPDATE_SLIDER_OPTION_ON_CHANGE_KEY)
+    configElement.handlers.get(updateSliderOptionOnChangeKey)
   );
 });
 

@@ -21,11 +21,11 @@ const DEFAULT_STATE: ThumbState = {
   ariaValueText: '-1',
 };
 
-const ARIA_ATTRIBUTE_PRECISION = 2;
-
 class RangeSliderThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
   implements IRangeSliderThumbView {
+  protected static ariaAttributePrecision = 2;
+
   readonly template = (
     { classInfo = {}, styleInfo = {}, attributes = {} } = {},
     { innerHTML, isActive }: { innerHTML: TemplateResult | TemplateResult[]; isActive: boolean } = {
@@ -49,9 +49,15 @@ class RangeSliderThumbView
         role="slider"
         tabindex="0"
         aria-orientation="${this._state.ariaOrientation}"
-        aria-valuemin="${this._state.ariaValueMin.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
-        aria-valuemax="${this._state.ariaValueMax.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
-        aria-valuenow="${this._state.ariaValueNow.toFixed(ARIA_ATTRIBUTE_PRECISION)}"
+        aria-valuemin="${this._state.ariaValueMin.toFixed(
+          RangeSliderThumbView.ariaAttributePrecision
+        )}"
+        aria-valuemax="${this._state.ariaValueMax.toFixed(
+          RangeSliderThumbView.ariaAttributePrecision
+        )}"
+        aria-valuenow="${this._state.ariaValueNow.toFixed(
+          RangeSliderThumbView.ariaAttributePrecision
+        )}"
         aria-valuetext="${this._state.ariaValueText}"
         @dragstart=${this}
       >

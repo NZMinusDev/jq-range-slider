@@ -3,12 +3,12 @@
  * @param obj - any value
  * @returns type
  * @example
- * console.log(TypeOf(123)) // Number
- * console.log(TypeOf(null)) // Null
- * console.log(TypeOf(undefined)) // Undefined
- * console.log(TypeOf([])) // Array
- * console.log(TypeOf(alert)) // Function
- * console.log(TypeOf(window)) // Window
+ * console.log(typeOf(123)) // Number
+ * console.log(typeOf(null)) // Null
+ * console.log(typeOf(undefined)) // Undefined
+ * console.log(typeOf([])) // Array
+ * console.log(typeOf(alert)) // Function
+ * console.log(typeOf(window)) // Window
  * console.log(new XMLHttpRequest()) // XMLHttpRequest
  *
  * let user = {};
@@ -16,7 +16,7 @@
  * user = { [Symbol.toStringTag]: "User" };
  * console.log(user) // User
  */
-const TypeOf = (obj: unknown): string => {
+const typeOf = (obj: unknown): string => {
   const type = Object.prototype.toString.call(obj);
 
   return type.slice(type.indexOf(' ') + 1, type.indexOf(']'));
@@ -29,4 +29,4 @@ const TypeOf = (obj: unknown): string => {
  */
 const isReferenceType = (any: unknown) => any instanceof Object;
 
-export { TypeOf as default, isReferenceType };
+export { typeOf as default, isReferenceType };

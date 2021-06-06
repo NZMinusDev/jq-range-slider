@@ -325,16 +325,16 @@ testDOM({
   templatesArgs: [],
   callbacksWithTest: [
     ({ container, instance }) => {
-      const INTERVALS = { min: -1250, '80%': -500, '90%': 400, max: 1500 };
-      const START = [-1150, -600, 1400];
-      const PADDING = 100;
-      const TRACK_VALUE_SIZE = INTERVALS.max - INTERVALS.min;
-      const MIN_TRACK_VALUE = INTERVALS.min + PADDING;
-      const MAX_TRACK_VALUE = INTERVALS.max - PADDING;
-      const TRACK_PX_SIZE = 100;
-      const TRACK_RATIO = TRACK_VALUE_SIZE / 100;
-      const VALUE_PER_PX = TRACK_VALUE_SIZE / TRACK_PX_SIZE;
-      const MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB = 29;
+      const intervals = { min: -1250, '80%': -500, '90%': 400, max: 1500 };
+      const start = [-1150, -600, 1400];
+      const padding = 100;
+      const trackValueSize = intervals.max - intervals.min;
+      const minTrackValue = intervals.min + padding;
+      const maxTrackValue = intervals.max - padding;
+      const trackPXSize = 100;
+      const trackRatio = trackValueSize / 100;
+      const valuePerPX = trackValueSize / trackPXSize;
+      const movementToIncludeAllIntervalsForInnerThumb = 29;
 
       const trackElem = container.querySelector<HTMLElement>(
         '.js-range-slider__track'
@@ -362,19 +362,19 @@ testDOM({
       const innerThumb = thumbsElements.item(1);
       const supremumThumb = thumbsElements.item(2);
 
-      const VALUE_NOW_QUALIFIED_NAME = 'aria-valuenow';
+      const valueNowQualifiedName = 'aria-valuenow';
 
       const runThroughAllIntervals = (
         movementAcc: number,
         increment: number,
         expecters: ((newValue: number, valueBefore: number) => void)[],
-        end = MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB
+        end = movementToIncludeAllIntervalsForInnerThumb
       ) => {
         if (Math.abs(movementAcc) < end - 1) {
           runThroughAllIntervals(movementAcc + increment, increment, expecters, end);
         }
 
-        const valueBefore = +(innerThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string);
+        const valueBefore = +(innerThumb.getAttribute(valueNowQualifiedName) as string);
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
@@ -382,7 +382,7 @@ testDOM({
             bubbles: true,
           })
         );
-        const newValue = +(innerThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string);
+        const newValue = +(innerThumb.getAttribute(valueNowQualifiedName) as string);
 
         let lowerValue = valueBefore;
         let greaterValue = newValue;
@@ -391,28 +391,28 @@ testDOM({
         }
 
         const isInsideTheFirstInterval =
-          lowerValue >= MIN_TRACK_VALUE && lowerValue < INTERVALS['80%'];
+          lowerValue >= minTrackValue && lowerValue < intervals['80%'];
         const isInsideTheSecondInterval =
-          lowerValue >= INTERVALS['80%'] && lowerValue < INTERVALS['90%'];
+          lowerValue >= intervals['80%'] && lowerValue < intervals['90%'];
         const isInsideTheThirdInterval =
-          lowerValue >= INTERVALS['90%'] && lowerValue < MAX_TRACK_VALUE;
+          lowerValue >= intervals['90%'] && lowerValue < maxTrackValue;
 
-        if (isInsideTheFirstInterval && greaterValue < INTERVALS['80%']) {
+        if (isInsideTheFirstInterval && greaterValue < intervals['80%']) {
           expecters[0](newValue, valueBefore);
         }
 
-        if (isInsideTheSecondInterval && greaterValue < INTERVALS['90%']) {
+        if (isInsideTheSecondInterval && greaterValue < intervals['90%']) {
           expecters[1](newValue, valueBefore);
         }
 
-        if (isInsideTheThirdInterval && greaterValue < MAX_TRACK_VALUE) {
+        if (isInsideTheThirdInterval && greaterValue < maxTrackValue) {
           expecters[2](newValue, valueBefore);
         }
       };
 
       trackElem.getBoundingClientRect = () => ({
-        width: TRACK_PX_SIZE,
-        height: TRACK_PX_SIZE,
+        width: trackPXSize,
+        height: trackPXSize,
         top: 0,
         right: 0,
         bottom: 0,
@@ -496,7 +496,7 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(instance.get()).toMatchObject(START);
+        expect(instance.get()).toMatchObject(start);
 
         instance.setOrientationOption('horizontal');
       });
@@ -513,27 +513,27 @@ testDOM({
 
         const expecters = [
           (newValue, valueBefore) => {
-            const range = INTERVALS['80%'] - INTERVALS.min;
-            const PERCENT_SIZE = 80;
+            const range = intervals['80%'] - intervals.min;
+            const percentSize = 80;
 
             expect(newValue - valueBefore).toBeCloseTo(
-              (range / PERCENT_SIZE / TRACK_RATIO) * VALUE_PER_PX * movement
+              (range / percentSize / trackRatio) * valuePerPX * movement
             );
           },
           (newValue, valueBefore) => {
-            const range = INTERVALS['90%'] - INTERVALS['80%'];
-            const PERCENT_SIZE = 10;
+            const range = intervals['90%'] - intervals['80%'];
+            const percentSize = 10;
 
             expect(newValue - valueBefore).toBeCloseTo(
-              (range / PERCENT_SIZE / TRACK_RATIO) * VALUE_PER_PX * movement
+              (range / percentSize / trackRatio) * valuePerPX * movement
             );
           },
           (newValue, valueBefore) => {
-            const range = INTERVALS.max - INTERVALS['90%'];
-            const PERCENT_SIZE = 10;
+            const range = intervals.max - intervals['90%'];
+            const percentSize = 10;
 
             expect(newValue - valueBefore).toBeCloseTo(
-              (range / PERCENT_SIZE / TRACK_RATIO) * VALUE_PER_PX * movement
+              (range / percentSize / trackRatio) * valuePerPX * movement
             );
           },
         ];
@@ -562,18 +562,18 @@ testDOM({
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
-            movementX: MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB,
+            movementX: movementToIncludeAllIntervalsForInnerThumb,
             bubbles: true,
           })
         );
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
-            movementX: -MOVEMENT_TO_INCLUDE_ALL_INTERVALS_FOR_INNER_THUMB,
+            movementX: -movementToIncludeAllIntervalsForInnerThumb,
             bubbles: true,
           })
         );
-        expect(+(innerThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)).toBe(-600);
+        expect(+(innerThumb.getAttribute(valueNowQualifiedName) as string)).toBe(-600);
 
         innerThumb.dispatchEvent(
           new PointerEvent('lostpointercapture', {
@@ -584,7 +584,7 @@ testDOM({
       });
 
       test('step options should work', () => {
-        const STEPS = [50, 1, 300];
+        const steps = [50, 1, 300];
         instance.setStepsOption([50, 'none', 300]);
         innerThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
@@ -595,13 +595,13 @@ testDOM({
 
         const expecters = [
           (newValue, valueBefore) => {
-            expect(Number.isInteger((newValue - valueBefore) / STEPS[0])).toBe(true);
+            expect(Number.isInteger((newValue - valueBefore) / steps[0])).toBe(true);
           },
           (newValue, valueBefore) => {
-            expect(Number.isInteger((newValue - valueBefore) / STEPS[1])).toBe(true);
+            expect(Number.isInteger((newValue - valueBefore) / steps[1])).toBe(true);
           },
           (newValue, valueBefore) => {
-            expect(Number.isInteger(Math.round(newValue - valueBefore) / STEPS[2])).toBe(true);
+            expect(Number.isInteger(Math.round(newValue - valueBefore) / steps[2])).toBe(true);
           },
         ];
 
@@ -668,7 +668,7 @@ testDOM({
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
-            movementX: TRACK_PX_SIZE,
+            movementX: trackPXSize,
             bubbles: true,
           })
         );
@@ -678,7 +678,7 @@ testDOM({
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
-            movementX: -TRACK_PX_SIZE,
+            movementX: -trackPXSize,
             bubbles: true,
           })
         );
@@ -732,51 +732,47 @@ testDOM({
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
-            movementX: TRACK_PX_SIZE,
+            movementX: trackPXSize,
             bubbles: true,
           })
         );
-        expect(+(innerThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)).toBe(
-          +(supremumThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)
+        expect(+(innerThumb.getAttribute(valueNowQualifiedName) as string)).toBe(
+          +(supremumThumb.getAttribute(valueNowQualifiedName) as string)
         );
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
-            movementX: -TRACK_PX_SIZE,
+            movementX: -trackPXSize,
             bubbles: true,
           })
         );
-        expect(+(innerThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)).toBe(
-          +(infimumThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)
+        expect(+(innerThumb.getAttribute(valueNowQualifiedName) as string)).toBe(
+          +(infimumThumb.getAttribute(valueNowQualifiedName) as string)
         );
 
         infimumThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 2,
-            movementX: -TRACK_PX_SIZE,
+            movementX: -trackPXSize,
             bubbles: true,
           })
         );
-        expect(+(infimumThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)).toBe(
-          MIN_TRACK_VALUE
-        );
+        expect(+(infimumThumb.getAttribute(valueNowQualifiedName) as string)).toBe(minTrackValue);
 
         supremumThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 3,
-            movementX: TRACK_PX_SIZE,
+            movementX: trackPXSize,
             bubbles: true,
           })
         );
-        expect(+(supremumThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)).toBe(
-          MAX_TRACK_VALUE
-        );
+        expect(+(supremumThumb.getAttribute(valueNowQualifiedName) as string)).toBe(maxTrackValue);
 
         instance.setPaddingOption(0);
         infimumThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 2,
-            movementX: -TRACK_PX_SIZE,
+            movementX: -trackPXSize,
             bubbles: true,
           })
         );
@@ -787,13 +783,13 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(infimumThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)).toBe(
-          MIN_TRACK_VALUE - PADDING
+        expect(+(infimumThumb.getAttribute(valueNowQualifiedName) as string)).toBe(
+          minTrackValue - padding
         );
         supremumThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 3,
-            movementX: TRACK_PX_SIZE,
+            movementX: trackPXSize,
             bubbles: true,
           })
         );
@@ -804,11 +800,11 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(supremumThumb.getAttribute(VALUE_NOW_QUALIFIED_NAME) as string)).toBe(
-          MAX_TRACK_VALUE + PADDING
+        expect(+(supremumThumb.getAttribute(valueNowQualifiedName) as string)).toBe(
+          maxTrackValue + padding
         );
         instance.set();
-        instance.setPaddingOption(PADDING);
+        instance.setPaddingOption(padding);
 
         innerThumb.dispatchEvent(
           new PointerEvent('lostpointercapture', {
@@ -831,35 +827,35 @@ testDOM({
       });
 
       test('click on track should be handled', () => {
-        instance.set([-1000, START[1], 1300]);
+        instance.set([-1000, start[1], 1300]);
 
         innerThumb.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        expect(instance['_state'].value).toStrictEqual([-1000, START[1], 1300]);
+        expect(instance['_state'].value).toStrictEqual([-1000, start[1], 1300]);
 
         trackElem.dispatchEvent(new MouseEvent('click', { clientX: -1 }));
         trackElem.dispatchEvent(
           new MouseEvent('click', {
-            clientX: TRACK_PX_SIZE * 0.5,
+            clientX: trackPXSize * 0.5,
           })
         );
-        trackElem.dispatchEvent(new MouseEvent('click', { clientX: TRACK_PX_SIZE + 1 }));
+        trackElem.dispatchEvent(new MouseEvent('click', { clientX: trackPXSize + 1 }));
         expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
-          START[0],
+          start[0],
           expect.any(Number),
-          START[2],
+          start[2],
         ]);
 
         instance.setOrientationOption('vertical');
         trackElem.dispatchEvent(new MouseEvent('click', { clientY: -1 }));
         trackElem.dispatchEvent(
           new MouseEvent('click', {
-            clientY: TRACK_PX_SIZE * 0.5,
+            clientY: trackPXSize * 0.5,
           })
         );
         expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
-          START[0],
+          start[0],
           expect.any(Number),
-          START[2],
+          start[2],
         ]);
         instance.setOrientationOption('horizontal');
 
@@ -872,7 +868,7 @@ testDOM({
         theMostLeftPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         theMostRightPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject(START);
+        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject(start);
       });
 
       test('click on marker of pips should not be handled', () => {
@@ -939,7 +935,7 @@ testDOM({
           new PointerEvent('pointermove', {
             pointerId: 2,
             movementX: movement,
-            clientX: TRACK_PX_SIZE + movement,
+            clientX: trackPXSize + movement,
             bubbles: true,
           })
         );
@@ -947,7 +943,7 @@ testDOM({
           new PointerEvent('pointermove', {
             pointerId: 2,
             movementX: -movement,
-            clientX: TRACK_PX_SIZE,
+            clientX: trackPXSize,
             bubbles: true,
           })
         );

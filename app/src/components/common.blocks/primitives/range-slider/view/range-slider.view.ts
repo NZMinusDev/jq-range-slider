@@ -744,15 +744,14 @@ class RangeSliderView
   protected _getThumbTransform(index: number) {
     const thumbOffset = this._thumbValueToPositionOnTrack(index);
     const thumbTranslate =
-      thumbOffset.offsetInPercent * thumbOffset.THUMB_SCALE_FACTOR -
-      thumbOffset.THUMB_TO_CENTER_OFFSET;
+      thumbOffset.offsetInPercent * thumbOffset.thumbScaleFactor - thumbOffset.thumbToCenterOffset;
 
     return this._options.orientation === 'horizontal'
       ? `translate(${thumbTranslate}%, 0)`
       : `translate(0, ${thumbTranslate}%)`;
   }
   protected _getThumbZIndex(index: number) {
-    const BASE_Z = 2;
+    const baseZ = 2;
     const nextIndex = index + 1;
     const previousIndex = index - 1;
     const epsilon = (this._options.intervals.max - this._options.intervals.min) * 0.02;
@@ -762,8 +761,8 @@ class RangeSliderView
 
     return this._state.value[index] >= supremum - epsilon &&
       this._state.value[index] >= infimum + epsilon
-      ? `${BASE_Z + 2 * this._state.value.length - index - 2}`
-      : `${BASE_Z + index}`;
+      ? `${baseZ + 2 * this._state.value.length - index - 2}`
+      : `${baseZ + index}`;
   }
 
   protected _thumbEventListenerObject = {
@@ -1052,16 +1051,15 @@ class RangeSliderView
     return { stepped, remains };
   }
   protected _thumbValueToPositionOnTrack(thumbIndex: number) {
-    const TRACK_RELATIVE_SIZE_IN_PERCENT = 100;
-    const ORIGIN_THUMB_RELATIVE_SIZE_IN_PERCENT = 10;
-    const THUMB_SCALE_FACTOR =
-      TRACK_RELATIVE_SIZE_IN_PERCENT / ORIGIN_THUMB_RELATIVE_SIZE_IN_PERCENT;
+    const trackRelativeSizeInPercent = 100;
+    const originThumbRelativeSizeInPercent = 10;
+    const thumbScaleFactor = trackRelativeSizeInPercent / originThumbRelativeSizeInPercent;
 
-    const THUMB_TO_CENTER_OFFSET = 50;
+    const thumbToCenterOffset = 50;
 
     const offsetInPercent = this._toTrackPercent(this._state.value[thumbIndex]);
 
-    return { offsetInPercent, THUMB_SCALE_FACTOR, THUMB_TO_CENTER_OFFSET };
+    return { offsetInPercent, thumbScaleFactor, thumbToCenterOffset };
   }
 
   protected _trackEventListenerObject = {
