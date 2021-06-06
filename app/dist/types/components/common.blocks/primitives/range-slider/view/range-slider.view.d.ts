@@ -112,9 +112,9 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
             };
         }>;
         handleEvent: (event: Event) => void;
-        _onPointerdown: (event: PointerEvent) => void;
-        _onPointermove: (event: PointerEvent) => void;
-        _onLostpointercapture: (event: PointerEvent) => void;
+        _handleThumbPointerdown: (event: PointerEvent) => void;
+        _handleThumbPointermove: (event: PointerEvent) => void;
+        _handleThumbLostpointercapture: (event: PointerEvent) => void;
         getOrigin(event: Event): HTMLElement;
     };
     protected _initThumbCache(origin: HTMLElement): {
@@ -127,6 +127,7 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
             valuePerPx: number;
         };
     };
+    protected _isMoveFromExteriorOfTrack(trackDOMRect: DOMRect, event: PointerEvent): any;
     protected _fixNonLinearShiftThroughIntervals(currentIntervalInfo: {
         keyOfInfimum: string;
         keyOfSupremum: string;
@@ -148,20 +149,20 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
     };
     protected _thumbValueToPositionOnTrack(thumbIndex: number): {
         offsetInPercent: number;
-        THUMB_SCALE_FACTOR: number;
-        THUMB_TO_CENTER_OFFSET: number;
+        thumbScaleFactor: number;
+        thumbToCenterOffset: number;
     };
     protected _trackEventListenerObject: {
         cache: {
             trackElem: HTMLElement;
         };
         handleEvent: (event: Event) => void;
-        _onClick: (event: MouseEvent) => void;
+        _handleTrackClick: (event: MouseEvent) => void;
     };
     protected _getNearestThumb(value: number): number;
     protected _pipsEventListenerObject: {
         handleEvent: (event: Event) => void;
-        _onClick: (event: MouseEvent) => void;
+        _handlePipsClick: (event: MouseEvent) => void;
     };
 }
 export { RangeSliderView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

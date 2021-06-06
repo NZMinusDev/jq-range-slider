@@ -4,7 +4,7 @@ import { StyleInfo } from 'lit-html/directives/style-map';
 /**
  * It's shortcut of default handleEvent in EventListenerObject
  */
-declare function handleEvent(event: Event): any;
+declare function handleEvent(event: Event, elementName?: string): any;
 interface CustomEventListener {
     (...args: any): void;
 }

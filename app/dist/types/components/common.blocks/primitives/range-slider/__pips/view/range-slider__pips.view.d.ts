@@ -1,3 +1,4 @@
+import { StyleInfo } from 'lit-html/directives/style-map';
 import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
 import './range-slider__pips.scss';
 import IRangeSliderPipsView, { PipsOptions, PipsState } from './range-slider__pips.view.coupling';
@@ -27,5 +28,6 @@ declare class RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOpt
     protected _fixDensityOption(): this;
     protected _getPipsRender(): import("lit-html").TemplateResult | import("lit-html").TemplateResult[];
     protected _getMarkersRender(end: number, range: number, positionKey: 'left' | 'top'): import("lit-html").TemplateResult[];
+    protected _getValueRender(styleInfo: StyleInfo, value: number): import("lit-html").TemplateResult;
 }
 export { RangeSliderPipsView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

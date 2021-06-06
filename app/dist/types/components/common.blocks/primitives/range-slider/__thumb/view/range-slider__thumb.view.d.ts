@@ -5,6 +5,7 @@ import IRangeSliderThumbView, { ThumbOptions, ThumbState } from './range-slider_
 declare const DEFAULT_OPTIONS: Required<ThumbOptions>;
 declare const DEFAULT_STATE: ThumbState;
 declare class RangeSliderThumbView extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> implements IRangeSliderThumbView {
+    protected static ariaAttributePrecision: number;
     readonly template: ({ classInfo, styleInfo, attributes }?: {
         classInfo?: {} | undefined;
         styleInfo?: {} | undefined;
