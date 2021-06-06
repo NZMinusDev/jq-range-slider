@@ -1126,7 +1126,7 @@ class RangeSliderView
 
       const pipValue = pipValueElem.dataset.value as string;
 
-      this._state.value[this._getNearestThumb(+pipValue)] = +pipValue;
+      this._state.value[this._getNearestThumb(Number(pipValue))] = Number(pipValue);
       this._setState({});
 
       this.trigger('slide').trigger('update').trigger('change').trigger('set');

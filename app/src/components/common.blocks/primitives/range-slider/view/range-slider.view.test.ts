@@ -672,7 +672,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+originsElements[1].style.zIndex).toBeGreaterThan(+originsElements[2].style.zIndex);
+        expect(Number(originsElements[1].style.zIndex)).toBeGreaterThan(
+          Number(originsElements[2].style.zIndex)
+        );
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
@@ -680,7 +682,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+originsElements[1].style.zIndex).toBeGreaterThan(+originsElements[0].style.zIndex);
+        expect(Number(originsElements[1].style.zIndex)).toBeGreaterThan(
+          Number(originsElements[0].style.zIndex)
+        );
 
         innerThumb.dispatchEvent(
           new PointerEvent('lostpointercapture', {
@@ -839,7 +843,7 @@ testDOM({
           })
         );
         trackElem.dispatchEvent(new MouseEvent('click', { clientX: TRACK_PX_SIZE + 1 }));
-        expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject([
+        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
           START[0],
           expect.any(Number),
           START[2],
@@ -852,7 +856,7 @@ testDOM({
             clientY: TRACK_PX_SIZE * 0.5,
           })
         );
-        expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject([
+        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
           START[0],
           expect.any(Number),
           START[2],
@@ -868,7 +872,7 @@ testDOM({
         theMostLeftPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         theMostRightPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-        expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject(START);
+        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject(START);
       });
 
       test('click on marker of pips should not be handled', () => {
@@ -889,7 +893,7 @@ testDOM({
         theMostLeftPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         theMostRightPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-        expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject([
+        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
           -1150,
           -1000,
           1400,
