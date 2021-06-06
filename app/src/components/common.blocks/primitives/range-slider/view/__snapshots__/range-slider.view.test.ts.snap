@@ -28,7 +28,7 @@ exports[`DOM manipulation renders correctly 1`] = `
       <!---->
       <div
         class="range-slider__thumb-origin js-range-slider__thumb-origin range-slider__thumb-origin_orientation-horizontal range-slider__thumb-origin_animate-tap"
-        style="z-index: 2; transform: translate(450%, 0);"
+        style="transform: translate(450%, 0); z-index: 2;"
       >
         
       
@@ -74,6 +74,11 @@ exports[`DOM manipulation renders correctly 1`] = `
       
       <!---->
       <!---->
+      <!---->
+      <div
+        class="range-slider__pips-marker js-range-slider__pips-marker range-slider__pips-marker_size-long"
+        style="left: 0%;"
+      />
       <!---->
       <div
         class="range-slider__pips-value js-range-slider__pips-value"
@@ -585,6 +590,11 @@ exports[`DOM manipulation renders correctly 1`] = `
         style="left: 100%;"
       />
       <!---->
+      <!---->
+      <div
+        class="range-slider__pips-marker js-range-slider__pips-marker range-slider__pips-marker_size-long"
+        style="left: 100%;"
+      />
       <!---->
       <div
         class="range-slider__pips-value js-range-slider__pips-value"

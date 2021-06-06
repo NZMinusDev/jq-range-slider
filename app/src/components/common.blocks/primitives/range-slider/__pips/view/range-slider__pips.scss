@@ -1,6 +1,6 @@
 $pipThickness: 2px;
-$valuePipLength: 1em;
 $markerPipLength: 0.5em;
+$longPipLength: 1em;
 
 .range-slider__pips {
   position: relative;
@@ -8,6 +8,7 @@ $markerPipLength: 0.5em;
 }
 
 .range-slider__pips-marker {
+  position: absolute;
   background: burlywood;
 }
 .range-slider__pips-value {
@@ -20,66 +21,58 @@ $markerPipLength: 0.5em;
     text-align: center;
   }
 }
-.range-slider__pips-marker {
-  position: absolute;
-}
 
 .range-slider__pips_orientation-horizontal {
   display: block;
 
-  .range-slider__pips-value,
   .range-slider__pips-marker {
     display: inline-block;
     width: #{$pipThickness};
+    height: #{$markerPipLength};
+
+    &:not(:first-child) {
+      transform: translateX(-100%);
+    }
+  }
+  .range-slider__pips-marker_size-long {
+    height: #{$longPipLength};
   }
 
   .range-slider__pips-value {
-    background-image: linear-gradient(180deg, burlywood 0%, burlywood 1em, transparent 1em);
-
-    &:first-child {
-      margin-right: #{-$pipThickness};
-    }
-    &:not(:first-child) {
-      margin-left: #{-$pipThickness};
-    }
+    display: inline-block;
+    width: 0;
 
     &:after {
-      margin-top: #{$valuePipLength};
+      margin-top: #{$longPipLength};
       transform: translateX(-50%);
     }
-  }
-  .range-slider__pips-marker {
-    height: #{$markerPipLength};
-    margin-left: #{-$pipThickness};
   }
 }
 .range-slider__pips_orientation-vertical {
   display: inline-block;
   height: 100%;
 
-  .range-slider__pips-value,
   .range-slider__pips-marker {
     display: block;
+    width: #{$markerPipLength};
     height: #{$pipThickness};
-  }
-  .range-slider__pips-value {
-    background-image: linear-gradient(90deg, burlywood 0%, burlywood 1em, transparent 1em);
 
-    &:first-child {
-      margin-bottom: #{-$pipThickness * 2};
-    }
     &:not(:first-child) {
-      margin-top: #{-$pipThickness};
+      transform: translateY(-100%);
     }
+  }
+  .range-slider__pips-marker_size-long {
+    width: #{$longPipLength};
+  }
+
+  .range-slider__pips-value {
+    display: block;
+    height: 0;
 
     &:after {
       transform: translateY(-50%);
-      margin-left: #{$valuePipLength};
+      margin-left: #{$longPipLength};
     }
-  }
-  .range-slider__pips-marker {
-    width: #{$markerPipLength};
-    margin-top: #{-$pipThickness};
   }
 }
 

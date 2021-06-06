@@ -343,6 +343,8 @@ testDOM({
       const pipsValueElements = pipsElement.querySelectorAll<HTMLElement>(
         '.js-range-slider__pips-value'
       );
+      const theMostLeftPipValue = pipsValueElements.item(0);
+      const theMostRightPipValue = pipsValueElements.item(3);
 
       const thumbsElements = container.querySelectorAll<HTMLElement>('.js-range-slider__thumb');
       const originsElements = Array.from<HTMLElement>(thumbsElements).map((thumbElem) => {
@@ -860,31 +862,32 @@ testDOM({
         instance.set();
       });
 
-      test('click on valuable pip should be handled', () => {
+      test('click on text of "valuable pip" should be handled', () => {
         instance.set([-1000, -600, 1300]);
+
+        theMostLeftPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        theMostRightPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+        expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject(START);
+      });
+
+      test('click on marker of pips should not be handled', () => {
+        const values = [-1000, -600, 1300];
+
+        instance.set(values);
 
         (pipsElement.querySelector('.js-range-slider__pips-marker') as HTMLElement).dispatchEvent(
           new MouseEvent('click', { bubbles: true })
         );
-        expect(instance['_state'].value).toStrictEqual([-1000, -600, 1300]);
 
-        const theLeftMostPip = pipsValueElements.item(0);
-        const theRightMostPip = pipsValueElements.item(3);
-
-        theLeftMostPip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        theRightMostPip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-
-        expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject(START);
+        expect(instance['_state'].value).toStrictEqual(values);
       });
 
       test('nearest thumb should be calculated by ordered distance', () => {
         instance.set([-1000, -1000, -1000]);
 
-        const theLeftMostPip = pipsValueElements.item(0);
-        const theRightMostPip = pipsValueElements.item(3);
-
-        theLeftMostPip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        theRightMostPip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        theMostLeftPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        theMostRightPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
         expect(instance['_state'].value.map((val) => +val.toFixed(2))).toMatchObject([
           -1150,

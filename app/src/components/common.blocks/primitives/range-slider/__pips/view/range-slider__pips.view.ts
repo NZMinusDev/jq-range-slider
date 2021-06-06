@@ -1,7 +1,7 @@
 import defaultsDeep from 'lodash-es/defaultsDeep';
 import { html } from 'lit-html';
 import { ClassInfo, classMap } from 'lit-html/directives/class-map';
-import { styleMap } from 'lit-html/directives/style-map';
+import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/tools/PluginCreationHelper';
@@ -108,9 +108,10 @@ class RangeSliderPipsView
       return html``;
     }
 
-    const valueClasses: ClassInfo = {
-      'range-slider__pips-value': true,
-      'js-range-slider__pips-value': true,
+    const longMarkerClasses: ClassInfo = {
+      'range-slider__pips-marker': true,
+      'js-range-slider__pips-marker': true,
+      'range-slider__pips-marker_size-long': true,
     };
 
     const positionKey = this._options.orientation === 'horizontal' ? 'left' : 'top';
@@ -119,14 +120,12 @@ class RangeSliderPipsView
     let rangeShift = this._options.values[0].percent;
 
     return this._options.values.map((value, index, values) => {
-      const valueStyles = {
+      const longMarkerStyles: StyleInfo = {
         [positionKey]: `${(valuePosition += rangeShift)}%`,
       };
-      const valueTemplate = html`<div
-        class=${classMap(valueClasses)}
-        style=${styleMap(valueStyles)}
-        data-value=${value.value}
-        data-formatted-value="${this._options.formatter(value.value)}"
+      const longMarkerTemplate = html`<div
+        class=${classMap(longMarkerClasses)}
+        style=${styleMap(longMarkerStyles)}
       ></div>`;
 
       let markersTemplate;
@@ -134,11 +133,13 @@ class RangeSliderPipsView
         markersTemplate = this._getMarkersRender(valuePosition, rangeShift, positionKey);
       }
 
+      const valueTemplate = this._getValueRender(longMarkerStyles, value.value);
+
       if (values[index + 1] !== undefined) {
         rangeShift = values[index + 1].percent - value.percent;
       }
 
-      return html`${markersTemplate}${valueTemplate}`;
+      return html`${markersTemplate}${longMarkerTemplate}${valueTemplate}`;
     });
   }
   protected _getMarkersRender(end: number, range: number, positionKey: 'left' | 'top') {
@@ -161,6 +162,19 @@ class RangeSliderPipsView
 
       return html`<div class=${classMap(classes)} style=${styleMap(markerStyles)}></div>`;
     });
+  }
+  protected _getValueRender(styleInfo: StyleInfo, value: number) {
+    const valueClasses: ClassInfo = {
+      'range-slider__pips-value': true,
+      'js-range-slider__pips-value': true,
+    };
+
+    return html`<div
+      class=${classMap(valueClasses)}
+      style=${styleMap(styleInfo)}
+      data-value=${value}
+      data-formatted-value=${this._options.formatter(value)}
+    ></div>`;
   }
 }
 
