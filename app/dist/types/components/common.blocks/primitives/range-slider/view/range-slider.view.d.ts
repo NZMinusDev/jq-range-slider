@@ -127,7 +127,7 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
             valuePerPx: number;
         };
     };
-    protected _isMoveFromExteriorOfTrack(trackDOMRect: DOMRect, event: PointerEvent): any;
+    protected _isMoveFromExteriorOfThumb(thumbDOMRect: DOMRect, event: PointerEvent): boolean;
     protected _fixNonLinearShiftThroughIntervals(currentIntervalInfo: {
         keyOfInfimum: string;
         keyOfSupremum: string;

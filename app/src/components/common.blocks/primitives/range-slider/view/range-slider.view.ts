@@ -806,12 +806,13 @@ class RangeSliderView
       }
 
       const origin = this._thumbEventListenerObject.getOrigin(event);
+      const thumb = origin.querySelector('.js-range-slider__thumb') as HTMLDivElement;
 
       const cache = this._thumbEventListenerObject.cache.get(origin) as ReturnType<
         RangeSliderView['_initThumbCache']
       >;
 
-      if (this._isMoveFromExteriorOfTrack(cache.trackElem.getBoundingClientRect(), event)) {
+      if (this._isMoveFromExteriorOfThumb(thumb.getBoundingClientRect(), event)) {
         return;
       }
 
@@ -934,22 +935,24 @@ class RangeSliderView
       },
     };
   }
-  protected _isMoveFromExteriorOfTrack(trackDOMRect: DOMRect, event: PointerEvent) {
-    let isCursorMore;
-    let isCursorLess;
-    let isReverseMovement;
+  protected _isMoveFromExteriorOfThumb(thumbDOMRect: DOMRect, event: PointerEvent) {
+    let isCursorMore: boolean;
+    let isCursorLess: boolean;
+    let isReverseMovement: boolean;
     if (this._options.orientation === 'horizontal') {
-      isCursorMore = event.clientX > trackDOMRect.right;
-      isCursorLess = event.clientX < trackDOMRect.left;
+      isCursorMore = event.clientX > thumbDOMRect.right;
+      isCursorLess = event.clientX < thumbDOMRect.left;
     } else {
-      isCursorMore = event.clientY > trackDOMRect.bottom;
-      isCursorLess = event.clientY < trackDOMRect.top;
+      isCursorMore = event.clientY > thumbDOMRect.bottom;
+      isCursorLess = event.clientY < thumbDOMRect.top;
     }
 
     if (isCursorMore) {
       isReverseMovement = event.movementX < 0 || event.movementY < 0;
     } else if (isCursorLess) {
       isReverseMovement = event.movementX > 0 || event.movementY > 0;
+    } else {
+      isReverseMovement = false;
     }
 
     const isNotOnTrack = isCursorMore || isCursorLess;

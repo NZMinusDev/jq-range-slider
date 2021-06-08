@@ -199,7 +199,7 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_getThumbZIndex(index: number): string
     #_thumbEventListenerObject: { cache: WeakMap<HTMLElement, { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }>; ... 4 more ...; getOrigin(event: Event): HTMLElement; }
     #_initThumbCache(origin: HTMLElement): { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }
-    #_isMoveFromExteriorOfTrack(trackDOMRect: DOMRect, event: PointerEvent): any
+    #_isMoveFromExteriorOfThumb(thumbDOMRect: DOMRect, event: PointerEvent): boolean
     #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | 'none'; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): { thumbValueAfterIncrementation: number; theLastIncrement: number; currentIntervalInfo: {    keyOfInfimum: string;    keyOfSupremum: string;    magnificationFactor: number;    step: number | 'none';}; }
     #_thumbValueToPositionOnTrack(thumbIndex: number): { offsetInPercent: number; thumbScaleFactor: number; thumbToCenterOffset: number; }
     #_trackEventListenerObject: { cache: { trackElem: HTMLElement; }; handleEvent: (event: Event) => void; handleTrackClick: (event: MouseEvent) => void; }
