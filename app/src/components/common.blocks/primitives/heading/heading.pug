@@ -1,0 +1,17 @@
+//-
+  heading: { [tag: string]: text }, example: { h3: 'awesome heading' }
+  isLabel?: boolean - if true, add nested label tag
+    when true
+      description?: string - description text
+  Tip: mixin also uses 'and attributes'(&attributes)
+mixin heading(heading, { isLabel = false, description = '' } = {})
+  -
+    const [ headingTag ] = Object.keys(heading);
+  if isLabel
+    #{headingTag}.heading
+      if isLabel
+        label.heading__label&attributes(attributes)= heading[headingTag]
+          if description
+            small.heading__label-description= description
+  else
+    #{headingTag}.heading&attributes(attributes)= heading[headingTag]

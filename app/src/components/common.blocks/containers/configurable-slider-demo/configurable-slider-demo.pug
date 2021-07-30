@@ -1,0 +1,27 @@
+include ~@common.blocks/primitives/slider/slider.pug
+include ~@common.blocks/containers/events-logger/events-logger.pug
+include ~@common.blocks/primitives/form-field/form-field.pug
+include ~@common.blocks/primitives/button/button.pug
+include ~@common.blocks/containers/slider-events-emission-table/slider-events-emission-table.pug
+include ~@common.blocks/containers/slider-config/slider-config.pug
+
+//- 
+  action?: string - form action
+  name?: string - name of <form>, also it is used such prefix for names of inner forms
+  method?: 'get' | 'post' - form method
+  Tip: mixin also uses 'and attributes'(&attributes)
+mixin configurable-slider-demo({ action = undefined, name = 'configurable-slider-demo', method = 'post' } = {})
+  .configurable-slider-demo.js-configurable-slider-demo&attributes(attributes)
+    .configurable-slider-demo__slider.js-configurable-slider-demo__slider
+      +slider
+    +events-logger(['Start', 'Slide', 'Update', 'Change', 'Set', 'End', 'Render'])
+    form.configurable-slider-demo__submit.js-configurable-slider-demo__submit(
+      action=action,
+      name=name,
+      method=method
+    )
+      +form-field({ type: 'text', name: `${name}-setter` })
+      +button(type="submit", name=`${name}-set`, value=".set(...values)")
+      +button(type="reset", name=`${name}-reset`, value="reset slider value")
+    +slider-events-emission-table
+    +slider-config

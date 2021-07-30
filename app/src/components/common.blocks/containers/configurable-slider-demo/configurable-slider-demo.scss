@@ -1,0 +1,9 @@
+.configurable-slider-demo {
+  display: grid;
+  grid-row-gap: 1em;
+  justify-items: center;
+
+  &__slider {
+    width: 100%;
+  }
+}

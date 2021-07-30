@@ -84,9 +84,10 @@ module.exports = {
     'padding-line-between-statements': [
       'error',
       { blankLine: 'always', prev: ['block-like'], next: '*' },
-      { blankLine: 'any', prev: ['case'], next: 'case' },
+      { blankLine: 'always', prev: ['const', 'let'], next: ['block-like'] },
       { blankLine: 'always', prev: '*', next: ['return', 'break', 'debugger'] },
       { blankLine: 'always', prev: '*', next: 'export' },
+      { blankLine: 'any', prev: ['case'], next: 'case' },
     ],
 
     // Disallow use of loops (for, for-in, while, do-while, for-of) - we have forEach, map etc.
@@ -124,8 +125,8 @@ module.exports = {
     'import/resolver': {
       alias: {
         map: [
-          ['@pug', './app/src/pug'],
           ['@layouts', './app/src/layouts'],
+          ['@plugin', './app/src/plugin/'],
           ['@common.blocks', './app/src/components/common.blocks/'],
           ['@utils', './app/src/utils/'],
           ['@assets', './app/src/assets/'],

@@ -1,0 +1,7 @@
+//- 
+  events: string[] - names of events to display
+  Tip: mixin also uses 'and attributes'(&attributes)
+mixin events-logger(events)
+  .events-logger.js-events-logger&attributes(attributes)
+    each event in events
+      .events-logger__firefly.js-events-logger__firefly= event

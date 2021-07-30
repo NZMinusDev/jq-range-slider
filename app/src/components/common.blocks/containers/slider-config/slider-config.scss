@@ -1,0 +1,7 @@
+.slider-config {
+  position: relative;
+  display: grid;
+  grid-template: none / repeat(3, 1fr);
+  grid-gap: 1em;
+  border: 1px solid tomato;
+}

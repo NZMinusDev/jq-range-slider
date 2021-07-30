@@ -12,7 +12,6 @@ const DoIUse = require('doiuse');
 const PostcssFlexbugsFixes = require('postcss-flexbugs-fixes');
 const Autoprefixer = require('autoprefixer');
 const PostCSSPresetEnv = require('postcss-preset-env');
-const PostCSSNormalize = require('postcss-normalize');
 const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const { UnusedFilesWebpackPlugin } = require('unused-files-webpack-plugin');
@@ -25,14 +24,21 @@ const isProd = !isDev;
 
 const PATHS = {
   src_absolute: path.resolve(__dirname, '../app/src/'),
-  srcPages_absolute: path.resolve(__dirname, '../app/src/pages/'),
   dist_absolute: path.resolve(__dirname, '../app/dist/'),
-  ICO_DIST_ABSOLUTE: path.resolve(__dirname, '../app/dist/', './assets/ico'),
 };
 
+const redefinitionLevels = [
+  'layouts',
+  'components/library.blocks',
+  'components/common.blocks',
+  'components/thematic/main-theme.blocks',
+  'components/experimental/experiment-1.blocks',
+];
+const componentGroups = ['basic', 'containers', 'primitives', 'specific'];
+
 const sharedAliases = {
-  '@pug': path.resolve(PATHS.src_absolute, './pug/'),
   '@layouts': path.resolve(PATHS.src_absolute, './layouts/'),
+  '@plugin': path.resolve(PATHS.src_absolute, './plugin/'),
   '@common.blocks': path.resolve(PATHS.src_absolute, './components/common.blocks/'),
   '@utils': path.resolve(PATHS.src_absolute, './utils/'),
   '@assets': path.resolve(PATHS.src_absolute, './assets/'),
@@ -51,13 +57,13 @@ const hashedFileName = (name, ext) => (isDev ? `${name}.${ext}` : `${name}.[hash
  */
 class ResultOfTemplatesProcessing {
   constructor() {
-    const foldersOfPages = fs.readdirSync(PATHS.srcPages_absolute);
+    const foldersOfPages = fs.readdirSync(path.resolve(PATHS.src_absolute, './pages/'));
 
     // get all pug templates from each page folder
     const namesOfTemplates = [].concat(
       ...foldersOfPages.map((folder) =>
         fs
-          .readdirSync(`${PATHS.srcPages_absolute}\\${folder}\\`)
+          .readdirSync(`${path.resolve(PATHS.src_absolute, './pages/')}\\${folder}\\`)
           .filter((filename) => filename.endsWith(`.pug`))
       )
     );
@@ -68,6 +74,7 @@ class ResultOfTemplatesProcessing {
       const shortNameOfTemplate = nameOfTemplate.replace(/\.pug/, '');
 
       this.entries[shortNameOfTemplate] = [
+        '@babel/polyfill',
         `./pages/${shortNameOfTemplate}/${shortNameOfTemplate}.ts`,
       ];
 
@@ -75,6 +82,9 @@ class ResultOfTemplatesProcessing {
         new HTMLWebpackPlugin({
           template: `!!pug-loader!app/src/pages/${shortNameOfTemplate}/${nameOfTemplate}`,
           filename: hashedFileName(`./${shortNameOfTemplate}`, 'html'),
+
+          // see ~@layouts/basic/main-layout/main-layout.pug
+          inject: false,
           chunks: [shortNameOfTemplate],
         })
       );
@@ -102,16 +112,8 @@ const webpackPlugins = () => {
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: path.resolve(PATHS.src_absolute, './assets/ico/android-chrome-192x192.png'),
-            to: PATHS.ICO_DIST_ABSOLUTE,
-          },
-          {
-            from: path.resolve(PATHS.src_absolute, './assets/ico/android-chrome-256x256.png'),
-            to: PATHS.ICO_DIST_ABSOLUTE,
-          },
-          {
-            from: path.resolve(PATHS.src_absolute, './assets/ico/mstile-150x150.png'),
-            to: PATHS.ICO_DIST_ABSOLUTE,
+            from: path.resolve(PATHS.src_absolute, './assets/ico/'),
+            to: path.resolve(PATHS.dist_absolute, './assets/ico/'),
           },
         ],
       })
@@ -125,31 +127,16 @@ const webpackPlugins = () => {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(
-            PATHS.src_absolute,
-            './components/common.blocks/primitives/range-slider/jq-range-slider-plugin.js'
-          ),
+          from: path.resolve(PATHS.src_absolute, './plugin/jq-range-slider-plugin.js'),
           to: path.resolve(PATHS.src_absolute, './../dist'),
         },
         {
-          from: path.resolve(
-            PATHS.src_absolute,
-            './components/common.blocks/primitives/range-slider/jq-range-slider-plugin.d.ts'
-          ),
-          to: path.resolve(
-            PATHS.src_absolute,
-            './../dist/types/components/common.blocks/primitives/range-slider'
-          ),
+          from: path.resolve(PATHS.src_absolute, './plugin/jq-range-slider-plugin.d.ts'),
+          to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
         },
         {
-          from: path.resolve(
-            PATHS.src_absolute,
-            './components/common.blocks/primitives/range-slider/range-slider-plugin.d.ts'
-          ),
-          to: path.resolve(
-            PATHS.src_absolute,
-            './../dist/types/components/common.blocks/primitives/range-slider'
-          ),
+          from: path.resolve(PATHS.src_absolute, './plugin/range-slider-plugin.d.ts'),
+          to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
         },
       ],
     })
@@ -176,16 +163,42 @@ const webpackPlugins = () => {
 
 /**
  * Loaders contraction for templates.
+ * @param { string[] } includedFilesExtensions - extensions for including into bundles from components' resources; example: ["scss", "ts"].
  */
-const templatesLoaders = () => [
-  {
-    // convert pug to template function
-    loader: 'pug-loader',
-  },
-];
+const templatesLoaders = (includedFilesExtensions = ['css', 'js', 'scss', 'ts']) => {
+  const bemDeclLevels = [];
+  redefinitionLevels.forEach((level) => {
+    componentGroups.forEach((group) => {
+      bemDeclLevels.push(`app/src/${level}/${group}/`);
+    });
+  });
+
+  return [
+    {
+      // Adds files of BEM entities to bundle (adds require statements)
+      loader: 'bemdecl-to-fs-loader',
+      options: {
+        levels: bemDeclLevels,
+        extensions: includedFilesExtensions,
+      },
+    },
+    {
+      // convert HTML to bem DECL format
+      loader: 'html2bemdecl-loader',
+    },
+    {
+      // convert template function to html
+      loader: './utils/webpack/loaders/pug-loader.ts',
+    },
+    {
+      // convert pug to template function
+      loader: 'pug-loader',
+    },
+  ];
+};
 
 /**
- * Loaders contraction that loads autoprefixed normalize css with converting modern CSS into something most browsers can understand.
+ * Loaders contraction that loads autoprefixed css with converting modern CSS into something most browsers can understand.
  * DoIUse - alerts for unsupported css features, depending on browserslist.
  * PostcssFlexbugsFixes - fix some flex bugs in old browsers.
  * @param { object } extra_loader - loader with options for css preprocessor.
@@ -209,13 +222,7 @@ const cssLoaders = (extraLoader) => {
       loader: 'postcss-loader',
       options: {
         postcssOptions: {
-          plugins: [
-            DoIUse({}),
-            PostcssFlexbugsFixes(),
-            Autoprefixer(),
-            PostCSSPresetEnv(),
-            PostCSSNormalize(),
-          ],
+          plugins: [DoIUse({}), PostcssFlexbugsFixes(), Autoprefixer(), PostCSSPresetEnv()],
         },
       },
     },
@@ -302,9 +309,7 @@ module.exports = smp.wrap({
   entry: isDev
     ? resultOfTemplatesProcessing.entries
     : {
-        'range-slider-plugin': [
-          `./components/common.blocks/primitives/range-slider/range-slider-plugin.ts`,
-        ],
+        'range-slider-plugin': [`./plugin/range-slider-plugin.ts`],
       },
 
   // Where to put bundles for every entry point

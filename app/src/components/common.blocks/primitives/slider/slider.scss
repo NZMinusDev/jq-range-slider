@@ -1,0 +1,25 @@
+.slider {
+  height: 100%;
+
+  &_color_red {
+    .range-slider__range_isConnected {
+      background-color: red;
+    }
+  }
+  &_color_green {
+    .range-slider__range_isConnected {
+      background-color: green;
+    }
+  }
+  &_color_blue {
+    .range-slider__range_isConnected {
+      background-color: blue;
+    }
+  }
+
+  &_withSwitchableTooltips {
+    .range-slider__thumb-origin_isActive .range-slider__tooltip {
+      display: flex;
+    }
+  }
+}

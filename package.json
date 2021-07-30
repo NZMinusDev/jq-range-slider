@@ -7,8 +7,8 @@
     "start": "rm -r -f app/dist && cross-env NODE_ENV=development MEASURE=false webpack-dev-server --config configs/webpack.config.js --mode development --open",
     "dev": "cross-env NODE_ENV=development MEASURE=false webpack --config configs/webpack.config.js --mode development",
     "build": "cross-env NODE_ENV=production MEASURE=true webpack --config configs/webpack.config.js --mode production && npm run types",
-    "types": "ttsc app/src/components/common.blocks/primitives/range-slider/range-slider.ts --declaration --emitDeclarationOnly --declarationDir app/dist/types",
-    "UML": "tplant --input app/src/components/common.blocks/primitives/range-slider/range-slider.ts --output app/src/components/common.blocks/primitives/range-slider/UML.puml",
+    "types": "ttsc app/src/plugin/range-slider/presenter/range-slider.ts --declaration --emitDeclarationOnly --declarationDir app/dist/types",
+    "UML": "tplant --input app/src/plugin/range-slider/range-slider.ts --output app/src/plugin/range-slider/UML/UML.puml",
     "test": "jest --config=configs/jest.config.js --watchAll",
     "analyze": "mkdirp app/log && cross-env NODE_ENV=production MEASURE=false webpack --config configs/webpack.config.js --mode production --json > app/log/stats.json && webpack-bundle-analyzer app/log/stats.json",
     "ext": "code --install-extension eamodio.gitlens && code --install-extension ms-vscode.powershell && code --install-extension teabyii.ayu && code --install-extension PKief.material-icon-theme && code --install-extension pranaygp.vscode-css-peek && code --install-extension ecmel.vscode-html-css && code --install-extension ionutvmi.path-autocomplete && code --install-extension formulahendry.auto-complete-tag && code --install-extension wmaurer.change-case && code --install-extension CoenraadS.bracket-pair-colorizer && code --install-extension streetsidesoftware.code-spell-checker && code --install-extension wayou.vscode-todo-highlight && code --install-extension wallabyjs.quokka-vscode && code --install-extension dbaeumer.vscode-eslint && code --install-extension bierner.lit-html && code --install-extension esbenp.prettier-vscode && code --install-extension kisstkondoros.vscode-gutter-preview && code --install-extension jumpinjackie.vscode-map-preview && code --install-extension jock.svg && code --install-extension DavidAnson.vscode-markdownlint && code --install-extension jebbs.plantuml&& code --install-extension earshinov.sort-lines-by-selection && code --install-extension ritwickdey.LiveServer && code --install-extension wix.vscode-import-cost && code --install-extension xabikos.JavaScriptSnippets && code --install-extension gogocrow.webpack-snippets"
@@ -36,12 +36,13 @@
   "author": "Nikita Zaitsev <developer.n.zaytsev@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@prettier/plugin-pug": "^1.5.1",
+    "@prettier/plugin-pug": "^1.15.2",
     "@types/jest": "^26.0.20",
     "@types/jquery": "^3.5.2",
     "@types/lodash-es": "^4.14.168",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
+    "@types/express": "^4.17.13",
     "@zerollup/ts-transform-paths": "^1.7.18",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.4.1",
@@ -75,13 +76,16 @@
     "@open-wc/lit-helpers": "^0.3.12",
     "autoprefixer": "^9.8.6",
     "babel-loader": "^8.1.0",
+    "bemdecl-to-fs-loader": "0.0.4",
     "circular-dependency-plugin": "^5.2.0",
     "cross-env": "^7.0.2",
     "css-loader": "^4.3.0",
     "doiuse": "^4.2.0",
+    "express": "^4.17.1",
     "fibers": "^5.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.4.1",
+    "html2bemdecl-loader": "^1.0.5",
     "inspectpack": "^4.5.2",
     "jquery": "^3.5.1",
     "lit-element": "^2.5.0",
@@ -91,7 +95,6 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-loader": "^4.0.1",
-    "postcss-normalize": "^9.0.0",
     "postcss-preset-env": "^6.7.0",
     "pug": "^2.0.4",
     "pug-loader": "^2.4.0",
@@ -110,6 +113,7 @@
   "prettier": {
     "endOfLine": "auto",
     "printWidth": 100,
-    "singleQuote": true
+    "singleQuote": true,
+    "pugSingleQuote": false
   }
 }

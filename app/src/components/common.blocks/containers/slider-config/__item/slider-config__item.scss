@@ -1,0 +1,12 @@
+.slider-config__item {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid: 1fr / 1fr;
+  place-items: center;
+  padding: 0.5em;
+  color: white;
+  border: inherit;
+  background-color: tomato;
+}

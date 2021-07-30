@@ -1,0 +1,9 @@
+.colorpicker {
+  display: grid;
+  grid: 200px / 1fr 1fr 1fr 200px;
+  grid-column-gap: 2em;
+
+  &__result {
+    border: 1px solid black;
+  }
+}

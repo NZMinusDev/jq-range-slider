@@ -1,161 +1,27 @@
 extends ~@layouts/basic/main-layout/main-layout.pug
 
+include ~@common.blocks/containers/colorpicker/colorpicker.pug
+include ~@common.blocks/containers/slider-datepicker/slider-datepicker.pug
+include ~@common.blocks/containers/configurable-slider-demo/configurable-slider-demo.pug
+include ~@common.blocks/basic/footer/footer.pug
+
 block append variables
   -
     title = 'jq-range-slider demo';
     keywords = 'demo, jq, JQuery, range-slider, slider, MVP, UI, component, plugin';
     description = "It's slider plugin using MVP pattern. It also contains script for connecting to JQuery";
 
-block append content
-  main.content.container
+block content
+  main.index-layout
     h1 Examples
-    section.demo
-      h2 Colorpicker
-      .colorpicker
-        #colorpicker-red.demo__slider(title='red')
-        #colorpicker-green.demo__slider(title='green')
-        #colorpicker-blue.demo__slider(title='blue')
-        #color-result.colorpicker__result(title='color') Color
-    section.demo
-      h2 Dates
-      .demo__slider
-      form(action='/', name='dates', method='post')
-        label.label.label_direction-column Date from:
-          input(type='text', name='dates-lower-result', size='100', readonly='')
-        label.label.label_direction-column Date to:
-          input(type='text', name='dates-greater-result', size='100', readonly='')
-    section.demo
-      h2 Playground
-      .demo__slider
-      #logger.logger
-        .logger__firefly.js-logger__firefly Start
-        .logger__firefly.js-logger__firefly Slide
-        .logger__firefly.js-logger__firefly Update
-        .logger__firefly.js-logger__firefly Change
-        .logger__firefly.js-logger__firefly Set
-        .logger__firefly.js-logger__firefly End
-        .logger__firefly.js-logger__firefly Render
-      form.submit(action='/', name='submit', method='post')
-        input(type='text', name='setter')
-        input.btn.btn_type-set(type='submit', name='set', value='.set(...values)')
-        input.btn(type='reset', name='reset', value='reset slider value')
-      table.events-emission-panel
-        thead.events-emission-panel__head
-          tr.events-emission-panel__row
-            th.events-emission-panel__data.events-emission-panel__header &nbsp;
-            th.events-emission-panel__data.events-emission-panel__header(scope='col') Start
-            th.events-emission-panel__data.events-emission-panel__header(scope='col') Slide
-            th.events-emission-panel__data.events-emission-panel__header(scope='col') Update
-            th.events-emission-panel__data.events-emission-panel__header(scope='col') Change
-            th.events-emission-panel__data.events-emission-panel__header(scope='col') Set
-            th.events-emission-panel__data.events-emission-panel__header(scope='col') End
-        tbody.events-emission-panel__body
-          tr.events-emission-panel__row
-            td.events-emission-panel__data A handle is strong activated, starting dragging
-            td.events-emission-panel__data(title='Start') Yes
-            td.events-emission-panel__data(title='Slide') No
-            td.events-emission-panel__data(title='Update') No
-            td.events-emission-panel__data(title='Change') No
-            td.events-emission-panel__data(title='Set') No
-            td.events-emission-panel__data(title='End') No
-          tr.events-emission-panel__row
-            td.events-emission-panel__data A handle is strong released after dragging
-            td.events-emission-panel__data(title='Start') No
-            td.events-emission-panel__data(title='Slide') No
-            td.events-emission-panel__data(title='Update') No
-            td.events-emission-panel__data(title='Change') Yes
-            td.events-emission-panel__data(title='Set') Yes
-            td.events-emission-panel__data(title='End') Yes
-          tr.events-emission-panel__row
-            td.events-emission-panel__data A handle moves while strong dragging
-            td.events-emission-panel__data(title='Start') No
-            td.events-emission-panel__data(title='Slide') Yes
-            td.events-emission-panel__data(title='Update') Yes
-            td.events-emission-panel__data(title='Change') No
-            td.events-emission-panel__data(title='Set') No
-            td.events-emission-panel__data(title='End') No
-          tr.events-emission-panel__row
-            td.events-emission-panel__data The strong .set() method is called
-            td.events-emission-panel__data(title='Start') No
-            td.events-emission-panel__data(title='Slide') No
-            td.events-emission-panel__data(title='Update') Yes
-            td.events-emission-panel__data(title='Change') No
-            td.events-emission-panel__data(title='Set') Yes
-            td.events-emission-panel__data(title='End') No
-          tr.events-emission-panel__row
-            td.events-emission-panel__data A slider is moved by strong tapping it
-            td.events-emission-panel__data(title='Start') No
-            td.events-emission-panel__data(title='Slide') Yes
-            td.events-emission-panel__data(title='Update') Yes
-            td.events-emission-panel__data(title='Change') Yes
-            td.events-emission-panel__data(title='Set') Yes
-            td.events-emission-panel__data(title='End') No
-      form(action='/', name='config', method='post')
-        fieldset.config
-          legend Configuration
-          .config__item
-            label orientation
-            .radio-group(role='radiogroup')
-              label.label horizontal
-                input(type='radio', name='orientation', value='horizontal')
-              label.label vertical
-                input(type='radio', name='orientation', value='vertical')
-          label.label.config__item min
-            input.config__control(type='number', name='min')
-          label.label.config__item max
-            input.config__control(type='number', name='max')
-          label.label.config__item left padding
-            input.config__control(type='number', name='pad-left')
-          label.label.config__item right padding
-            input.config__control(type='number', name='pad-right')
-          label.label.config__item
-            span start
-              br
-              small.config__control-description number | number[]
-            input.config__control(type='text', name='start')
-          label.label.config__item
-            span steps
-              br
-              small.config__control-description number | &quot;none&quot; | (number | &quot;none&quot;)[]
-            input.config__control(type='text', name='steps')
-          label.label.config__item
-            span connect
-              br
-              small.config__control-description boolean | boolean[]
-            input.config__control(type='text', name='connect')
-          label.label.config__item
-            span intervals
-              br
-              small.config__control-description {[&grave;${number}%&grave;]: number}
-            textarea.config__control(name='intervals', style='resize: none;')
-          label.label.config__item
-            span tooltips
-              br
-              small.config__control-description boolean | (boolean | Formatter)[]
-            input.config__control(type='text', name='tooltips')
-          fieldset.config__item.config__control-panel
-            legend pips
-            .config__item
-              label mode of intervals
-              .radio-group(role='radiogroup')
-                label.label intervals
-                  input(type='radio', name='mode', value='intervals')
-                label.label count
-                  input(type='radio', name='mode', value='count')
-                label.label positions
-                  input(type='radio', name='mode', value='positions')
-                label.label values
-                  input(type='radio', name='mode', value='values')
-            label.label.config__item pips density
-              input.config__control(type='number', name='pips-density')
-            label.label.config__item
-              span pips values
-                br
-                small.config__control-description number | number[]
-              input.config__control(type='text', name='pips-values')
-            label.label.config__item hide pips
-              input.toggle(type='checkbox', name='pips-isHidden')
-          input.btn(type='button', name='reset', value='reset slider config')
-  footer.footer.container
-    address.sign Nikita Zaitsev (GitHub:
-      a(href='https://github.com/NZMinusDev', target='_blank', rel='noopener noreferrer') https://github.com/NZMinusDev)
+    section.index-layout__demo
+      h2.index-layout__heading Colorpicker
+      +colorpicker
+    section.index-layout__demo
+      h2.index-layout__heading Dates
+      +slider-datepicker
+    section.index-layout__demo
+      h2.index-layout__heading Playground
+      +configurable-slider-demo
+block footer
+  +footer

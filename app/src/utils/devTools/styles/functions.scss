@@ -1,0 +1,9 @@
+/// Adjustable size depending on the user's device, if you need upper or lower border for fixed value - use this function in @media (max-width/min-width) in your project and point out the same $pcSize for default value
+/// @param { number } $pcSize [10] - size in larger(your template width) state
+/// @param { number } $mobSize [5] - size in smaller(page width 320px) state
+/// @param { number } $templateWidth [1440] - width of larger template in figma or smth else
+@function getLiquidSize($pcSize: 10, $mobSize: 5, $templateWidth: 1440) {
+  $addSize: $pcSize - $mobSize;
+  $maxWidth: $templateWidth - 320;
+  @return calc(#{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth}));
+}

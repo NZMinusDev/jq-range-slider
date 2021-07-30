@@ -1,0 +1,59 @@
+//- 
+  Tip: mixin also uses 'and attributes'(&attributes)
+mixin slider-events-emission-table
+  table.slider-events-emission-table&attributes(attributes)
+    thead.slider-events-emission-table__head
+      tr.slider-events-emission-table__row
+        th.slider-events-emission-table__data &nbsp;
+        th.slider-events-emission-table__data(scope="col") Start
+        th.slider-events-emission-table__data(scope="col") Slide
+        th.slider-events-emission-table__data(scope="col") Update
+        th.slider-events-emission-table__data(scope="col") Change
+        th.slider-events-emission-table__data(scope="col") Set
+        th.slider-events-emission-table__data(scope="col") End
+    tbody.slider-events-emission-table__body
+      tr.slider-events-emission-table__row
+        td.slider-events-emission-table__data.
+          A handle is #[strong activated], starting dragging
+        td.slider-events-emission-table__data(title="Start") Yes
+        td.slider-events-emission-table__data(title="Slide") No
+        td.slider-events-emission-table__data(title="Update") No
+        td.slider-events-emission-table__data(title="Change") No
+        td.slider-events-emission-table__data(title="Set") No
+        td.slider-events-emission-table__data(title="End") No
+      tr.slider-events-emission-table__row
+        td.slider-events-emission-table__data.
+          A handle is #[strong released] after dragging
+        td.slider-events-emission-table__data(title="Start") No
+        td.slider-events-emission-table__data(title="Slide") No
+        td.slider-events-emission-table__data(title="Update") No
+        td.slider-events-emission-table__data(title="Change") Yes
+        td.slider-events-emission-table__data(title="Set") Yes
+        td.slider-events-emission-table__data(title="End") Yes
+      tr.slider-events-emission-table__row
+        td.slider-events-emission-table__data.
+         A handle moves while #[strong dragging]
+        td.slider-events-emission-table__data(title="Start") No
+        td.slider-events-emission-table__data(title="Slide") Yes
+        td.slider-events-emission-table__data(title="Update") Yes
+        td.slider-events-emission-table__data(title="Change") No
+        td.slider-events-emission-table__data(title="Set") No
+        td.slider-events-emission-table__data(title="End") No
+      tr.slider-events-emission-table__row
+        td.slider-events-emission-table__data.
+          The #[strong .set()] method is called
+        td.slider-events-emission-table__data(title="Start") No
+        td.slider-events-emission-table__data(title="Slide") No
+        td.slider-events-emission-table__data(title="Update") Yes
+        td.slider-events-emission-table__data(title="Change") No
+        td.slider-events-emission-table__data(title="Set") Yes
+        td.slider-events-emission-table__data(title="End") No
+      tr.slider-events-emission-table__row
+        td.slider-events-emission-table__data.
+          A slider is moved by #[strong tapping] it
+        td.slider-events-emission-table__data(title="Start") No
+        td.slider-events-emission-table__data(title="Slide") Yes
+        td.slider-events-emission-table__data(title="Update") Yes
+        td.slider-events-emission-table__data(title="Change") Yes
+        td.slider-events-emission-table__data(title="Set") Yes
+        td.slider-events-emission-table__data(title="End") No

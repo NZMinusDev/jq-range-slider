@@ -1,21 +1,34 @@
 //- mixins
-include ~@pug/mixins/meta.pug
-include ~@pug/mixins/ico.pug
-include ~@pug/mixins/noscript-notification.pug
+include ~@utils/devTools/pug/mixins/meta.pug
+include ~@utils/devTools/pug/mixins/ico.pug
+include ~@utils/devTools/pug/mixins/noscript-notification.pug
+include ~@utils/devTools/pug/mixins/click-jacking-protector/click-jacking-protector.pug
 
 block variables
   -
     let title = 'Страница';
     let description = '';
     let keywords = '';
+    let haveClickJackingDivProtector = true;
 
 doctype html
 html(lang="ru")
   head
     +meta(keywords, description, title)
     +ico
-  body
+    //- if process page after added files of BEM entities to bundle by bemdecl-to-fs-loader
+    if htmlWebpackPlugin
+      each js in htmlWebpackPlugin.files.js
+        script(defer="defer", src=js)
+      each css in htmlWebpackPlugin.files.css
+        link(rel="stylesheet", href=css)
+  body.main-layout
+    if haveClickJackingDivProtector
+      +click-jacking-protector
     +noscript
-    block header
-    block content
-    block footer
+    .main-layout__header
+      block header
+    .main-layout__content
+      block content
+    .main-layout__footer
+      block footer

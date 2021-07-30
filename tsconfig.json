@@ -14,8 +14,11 @@
     "strictPropertyInitialization": true,
     "baseUrl": "./app/src/",
     "paths": {
+      "@layouts/*": ["layouts/*"],
+      "@plugin/*": ["plugin/*"],
       "@common.blocks/*": ["components/common.blocks/*"],
-      "@utils/*": ["utils/*"]
+      "@utils/*": ["utils/*"],
+      "@assets/*": ["assets/*"]
     },
     "plugins": [
       {
