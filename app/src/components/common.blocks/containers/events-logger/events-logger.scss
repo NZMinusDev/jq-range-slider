@@ -2,4 +2,15 @@
   display: grid;
   grid-auto-flow: column;
   grid-column-gap: 1em;
+
+  &__firefly {
+    padding: 0.5em;
+    border: 1px solid tomato;
+    border-radius: 4px;
+    transition: background-color 0.25s;
+    
+    &_active{
+      background-color: tomato;
+    }
+  }
 }

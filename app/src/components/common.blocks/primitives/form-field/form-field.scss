@@ -3,8 +3,12 @@
   height: 100%;
   display: inline-grid;
 
-  &_with-label{
+  &_with-label {
     grid: 'heading input' / 50% 50%;
+  }
+
+  &_direction_column {
+    grid: 'heading' 'input';
   }
 
   &_place-items_center {
@@ -22,9 +26,41 @@
       height: initial;
       justify-self: self-end;
     }
-  }
 
-  &_direction_column {
-    grid: 'heading' 'input';
+    &_type_toggle {
+      display: inline-block;
+      width: 2em;
+      height: 1em;
+      position: relative;
+      appearance: none;
+      background-color: white;
+      cursor: pointer;
+
+      &:before {
+        content: '';
+        width: 30%;
+        height: 60%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        margin: auto;
+        transform: translateX(33%);
+        background-color: tomato;
+        transition: all 0.3s cubic-bezier(0.2, 0.85, 0.32, 1.2);
+      }
+
+      &:checked:before {
+        transform: translateX(200%);
+      }
+    }
+
+    &_text-align_center {
+      text-align: center;
+    }
+
+    &_resize_none {
+      resize: none;
+    }
   }
 }

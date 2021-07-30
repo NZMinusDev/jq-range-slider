@@ -4,7 +4,6 @@ import {
 } from '@utils/devTools/scripts/ComponentCreationHelper';
 
 import eventsLoggers from '../events-logger';
-import './_active/events-logger__firefly_active.scss';
 
 type EventsLoggerFireflyElement = HTMLDivElement;
 
