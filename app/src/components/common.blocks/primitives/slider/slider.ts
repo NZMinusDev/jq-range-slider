@@ -6,7 +6,7 @@ import '@plugin/range-slider-plugin';
 import IRangeSliderPresenter from '@plugin/presenter/range-slider.coupling';
 import { RangeSliderOptions } from '@plugin/view/range-slider.view.coupling';
 
-type SliderElement = HTMLDivElement;
+import sliderElements, { SliderElement } from './slider-elements';
 
 type SliderHTMLOptions = Omit<RangeSliderOptions, 'formatter'> & { formatter: string };
 
@@ -117,10 +117,7 @@ type SliderElementWithComponent = HTMLElementWithComponent<
   Slider
 >;
 
-const sliders = Array.from(
-  document.querySelectorAll<SliderElement>('.js-slider'),
-  (sliderElement) => new Slider(sliderElement)
-);
+const sliders = Array.from(sliderElements, (sliderElement) => new Slider(sliderElement));
 
 export type { SliderCustomEvents, Slider, SliderElementWithComponent, RangeSliderOptions };
 

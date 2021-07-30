@@ -3,7 +3,7 @@ import {
   HTMLElementWithComponent,
 } from '@utils/devTools/scripts/ComponentCreationHelper';
 
-type FormFieldElement = HTMLDivElement;
+import formFieldElements, { FormFieldElement } from './form-field-elements';
 
 type FormFieldDOM = {
   input: HTMLInputElement | HTMLTextAreaElement;
@@ -44,7 +44,7 @@ type FormFieldElementWithComponent = HTMLElementWithComponent<
 >;
 
 const formFields = Array.from(
-  document.querySelectorAll<FormFieldElement>('.js-form-field'),
+  formFieldElements,
   (formFieldElement) => new FormField(formFieldElement)
 );
 

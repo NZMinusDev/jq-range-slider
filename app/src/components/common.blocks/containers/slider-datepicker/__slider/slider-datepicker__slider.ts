@@ -79,16 +79,10 @@ type SliderDatepickerSliderElementWithComponent = HTMLElementWithComponent<
 const sliderDatepickerSliders = Array.from(sliderDatepickerElements, (sliderDatepickerElement) => {
   const sliderDatepickerSliderElement = sliderDatepickerElement.querySelector(
     '.js-slider-datepicker__slider'
-  );
+  ) as SliderDatepickerSliderElement;
 
-  if (sliderDatepickerSliderElement !== null) {
-    return new SliderDatepickerSlider(
-      sliderDatepickerSliderElement as SliderDatepickerSliderElement
-    );
-  }
-
-  return null;
-}).filter((sliderDatepickerSlider) => sliderDatepickerSlider !== null);
+  return new SliderDatepickerSlider(sliderDatepickerSliderElement);
+});
 
 export type {
   SliderDatepickerSliderCustomEvents,

@@ -7,8 +7,7 @@ import {
   EventsLoggerFireflyCustomEvents,
   EventsLoggerFireflyElementWithComponent,
 } from './__firefly/events-logger__firefly';
-
-type EventsLoggerElement = HTMLDivElement;
+import eventsLoggerElements, { EventsLoggerElement } from './events-logger-elements';
 
 type EventsLoggerDOM = {
   fireflies: EventsLoggerFireflyElementWithComponent[];
@@ -45,7 +44,7 @@ type EventsLoggerElementWithComponent = HTMLElementWithComponent<
 >;
 
 const eventsLoggers = Array.from(
-  document.querySelectorAll<EventsLoggerElement>('.js-events-logger'),
+  eventsLoggerElements,
   (eventsLoggerElement) => new EventsLogger(eventsLoggerElement)
 );
 

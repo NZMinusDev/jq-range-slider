@@ -71,17 +71,11 @@ const configurableSliderDemoSliders = Array.from(
   (configurableSliderDemoElement) => {
     const configurableSliderDemoSliderElement = configurableSliderDemoElement.querySelector(
       '.js-configurable-slider-demo__slider'
-    );
+    ) as ConfigurableSliderDemoSliderElement;
 
-    if (configurableSliderDemoSliderElement !== null) {
-      return new ConfigurableSliderDemoSlider(
-        configurableSliderDemoSliderElement as ConfigurableSliderDemoSliderElement
-      );
-    }
-
-    return null;
+    return new ConfigurableSliderDemoSlider(configurableSliderDemoSliderElement);
   }
-).filter((configurableSliderDemoSlider) => configurableSliderDemoSlider !== null);
+);
 
 export type {
   ConfigurableSliderDemoSliderCustomEvents,

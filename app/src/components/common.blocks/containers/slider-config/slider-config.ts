@@ -4,7 +4,7 @@ import {
 } from '@utils/devTools/scripts/ComponentCreationHelper';
 import { FixedRangeSliderOptions } from '@plugin/view/range-slider.view.coupling';
 
-type SliderConfigElement = HTMLFieldSetElement;
+import sliderConfigElements, { SliderConfigElement } from './slider-config-elements';
 
 type SliderConfigDOM = {
   configItems: {
@@ -174,7 +174,7 @@ type SliderConfigElementWithComponent = HTMLElementWithComponent<
 >;
 
 const sliderConfigs = Array.from(
-  document.querySelectorAll<SliderConfigElement>('.js-slider-config'),
+  sliderConfigElements,
   (sliderConfigElement) => new SliderConfig(sliderConfigElement)
 );
 

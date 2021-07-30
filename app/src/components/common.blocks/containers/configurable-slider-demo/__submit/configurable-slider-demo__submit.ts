@@ -93,17 +93,11 @@ const configurableSliderDemoSubmits = Array.from(
   (configurableSliderDemoElement) => {
     const configurableSliderDemoSubmitElement = configurableSliderDemoElement.querySelector(
       '.js-configurable-slider-demo__submit'
-    );
+    ) as ConfigurableSliderDemoSubmitElement;
 
-    if (configurableSliderDemoSubmitElement !== null) {
-      return new ConfigurableSliderDemoSubmit(
-        configurableSliderDemoSubmitElement as ConfigurableSliderDemoSubmitElement
-      );
-    }
-
-    return null;
+    return new ConfigurableSliderDemoSubmit(configurableSliderDemoSubmitElement);
   }
-).filter((configurableSliderDemoSubmit) => configurableSliderDemoSubmit !== null);
+);
 
 export type {
   ConfigurableSliderDemoSubmitCustomEvents,

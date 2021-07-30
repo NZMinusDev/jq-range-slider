@@ -3,7 +3,7 @@ import {
   HTMLElementWithComponent,
 } from '@utils/devTools/scripts/ComponentCreationHelper';
 
-import eventsLoggers from '../events-logger';
+import eventsLoggerElements from '../events-logger-elements';
 
 type EventsLoggerFireflyElement = HTMLDivElement;
 
@@ -48,16 +48,12 @@ type EventsLoggerFireflyElementWithComponent = HTMLElementWithComponent<
   EventsLoggerFirefly
 >;
 
-const eventsLoggerFireflies = eventsLoggers
-  .map((eventsLogger) =>
-    Array.from(
-      eventsLogger.element.querySelectorAll<EventsLoggerFireflyElement>(
-        '.js-events-logger__firefly'
-      ),
-      (eventsLoggerFireflyElement) => new EventsLoggerFirefly(eventsLoggerFireflyElement)
-    )
+const eventsLoggerFireflies = Array.from(eventsLoggerElements, (eventsLoggerElement) =>
+  Array.from(
+    eventsLoggerElement.querySelectorAll<EventsLoggerFireflyElement>('.js-events-logger__firefly'),
+    (eventsLoggerFireflyElement) => new EventsLoggerFirefly(eventsLoggerFireflyElement)
   )
-  .flat();
+).flat();
 
 export type {
   EventsLoggerFireflyCustomEvents,
