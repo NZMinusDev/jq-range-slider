@@ -16,7 +16,9 @@
     "paths": {
       "@layouts/*": ["layouts/*"],
       "@plugin/*": ["plugin/*"],
-      "@common.blocks/*": ["components/common.blocks/*"],
+      "@views/*": ["components/views/*"],
+      "@models/*": ["components/models/*"],
+      "@presenters/*": ["components/presenters/*"],
       "@utils/*": ["utils/*"],
       "@assets/*": ["assets/*"]
     },

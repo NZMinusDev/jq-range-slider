@@ -27,19 +27,15 @@ const PATHS = {
   dist_absolute: path.resolve(__dirname, '../app/dist/'),
 };
 
-const redefinitionLevels = [
-  'layouts',
-  'components/library.blocks',
-  'components/common.blocks',
-  'components/thematic/main-theme.blocks',
-  'components/experimental/experiment-1.blocks',
-];
+const redefinitionLevels = ['layouts', 'components/views/common-level'];
 const componentGroups = ['basic', 'containers', 'primitives', 'specific'];
 
 const sharedAliases = {
   '@layouts': path.resolve(PATHS.src_absolute, './layouts/'),
   '@plugin': path.resolve(PATHS.src_absolute, './plugin/'),
-  '@common.blocks': path.resolve(PATHS.src_absolute, './components/common.blocks/'),
+  '@views': path.resolve(PATHS.src_absolute, './components/views/'),
+  '@models': path.resolve(PATHS.src_absolute, './components/models/'),
+  '@presenters': path.resolve(PATHS.src_absolute, './components/presenters/'),
   '@utils': path.resolve(PATHS.src_absolute, './utils/'),
   '@assets': path.resolve(PATHS.src_absolute, './assets/'),
 };

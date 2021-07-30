@@ -102,7 +102,9 @@
   "path-autocomplete.pathMappings": {
     "@layouts": "${folder}/app/src/layouts",
     "@plugin": "${folder}/app/src/plugin/",
-    "@common.blocks": "${folder}/app/src/components/common.blocks/",
+    "@views": "${folder}/app/src/components/views/",
+    "@models": "${folder}/app/src/components/models/",
+    "@presenters": "${folder}/app/src/components/presenters/",
     "@utils": "${folder}/app/src/utils/",
     "@assets": "${folder}/app/src/assets/"
   },

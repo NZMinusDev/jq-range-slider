@@ -1,0 +1,43 @@
+include ~@views/common-level/primitives/heading/heading.pug
+
+//- 
+  label?: string - text of label
+  description?: string - text of extracted placeholder
+  name?: string - name of input field
+  type?: string | 'textarea' | 'toggle' - type of input
+    when 'textarea'
+      inputResize?: 'none'
+  value?: string - value of input
+  orientation?: 'column' - orientation of form-field
+  placeItems: 'center' - css place-items of form-field
+  inputTextAlign?: 'center' - text align of input
+  readonly?: boolean - makes input readonly
+  Tip: mixin also uses 'and attributes'(&attributes)
+mixin form-field({ label = '', description = '', name = 'form-field', id = name, type = 'text', value = undefined, orientation = '', placeItems = '', inputTextAlign = '', readonly = false, inputResize = '' } = {})
+  -
+    const withLabelClass = label === '' ? null : 'form-field_with-label';
+    let inputTag;
+    let inputType = type;
+    let inputTypeClass;
+
+    switch (type){
+      case 'textarea': { inputTag = 'textarea'; break; }
+      case 'toggle': { inputTag = 'input'; inputType = 'checkbox'; inputTypeClass = 'form-field__input_type_toggle'; break; }
+      default: { inputTag = 'input'; }
+    }
+
+    const orientationClass = orientation === '' ? null : `form-field_direction_${orientation}`;
+    const placeItemsClass = placeItems === '' ? null : `form-field_place-items_${placeItems}`;
+    const inputTextAlignClass = inputTextAlign === '' ? null : `form-field__input_text-align_${inputTextAlign}`;
+    const inputResizeClass = inputResize === '' ? null : `form-field__input_resize_${inputResize}`;
+  .form-field.js-form-field(class=[withLabelClass, orientationClass, placeItemsClass])&attributes(attributes)
+    if label !== ''
+      +heading({ h3: label }, { isLabel: true, description })(for=name)
+    #{inputTag}.form-field__input.js-form-field__input(
+      id=id,
+      name=name,
+      type=inputType,
+      value=value,
+      readonly=readonly,
+      class=[inputTypeClass, inputTextAlignClass, inputResizeClass]
+    )
