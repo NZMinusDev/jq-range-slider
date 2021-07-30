@@ -1,6 +1,8 @@
 include ~@common.blocks/primitives/sign/sign.pug
 
+//- 
+  Tip: mixin also uses 'and attributes'(&attributes)
 mixin footer
-  footer.footer
+  footer.footer&attributes(attributes)
     +sign
     
