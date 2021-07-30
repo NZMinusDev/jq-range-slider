@@ -2,8 +2,9 @@ import IRangeSliderView, { RangeSliderOptions } from '../view/range-slider.view.
 import IRangeSliderModel from '../models/range-slider.model.coupling';
 
 interface IRangeSliderPresenter {
-  view: IRangeSliderView;
-  model?: IRangeSliderModel;
+  readonly view: IRangeSliderView;
+  readonly model?: IRangeSliderModel;
+  setModel(model: IRangeSliderModel): this;
 }
 
 interface IRangeSliderPresenterConstructor {
