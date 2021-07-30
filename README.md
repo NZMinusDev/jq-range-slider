@@ -240,7 +240,7 @@ npm run {script-name}
 
 Script-names:
 
-- **start** - builds bundles and runs server to be upgraded;
+- **start** - builds bundles and runs servers: webpack-dev-server and server with express;
 - **dev** - just builds bundles and place it into [dist](./app/dist) directory;
 - **build** - build minify bundles and place it into [dist](./app/dist) directory + run _types_ script;
 - **types** - generate d.ts files and place it into [dist/types](./app/dist/types) directory;

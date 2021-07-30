@@ -85,6 +85,10 @@ class ResultOfTemplatesProcessing {
 
           // see ~@layouts/basic/main-layout/main-layout.pug
           inject: false,
+
+          // express server needs it
+          cache: false,
+
           chunks: [shortNameOfTemplate],
         })
       );
@@ -375,5 +379,6 @@ module.exports = smp.wrap({
 
     // watch html
     watchContentBase: true,
+    writeToDisk: true,
   },
 });
