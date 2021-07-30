@@ -20,15 +20,17 @@ app.use('/fetch/post/state', jsonParser, (req, res, next) => {
     case 'set': {
       console.log('setState: ', req.body.state);
 
+      res.sendStatus(200);
+
       break;
     }
 
     default: {
+      res.sendStatus(200);
+
       break;
     }
   }
-
-  res.sendStatus(200);
 
   next();
 });
