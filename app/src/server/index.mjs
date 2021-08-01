@@ -42,6 +42,7 @@ app.use('/fetch/post/state', jsonParser, (req, res, next) => {
   next();
 });
 
+let timerId;
 app.use('/stateChanger', (req, res, next) => {
   res.writeHead(200, {
     Connection: 'keep-alive',
@@ -50,14 +51,17 @@ app.use('/stateChanger', (req, res, next) => {
   });
 
   let sentState = cloneDeep(state);
-  setInterval(() => {
-    if (!isEqual(sentState, state)) {
-      res.write(`data: {"state": ${JSON.stringify(state)}}\nid: ${Date.now()}\n\n`);
-      console.log('whenStateIsChanged: ', state);
-    }
 
-    sentState = cloneDeep(state);
-  }, 3000);
+  if (timerId === undefined) {
+    timerId = setInterval(() => {
+      if (!isEqual(sentState, state)) {
+        res.write(`data: {"state": ${JSON.stringify(state)}}\nid: ${Date.now()}\n\n`);
+        console.log('whenStateIsChanged: ', state);
+      }
+
+      sentState = cloneDeep(state);
+    }, 3000);
+  }
 
   next();
 });
