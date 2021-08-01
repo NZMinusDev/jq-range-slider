@@ -16,7 +16,7 @@ It's slider plugin using MVP pattern. It also contains script for connecting to 
 ![dates](./app/src/assets/readme/dates.gif)
 ![config](./app/src/assets/readme/config.gif)
 
-[The result is here](https://nzminusdev.github.io/jq-range-slider/).
+[The result is here](https://jq-range-slider.herokuapp.com/).
 
 ## Usage
 
