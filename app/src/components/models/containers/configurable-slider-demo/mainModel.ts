@@ -1,6 +1,12 @@
 import IModel from './IModel';
 
-const mainModel: IModel = {
+interface MainModel extends IModel {
+  eventSource: EventSource;
+}
+
+const mainModel: MainModel = {
+  eventSource: new EventSource('/stateChanger'),
+
   async setState(state) {
     await fetch('/fetch/post/state', {
       method: 'POST',
@@ -27,13 +33,14 @@ const mainModel: IModel = {
     return result;
   },
   whenStateIsChanged(callback) {
-    if (this.eventSource === undefined) {
-      this.eventSource = new EventSource('/stateChanger');
-    }
-
     this.eventSource.onmessage = function (event) {
       callback(JSON.parse(event.data).state);
     };
+  },
+  closeConnections() {
+    this.eventSource.onmessage = null;
+
+    return this;
   },
 };
 
