@@ -771,6 +771,7 @@ class RangeSliderView
     handleEvent: (event: Event) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
+      //FIXME: init always
       if (!this._thumbEventListenerObject.cache.has(origin)) {
         this._thumbEventListenerObject.cache.set(origin, this._initThumbCache(origin));
       }
@@ -906,6 +907,7 @@ class RangeSliderView
     },
   };
   protected _initThumbCache(origin: HTMLElement) {
+    // FIXME: some should recalc always
     const trackElem = origin.closest('.js-range-slider__track') as HTMLElement;
     const trackValueSize = this._options.intervals.max - this._options.intervals.min;
     const thumbIndex = Array.from(
