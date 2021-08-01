@@ -8,11 +8,12 @@
     "watch:client": "rm -r -f app/dist && cross-env NODE_ENV=development MEASURE=false webpack-dev-server --config configs/webpack.config.js --mode development",
     "watch:server": "nodemon app/src/server/index.mjs",
     "dev": "cross-env NODE_ENV=development MEASURE=false webpack --config configs/webpack.config.js --mode development",
-    "build": "cross-env NODE_ENV=production MEASURE=true webpack --config configs/webpack.config.js --mode production && npm run types",
+    "build": "cross-env NODE_ENV=production MEASURE=true webpack --config configs/webpack.config.js --mode production",
+    "build:plugin": "cross-env NODE_ENV=production MEASURE=true PLUGIN_ONLY=true webpack --config configs/webpack.config.js --mode production && npm run types",
     "types": "ttsc app/src/plugin/presenter/range-slider.ts --declaration --emitDeclarationOnly --declarationDir app/dist/types",
     "UML": "tplant --input app/src/plugin/presenter/range-slider.ts --output app/src/plugin/UML/UML.puml",
     "test": "jest --config=configs/jest.config.js --watchAll",
-    "analyze": "mkdirp app/log && cross-env NODE_ENV=production MEASURE=false webpack --config configs/webpack.config.js --mode production --json > app/log/stats.json && webpack-bundle-analyzer app/log/stats.json",
+    "analyze": "mkdirp app/log && cross-env NODE_ENV=production MEASURE=false PLUGIN_ONLY=true webpack --config configs/webpack.config.js --mode production --json > app/log/stats.json && webpack-bundle-analyzer app/log/stats.json",
     "ext": "code --install-extension eamodio.gitlens && code --install-extension ms-vscode.powershell && code --install-extension teabyii.ayu && code --install-extension PKief.material-icon-theme && code --install-extension pranaygp.vscode-css-peek && code --install-extension ecmel.vscode-html-css && code --install-extension ionutvmi.path-autocomplete && code --install-extension formulahendry.auto-complete-tag && code --install-extension wmaurer.change-case && code --install-extension CoenraadS.bracket-pair-colorizer && code --install-extension streetsidesoftware.code-spell-checker && code --install-extension wayou.vscode-todo-highlight && code --install-extension wallabyjs.quokka-vscode && code --install-extension dbaeumer.vscode-eslint && code --install-extension bierner.lit-html && code --install-extension esbenp.prettier-vscode && code --install-extension kisstkondoros.vscode-gutter-preview && code --install-extension jumpinjackie.vscode-map-preview && code --install-extension jock.svg && code --install-extension DavidAnson.vscode-markdownlint && code --install-extension jebbs.plantuml&& code --install-extension earshinov.sort-lines-by-selection && code --install-extension ritwickdey.LiveServer && code --install-extension wix.vscode-import-cost && code --install-extension xabikos.JavaScriptSnippets && code --install-extension gogocrow.webpack-snippets"
   },
   "browserslist": [

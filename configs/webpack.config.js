@@ -22,10 +22,12 @@ const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = !isDev;
+const isProcessFullApp = process.env.PLUGIN_ONLY !== 'true';
 
 const PATHS = {
   src_absolute: path.resolve(__dirname, '../app/src/'),
   dist_absolute: path.resolve(__dirname, '../app/dist/'),
+  public_absolute: path.resolve(__dirname, '../app/public/'),
 };
 
 const redefinitionLevels = ['layouts', 'components/views/common-level'];
@@ -78,7 +80,7 @@ class ResultOfTemplatesProcessing {
       this.HTMLWebpackPlugins.push(
         new HTMLWebpackPlugin({
           template: `!!pug-loader!app/src/pages/${shortNameOfTemplate}/${nameOfTemplate}`,
-          filename: hashedFileName(`./${shortNameOfTemplate}`, 'html'),
+          filename: `./${shortNameOfTemplate}.html`,
 
           // see ~@layouts/basic/main-layout/main-layout.pug
           inject: false,
@@ -106,7 +108,7 @@ const resultOfTemplatesProcessing = new ResultOfTemplatesProcessing();
 const webpackPlugins = () => {
   const plugins = [];
 
-  if (isDev) {
+  if (isProcessFullApp) {
     plugins.push(
       ...resultOfTemplatesProcessing.HTMLWebpackPlugins,
       new ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }),
@@ -114,7 +116,26 @@ const webpackPlugins = () => {
         patterns: [
           {
             from: path.resolve(PATHS.src_absolute, './assets/ico/'),
-            to: path.resolve(PATHS.dist_absolute, './assets/ico/'),
+            to: path.resolve(PATHS.public_absolute, './assets/ico/'),
+          },
+        ],
+      })
+    );
+  } else {
+    plugins.push(
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(PATHS.src_absolute, './plugin/jq-range-slider-plugin.js'),
+            to: path.resolve(PATHS.src_absolute, './../dist'),
+          },
+          {
+            from: path.resolve(PATHS.src_absolute, './plugin/jq-range-slider-plugin.d.ts'),
+            to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
+          },
+          {
+            from: path.resolve(PATHS.src_absolute, './plugin/range-slider-plugin.d.ts'),
+            to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
           },
         ],
       })
@@ -123,23 +144,7 @@ const webpackPlugins = () => {
 
   plugins.push(
     new MiniCssExtractPlugin({
-      filename: isDev ? hashedFileName('styles/[name]/style', 'css') : 'range-slider.css',
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.resolve(PATHS.src_absolute, './plugin/jq-range-slider-plugin.js'),
-          to: path.resolve(PATHS.src_absolute, './../dist'),
-        },
-        {
-          from: path.resolve(PATHS.src_absolute, './plugin/jq-range-slider-plugin.d.ts'),
-          to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
-        },
-        {
-          from: path.resolve(PATHS.src_absolute, './plugin/range-slider-plugin.d.ts'),
-          to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
-        },
-      ],
+      filename: isProcessFullApp ? hashedFileName('styles/[id]/[name]', 'css') : '[name].css',
     })
   );
 
@@ -308,7 +313,7 @@ module.exports = smp.wrap({
   mode: 'development',
 
   // Declarations of used files in bundles
-  entry: isDev
+  entry: isProcessFullApp
     ? resultOfTemplatesProcessing.entries
     : {
         'range-slider-plugin': [`./plugin/range-slider-plugin.ts`],
@@ -316,8 +321,8 @@ module.exports = smp.wrap({
 
   // Where to put bundles for every entry point
   output: {
-    filename: isDev ? hashedFileName('bundles/[id]/[name]', 'js') : '[name].js',
-    path: PATHS.dist_absolute,
+    filename: isProcessFullApp ? hashedFileName('bundles/[id]/[name]', 'js') : '[name].js',
+    path: isProcessFullApp ? PATHS.public_absolute : PATHS.dist_absolute,
   },
   resolve: {
     // You can use it while using import in css and js

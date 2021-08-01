@@ -247,8 +247,9 @@ npm run {script-name}
 Script-names:
 
 - **start** - builds bundles and runs servers: webpack-dev-server and server with express;
-- **dev** - just builds bundles and place it into [dist](./app/dist) directory;
-- **build** - build minify bundles and place it into [dist](./app/dist) directory + run _types_ script;
+- **dev** - just builds bundles and place it into [public](./app/public) directory;
+- **build** - build minify bundles and place it into [public](./app/public) directory;
+- **build:plugin** - build minify bundles for plugin only and place it into [dist](./app/dist) directory + run _types_ script;
 - **types** - generate d.ts files and place it into [dist/types](./app/dist/types) directory;
 - **UML** - generate .puml files and place it into [src](./app/src/plugin/UML/) directory. P.S.: you should work [with your hands](https://plantuml.com/en/class-diagram) a little cause of the [tool](https://github.com/bafolts/tplant) has bugs(["default" isn't keyword](https://github.com/bafolts/tplant/issues/66), [error when output directory doesn't exist](https://github.com/bafolts/tplant/issues/51), [Missing Aggregation/Composition](https://github.com/bafolts/tplant/issues/48), etc);
 - **test** - run jest tests(matches .spec. or .test. files), P.S.: it can work in a separate console in parallel with **start** script;
@@ -258,7 +259,7 @@ Script-names:
 Deploy
 
 ```bash
-git subtree push --prefix app/dist origin gh-pages
+git subtree push --prefix app/public origin gh-pages
 ```
 
 ### Technologies
