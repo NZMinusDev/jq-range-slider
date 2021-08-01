@@ -23,4 +23,13 @@ module.exports = {
     '@utils(.*)$': '<rootDir>/utils/$1',
     '@assets(.*)$': '<rootDir>/assets/$1',
   },
+
+  globals: {
+    'ts-jest': {
+      babelConfig: {
+        presets: ['@babel/preset-env', '@babel/preset-typescript'],
+        plugins: ['@babel/plugin-proposal-class-properties'],
+      },
+    },
+  },
 };
