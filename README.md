@@ -255,6 +255,12 @@ Script-names:
 - **analyze** - visualize size of webpack output files with an interactive zoomable treemap using webpack-bundle-analyzer;
 - **ext** - install necessary VS Code extensions.
 
+Deploy
+
+```bash
+git subtree push --prefix app/dist origin gh-pages
+```
+
 ### Technologies
 
 1. [Shared VS Code settings](./.vscode/settings.json).
