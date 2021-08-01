@@ -118,6 +118,14 @@ const webpackPlugins = () => {
             from: path.resolve(PATHS.src_absolute, './assets/ico/'),
             to: path.resolve(PATHS.public_absolute, './assets/ico/'),
           },
+          {
+            from: path.resolve(PATHS.src_absolute, './server/package.json'),
+            to: path.resolve(PATHS.public_absolute),
+          },
+          {
+            from: path.resolve(PATHS.src_absolute, './server/index.mjs'),
+            to: path.resolve(PATHS.public_absolute),
+          },
         ],
       })
     );

@@ -6,12 +6,18 @@ import path from 'path';
 import isEqual from 'lodash/isEqual.js';
 import cloneDeep from 'lodash/cloneDeep.js';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const app = express();
 const jsonParser = express.json();
 
 const state = { value: [50] };
 
-app.use(express.static(path.resolve('app/dist')));
+if (isDev) {
+  app.use(express.static(path.resolve('app/dist')));
+} else {
+  app.use(express.static(path.resolve('./')));
+}
 
 app.use('/fetch/post/state', jsonParser, (req, res, next) => {
   switch (req.body.mode) {

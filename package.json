@@ -4,8 +4,8 @@
   "description": "It's jq-range-slider plugin using MVP on typescript",
   "private": true,
   "scripts": {
-    "start": "npm-run-all --parallel watch:client watch:server",
-    "watch:client": "rm -r -f app/dist && cross-env NODE_ENV=development MEASURE=false webpack-dev-server --config configs/webpack.config.js --mode development",
+    "start": "NODE_ENV=development npm-run-all --parallel watch:client watch:server",
+    "watch:client": "rm -r -f app/dist && cross-env MEASURE=false webpack-dev-server --config configs/webpack.config.js --mode development",
     "watch:server": "nodemon app/src/server/index.mjs",
     "dev": "cross-env NODE_ENV=development MEASURE=false webpack --config configs/webpack.config.js --mode development",
     "build": "cross-env NODE_ENV=production MEASURE=true webpack --config configs/webpack.config.js --mode production",
