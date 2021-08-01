@@ -18,6 +18,7 @@ const { UnusedFilesWebpackPlugin } = require('unused-files-webpack-plugin');
 const { DuplicatesPlugin } = require('inspectpack/plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = !isDev;
@@ -155,7 +156,8 @@ const webpackPlugins = () => {
       hashDigest: 'base64',
       hashDigestLength: 8,
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new OpenBrowserPlugin({ url: 'http://localhost:8080' })
   );
 
   return plugins;
