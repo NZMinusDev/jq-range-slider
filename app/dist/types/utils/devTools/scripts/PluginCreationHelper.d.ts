@@ -84,5 +84,6 @@ interface MVPModel<State> {
     getState(): Promise<Required<State>>;
     setState(state?: Partial<State>): Promise<this>;
     whenStateIsChanged(callback: (state: Required<State>) => void): void;
+    closeConnections(): this;
 }
 export { handleEvent, CustomEventListener, CustomEventListenerObject, handler, EventManagerMixin, template, MVPView, renderMVPView, MVPModel, };

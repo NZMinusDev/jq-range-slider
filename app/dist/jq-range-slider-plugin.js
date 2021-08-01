@@ -1,1 +1,1 @@
-!function(n,e,i){n.fn.initRangeSlider=function(n,e){const i=[];return this.each((function(){i.push(new RangeSliderPresenter(this,n,e))})),i}}(jQuery,window);
+!function(n,e,i){n.fn.initRangeSlider=function(n,i,t){const r=[];return this.each((function(){r.push(new e.RangeSliderPresenter(this,n,i,t))})),r}}(jQuery,window);

@@ -1,11 +1,11 @@
-import { MVPView } from "../../../../../utils/devTools/tools/PluginCreationHelper";
+import { MVPView } from "../../utils/devTools/scripts/PluginCreationHelper";
 import './range-slider.scss';
 import IRangeSliderView, { RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState } from './range-slider.view.coupling';
-import { FixedTrackOptions, TrackOptions } from '../__track/view/range-slider__track.view.coupling';
-import { RangeOptions } from '../__range/view/range-slider__range.view.coupling';
-import { ThumbOptions, ThumbState } from '../__thumb/view/range-slider__thumb.view.coupling';
-import { TooltipOptions, TooltipState } from '../__tooltip/view/range-slider__tooltip.view.coupling';
-import { PipsOptions } from '../__pips/view/range-slider__pips.view.coupling';
+import { FixedTrackOptions, TrackOptions } from './__track/range-slider__track.view.coupling';
+import { RangeOptions } from './__range/range-slider__range.view.coupling';
+import { ThumbOptions, ThumbState } from './__thumb/range-slider__thumb.view.coupling';
+import { TooltipOptions, TooltipState } from './__tooltip/range-slider__tooltip.view.coupling';
+import { PipsOptions } from './__pips/range-slider__pips.view.coupling';
 declare const DEFAULT_OPTIONS: FixedRangeSliderOptions;
 declare const DEFAULT_STATE: RangeSliderState;
 declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> implements IRangeSliderView {
@@ -26,7 +26,7 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
     getOrientationOption(): "horizontal" | "vertical";
     getPaddingOption(): [number, number];
     getFormatterOption(): import("./range-slider.view.coupling").Formatter;
-    getTooltipsOption(): (boolean | import("../__tooltip/view/range-slider__tooltip.view.coupling").Formatter)[];
+    getTooltipsOption(): (boolean | import("./__tooltip/range-slider__tooltip.view.coupling").Formatter)[];
     getPipsOption(): any;
     setIntervalsOption(intervals?: RangeSliderOptions['intervals']): this;
     setStartOption(start?: RangeSliderOptions['start']): this;

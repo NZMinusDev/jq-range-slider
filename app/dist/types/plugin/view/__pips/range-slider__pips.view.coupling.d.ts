@@ -1,4 +1,4 @@
-import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
+import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
 declare type Formatter = (value: number) => string;
 declare type PipsOptions = {
     orientation?: 'horizontal' | 'vertical';

@@ -1,5 +1,5 @@
 import { TemplateResult } from 'lit-html';
-import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
+import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
 import './range-slider__track.scss';
 import IRangeSliderTrackView, { TrackOptions, FixedTrackOptions, TrackState } from './range-slider__track.view.coupling';
 declare const DEFAULT_OPTIONS: FixedTrackOptions;

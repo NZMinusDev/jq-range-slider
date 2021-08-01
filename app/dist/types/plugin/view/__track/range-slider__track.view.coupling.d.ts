@@ -1,4 +1,4 @@
-import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
+import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
 declare type TrackOptions = {
     orientation?: 'horizontal' | 'vertical';
     intervals?: {

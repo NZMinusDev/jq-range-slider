@@ -1,5 +1,5 @@
 import { StyleInfo } from 'lit-html/directives/style-map';
-import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
+import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
 import './range-slider__pips.scss';
 import IRangeSliderPipsView, { PipsOptions, PipsState } from './range-slider__pips.view.coupling';
 declare const DEFAULT_OPTIONS: Required<PipsOptions>;

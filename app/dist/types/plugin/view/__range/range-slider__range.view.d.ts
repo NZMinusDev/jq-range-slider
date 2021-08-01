@@ -1,4 +1,4 @@
-import { MVPView } from "../../../../../../utils/devTools/tools/PluginCreationHelper";
+import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
 import './range-slider__range.scss';
 import IRangeSliderRangeView, { RangeOptions, RangeState } from './range-slider__range.view.coupling';
 declare const DEFAULT_OPTIONS: Required<RangeOptions>;

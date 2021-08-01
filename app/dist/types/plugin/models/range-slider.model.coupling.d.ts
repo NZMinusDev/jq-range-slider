@@ -1,4 +1,4 @@
-import type { MVPModel } from "../../../../../utils/devTools/tools/PluginCreationHelper";
+import type { MVPModel } from "../../utils/devTools/scripts/PluginCreationHelper";
 declare type RangeSliderState = {
     value: number[];
 };
