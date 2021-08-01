@@ -14,7 +14,7 @@ const jsonParser = express.json();
 const state = { value: [50] };
 
 if (isDev) {
-  app.use(express.static(path.resolve('app/dist')));
+  app.use(express.static(path.resolve('app/public')));
 } else {
   app.use(express.static(path.resolve('./')));
 }
