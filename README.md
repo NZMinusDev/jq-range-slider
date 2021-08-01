@@ -16,11 +16,7 @@ It's slider plugin using MVP pattern. It also contains script for connecting to 
 ![dates](./app/src/assets/readme/dates.gif)
 ![config](./app/src/assets/readme/config.gif)
 
-## Playground
-
----
-
-_<https://codesandbox.io/s/mvp-jq-range-slider-x14h1?file=/src/server/index.js>_
+[The result is here](https://nzminusdev.github.io/jq-range-slider/).
 
 ## Usage
 
@@ -52,6 +48,7 @@ const RANGE_SLIDER_OPTIONS = {
   }
 };
 const RANGE_SLIDER_MODEL = {
+   eventSource: new EventSource('/stateChanger'),
   //to be executed on "set" event of slider
   async setState(state) {
     // example request
@@ -76,14 +73,21 @@ const RANGE_SLIDER_MODEL = {
       body: JSON.stringify({ mode: "get" }),
     });
 
-    return await response.json();
+    const result = await response.json();
+
+    return result;
   },
   // run callback(state) on each message from server
   whenStateIsChanged(callback) {
-    let eventSource = new EventSource("/stateChanger");
-    eventSource.onmessage = function (event) {
+    this.eventSource.onmessage = function (event) {
       callback(JSON.parse(event.data).state);
     };
+  },
+  // close connections if new model is assigned
+  closeConnections() {
+    this.eventSource.onmessage = null;
+
+    return this;
   },
 };
 ```
@@ -182,6 +186,7 @@ Init:
 ```js
 new window.RangeSliderPresenter(
   document.querySelector(".slider-container"),
+  (reason) => { console.error(reason) }, // errorCatcher
   RANGE_SLIDER_OPTIONS, // it's optional
   RANGE_SLIDER_MODEL // it's optional
 );
@@ -207,6 +212,7 @@ init:
 
 ```js
 const sliders = $(".slider-container").initRangeSlider(
+  (reason) => { console.error(reason) }, // errorCatcher
   RANGE_SLIDER_OPTIONS, // it's optional
   RANGE_SLIDER_MODEL // it's optional
 );
@@ -244,7 +250,7 @@ Script-names:
 - **dev** - just builds bundles and place it into [dist](./app/dist) directory;
 - **build** - build minify bundles and place it into [dist](./app/dist) directory + run _types_ script;
 - **types** - generate d.ts files and place it into [dist/types](./app/dist/types) directory;
-- **UML** - generate .puml files and place it into [src](./app/src/components/common.blocks/primitives/range-slider) directory. P.S.: you should work [with your hands](https://plantuml.com/en/class-diagram) a little cause of the [tool](https://github.com/bafolts/tplant) has bugs(["default" isn't keyword](https://github.com/bafolts/tplant/issues/66), [error when output directory doesn't exist](https://github.com/bafolts/tplant/issues/51), [Missing Aggregation/Composition](https://github.com/bafolts/tplant/issues/48), etc);
+- **UML** - generate .puml files and place it into [src](./app/src/plugin/UML/) directory. P.S.: you should work [with your hands](https://plantuml.com/en/class-diagram) a little cause of the [tool](https://github.com/bafolts/tplant) has bugs(["default" isn't keyword](https://github.com/bafolts/tplant/issues/66), [error when output directory doesn't exist](https://github.com/bafolts/tplant/issues/51), [Missing Aggregation/Composition](https://github.com/bafolts/tplant/issues/48), etc);
 - **test** - run jest tests(matches .spec. or .test. files), P.S.: it can work in a separate console in parallel with **start** script;
 - **analyze** - visualize size of webpack output files with an interactive zoomable treemap using webpack-bundle-analyzer;
 - **ext** - install necessary VS Code extensions.
@@ -284,7 +290,7 @@ Script-names:
    2. [SCSS](https://sass-lang.com/).
    3. [TypeScript](https://www.typescriptlang.org/).
 4. [Webpack](https://v4.webpack.js.org/concepts/) which kill your headaches:
-   1. You can simply import files at the entry point([dev](./app/src/pages/index/index.ts) or [build](./app/src/components/common.blocks/primitives/range-slider/range-slider-plugin.ts)) instead of manually connecting them using tags on the page.
+   1. You can simply import files at the entry point([dev](./app/src/pages/index/index.ts) or [build](./app/src/plugin/range-slider-plugin.ts)) instead of manually connecting them using tags on the page.
    2. [Pages](./app/src/pages/) only need to be created, and the collector can determine the entry points on its own.
    3. No need to remember a bunch of css prefixes and what properties are supported thanks to [PostCSS Preset Env](https://github.com/csstools/postcss-preset-env) and [Autoprefixer](https://www.npmjs.com/package/autoprefixer).
    4. Output files is minified in production mode.
@@ -298,11 +304,11 @@ Script-names:
    1. [JQuery](https://jquery.com/).
    2. [lodash-es](https://lodash.com/) to supplement the js standard. Tip: you should use only import of lodash-es(moreover, when importing, only care about the readability and strictness of the code, and not the optimization of the weight) instead of common lodash because ES6+ module syntax is supported by terser for optimization.
    3. [lit-html](https://lit-html.polymer-project.org/guide) to highlight html inside js/ts and only update the parts of the template that have changed since the last render.
-8. Custom Tools: [ts shortcuts](./app/src/utils/devTools/tools/).
+8. Custom Tools: [ts shortcuts](./app/src/utils/devTools/).
 
 ### How it works
 
-![UML View Class Diagram](./app/src/components/common.blocks/primitives/range-slider/UML/UML.svg)
+![UML View Class Diagram](./app/src/plugin/UML/UML.svg)
 
 ## License
 

@@ -111,5 +111,6 @@
   "path-autocomplete.triggerOutsideStrings": true,
   "path-autocomplete.enableFolderTrailingSlash": true,
   "editor.tabSize": 2,
-  "plantuml.exportOutDir": "./"
+  "plantuml.exportOutDir": "./",
+  "plantuml.exportSubFolder": false
 }

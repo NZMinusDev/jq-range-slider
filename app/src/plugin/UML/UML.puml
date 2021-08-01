@@ -25,6 +25,7 @@ interface MVPModel<State> {
     +getState(): Promise<Required<State>>
     +setState(state?: Partial<State> | undefined): Promise<this>
     +whenStateIsChanged(callback: (state: Required<State>) => void): void
+    +closeConnections(): this
 }
 interface IRangeSliderTrackView extends MVPView {
     +getIntervalsOption(): { [key: string]: number; min: number; max: number; }
@@ -79,11 +80,6 @@ interface IRangeSliderView extends MVPView {
     +setPipsOption(pips?: (Omit<PipsOptions, "orientation" | "formatter" | "values"> & { mode?: Mode | undefined; values?: number | number[] | undefined; }) | undefined): this
     +get(): number[]
     +set(value?: number | number[] | undefined): this
-}
-interface IRangeSliderModel extends MVPModel
-interface IRangeSliderPresenter {
-    +view: IRangeSliderView
-    +model?: IRangeSliderModel | undefined
 }
 interface IRangeSliderThumbView extends MVPView
 class RangeSliderTrackView extends MVPView implements IRangeSliderTrackView {
@@ -208,18 +204,24 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #{static} _getIntervalKeyAsNumber(key: string | number): number
     #{static} _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): { stepped: number; remains: number; }
 }
-class RangeSliderPresenter implements IRangeSliderPresenter {
+interface IRangeSliderModel extends MVPModel
+class RangeSliderPresenter {
     +view: IRangeSliderView
     +model?: IRangeSliderModel | undefined
-    +setModel(model: IRangeSliderModel): this
+    +setModel(model: IRangeSliderModel, errorCatcher: ErrorCatcher): this
+    #handleViewSet: () => void
+    #_updateViewDisplay(state: Required<RangeSliderState>): this
+    #_initModelViewBinding(): this
 }
 RangeSliderView "1" *-- "1" RangeSliderTrackView : composes template using template of >
 RangeSliderView "1" *-- "*" RangeSliderRangeView : composes template using templates of >
 RangeSliderView "1" *-- "*" RangeSliderThumbView : composes template using templates of >
 RangeSliderView "1" *-- "*" RangeSliderTooltipView : composes template using templates of >
 RangeSliderView "1" *-- "1" RangeSliderPipsView : composes template using template of >
-IRangeSliderPresenter --> IRangeSliderModel
-IRangeSliderPresenter --> IRangeSliderView
+RangeSliderPresenter "1" --> "1" IRangeSliderModel : get/set state, listen state update 
+RangeSliderPresenter "1" --> "1" IRangeSliderView : supply state (Update)
+IRangeSliderModel "1" ..> "1" RangeSliderPresenter : change notification (calls passed to 'whenStateIsChanged' callback which updates view display)
+IRangeSliderView "1" ..> "1" RangeSliderPresenter : user action ('set' event)
 note left of MVPView::template
   This method can <b>include templates of the others</b> and it's used for efficient rendering
 end note
