@@ -59,8 +59,8 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   }
 };
 
-const differentOptionsArg: DifferentArguments<Parameters<
-  typeof RangeSliderView.prototype.setOptions
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<
+  typeof RangeSliderView
 >> = {
   invalidOptionalArguments: [
     [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], connect: [] }],
@@ -141,6 +141,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
         tooltips: [true, (number: number) => `${number.toFixed(4).toLocaleString()}%`],
         pips: { mode: 'count', values: 4, density: 5 },
       },
+      { isActiveThumbs: [false, false], value: [0, 75] },
     ],
   ],
 };
@@ -149,12 +150,9 @@ testDefaultOptions(RangeSliderView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderView,
-  differentConstructorArgs: {
-    validRequiredArguments: [[]],
-    ...(differentOptionsArg as DifferentArguments<ConstructorParameters<typeof RangeSliderView>>),
-  },
+  differentConstructorArgs,
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set('_options', 1),
+  propsToSet: new Map().set('_options', 0).set('_state', 1),
 });
 describe('init', () => {
   describe("with start, tooltips, connect options aren't array", () => {
@@ -187,6 +185,7 @@ describe('init', () => {
 
       const templateMock = jest.fn(instance.template);
       templateMock();
+      templateMock({ classInfo: {}, styleInfo: {}, attributes: {} });
       expect(templateMock).toHaveReturned();
 
       const _getIntervalInfoByPointMock = jest.spyOn(
@@ -237,7 +236,9 @@ testSetter({
     expecter: ({ mock, passedArgs, instance }) => {
       // some expect calls
     },
-    differentArguments: differentOptionsArg,
+    differentArguments: differentConstructorArgs as DifferentArguments<
+      [ConstructorParameters<typeof RangeSliderView>['0']]
+    >,
   },
   propsToSet: new Map().set('_options', 0),
   resetPropsTo: new Map().set('_options', DEFAULT_OPTIONS),
@@ -386,6 +387,7 @@ testDOM({
 
         let lowerValue = valueBefore;
         let greaterValue = newValue;
+
         if (increment < 0) {
           [lowerValue, greaterValue] = [greaterValue, lowerValue];
         }

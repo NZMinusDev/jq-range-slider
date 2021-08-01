@@ -33,8 +33,8 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   );
 };
 
-const differentOptionsArg: DifferentArguments<Parameters<
-  typeof RangeSliderPipsView.prototype.setOptions
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<
+  typeof RangeSliderPipsView
 >> = {
   invalidOptionalArguments: [
     [
@@ -84,6 +84,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
         density: 2,
         formatter: (value: number) => `${value.toString()}$`,
       },
+      {},
     ],
   ],
 };
@@ -92,14 +93,9 @@ testDefaultOptions(RangeSliderPipsView, [DEFAULT_OPTIONS], viewPropertiesExpecte
 
 testInit({
   Creator: RangeSliderPipsView,
-  differentConstructorArgs: {
-    validRequiredArguments: [[]],
-    ...(differentOptionsArg as DifferentArguments<
-      ConstructorParameters<typeof RangeSliderPipsView>
-    >),
-  },
+  differentConstructorArgs,
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set('_options', 1),
+  propsToSet: new Map().set('_options', 0).set('_state', 1),
 });
 describe('init', () => {
   describe('with default options', () => {
@@ -112,6 +108,7 @@ describe('init', () => {
 
       const templateMock = jest.fn(instance.template);
       templateMock();
+      templateMock({ classInfo: {}, styleInfo: {}, attributes: {} });
       expect(templateMock).toHaveReturned();
     });
   });
@@ -138,7 +135,9 @@ testSetter({
     expecter: () => {
       // some expect calls
     },
-    differentArguments: differentOptionsArg,
+    differentArguments: differentConstructorArgs as DifferentArguments<
+      [ConstructorParameters<typeof RangeSliderPipsView>[0]]
+    >,
   },
   propsToSet: new Map().set('_options', 0),
   resetPropsTo: new Map().set('_options', DEFAULT_OPTIONS),

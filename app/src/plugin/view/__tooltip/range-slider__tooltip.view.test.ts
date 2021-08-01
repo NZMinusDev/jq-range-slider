@@ -20,8 +20,8 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   // some expect calls
 };
 
-const differentOptionsArg: DifferentArguments<Parameters<
-  typeof RangeSliderTooltipView.prototype.setOptions
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<
+  typeof RangeSliderTooltipView
 >> = {
   partialOptionalArguments: [[{ isHidden: true }]],
   fullOptionalArguments: [
@@ -31,6 +31,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
         formatter: (value: number) => `${value.toFixed(0).toLocaleString()}$`,
         isHidden: true,
       },
+      { value: 0 },
     ],
   ],
 };
@@ -39,14 +40,9 @@ testDefaultOptions(RangeSliderTooltipView, [DEFAULT_OPTIONS], viewPropertiesExpe
 
 testInit({
   Creator: RangeSliderTooltipView,
-  differentConstructorArgs: {
-    validRequiredArguments: [[]],
-    ...(differentOptionsArg as DifferentArguments<
-      ConstructorParameters<typeof RangeSliderTooltipView>
-    >),
-  },
+  differentConstructorArgs,
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set('_options', 1),
+  propsToSet: new Map().set('_options', 0).set('_state', 1),
 });
 describe('init', () => {
   describe('with default options', () => {
@@ -56,6 +52,11 @@ describe('init', () => {
       const formatterMock = jest.fn(instance['_options'].formatter);
       formatterMock(12.345);
       expect(formatterMock).toHaveReturned();
+
+      const templateMock = jest.fn(instance.template);
+      templateMock();
+      templateMock({ classInfo: {}, styleInfo: {}, attributes: {} });
+      expect(templateMock).toHaveReturned();
     });
   });
 });
@@ -83,7 +84,9 @@ testSetter({
     expecter: ({ mock, passedArgs, instance }) => {
       // some expect calls
     },
-    differentArguments: differentOptionsArg,
+    differentArguments: differentConstructorArgs as DifferentArguments<
+      [ConstructorParameters<typeof RangeSliderTooltipView>['0']]
+    >,
   },
   propsToSet: new Map().set('_options', 0),
   resetPropsTo: new Map().set('_options', DEFAULT_OPTIONS),

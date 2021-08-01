@@ -18,24 +18,19 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   // some expect calls
 };
 
-const differentOptionsArg: DifferentArguments<Parameters<
-  typeof RangeSliderRangeView.prototype.setOptions
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<
+  typeof RangeSliderRangeView
 >> = {
-  fullOptionalArguments: [[{ isConnected: true }]],
+  fullOptionalArguments: [[{ isConnected: true }, {}]],
 };
 
 testDefaultOptions(RangeSliderRangeView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
   Creator: RangeSliderRangeView,
-  differentConstructorArgs: {
-    validRequiredArguments: [[]],
-    ...(differentOptionsArg as DifferentArguments<
-      ConstructorParameters<typeof RangeSliderRangeView>
-    >),
-  },
+  differentConstructorArgs,
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set('_options', 1),
+  propsToSet: new Map().set('_options', 0).set('_state', 1),
 });
 describe('init', () => {
   describe('with default options', () => {
@@ -44,6 +39,7 @@ describe('init', () => {
 
       const templateMock = jest.fn(instance.template);
       templateMock();
+      templateMock({ classInfo: {}, styleInfo: {}, attributes: {} });
       expect(templateMock).toHaveReturned();
     });
   });
@@ -72,7 +68,9 @@ testSetter({
     expecter: ({ mock, passedArgs, instance }) => {
       // some expect calls
     },
-    differentArguments: differentOptionsArg,
+    differentArguments: differentConstructorArgs as DifferentArguments<
+      [ConstructorParameters<typeof RangeSliderRangeView>['0']]
+    >,
   },
   propsToSet: new Map().set('_options', 0),
   resetPropsTo: new Map().set('_options', DEFAULT_OPTIONS),

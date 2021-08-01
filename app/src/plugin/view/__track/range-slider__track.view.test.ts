@@ -77,8 +77,8 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   });
 };
 
-const differentOptionsArg: DifferentArguments<Parameters<
-  typeof RangeSliderTrackView.prototype.setOptions
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<
+  typeof RangeSliderTrackView
 >> = {
   invalidOptionalArguments: [
     [{ intervals: { min: 100, max: 100 } }],
@@ -114,6 +114,7 @@ const differentOptionsArg: DifferentArguments<Parameters<
         steps: [1, 100, 11],
         padding: [10, 5],
       },
+      {},
     ],
   ],
 };
@@ -122,14 +123,9 @@ testDefaultOptions(RangeSliderTrackView, [DEFAULT_OPTIONS], viewPropertiesExpect
 
 testInit({
   Creator: RangeSliderTrackView,
-  differentConstructorArgs: {
-    validRequiredArguments: [[]],
-    ...(differentOptionsArg as DifferentArguments<
-      ConstructorParameters<typeof RangeSliderTrackView>
-    >),
-  },
+  differentConstructorArgs,
   instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set('_options', 1),
+  propsToSet: new Map().set('_options', 0).set('_state', 1),
 });
 describe('init', () => {
   describe("with steps, padding, options aren't array", () => {
@@ -152,6 +148,7 @@ describe('init', () => {
 
       const templateMock = jest.fn(instance.template);
       templateMock();
+      templateMock({ classInfo: {}, styleInfo: {}, attributes: {} }, undefined);
       expect(templateMock).toHaveReturned();
     });
   });
@@ -180,7 +177,9 @@ testSetter({
     expecter: ({ mock, passedArgs, instance }) => {
       // some expect calls
     },
-    differentArguments: differentOptionsArg,
+    differentArguments: differentConstructorArgs as DifferentArguments<
+      [ConstructorParameters<typeof RangeSliderTrackView>['0']]
+    >,
   },
   propsToSet: new Map().set('_options', 0),
   resetPropsTo: new Map().set('_options', DEFAULT_OPTIONS),
