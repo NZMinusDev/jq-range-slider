@@ -2,8 +2,6 @@ import IModel from './IModel';
 
 const mainModel: IModel = {
   async setState(state) {
-    console.log('setState: ', JSON.stringify(state));
-
     await fetch('/fetch/post/state', {
       method: 'POST',
       headers: {
@@ -23,17 +21,17 @@ const mainModel: IModel = {
       body: JSON.stringify({ mode: 'get' }),
     });
 
+    // eslint-disable-next-line sonarjs/prefer-immediate-return
     const result = await response.json();
-
-    console.log('getState: ', result);
 
     return result;
   },
   whenStateIsChanged(callback) {
-    const eventSource = new EventSource('/stateChanger');
+    if (this.eventSource === undefined) {
+      this.eventSource = new EventSource('/stateChanger');
+    }
 
-    eventSource.onmessage = function (event) {
-      console.log('New message from server: ', event.data);
+    this.eventSource.onmessage = function (event) {
       callback(JSON.parse(event.data).state);
     };
   },

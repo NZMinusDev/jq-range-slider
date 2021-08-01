@@ -1,4 +1,4 @@
-import { camelCase } from 'lodash-es';
+import camelCase from 'lodash-es/camelCase';
 
 import {
   BEMComponent,
@@ -9,6 +9,8 @@ import type {
   EventsLoggerElementWithComponent,
 } from '@views/common-level/containers/events-logger/events-logger';
 import '@views/common-level/containers/events-logger/events-logger';
+import type { FormFieldElementWithComponent } from '@views/common-level/primitives/form-field/form-field';
+import '@views/common-level/primitives/form-field/form-field';
 import type {
   SliderConfigCustomEvents,
   SliderConfigElementWithComponent,
@@ -34,6 +36,7 @@ type ConfigurableSliderDemoDOM = {
   slider: ConfigurableSliderDemoSliderElementWithComponent;
   eventsLogger: EventsLoggerElementWithComponent;
   submit: ConfigurableSliderDemoSubmitElementWithComponent;
+  serverResponse: FormFieldElementWithComponent;
   sliderConfig: SliderConfigElementWithComponent;
 };
 
@@ -58,6 +61,14 @@ class ConfigurableSliderDemo extends BEMComponent<
     this._initDisplay();
   }
 
+  getSlider() {
+    return this._DOM.slider.component;
+  }
+  addServerResponse(value: string) {
+    const currentValue = this._DOM.serverResponse.component.get();
+    this._DOM.serverResponse.component.set(`${currentValue}${value}\n`);
+  }
+
   protected _initDOM() {
     const slider = this.element.querySelector(
       '.js-configurable-slider-demo__slider'
@@ -68,11 +79,14 @@ class ConfigurableSliderDemo extends BEMComponent<
     const submit = this.element.querySelector(
       '.js-configurable-slider-demo__submit'
     ) as ConfigurableSliderDemoDOM['submit'];
+    const serverResponse = this.element.querySelector(
+      '.js-configurable-slider-demo__server-response'
+    )?.firstElementChild as ConfigurableSliderDemoDOM['serverResponse'];
     const sliderConfig = this.element.querySelector(
       '.js-slider-config'
     ) as ConfigurableSliderDemoDOM['sliderConfig'];
 
-    return { slider, eventsLogger, submit, sliderConfig };
+    return { slider, eventsLogger, submit, serverResponse, sliderConfig };
   }
 
   protected _bindSliderListeners() {

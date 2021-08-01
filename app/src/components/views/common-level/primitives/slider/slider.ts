@@ -2,9 +2,9 @@ import {
   BEMComponent,
   HTMLElementWithComponent,
 } from '@utils/devTools/scripts/ComponentCreationHelper';
-import '@plugin/range-slider-plugin';
-import '@plugin/jq-range-slider-plugin';
+import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
 import IRangeSliderView, { RangeSliderOptions } from '@plugin/view/range-slider.view.coupling';
+import '@plugin/range-slider-plugin';
 
 import sliderElements, { SliderElement } from './slider-elements';
 
@@ -51,7 +51,7 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
   get() {
     return this._libSlider.get();
   }
-  set(value: RangeSliderOptions['start']) {
+  set(value: Unpacked<Parameters<IRangeSliderView['set']>>) {
     this._libSlider.set(value);
 
     return this;
@@ -66,7 +66,8 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
   }
 
   protected _initLibSlider() {
-    return new window.RangeSliderPresenter(this.element, this._options).view;
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return new window.RangeSliderPresenter(this.element, () => {}, this._options).view;
   }
 
   protected _bindLibSliderListeners() {

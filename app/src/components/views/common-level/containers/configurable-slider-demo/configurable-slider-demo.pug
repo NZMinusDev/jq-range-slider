@@ -20,8 +20,10 @@ mixin configurable-slider-demo({ action = undefined, name = 'configurable-slider
       name=name,
       method=method
     )
-      +form-field({ type: 'text', name: `${name}-setter` })
+      +form-field({ name: `${name}-setter`, type: 'text' })
       +button(type="submit", name=`${name}-set`, value=".set(...values)")
       +button(type="reset", name=`${name}-reset`, value="reset slider value")
+    .configurable-slider-demo__server-response.js-configurable-slider-demo__server-response
+      +form-field({ label: 'Server response', name: `${name}-server-response`, type: 'textarea', inputResize: 'none', orientation: 'column', inputTextAlign: 'center', readonly: true })
     +slider-events-emission-table
     +slider-config

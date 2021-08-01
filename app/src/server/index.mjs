@@ -1,24 +1,31 @@
+/* eslint-disable import/extensions */
 /* eslint-disable import/no-extraneous-dependencies */
 
 import express from 'express';
 import path from 'path';
+import isEqual from 'lodash/isEqual.js';
+import cloneDeep from 'lodash/cloneDeep.js';
 
 const app = express();
 const jsonParser = express.json();
+
+const state = { value: [50] };
 
 app.use(express.static(path.resolve('app/dist')));
 
 app.use('/fetch/post/state', jsonParser, (req, res, next) => {
   switch (req.body.mode) {
     case 'get': {
-      console.log('getState');
+      console.log('getState: ', state);
 
-      res.json({ value: 0 });
+      res.json(state);
 
       break;
     }
     case 'set': {
-      console.log('setState: ', req.body.state);
+      state.value = JSON.parse(req.body.state).value;
+
+      console.log('setState: ', state);
 
       res.sendStatus(200);
 
@@ -36,19 +43,21 @@ app.use('/fetch/post/state', jsonParser, (req, res, next) => {
 });
 
 app.use('/stateChanger', (req, res, next) => {
-  console.log('whenStateIsChanged');
-
-  const state = { value: 0 };
-
   res.writeHead(200, {
     Connection: 'keep-alive',
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
   });
 
-  setTimeout(() => {
-    res.write(`data: {"state": ${JSON.stringify(state)}}\nid: ${Date.now()}\n\n`);
-  }, 2000);
+  let sentState = cloneDeep(state);
+  setInterval(() => {
+    if (!isEqual(sentState, state)) {
+      res.write(`data: {"state": ${JSON.stringify(state)}}\nid: ${Date.now()}\n\n`);
+      console.log('whenStateIsChanged: ', state);
+    }
+
+    sentState = cloneDeep(state);
+  }, 3000);
 
   next();
 });

@@ -1,50 +1,52 @@
+import defaultsDeep from 'lodash-es/defaultsDeep';
+
 import { renderMVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
 import IRangeSliderView, { RangeSliderOptions } from '../view/range-slider.view.coupling';
-import IRangeSliderModel from '../models/range-slider.model.coupling';
-import IRangeSliderPresenter from './range-slider.coupling';
-
 import RangeSliderView from '../view/range-slider.view';
+import IRangeSliderModel from '../models/range-slider.model.coupling';
+import IRangeSliderPresenter, { ErrorCatcher } from './range-slider.coupling';
 
 class RangeSliderPresenter implements IRangeSliderPresenter {
   readonly view: IRangeSliderView;
+  model?: IRangeSliderModel;
 
   constructor(
     container: HTMLElement,
+    errorCatcher: ErrorCatcher,
     viewOptions?: RangeSliderOptions,
-    readonly model?: IRangeSliderModel
+    model?: IRangeSliderModel
   ) {
     this.view = renderMVPView(RangeSliderView, [viewOptions] as [RangeSliderOptions], container);
 
     if (model !== undefined) {
-      this.setModel(model);
+      this.setModel(model, errorCatcher);
     }
   }
 
-  setModel(model: IRangeSliderModel) {
-    model
-      .getState()
+  setModel(model: IRangeSliderModel, errorCatcher: ErrorCatcher) {
+    this.model = defaultsDeep({}, model);
+
+    this.model
+      ?.getState()
       .then((state) => {
         this.view.set(state.value);
 
         return this;
       })
       .then(() => {
-        const setHandler = () => {
-          model.setState({ value: this.view.get() });
+        const handleViewUpdate = () => {
+          this.model?.setState({ value: this.view.get() });
         };
 
-        this.view.on('set', setHandler);
-        model.whenStateIsChanged((state) => {
+        this.view.on('update', handleViewUpdate);
+        this.model?.whenStateIsChanged((state) => {
           this.view.set(state.value);
         });
 
         return this;
       })
-      .catch((reason) => {
-        // eslint-disable-next-line no-console
-        console.error(reason);
-      });
+      .catch(errorCatcher);
 
     return this;
   }
