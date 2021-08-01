@@ -2,8 +2,8 @@ interface Window {
   RangeSliderPresenter: {
     new (
       ...args: ConstructorParameters<
-        import('./presenter/range-slider.coupling').IRangeSliderPresenterConstructor
+        import('./presenter/range-slider').RangeSliderPresenterConstructor
       >
-    ): import('./presenter/range-slider.coupling').default;
+    ): import('./presenter/range-slider').default;
   };
 }

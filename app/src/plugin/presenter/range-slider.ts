@@ -66,4 +66,13 @@ class RangeSliderPresenter {
   }
 }
 
-export default RangeSliderPresenter;
+interface RangeSliderPresenterConstructor {
+  new (
+    container: HTMLElement,
+    errorCatcher: ErrorCatcher,
+    viewOptions?: RangeSliderOptions,
+    model?: IRangeSliderModel
+  ): RangeSliderPresenter;
+}
+
+export { RangeSliderPresenter as default, RangeSliderPresenterConstructor, ErrorCatcher };
