@@ -6,6 +6,7 @@ import path from 'path';
 import isEqual from 'lodash/isEqual.js';
 import cloneDeep from 'lodash/cloneDeep.js';
 
+// local
 const isDev = process.env.NODE_ENV === 'development';
 
 const app = express();
@@ -74,6 +75,6 @@ app.use('/stateChanger', (req, res, next) => {
   next();
 });
 
-app.listen(8080, () => {
+app.listen(process.env.PORT || 8080, () => {
   console.log('Server started at 8080');
 });
