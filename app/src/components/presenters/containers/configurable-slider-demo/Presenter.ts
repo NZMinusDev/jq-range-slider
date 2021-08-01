@@ -1,5 +1,6 @@
 import cloneDeep from 'lodash-es/cloneDeep';
 
+import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
 import IModel from '@models/containers/configurable-slider-demo/IModel';
 import {
   ConfigurableSliderDemo,
@@ -25,36 +26,45 @@ class Presenter {
   }
 
   setModel(model: IModel, errorCatcher: ErrorCatcher) {
+    if (this.model !== undefined) {
+      this.model.closeConnections();
+    }
+
     this.model = cloneDeep(model);
 
     this.model
       .getState()
       .then((state) => {
-        const slider = this.view.getSlider();
-
-        slider.set(state.value);
-        this.view.addServerResponse(state.value.toString());
-
-        return this;
-      })
-      .then(() => {
-        const handleSliderViewUpdate = (
-          event: CustomEvent<ConfigurableSliderDemoCustomEvents['update']>
-        ) => {
-          this.model?.setState({ value: event.detail.value });
-        };
-
-        this.view.addCustomEventListener('update', handleSliderViewUpdate);
-        this.model?.whenStateIsChanged((state) => {
-          const slider = this.view.getSlider();
-
-          slider.set(state.value);
-          this.view.addServerResponse(state.value.toString());
-        });
+        this._initModelViewBinding();
+        this._updateViewDisplay(state);
 
         return this;
       })
       .catch(errorCatcher);
+
+    return this;
+  }
+
+  protected handleSliderViewSet = (
+    event: CustomEvent<ConfigurableSliderDemoCustomEvents['set']>
+  ) => {
+    this.model?.setState({ value: event.detail.value });
+  };
+
+  protected _updateViewDisplay(state: Unpacked<ReturnType<IModel['getState']>>) {
+    const slider = this.view.getSlider();
+
+    slider.set(state.value);
+    this.view.addServerResponse(state.value.toString());
+
+    return this;
+  }
+
+  protected _initModelViewBinding() {
+    this.view.addCustomEventListener('set', this.handleSliderViewSet);
+    this.model?.whenStateIsChanged((state) => {
+      this._updateViewDisplay(state);
+    });
 
     return this;
   }

@@ -1,13 +1,15 @@
 import defaultsDeep from 'lodash-es/defaultsDeep';
 
+import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
 import { renderMVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
 import IRangeSliderView, { RangeSliderOptions } from '../view/range-slider.view.coupling';
 import RangeSliderView from '../view/range-slider.view';
 import IRangeSliderModel from '../models/range-slider.model.coupling';
-import IRangeSliderPresenter, { ErrorCatcher } from './range-slider.coupling';
 
-class RangeSliderPresenter implements IRangeSliderPresenter {
+type ErrorCatcher = (reason: unknown) => void;
+
+class RangeSliderPresenter {
   readonly view: IRangeSliderView;
   model?: IRangeSliderModel;
 
@@ -25,28 +27,40 @@ class RangeSliderPresenter implements IRangeSliderPresenter {
   }
 
   setModel(model: IRangeSliderModel, errorCatcher: ErrorCatcher) {
+    if (this.model !== undefined) {
+      this.model.closeConnections();
+    }
+
     this.model = defaultsDeep({}, model);
 
     this.model
       ?.getState()
       .then((state) => {
-        this.view.set(state.value);
-
-        return this;
-      })
-      .then(() => {
-        const handleViewUpdate = () => {
-          this.model?.setState({ value: this.view.get() });
-        };
-
-        this.view.on('update', handleViewUpdate);
-        this.model?.whenStateIsChanged((state) => {
-          this.view.set(state.value);
-        });
+        this._initModelViewBinding();
+        this._updateViewDisplay(state);
 
         return this;
       })
       .catch(errorCatcher);
+
+    return this;
+  }
+
+  protected handleViewSet = () => {
+    this.model?.setState({ value: this.view.get() });
+  };
+
+  protected _updateViewDisplay(state: Unpacked<ReturnType<IRangeSliderModel['getState']>>) {
+    this.view.set(state.value);
+
+    return this;
+  }
+
+  protected _initModelViewBinding() {
+    this.view.on('set', this.handleViewSet);
+    this.model?.whenStateIsChanged((state) => {
+      this._updateViewDisplay(state);
+    });
 
     return this;
   }
