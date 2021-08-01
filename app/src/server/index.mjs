@@ -53,15 +53,17 @@ app.use('/stateChanger', (req, res, next) => {
   let sentState = cloneDeep(state);
 
   if (timerId === undefined) {
-    timerId = setInterval(() => {
-      if (!isEqual(sentState, state)) {
-        res.write(`data: {"state": ${JSON.stringify(state)}}\nid: ${Date.now()}\n\n`);
-        console.log('whenStateIsChanged: ', state);
-      }
-
-      sentState = cloneDeep(state);
-    }, 3000);
+    clearTimeout(timerId);
   }
+
+  timerId = setInterval(() => {
+    if (!isEqual(sentState, state)) {
+      res.write(`data: {"state": ${JSON.stringify(state)}}\nid: ${Date.now()}\n\n`);
+      console.log('whenStateIsChanged: ', state);
+    }
+
+    sentState = cloneDeep(state);
+  }, 3000);
 
   next();
 });
