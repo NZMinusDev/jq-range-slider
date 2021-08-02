@@ -28,7 +28,7 @@ class RangeSliderTooltipView
     class=${classMap({
       'range-slider__tooltip': true,
       [`range-slider__tooltip_orientation-${this._options.orientation}`]: true,
-      'range-slider__tooltip_isHidden': this._options.isHidden,
+      'range-slider__tooltip_hidden': this._options.isHidden,
       ...classInfo,
     })}
     ...=${spread(attributes)}

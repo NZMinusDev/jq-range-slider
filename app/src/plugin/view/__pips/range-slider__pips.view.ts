@@ -29,7 +29,7 @@ class RangeSliderPipsView
         'range-slider__pips': true,
         'js-range-slider__pips': true,
         [`range-slider__pips_orientation-${this._options.orientation}`]: true,
-        'range-slider__pips_isHidden': this._options.isHidden,
+        'range-slider__pips_hidden': this._options.isHidden,
         ...classInfo,
       })}
       ...=${spread(attributes)}
