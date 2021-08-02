@@ -4,30 +4,30 @@ exports[`DOM manipulation renders correctly 1`] = `
 <DocumentFragment>
   <!---->
   <div
-    class="range-slider range-slider_orientation-horizontal"
+    class="range-slider range-slider_orientation_horizontal"
     style=""
   >
     
     
     <div
-      class="range-slider__track js-range-slider__track range-slider__track_orientation-horizontal"
+      class="range-slider__track js-range-slider__track range-slider__track_orientation_horizontal"
       style=""
     >
       
       
       <!---->
       <div
-        class="range-slider__range js-range-slider__range range-slider__range_animate-tap"
+        class="range-slider__range js-range-slider__range range-slider__range_animate_tap"
         style="transform: translate(0%, 0) scale(0.5, 1);"
       />
       <!---->
       <div
-        class="range-slider__range js-range-slider__range range-slider__range_animate-tap"
+        class="range-slider__range js-range-slider__range range-slider__range_animate_tap"
         style="transform: translate(50%, 0) scale(0.5, 1);"
       />
       <!---->
       <div
-        class="range-slider__thumb-origin js-range-slider__thumb-origin range-slider__thumb-origin_orientation-horizontal range-slider__thumb-origin_animate-tap"
+        class="range-slider__thumb-origin js-range-slider__thumb-origin range-slider__thumb-origin_orientation_horizontal range-slider__thumb-origin_animate_tap"
         style="transform: translate(450%, 0); z-index: 2;"
       >
         
@@ -45,7 +45,7 @@ exports[`DOM manipulation renders correctly 1`] = `
           
         
           <div
-            class="range-slider__tooltip range-slider__tooltip_orientation-top"
+            class="range-slider__tooltip range-slider__tooltip_orientation_top"
             style=""
           >
             
@@ -67,7 +67,7 @@ exports[`DOM manipulation renders correctly 1`] = `
     
     
     <div
-      class="range-slider__pips js-range-slider__pips range-slider__pips_orientation-horizontal"
+      class="range-slider__pips js-range-slider__pips range-slider__pips_orientation_horizontal"
       style=""
     >
       
@@ -76,7 +76,7 @@ exports[`DOM manipulation renders correctly 1`] = `
       <!---->
       <!---->
       <div
-        class="range-slider__pips-marker js-range-slider__pips-marker range-slider__pips-marker_size-long"
+        class="range-slider__pips-marker js-range-slider__pips-marker range-slider__pips-marker_size_long"
         style="left: 0%;"
       />
       <!---->
@@ -592,7 +592,7 @@ exports[`DOM manipulation renders correctly 1`] = `
       <!---->
       <!---->
       <div
-        class="range-slider__pips-marker js-range-slider__pips-marker range-slider__pips-marker_size-long"
+        class="range-slider__pips-marker js-range-slider__pips-marker range-slider__pips-marker_size_long"
         style="left: 100%;"
       />
       <!---->
