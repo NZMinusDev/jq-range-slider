@@ -962,6 +962,40 @@ testDOM({
             bubbles: true,
           })
         );
+
+        instance.set();
+      });
+
+      test('after options updated value calculating should be properly(with new arguments in formula)', () => {
+        instance.setOptions({ intervals: { min: intervals.min, max: intervals.max * 10 } });
+
+        supremumThumb.dispatchEvent(
+          new PointerEvent('pointerdown', {
+            pointerId: 1,
+            bubbles: true,
+          })
+        );
+
+        supremumThumb.dispatchEvent(
+          new PointerEvent('pointermove', {
+            pointerId: 1,
+            movementX: trackPXSize,
+            bubbles: true,
+          })
+        );
+
+        supremumThumb.dispatchEvent(
+          new PointerEvent('lostpointercapture', {
+            pointerId: 1,
+            bubbles: true,
+          })
+        );
+
+        const desiredValues = [...start];
+        desiredValues[2] = intervals.max * 10 - padding;
+        expect(instance.get()).toStrictEqual(desiredValues);
+
+        instance.setOptions({ intervals: { min: intervals.min, max: intervals.max } });
       });
     },
   ],

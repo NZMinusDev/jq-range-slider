@@ -770,10 +770,7 @@ class RangeSliderView
     handleEvent: (event: Event) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
-      // FIXME: init always
-      if (!this._thumbEventListenerObject.cache.has(origin)) {
-        this._thumbEventListenerObject.cache.set(origin, this._initThumbCache(origin));
-      }
+      this._thumbEventListenerObject.cache.set(origin, this._initThumbCache(origin));
 
       handleEvent.apply(this._thumbEventListenerObject, [event, 'thumb']);
     },
@@ -816,8 +813,6 @@ class RangeSliderView
         return;
       }
 
-      const newCalculated = cache.getCalculated();
-
       let thumbValue = this._state.value[cache.thumbIndex];
       const currentIntervalInfo = this._getIntervalInfoByPoint(thumbValue) as {
         keyOfInfimum: string;
@@ -838,7 +833,7 @@ class RangeSliderView
 
       const thumbValueIncrementation =
         (cache.movementAcc / window.devicePixelRatio) *
-        newCalculated.valuePerPx *
+        cache.valuePerPx *
         currentIntervalInfo.magnificationFactor;
       thumbValue += thumbValueIncrementation;
 
@@ -847,7 +842,7 @@ class RangeSliderView
         thumbValue,
         thumbValueIncrementation,
         cache.movementAcc,
-        newCalculated.valuePerPx
+        cache.valuePerPx
       );
 
       if (currentIntervalInfo.step !== 'none') {
@@ -906,17 +901,21 @@ class RangeSliderView
     },
   };
   protected _initThumbCache(origin: HTMLElement) {
-    // FIXME: some should recalc always
     const trackElem = origin.closest('.js-range-slider__track') as HTMLElement;
+    const ranges = trackElem.querySelectorAll<HTMLElement>('.js-range-slider__range');
+
     const trackValueSize = this._options.intervals.max - this._options.intervals.min;
     const thumbIndex = Array.from(
       trackElem.querySelectorAll<HTMLElement>('.js-range-slider__thumb-origin')
     ).indexOf(origin);
-    const ranges = trackElem.querySelectorAll<HTMLElement>('.js-range-slider__range');
     const siblingRanges = [ranges.item(thumbIndex), ranges.item(thumbIndex + 1)] as [
       HTMLElement,
       HTMLElement
     ];
+    const valuePerPx =
+      this._options.orientation === 'horizontal'
+        ? trackValueSize / trackElem.getBoundingClientRect().width
+        : trackValueSize / trackElem.getBoundingClientRect().height;
 
     return {
       trackElem,
@@ -924,16 +923,7 @@ class RangeSliderView
       movementAcc: 0,
       trackValueSize,
       siblingRanges,
-      getCalculated: () => {
-        const valuePerPx =
-          this._options.orientation === 'horizontal'
-            ? trackValueSize / trackElem.getBoundingClientRect().width
-            : trackValueSize / trackElem.getBoundingClientRect().height;
-
-        return {
-          valuePerPx,
-        };
-      },
+      valuePerPx,
     };
   }
   protected _isMoveFromExteriorOfThumb(thumbDOMRect: DOMRect, event: PointerEvent) {
