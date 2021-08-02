@@ -34,6 +34,8 @@ class ConfigurableSliderDemoSubmit extends BEMComponent<
 
   set(value: string) {
     this._DOM.textField.value = value;
+
+    return this;
   }
 
   protected _initDOM() {

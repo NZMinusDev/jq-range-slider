@@ -67,6 +67,8 @@ class ConfigurableSliderDemo extends BEMComponent<
   addServerResponse(value: string) {
     const currentValue = this._DOM.serverResponse.component.get();
     this._DOM.serverResponse.component.set(`${currentValue}${value}\n`);
+
+    return this;
   }
 
   protected _initDOM() {
@@ -341,6 +343,8 @@ class ConfigurableSliderDemo extends BEMComponent<
     const sliderConfig = this._DOM.sliderConfig.component;
 
     sliderConfig.set(slider.getOptions());
+
+    return this;
   }
 }
 

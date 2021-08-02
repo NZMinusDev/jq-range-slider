@@ -66,6 +66,8 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     configItems.pipsValues.value =
       options.pips.mode === 'count' ? `${options.pips.values}` : `[${options.pips.values}]`;
     configItems.pipsIsHidden.checked = options.pips.isHidden;
+
+    return this;
   }
 
   protected _initDOM() {

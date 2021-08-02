@@ -87,6 +87,8 @@ class Colorpicker extends BEMComponent<ColorpickerElement, ColorpickerCustomEven
 
     this._DOM.result.style.backgroundColor = color;
     this._DOM.result.style.color = color;
+
+    return this;
   }
 }
 

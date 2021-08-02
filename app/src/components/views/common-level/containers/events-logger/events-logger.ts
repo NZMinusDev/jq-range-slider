@@ -26,6 +26,8 @@ class EventsLogger extends BEMComponent<EventsLoggerElement, EventsLoggerCustomE
 
   blinkFirefly(index: number) {
     this._DOM.fireflies[index].component.blink();
+
+    return this;
   }
 
   protected _initDOM() {
