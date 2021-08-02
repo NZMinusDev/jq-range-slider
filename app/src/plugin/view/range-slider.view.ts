@@ -920,10 +920,10 @@ class RangeSliderView
     return {
       trackElem,
       thumbIndex,
-      movementAcc: 0,
       trackValueSize,
       siblingRanges,
       valuePerPx,
+      movementAcc: 0,
     };
   }
   protected _isMoveFromExteriorOfThumb(thumbDOMRect: DOMRect, event: PointerEvent) {
@@ -934,17 +934,25 @@ class RangeSliderView
     if (this._options.orientation === 'horizontal') {
       isCursorMore = event.clientX > thumbDOMRect.right;
       isCursorLess = event.clientX < thumbDOMRect.left;
+
+      if (isCursorMore) {
+        isReverseMovement = event.movementX < 0;
+      } else if (isCursorLess) {
+        isReverseMovement = event.movementX > 0;
+      } else {
+        isReverseMovement = false;
+      }
     } else {
       isCursorMore = event.clientY > thumbDOMRect.bottom;
       isCursorLess = event.clientY < thumbDOMRect.top;
-    }
 
-    if (isCursorMore) {
-      isReverseMovement = event.movementX < 0 || event.movementY < 0;
-    } else if (isCursorLess) {
-      isReverseMovement = event.movementX > 0 || event.movementY > 0;
-    } else {
-      isReverseMovement = false;
+      if (isCursorMore) {
+        isReverseMovement = event.movementY < 0;
+      } else if (isCursorLess) {
+        isReverseMovement = event.movementY > 0;
+      } else {
+        isReverseMovement = false;
+      }
     }
 
     const isNotOnTrack = isCursorMore || isCursorLess;
