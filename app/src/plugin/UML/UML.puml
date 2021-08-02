@@ -213,12 +213,12 @@ class RangeSliderPresenter {
     #_updateViewDisplay(state: Required<RangeSliderState>): this
     #_initModelViewBinding(): this
 }
-RangeSliderView "1" *-- "1" RangeSliderTrackView : composes template using template of >
-RangeSliderView "1" *-- "*" RangeSliderRangeView : composes template using templates of >
-RangeSliderView "1" *-- "*" RangeSliderThumbView : composes template using templates of >
-RangeSliderView "1" *-- "*" RangeSliderTooltipView : composes template using templates of >
-RangeSliderView "1" *-- "1" RangeSliderPipsView : composes template using template of >
-RangeSliderPresenter "1" --> "1" IRangeSliderModel : get/set state, listen state update 
+RangeSliderView "1" --* "1" RangeSliderTrackView : composes template using template of >
+RangeSliderView "1" --* "*" RangeSliderRangeView : composes template using templates of >
+RangeSliderView "1" --* "*" RangeSliderThumbView : composes template using templates of >
+RangeSliderView "1" --* "*" RangeSliderTooltipView : composes template using templates of >
+RangeSliderView "1" --* "1" RangeSliderPipsView : composes template using template of >
+RangeSliderPresenter "1" --o "1" IRangeSliderModel : get/set state, listen state update 
 RangeSliderPresenter "1" --> "1" IRangeSliderView : supply state (Update)
 IRangeSliderModel "1" ..> "1" RangeSliderPresenter : change notification (calls passed to 'whenStateIsChanged' callback which updates view display)
 IRangeSliderView "1" ..> "1" RangeSliderPresenter : user action ('set' event)
