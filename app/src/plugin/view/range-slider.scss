@@ -7,13 +7,13 @@
 
 .range-slider {
   display: inline-flex;
-}
 
-.range-slider_orientation-horizontal {
-  width: 100%;
-  flex-direction: column;
-}
-.range-slider_orientation-vertical {
-  height: 100%;
-  flex-direction: row;
+  &_orientation-horizontal {
+    width: 100%;
+    flex-direction: column;
+  }
+  &_orientation-vertical {
+    height: 100%;
+    flex-direction: row;
+  }
 }

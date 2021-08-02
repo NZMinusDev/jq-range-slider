@@ -8,12 +8,14 @@
   will-change: transform;
   transform-origin: 0 0;
   transform-style: flat;
+
+  &_connected {
+    opacity: 1;
+  }
+  
+  &_animate-tap {
+    transition: transform 0.3s;
+  }
 }
 
-.range-slider__range_connected {
-  opacity: 1;
-}
 
-.range-slider__range_animate-tap {
-  transition: transform 0.3s;
-}

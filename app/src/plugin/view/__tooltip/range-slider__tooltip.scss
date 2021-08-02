@@ -17,29 +17,29 @@ $triangleSize: 5px;
     border-width: $triangleSize;
     border-style: solid;
   }
-}
 
-.range-slider__tooltip_orientation-top {
-  bottom: calc(100% + #{$triangleSize * 2});
+  &_orientation-top {
+    bottom: calc(100% + #{$triangleSize * 2});
 
-  &:before {
-    top: 100%;
-    left: 50%;
-    transform: translate(-50%, 0);
-    border-color: black transparent transparent transparent;
+    &:before {
+      top: 100%;
+      left: 50%;
+      transform: translate(-50%, 0);
+      border-color: black transparent transparent transparent;
+    }
   }
-}
-.range-slider__tooltip_orientation-left {
-  right: calc(100% + #{$triangleSize * 2});
+  &_orientation-left {
+    right: calc(100% + #{$triangleSize * 2});
 
-  &:before {
-    top: 50%;
-    left: 100%;
-    transform: translate(0, -50%);
-    border-color: transparent transparent transparent black;
+    &:before {
+      top: 50%;
+      left: 100%;
+      transform: translate(0, -50%);
+      border-color: transparent transparent transparent black;
+    }
   }
-}
 
-.range-slider__tooltip_hidden {
-  display: none;
+  &_hidden {
+    display: none;
+  }
 }
