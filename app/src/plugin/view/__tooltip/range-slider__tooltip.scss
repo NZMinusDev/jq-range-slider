@@ -18,7 +18,7 @@ $triangleSize: 5px;
     border-style: solid;
   }
 
-  &_orientation-top {
+  &_orientation_top {
     bottom: calc(100% + #{$triangleSize * 2});
 
     &:before {
@@ -28,7 +28,7 @@ $triangleSize: 5px;
       border-color: black transparent transparent transparent;
     }
   }
-  &_orientation-left {
+  &_orientation_left {
     right: calc(100% + #{$triangleSize * 2});
 
     &:before {

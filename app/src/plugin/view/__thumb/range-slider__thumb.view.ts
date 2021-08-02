@@ -37,8 +37,8 @@ class RangeSliderThumbView
       class=${classMap({
         'range-slider__thumb-origin': true,
         'js-range-slider__thumb-origin': true,
-        [`range-slider__thumb-origin_orientation-${this._state.ariaOrientation}`]: true,
-        'range-slider__thumb-origin_isActive': isActive,
+        [`range-slider__thumb-origin_orientation_${this._state.ariaOrientation}`]: true,
+        'range-slider__thumb-origin_active': isActive,
         ...classInfo,
       })}
       ...=${spread(attributes)}

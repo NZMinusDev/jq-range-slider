@@ -28,7 +28,7 @@ class RangeSliderPipsView
       class=${classMap({
         'range-slider__pips': true,
         'js-range-slider__pips': true,
-        [`range-slider__pips_orientation-${this._options.orientation}`]: true,
+        [`range-slider__pips_orientation_${this._options.orientation}`]: true,
         'range-slider__pips_hidden': this._options.isHidden,
         ...classInfo,
       })}
@@ -111,7 +111,7 @@ class RangeSliderPipsView
     const longMarkerClasses: ClassInfo = {
       'range-slider__pips-marker': true,
       'js-range-slider__pips-marker': true,
-      'range-slider__pips-marker_size-long': true,
+      'range-slider__pips-marker_size_long': true,
     };
 
     const positionKey = this._options.orientation === 'horizontal' ? 'left' : 'top';

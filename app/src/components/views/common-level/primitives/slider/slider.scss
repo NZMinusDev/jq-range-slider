@@ -2,23 +2,23 @@
   height: 100%;
 
   &_color_red {
-    .range-slider__range_isConnected {
+    .range-slider__range_connected {
       background-color: red;
     }
   }
   &_color_green {
-    .range-slider__range_isConnected {
+    .range-slider__range_connected {
       background-color: green;
     }
   }
   &_color_blue {
-    .range-slider__range_isConnected {
+    .range-slider__range_connected {
       background-color: blue;
     }
   }
 
   &_with-switchable-tooltips {
-    .range-slider__thumb-origin_isActive .range-slider__tooltip {
+    .range-slider__thumb-origin_active .range-slider__tooltip {
       display: flex;
     }
   }

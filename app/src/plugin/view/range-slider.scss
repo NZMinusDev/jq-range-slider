@@ -8,11 +8,11 @@
 .range-slider {
   display: inline-flex;
 
-  &_orientation-horizontal {
+  &_orientation_horizontal {
     width: 100%;
     flex-direction: column;
   }
-  &_orientation-vertical {
+  &_orientation_vertical {
     height: 100%;
     flex-direction: row;
   }

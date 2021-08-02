@@ -6,7 +6,7 @@ $longPipLength: 1em;
   position: relative;
   color: grey;
 
-  &_orientation-horizontal {
+  &_orientation_horizontal {
     display: block;
 
     .range-slider__pips-marker {
@@ -18,7 +18,7 @@ $longPipLength: 1em;
         transform: translateX(-100%);
       }
 
-      &_size-long {
+      &_size_long {
         height: #{$longPipLength};
       }
     }
@@ -33,7 +33,7 @@ $longPipLength: 1em;
       }
     }
   }
-  &_orientation-vertical {
+  &_orientation_vertical {
     display: inline-block;
     height: 100%;
 
@@ -46,7 +46,7 @@ $longPipLength: 1em;
         transform: translateY(-100%);
       }
 
-      &_size-long {
+      &_size_long {
         width: #{$longPipLength};
       }
     }

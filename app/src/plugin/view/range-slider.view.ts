@@ -65,7 +65,7 @@ class RangeSliderView
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
     class=${classMap({
       'range-slider': true,
-      [`range-slider_orientation-${this._options.orientation}`]: true,
+      [`range-slider_orientation_${this._options.orientation}`]: true,
       ...classInfo,
     })}
     ...=${spread(attributes)}
@@ -79,7 +79,7 @@ class RangeSliderView
           .map((rangeView, index) =>
             rangeView.template({
               classInfo: {
-                'range-slider__range_animate-tap':
+                'range-slider__range_animate_tap':
                   (this._state.isActiveThumbs[index] ?? false) ===
                   (this._state.isActiveThumbs[index - 1] ?? false),
               },
@@ -97,7 +97,7 @@ class RangeSliderView
             thumbView.template(
               {
                 classInfo: {
-                  'range-slider__thumb-origin_animate-tap': !this._state.isActiveThumbs[index],
+                  'range-slider__thumb-origin_animate_tap': !this._state.isActiveThumbs[index],
                 },
                 styleInfo: {
                   transform: this._getThumbTransform(index),

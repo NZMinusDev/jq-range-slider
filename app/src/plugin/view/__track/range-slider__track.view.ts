@@ -46,7 +46,7 @@ class RangeSliderTrackView
       class=${classMap({
         'range-slider__track': true,
         'js-range-slider__track': true,
-        [`range-slider__track_orientation-${this._options.orientation}`]: true,
+        [`range-slider__track_orientation_${this._options.orientation}`]: true,
         ...classInfo,
       })}
       ...=${spread(attributes)}

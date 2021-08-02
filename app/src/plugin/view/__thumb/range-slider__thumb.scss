@@ -13,7 +13,7 @@ $thumbSize: 2em;
 .range-slider__thumb-origin {
   will-change: transform;
 
-  &_orientation-horizontal {
+  &_orientation_horizontal {
     width: #{$originSize};
     height: 0;
     top: #{$originOffset};
@@ -31,7 +31,7 @@ $thumbSize: 2em;
       }
     }
   }
-  &_orientation-vertical {
+  &_orientation_vertical {
     width: 0;
     height: #{$originSize};
     left: #{$originOffset};
@@ -50,7 +50,7 @@ $thumbSize: 2em;
     }
   }
 
-  &_animate-tap {
+  &_animate_tap {
     transition: transform 0.3s;
   }
 }
