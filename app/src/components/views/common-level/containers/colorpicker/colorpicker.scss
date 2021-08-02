@@ -1,9 +1,26 @@
 .colorpicker {
   display: grid;
-  grid: 200px / 1fr 1fr 1fr 200px;
-  grid-column-gap: 2em;
+
+  @media (min-width: 0) {
+    grid:
+      'sliders' 200px
+      '.' 2em
+      'result' 200px;
+  }
+
+  @media (min-width: 768px) {
+    grid: 'sliders . result' 200px / 1fr 2em 200px;
+  }
+
+  &__sliders {
+    grid-area: sliders;
+    display: grid;
+    grid: none / 1fr 1fr 1fr;
+    grid-column-gap: 2em;
+  }
 
   &__result {
+    grid-area: result;
     border: 1px solid black;
   }
 }

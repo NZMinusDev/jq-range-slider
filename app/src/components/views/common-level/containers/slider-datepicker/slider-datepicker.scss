@@ -1,3 +1,19 @@
 .slider-datepicker {
   width: 100%;
+  display: grid;
+  justify-items: center;
+
+  &__slider {
+    @media (min-width: 0) {
+      width: 75%;
+    }
+
+    @media (min-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  &__result {
+    width: 100%;
+  }
 }

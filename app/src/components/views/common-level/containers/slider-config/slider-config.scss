@@ -1,9 +1,12 @@
 .slider-config {
   position: relative;
   display: grid;
-  grid-template: none / repeat(3, 1fr);
   grid-gap: 1em;
   border: 1px solid tomato;
+
+  @media (min-width: 768px) {
+    grid-template: none / repeat(3, 1fr);
+  }
 
   &__legend {
     position: absolute;
@@ -26,12 +29,15 @@
 
   &__control-panel-item {
     position: relative;
-    grid-column: span 3;
     display: grid;
-    grid: 1fr / 50% 50%;
     place-items: center;
     margin: 0;
     padding: 0;
     border: inherit;
+
+    @media (min-width: 768px) {
+      grid-column: span 3;
+      grid: 1fr / 50% 50%;
+    }
   }
 }
