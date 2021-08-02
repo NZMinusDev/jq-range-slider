@@ -44,6 +44,9 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
   }
   setOptions(options?: RangeSliderOptions) {
     this._libSlider.setOptions(options);
+    this.element.dispatchEvent(
+      new CustomEvent('set', { bubbles: true, detail: { value: this._libSlider.get() } })
+    );
 
     return this;
   }

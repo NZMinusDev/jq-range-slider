@@ -302,7 +302,7 @@ class ConfigurableSliderDemo extends BEMComponent<
         // no default
       }
 
-      this._displaySliderConfig();
+      this._displaySliderConfig()._displaySubmit();
     },
     handleSliderConfigCustomReset: (
       event: CustomEvent<SliderConfigCustomEvents['customReset']>
