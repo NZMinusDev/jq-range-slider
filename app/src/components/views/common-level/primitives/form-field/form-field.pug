@@ -32,12 +32,25 @@ mixin form-field({ label = '', description = '', name = 'form-field', id = name,
     const inputResizeClass = inputResize === '' ? null : `form-field__input_resize_${inputResize}`;
   .form-field.js-form-field(class=[withLabelClass, orientationClass, placeItemsClass])&attributes(attributes)
     if label !== ''
-      +heading({ h3: label }, { isLabel: true, description })(for=name)
-    #{inputTag}.form-field__input.js-form-field__input(
-      id=id,
-      name=name,
-      type=inputType,
-      value=value,
-      readonly=readonly,
-      class=[inputTypeClass, inputTextAlignClass, inputResizeClass]
-    )
+      +heading({ h3: label }, { isLabel: true, description })(for=id)
+    //- cause of pug don't use self-closing when tag interpolation by js variable
+    case inputTag
+      when 'input'
+        input.form-field__input.js-form-field__input(
+          id=id,
+          name=name,
+          type=inputType,
+          value=value,
+          readonly=readonly,
+          class=[inputTypeClass, inputTextAlignClass, inputResizeClass]
+        )
+      when 'textarea'
+        textarea.form-field__input.js-form-field__input(
+          cols="30",
+          rows="10",
+          id=id,
+          name=name,
+          value=value,
+          readonly=readonly,
+          class=[inputTypeClass, inputTextAlignClass, inputResizeClass]
+        )

@@ -47,7 +47,7 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     const { configItems } = this._DOM;
 
     (configItems.orientation.elements.namedItem(
-      options.orientation
+      `${configItems.orientation.id}-${options.orientation}`
     ) as HTMLInputElement).checked = true;
     configItems.min.value = options.intervals.min.toString();
     configItems.max.value = options.intervals.max.toString();
@@ -59,7 +59,9 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     configItems.connect.value = `[${options.connect}]`;
     configItems.intervals.value = JSON.stringify(options.intervals);
     configItems.tooltips.value = `[${options.tooltips}]`;
-    (configItems.mode.elements.namedItem(options.pips.mode) as HTMLInputElement).checked = true;
+    (configItems.mode.elements.namedItem(
+      `${configItems.mode.id}-${options.pips.mode}`
+    ) as HTMLInputElement).checked = true;
     configItems.pipsDensity.value = options.pips.density.toString();
     configItems.pipsValues.value =
       options.pips.mode === 'count' ? `${options.pips.values}` : `[${options.pips.values}]`;

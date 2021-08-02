@@ -9,7 +9,7 @@ include ~@views/common-level/primitives/form-field/form-field.pug
 mixin radio-group(items, { label = '', name = 'radio-group' })
   .radio-group&attributes(attributes)
     if label !== ''
-      +heading({ h3: label }, { isLabel: true })(for=name)
+      +heading({ h3: label })
     fieldset.radio-group__group(id=name, role="radiogroup")
       each item, index in items
-        +form-field({ label: item.label, name, id: item.value, type: 'radio', value: item.value })
+        +form-field({ label: item.label, name, id: `${name}-${item.value}`, type: 'radio', value: item.value })
