@@ -1,2 +1,2 @@
-declare module "*.pug";
-declare module "*.scss";
+declare module '*.pug';
+declare module '*.scss';

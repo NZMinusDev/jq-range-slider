@@ -770,7 +770,7 @@ class RangeSliderView
     handleEvent: (event: Event) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
-      //FIXME: init always
+      // FIXME: init always
       if (!this._thumbEventListenerObject.cache.has(origin)) {
         this._thumbEventListenerObject.cache.set(origin, this._initThumbCache(origin));
       }
