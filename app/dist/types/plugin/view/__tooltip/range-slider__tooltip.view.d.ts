@@ -1,6 +1,6 @@
 import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
-import './range-slider__tooltip.scss';
 import IRangeSliderTooltipView, { TooltipOptions, TooltipState } from './range-slider__tooltip.view.coupling';
+import './range-slider__tooltip.scss';
 declare const DEFAULT_OPTIONS: Required<TooltipOptions>;
 declare const DEFAULT_STATE: TooltipState;
 declare class RangeSliderTooltipView extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> implements IRangeSliderTooltipView {

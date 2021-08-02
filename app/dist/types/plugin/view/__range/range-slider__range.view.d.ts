@@ -1,6 +1,6 @@
 import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
-import './range-slider__range.scss';
 import IRangeSliderRangeView, { RangeOptions, RangeState } from './range-slider__range.view.coupling';
+import './range-slider__range.scss';
 declare const DEFAULT_OPTIONS: Required<RangeOptions>;
 declare const DEFAULT_STATE: RangeState;
 declare class RangeSliderRangeView extends MVPView<Required<RangeOptions>, RangeOptions, RangeState> implements IRangeSliderRangeView {

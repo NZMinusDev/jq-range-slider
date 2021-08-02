@@ -1,7 +1,7 @@
 import { TemplateResult } from 'lit-html';
 import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
-import './range-slider__track.scss';
 import IRangeSliderTrackView, { TrackOptions, FixedTrackOptions, TrackState } from './range-slider__track.view.coupling';
+import './range-slider__track.scss';
 declare const DEFAULT_OPTIONS: FixedTrackOptions;
 declare const DEFAULT_STATE: TrackState;
 declare class RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> implements IRangeSliderTrackView {

@@ -1,11 +1,11 @@
 import { MVPView } from "../../utils/devTools/scripts/PluginCreationHelper";
-import './range-slider.scss';
-import IRangeSliderView, { RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState } from './range-slider.view.coupling';
 import { FixedTrackOptions, TrackOptions } from './__track/range-slider__track.view.coupling';
 import { RangeOptions } from './__range/range-slider__range.view.coupling';
 import { ThumbOptions, ThumbState } from './__thumb/range-slider__thumb.view.coupling';
 import { TooltipOptions, TooltipState } from './__tooltip/range-slider__tooltip.view.coupling';
 import { PipsOptions } from './__pips/range-slider__pips.view.coupling';
+import IRangeSliderView, { RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState } from './range-slider.view.coupling';
+import './range-slider.scss';
 declare const DEFAULT_OPTIONS: FixedRangeSliderOptions;
 declare const DEFAULT_STATE: RangeSliderState;
 declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> implements IRangeSliderView {
@@ -104,12 +104,10 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
         cache: WeakMap<HTMLElement, {
             trackElem: HTMLElement;
             thumbIndex: number;
-            movementAcc: number;
             trackValueSize: number;
             siblingRanges: [HTMLElement, HTMLElement];
-            getCalculated: () => {
-                valuePerPx: number;
-            };
+            valuePerPx: number;
+            movementAcc: number;
         }>;
         handleEvent: (event: Event) => void;
         handleThumbPointerdown: (event: PointerEvent) => void;
@@ -120,12 +118,10 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
     protected _initThumbCache(origin: HTMLElement): {
         trackElem: HTMLElement;
         thumbIndex: number;
-        movementAcc: number;
         trackValueSize: number;
         siblingRanges: [HTMLElement, HTMLElement];
-        getCalculated: () => {
-            valuePerPx: number;
-        };
+        valuePerPx: number;
+        movementAcc: number;
     };
     protected _isMoveFromExteriorOfThumb(thumbDOMRect: DOMRect, event: PointerEvent): boolean;
     protected _fixNonLinearShiftThroughIntervals(currentIntervalInfo: {
