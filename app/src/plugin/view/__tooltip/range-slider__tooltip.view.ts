@@ -5,11 +5,11 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
-import './range-slider__tooltip.scss';
 import IRangeSliderTooltipView, {
   TooltipOptions,
   TooltipState,
 } from './range-slider__tooltip.view.coupling';
+import './range-slider__tooltip.scss';
 
 const DEFAULT_OPTIONS: Required<TooltipOptions> = {
   orientation: 'top',

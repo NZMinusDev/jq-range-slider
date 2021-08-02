@@ -5,11 +5,11 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
-import './range-slider__range.scss';
 import IRangeSliderRangeView, {
   RangeOptions,
   RangeState,
 } from './range-slider__range.view.coupling';
+import './range-slider__range.scss';
 
 const DEFAULT_OPTIONS: Required<RangeOptions> = {
   isConnected: false,

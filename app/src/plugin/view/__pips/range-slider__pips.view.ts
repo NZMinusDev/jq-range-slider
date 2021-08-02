@@ -7,8 +7,8 @@ import { spread } from '@open-wc/lit-helpers';
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 import { collapsingParseInt } from '@utils/devTools/scripts/ParserHelper';
 
-import './range-slider__pips.scss';
 import IRangeSliderPipsView, { PipsOptions, PipsState } from './range-slider__pips.view.coupling';
+import './range-slider__pips.scss';
 
 const DEFAULT_OPTIONS: Required<PipsOptions> = {
   orientation: 'horizontal',

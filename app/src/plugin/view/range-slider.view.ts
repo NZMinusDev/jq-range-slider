@@ -8,13 +8,6 @@ import { handleEvent, MVPView } from '@utils/devTools/scripts/PluginCreationHelp
 import { ascending } from '@utils/devTools/scripts/ProcessingOfPrimitiveDataHelper';
 import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
 
-import './range-slider.scss';
-import IRangeSliderView, {
-  RangeSliderOptions,
-  FixedRangeSliderOptions,
-  RangeSliderState,
-} from './range-slider.view.coupling';
-
 import { FixedTrackOptions, TrackOptions } from './__track/range-slider__track.view.coupling';
 import { RangeOptions } from './__range/range-slider__range.view.coupling';
 import { ThumbOptions, ThumbState } from './__thumb/range-slider__thumb.view.coupling';
@@ -31,6 +24,12 @@ import RangeSliderTooltipView from './__tooltip/range-slider__tooltip.view';
 import RangeSliderPipsView, {
   DEFAULT_OPTIONS as PIPS_DEFAULT_OPTIONS,
 } from './__pips/range-slider__pips.view';
+import IRangeSliderView, {
+  RangeSliderOptions,
+  FixedRangeSliderOptions,
+  RangeSliderState,
+} from './range-slider.view.coupling';
+import './range-slider.scss';
 
 const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,

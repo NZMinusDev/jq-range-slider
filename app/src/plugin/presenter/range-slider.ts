@@ -3,9 +3,9 @@ import defaultsDeep from 'lodash-es/defaultsDeep';
 import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
 import { renderMVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
+import IRangeSliderModel from '../models/range-slider.model.coupling';
 import IRangeSliderView, { RangeSliderOptions } from '../view/range-slider.view.coupling';
 import RangeSliderView from '../view/range-slider.view';
-import IRangeSliderModel from '../models/range-slider.model.coupling';
 
 type ErrorCatcher = (reason: unknown) => void;
 

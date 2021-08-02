@@ -5,11 +5,11 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
-import './range-slider__thumb.scss';
 import IRangeSliderThumbView, {
   ThumbOptions,
   ThumbState,
 } from './range-slider__thumb.view.coupling';
+import './range-slider__thumb.scss';
 
 const DEFAULT_OPTIONS: Required<ThumbOptions> = {};
 

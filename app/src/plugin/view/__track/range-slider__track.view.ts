@@ -7,12 +7,12 @@ import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 import { collapsingParseFloat } from '@utils/devTools/scripts/ParserHelper';
 import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
 
-import './range-slider__track.scss';
 import IRangeSliderTrackView, {
   TrackOptions,
   FixedTrackOptions,
   TrackState,
 } from './range-slider__track.view.coupling';
+import './range-slider__track.scss';
 
 const DEFAULT_OPTIONS: FixedTrackOptions = {
   orientation: 'horizontal',
