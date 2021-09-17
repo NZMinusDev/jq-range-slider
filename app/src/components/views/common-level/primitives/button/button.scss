@@ -1,13 +1,13 @@
 .button {
-  text-transform: uppercase;
   border: 1px solid lime;
   border-bottom: 4px solid darkgreen;
   border-radius: 4px;
   background-color: lime;
+  text-transform: uppercase;
   cursor: pointer;
 
   &:active {
-    transform: translateY(2px);
     border-bottom-width: 2px;
+    transform: translateY(2px);
   }
 }

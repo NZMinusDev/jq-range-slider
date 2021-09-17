@@ -1,14 +1,14 @@
 .radio-group {
-  width: 100%;
   display: grid;
+  width: 100%;
   grid: 'heading group' / 1fr 1fr;
   place-items: center;
 
   &__group {
-    grid-area: group;
-    width: 100%;
     display: inline-flex;
     flex-direction: column;
+    width: 100%;
     border: inherit;
+    grid-area: group;
   }
 }

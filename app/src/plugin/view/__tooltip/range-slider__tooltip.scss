@@ -1,41 +1,41 @@
-$triangleSize: 5px;
+$triangle-size: 5px;
 
 .range-slider__tooltip {
   position: absolute;
   padding: 1ex;
   border-radius: 4px;
+  background-color: black;
+  color: white;
   text-align: center;
   line-height: 100%;
-  color: white;
-  background-color: black;
-  pointer-events: none;
   cursor: initial;
+  pointer-events: none;
 
-  &:before {
-    content: '';
+  &::before {
     position: absolute;
-    border-width: $triangleSize;
+    border-width: $triangle-size;
     border-style: solid;
+    content: '';
   }
 
   &_orientation_top {
-    bottom: calc(100% + #{$triangleSize * 2});
+    bottom: calc(100% + #{$triangle-size * 2});
 
-    &:before {
+    &::before {
       top: 100%;
       left: 50%;
-      transform: translate(-50%, 0);
       border-color: black transparent transparent transparent;
+      transform: translate(-50%, 0);
     }
   }
   &_orientation_left {
-    right: calc(100% + #{$triangleSize * 2});
+    right: calc(100% + #{$triangle-size * 2});
 
-    &:before {
+    &::before {
       top: 50%;
       left: 100%;
-      transform: translate(0, -50%);
       border-color: transparent transparent transparent black;
+      transform: translate(0, -50%);
     }
   }
 

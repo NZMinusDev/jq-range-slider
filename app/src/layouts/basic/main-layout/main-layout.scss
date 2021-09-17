@@ -2,15 +2,15 @@
 
 html {
   height: 100%;
-  font-family: 'Times New Roman', Times, serif;
-  font-size: functions.getLiquidSize(16, 12);
-  color: black;
   background-color: white;
+  color: black;
+  font-size: functions.get-liquid-size(16, 12);
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .main-layout {
-  min-height: 100%;
   display: grid;
+  min-height: 100%;
   grid:
     'header' auto
     'content' 1fr

@@ -13,14 +13,14 @@
   }
 
   &__sliders {
-    grid-area: sliders;
     display: grid;
+    grid-area: sliders;
     grid: none / 1fr 1fr 1fr;
     grid-column-gap: 2em;
   }
 
   &__result {
-    grid-area: result;
     border: 1px solid black;
+    grid-area: result;
   }
 }

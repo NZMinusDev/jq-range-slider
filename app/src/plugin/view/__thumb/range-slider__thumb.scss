@@ -1,51 +1,51 @@
-$originSize: 10%;
-$originOffset: 50%;
-$thumbSize: 2em;
+$origin-size: 10%;
+$origin-offset: 50%;
+$thumb-size: 2em;
 
 .range-slider__thumb-origin,
 .range-slider__thumb {
   position: absolute;
   display: inline-flex;
-  justify-content: space-evenly;
   align-items: center;
+  justify-content: space-evenly;
 }
 
 .range-slider__thumb-origin {
   will-change: transform;
 
   &_orientation_horizontal {
-    width: #{$originSize};
+    top: #{$origin-offset};
+    width: #{$origin-size};
     height: 0;
-    top: #{$originOffset};
 
     .range-slider__thumb {
-      width: #{$thumbSize};
-      height: #{$thumbSize};
       flex-direction: row;
+      width: #{$thumb-size};
+      height: #{$thumb-size};
       cursor: ew-resize;
 
-      &:before,
-      &:after {
-        height: 75%;
+      &::before,
+      &::after {
         width: 1px;
+        height: 75%;
       }
     }
   }
   &_orientation_vertical {
+    left: #{$origin-offset};
     width: 0;
-    height: #{$originSize};
-    left: #{$originOffset};
+    height: #{$origin-size};
 
     .range-slider__thumb {
-      width: #{$thumbSize};
-      height: #{$thumbSize};
       flex-direction: column;
+      width: #{$thumb-size};
+      height: #{$thumb-size};
       cursor: ns-resize;
 
-      &:before,
-      &:after {
-        height: 1px;
+      &::before,
+      &::after {
         width: 75%;
+        height: 1px;
       }
     }
   }
@@ -55,22 +55,22 @@ $thumbSize: 2em;
   }
 }
 .range-slider__thumb {
-  $bgColor: black;
+  $bg-color: black;
 
-  background-color: $bgColor;
+  background-color: $bg-color;
   transition: box-shadow 0.25s ease-in-out;
 
   &:hover {
-    box-shadow: 0 0 0 0.5em rgba($color: $bgColor, $alpha: 0.1);
+    box-shadow: 0 0 0 0.5em rgba($color: $bg-color, $alpha: 0.1);
   }
   &:active,
   &:focus {
-    box-shadow: 0 0 0 0.75em rgba($color: $bgColor, $alpha: 0.2);
+    box-shadow: 0 0 0 0.75em rgba($color: $bg-color, $alpha: 0.2);
   }
 
-  &:before,
-  &:after {
-    content: '';
+  &::before,
+  &::after {
     background: white;
+    content: '';
   }
 }

@@ -1,12 +1,12 @@
 .range-slider__range {
-  height: 100%;
-  width: 100%;
   position: absolute;
-  background: tomato;
+  width: 100%;
+  height: 100%;
   border-radius: inherit;
+  background: tomato;
   opacity: 0;
-  will-change: transform;
   transform-origin: 0 0;
+  will-change: transform;
   transform-style: flat;
 
   &_connected {

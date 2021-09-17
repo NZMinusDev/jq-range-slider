@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const DartSASS = require('sass');
 const fibers = require('fibers');
 const DoIUse = require('doiuse');
+const StylelintPlugin = require('stylelint-webpack-plugin');
 const PostcssFlexbugsFixes = require('postcss-flexbugs-fixes');
 const Autoprefixer = require('autoprefixer');
 const PostCSSPresetEnv = require('postcss-preset-env');
@@ -99,6 +100,7 @@ const resultOfTemplatesProcessing = new ResultOfTemplatesProcessing();
 /**
  * HTMLWebpackPlugin - create html of pages with plug in scripts.
  * MiniCssExtractPlugin - extract css into separate files.
+ * StylelintPlugin - uses stylelint that helps you avoid errors and enforce conventions in your styles
  * CircularDependencyPlugin - scan bundles to alert about circular dependencies.
  * DuplicatesPlugin - scan bundles to alert about duplicate resources from node_modules.
  * UnusedFilesWebpackPlugin - scan bundles to alert about UnusedFiles.
@@ -155,6 +157,10 @@ const webpackPlugins = () => {
       filename: isProcessFullApp ? hashedFileName('styles/[id]/[name]', 'css') : '[name].css',
     })
   );
+
+  if (isDev) {
+    plugins.push(new StylelintPlugin({ fix: true }));
+  }
 
   if (process.env.MEASURE === 'true') {
     // writes data in stats.json as plain text, shouldn't be in dev mod)

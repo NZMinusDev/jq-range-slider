@@ -1,6 +1,6 @@
-$pipThickness: 2px;
-$markerPipLength: 0.5em;
-$longPipLength: 1em;
+$pip-thickness: 2px;
+$marker-pip-length: 0.5em;
+$long-pip-length: 1em;
 
 .range-slider__pips {
   position: relative;
@@ -11,15 +11,15 @@ $longPipLength: 1em;
 
     .range-slider__pips-marker {
       display: inline-block;
-      width: #{$pipThickness};
-      height: #{$markerPipLength};
+      width: #{$pip-thickness};
+      height: #{$marker-pip-length};
 
       &:not(:first-child) {
         transform: translateX(-100%);
       }
 
       &_size_long {
-        height: #{$longPipLength};
+        height: #{$long-pip-length};
       }
     }
 
@@ -27,8 +27,8 @@ $longPipLength: 1em;
       display: inline-block;
       width: 0;
 
-      &:after {
-        margin-top: #{$longPipLength};
+      &::after {
+        margin-top: #{$long-pip-length};
         transform: translateX(-50%);
       }
     }
@@ -39,15 +39,15 @@ $longPipLength: 1em;
 
     .range-slider__pips-marker {
       display: block;
-      width: #{$markerPipLength};
-      height: #{$pipThickness};
+      width: #{$marker-pip-length};
+      height: #{$pip-thickness};
 
       &:not(:first-child) {
         transform: translateY(-100%);
       }
 
       &_size_long {
-        width: #{$longPipLength};
+        width: #{$long-pip-length};
       }
     }
 
@@ -55,9 +55,9 @@ $longPipLength: 1em;
       display: block;
       height: 0;
 
-      &:after {
+      &::after {
+        margin-left: #{$long-pip-length};
         transform: translateY(-50%);
-        margin-left: #{$longPipLength};
       }
     }
   }
@@ -74,9 +74,9 @@ $longPipLength: 1em;
     position: relative;
     cursor: pointer;
 
-    &:after {
-      content: attr(data-formatted-value);
+    &::after {
       display: inline-block;
+      content: attr(data-formatted-value);
       text-align: center;
     }
   }

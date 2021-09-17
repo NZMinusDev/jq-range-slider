@@ -9,11 +9,11 @@
   display: inline-flex;
 
   &_orientation_horizontal {
-    width: 100%;
     flex-direction: column;
+    width: 100%;
   }
   &_orientation_vertical {
-    height: 100%;
     flex-direction: row;
+    height: 100%;
   }
 }

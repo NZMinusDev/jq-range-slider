@@ -1,15 +1,15 @@
 {
-  "window.zoomLevel": 0,
-  "workbench.colorTheme": "Ayu Dark Bordered",
-  "workbench.iconTheme": "material-icon-theme",
-  "editor.cursorStyle": "line-thin",
-  "editor.rulers": [100],
+  "editor.tabSize": 2,
   "editor.wordWrap": "wordWrapColumn",
   "editor.wordWrapColumn": 100,
-  "files.autoSave": "afterDelay",
+  "editor.rulers": [100],
   "editor.formatOnSave": true,
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.fixAll.stylelint": true
   },
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "[html]": {
@@ -39,16 +39,28 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "javascript.updateImportsOnFileMove.enabled": "always",
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "typescript.tsserver.maxTsServerMemory": 4096,
-  "editor.largeFileOptimizations": true,
-  "explorer.confirmDelete": false,
-  "explorer.confirmDragAndDrop": false,
-  "editor.emptySelectionClipboard": false,
-  "git.autofetch": true,
-  "git.suggestSmartCommit": false,
-  "gitlens.views.repositories.branches.layout": "list",
+  "path-autocomplete.extensionOnImport": true,
+  "path-autocomplete.includeExtension": true,
+  "path-autocomplete.excludedItems": {
+    "**/*.js": { "when": "**/*.ts" },
+    "**/*.map": { "when": "**" },
+    "**/{.git,node_modules}": { "when": "**" }
+  },
+  "path-autocomplete.pathMappings": {
+    "@layouts": "${folder}/app/src/layouts",
+    "@plugin": "${folder}/app/src/plugin/",
+    "@views": "${folder}/app/src/components/views/",
+    "@models": "${folder}/app/src/components/models/",
+    "@presenters": "${folder}/app/src/components/presenters/",
+    "@utils": "${folder}/app/src/utils/",
+    "@assets": "${folder}/app/src/assets/"
+  },
+  "path-autocomplete.triggerOutsideStrings": true,
+  "path-autocomplete.enableFolderTrailingSlash": true,
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "plantuml.exportOutDir": "./",
+  "plantuml.exportSubFolder": false,
+  "cSpell.language": "en,ru",
   "cSpell.words": [
     "DDTHH",
     "Datepickers",
@@ -91,26 +103,5 @@
     "valuetext",
     "webp"
   ],
-  "cSpell.ignoreWords": ["import", "import normalize", "normalize"],
-  "path-autocomplete.extensionOnImport": true,
-  "path-autocomplete.includeExtension": true,
-  "path-autocomplete.excludedItems": {
-    "**/*.js": { "when": "**/*.ts" },
-    "**/*.map": { "when": "**" },
-    "**/{.git,node_modules}": { "when": "**" }
-  },
-  "path-autocomplete.pathMappings": {
-    "@layouts": "${folder}/app/src/layouts",
-    "@plugin": "${folder}/app/src/plugin/",
-    "@views": "${folder}/app/src/components/views/",
-    "@models": "${folder}/app/src/components/models/",
-    "@presenters": "${folder}/app/src/components/presenters/",
-    "@utils": "${folder}/app/src/utils/",
-    "@assets": "${folder}/app/src/assets/"
-  },
-  "path-autocomplete.triggerOutsideStrings": true,
-  "path-autocomplete.enableFolderTrailingSlash": true,
-  "editor.tabSize": 2,
-  "plantuml.exportOutDir": "./",
-  "plantuml.exportSubFolder": false
+  "cSpell.ignoreWords": ["import", "import normalize", "normalize"]
 }
