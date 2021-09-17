@@ -13,7 +13,7 @@ import { RangeOptions } from './components/RangeView/IRangeView';
 import { ThumbOptions, ThumbState } from './components/ThumbView/IThumbView';
 import { TooltipOptions, TooltipState } from './components/TooltipView/ITooltipView';
 import { PipsOptions } from './components/PipsView/IPipsView';
-import RangeSliderTrackView, {
+import TrackView, {
   DEFAULT_OPTIONS as TRACK_DEFAULT_OPTIONS,
 } from './components/TrackView/TrackView';
 import RangeView, {
@@ -70,7 +70,7 @@ class RangeSliderView
     ...=${spread(attributes)}
     style=${styleMap({ ...styleInfo })}
   >
-    ${new RangeSliderTrackView(this._toTrackOptions()).template(
+    ${new TrackView(this._toTrackOptions()).template(
       { attributes: { '@click': this._trackEventListenerObject } },
       [
         ...this._options.connect
@@ -285,7 +285,7 @@ class RangeSliderView
   }
 
   protected _fixIntervalsOption() {
-    this._options.intervals = new RangeSliderTrackView({
+    this._options.intervals = new TrackView({
       orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
@@ -295,7 +295,7 @@ class RangeSliderView
     return this;
   }
   protected _fixPaddingOption() {
-    this._options.padding = new RangeSliderTrackView({
+    this._options.padding = new TrackView({
       orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
@@ -330,7 +330,7 @@ class RangeSliderView
     return this;
   }
   protected _fixStepsOption() {
-    this._options.steps = new RangeSliderTrackView({
+    this._options.steps = new TrackView({
       orientation: this._options.orientation,
       intervals: this._options.intervals,
       padding: this._options.padding,
@@ -485,7 +485,7 @@ class RangeSliderView
   }
   protected _getIntervalInfoByPoint(value: number, { isIncludedInSupremum = false } = {}) {
     const intervalsKeys = Object.keys(this._options.intervals).sort(
-      RangeSliderTrackView.intervalsKeysCompareFunc
+      TrackView.intervalsKeysCompareFunc
     );
 
     if (value > this._options.intervals.max) {
@@ -542,7 +542,7 @@ class RangeSliderView
   }
   protected _toTrackPercent(valueOnTrack: number) {
     const intervalsKeys = Object.keys(this._options.intervals).sort(
-      RangeSliderTrackView.intervalsKeysCompareFunc
+      TrackView.intervalsKeysCompareFunc
     );
 
     let offsetInPercent = 0;
@@ -573,7 +573,7 @@ class RangeSliderView
   }
   protected _toTrackValue(linearPercentOnTrack: number) {
     const intervalsKeys = Object.keys(this._options.intervals).sort(
-      RangeSliderTrackView.intervalsKeysCompareFunc
+      TrackView.intervalsKeysCompareFunc
     );
 
     let trackValue = this._options.intervals.min;

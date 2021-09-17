@@ -19,10 +19,7 @@ const DEFAULT_OPTIONS: FixedTrackOptions = {
 
 const DEFAULT_STATE: TrackState = {};
 
-class RangeSliderTrackView
-  extends MVPView<FixedTrackOptions, TrackOptions, TrackState>
-  implements ITrackView
-{
+class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> implements ITrackView {
   static intervalsKeysCompareFunc(a: string, b: string) {
     if (a === 'min' || b === 'max') {
       return -1;
@@ -232,10 +229,10 @@ class RangeSliderTrackView
 
   protected _getSortedKeysOfIntervalsOption() {
     const intervalsKeys = Object.keys(this._options.intervals);
-    intervalsKeys.sort(RangeSliderTrackView.intervalsKeysCompareFunc);
+    intervalsKeys.sort(TrackView.intervalsKeysCompareFunc);
 
     return intervalsKeys;
   }
 }
 
-export { RangeSliderTrackView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { TrackView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

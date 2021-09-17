@@ -4,7 +4,7 @@ import ITrackView, { TrackOptions, FixedTrackOptions, TrackState } from './ITrac
 import './TrackView.scss';
 declare const DEFAULT_OPTIONS: FixedTrackOptions;
 declare const DEFAULT_STATE: TrackState;
-declare class RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> implements ITrackView {
+declare class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> implements ITrackView {
     static intervalsKeysCompareFunc(a: string, b: string): number;
     readonly template: ({ classInfo, styleInfo, attributes }?: {
         classInfo?: {} | undefined;
@@ -34,4 +34,4 @@ declare class RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptio
     protected _fixPaddingOption(): this;
     protected _getSortedKeysOfIntervalsOption(): string[];
 }
-export { RangeSliderTrackView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { TrackView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

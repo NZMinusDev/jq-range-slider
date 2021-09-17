@@ -11,11 +11,11 @@ import {
 } from '@utils/devTools/scripts/UnitTestingHelper';
 import { collapsingParseFloat } from '@utils/devTools/scripts/ParserHelper';
 
-import RangeSliderTrackView, { DEFAULT_OPTIONS } from './TrackView';
+import TrackView, { DEFAULT_OPTIONS } from './TrackView';
 
 const viewPropertiesExpecter: InstancePropsExpecter<
-  ConstructorParameters<typeof RangeSliderTrackView>,
-  RangeSliderTrackView
+  ConstructorParameters<typeof TrackView>,
+  TrackView
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 > = function viewPropertiesExpecter({ instance, passedArgs }) {
   const keysOfIntervals = Object.keys(instance['_options'].intervals).sort((a, b) => {
@@ -77,9 +77,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   });
 };
 
-const differentConstructorArgs: DifferentArguments<
-  ConstructorParameters<typeof RangeSliderTrackView>
-> = {
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof TrackView>> = {
   invalidOptionalArguments: [
     [{ intervals: { min: 100, max: 100 } }],
     [{ intervals: { min: 100, max: 99 } }],
@@ -119,10 +117,10 @@ const differentConstructorArgs: DifferentArguments<
   ],
 };
 
-testDefaultOptions(RangeSliderTrackView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
+testDefaultOptions(TrackView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
-  Creator: RangeSliderTrackView,
+  Creator: TrackView,
   differentConstructorArgs,
   instancePropsExpecter: viewPropertiesExpecter,
   propsToSet: new Map().set('_options', 0).set('_state', 1),
@@ -130,7 +128,7 @@ testInit({
 describe('init', () => {
   describe("with steps, padding, options aren't array", () => {
     test("the instance's options should be correct arrays", () => {
-      const sliderOptions = new RangeSliderTrackView({
+      const sliderOptions = new TrackView({
         intervals: { min: -200, max: 200, '50%': -100 },
         steps: 2,
         padding: 20,
@@ -144,7 +142,7 @@ describe('init', () => {
 describe('init', () => {
   describe('with default options', () => {
     test("the instance's func options should be to have returned", () => {
-      const instance = new RangeSliderTrackView();
+      const instance = new TrackView();
 
       const templateMock = jest.fn(instance.template);
       templateMock();
@@ -155,11 +153,11 @@ describe('init', () => {
 });
 
 testGetter({
-  Creator: RangeSliderTrackView,
+  Creator: TrackView,
   constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
-    methodReference: RangeSliderTrackView.prototype.getOptions,
+    methodReference: TrackView.prototype.getOptions,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     expecter: ({ mock, passedArgs, instance }) => {
       // some expect calls
@@ -168,17 +166,17 @@ testGetter({
   },
 });
 testSetter({
-  Creator: RangeSliderTrackView,
+  Creator: TrackView,
   constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
-    methodReference: RangeSliderTrackView.prototype.setOptions,
+    methodReference: TrackView.prototype.setOptions,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     expecter: ({ mock, passedArgs, instance }) => {
       // some expect calls
     },
     differentArguments: differentConstructorArgs as DifferentArguments<
-      [ConstructorParameters<typeof RangeSliderTrackView>['0']]
+      [ConstructorParameters<typeof TrackView>['0']]
     >,
   },
   propsToSet: new Map().set('_options', 0),
@@ -187,7 +185,7 @@ testSetter({
 describe('setOptions', () => {
   describe("with steps, padding options aren't array", () => {
     test("the instance's options should be correct arrays", () => {
-      const sliderOptions = new RangeSliderTrackView({
+      const sliderOptions = new TrackView({
         intervals: { min: -2000, max: 2000, '50%': -1000, '75%': 1800 },
         steps: [10, 15, 20],
         padding: [30, 45],
@@ -203,7 +201,7 @@ describe('setOptions', () => {
 });
 
 testDOM({
-  Creator: RangeSliderTrackView,
+  Creator: TrackView,
   constructorsArgs: [],
   templatesArgs: [],
   callbacksWithTest: [],
