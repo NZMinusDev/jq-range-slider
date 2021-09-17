@@ -16,7 +16,7 @@ class EventsLoggerFirefly extends BEMComponent<
 > {
   static blinkAnimationDuration = 250;
 
-  // eslint-disable-next-line no-useless-constructor
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(eventsLoggerFireflyElement: EventsLoggerFireflyElement) {
     super(eventsLoggerFireflyElement);
   }

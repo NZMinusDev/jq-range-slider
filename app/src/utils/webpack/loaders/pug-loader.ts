@@ -1,3 +1,5 @@
+/* eslint-disable func-names */
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable new-cap */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-var-requires */

@@ -257,7 +257,9 @@ Script-names:
 - **types** - generate d.ts files and place it into [dist/types](./app/dist/types) directory;
 - **UML** - generate .puml files and place it into [src](./app/src/plugin/UML/) directory. P.S.: you should work [with your hands](https://plantuml.com/en/class-diagram) a little cause of the [tool](https://github.com/bafolts/tplant) has bugs(["default" isn't keyword](https://github.com/bafolts/tplant/issues/66), [error when output directory doesn't exist](https://github.com/bafolts/tplant/issues/51), [Missing Aggregation/Composition](https://github.com/bafolts/tplant/issues/48), etc);
 - **test** - run jest tests(matches .spec. or .test. files), P.S.: it can work in a separate console in parallel with **start** script;
-- **analyze** - visualize size of webpack output files with an interactive zoomable treemap using webpack-bundle-analyzer.
+- **analyze** - visualize size of webpack output files with an interactive zoomable treemap using webpack-bundle-analyzer;
+- **lint** - lint styles and scripts, show result;
+- **lint:fix** - use prettier for all known files, lint styles and scripts, auto fix files with errors if it is possible, show result.
 
 Deploy
 

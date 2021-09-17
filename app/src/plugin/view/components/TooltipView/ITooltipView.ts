@@ -12,8 +12,7 @@ type TooltipState = {
   value: number;
 };
 
-interface IRangeSliderTooltipView
-  extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> {
+interface ITooltipView extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> {
   getOrientationOption(): TooltipOptions['orientation'];
   getIsHiddenOption(): TooltipOptions['isHidden'];
   getFormatterOption(): TooltipOptions['formatter'];
@@ -22,4 +21,4 @@ interface IRangeSliderTooltipView
   setFormatterOption(formatter?: TooltipOptions['formatter']): this;
 }
 
-export { IRangeSliderTooltipView as default, Formatter, TooltipOptions, TooltipState };
+export { ITooltipView as default, Formatter, TooltipOptions, TooltipState };

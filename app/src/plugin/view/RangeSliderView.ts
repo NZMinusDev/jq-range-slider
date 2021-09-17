@@ -8,28 +8,26 @@ import { handleEvent, MVPView } from '@utils/devTools/scripts/PluginCreationHelp
 import { ascending } from '@utils/devTools/scripts/ProcessingOfPrimitiveDataHelper';
 import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
 
-import { FixedTrackOptions, TrackOptions } from './__track/range-slider__track.view.coupling';
-import { RangeOptions } from './__range/range-slider__range.view.coupling';
-import { ThumbOptions, ThumbState } from './__thumb/range-slider__thumb.view.coupling';
-import { TooltipOptions, TooltipState } from './__tooltip/range-slider__tooltip.view.coupling';
-import { PipsOptions } from './__pips/range-slider__pips.view.coupling';
+import { FixedTrackOptions, TrackOptions } from './components/TrackView/ITrackView';
+import { RangeOptions } from './components/RangeView/IRangeView';
+import { ThumbOptions, ThumbState } from './components/ThumbView/IThumbView';
+import { TooltipOptions, TooltipState } from './components/TooltipView/ITooltipView';
+import { PipsOptions } from './components/PipsView/IPipsView';
 import RangeSliderTrackView, {
   DEFAULT_OPTIONS as TRACK_DEFAULT_OPTIONS,
-} from './__track/range-slider__track.view';
-import RangeSliderRangeView, {
+} from './components/TrackView/TrackView';
+import RangeView, {
   DEFAULT_OPTIONS as RANGE_DEFAULT_OPTIONS,
-} from './__range/range-slider__range.view';
-import RangeSliderThumbView from './__thumb/range-slider__thumb.view';
-import RangeSliderTooltipView from './__tooltip/range-slider__tooltip.view';
-import RangeSliderPipsView, {
-  DEFAULT_OPTIONS as PIPS_DEFAULT_OPTIONS,
-} from './__pips/range-slider__pips.view';
+} from './components/RangeView/RangeView';
+import ThumbView from './components/ThumbView/ThumbView';
+import TooltipView from './components/TooltipView/TooltipView';
+import PipsView, { DEFAULT_OPTIONS as PIPS_DEFAULT_OPTIONS } from './components/PipsView/PipsView';
 import IRangeSliderView, {
   RangeSliderOptions,
   FixedRangeSliderOptions,
   RangeSliderState,
-} from './range-slider.view.coupling';
-import './range-slider.scss';
+} from './IRangeSliderView';
+import './RangeSliderView.scss';
 
 const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,
@@ -60,10 +58,12 @@ class RangeSliderView
     RangeSliderState,
     'start' | 'slide' | 'update' | 'change' | 'set' | 'end'
   >
-  implements IRangeSliderView {
+  implements IRangeSliderView
+{
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
     class=${classMap({
       'range-slider': true,
+      // eslint-disable-next-line sonarjs/no-nested-template-literals
       [`range-slider_orientation_${this._options.orientation}`]: true,
       ...classInfo,
     })}
@@ -74,7 +74,7 @@ class RangeSliderView
       { attributes: { '@click': this._trackEventListenerObject } },
       [
         ...this._options.connect
-          .map((isConnected, index) => new RangeSliderRangeView(this._toRangeOptions(index)))
+          .map((isConnected, index) => new RangeView(this._toRangeOptions(index)))
           .map((rangeView, index) =>
             rangeView.template({
               classInfo: {
@@ -90,7 +90,7 @@ class RangeSliderView
         ...this._state.value
           .map(
             (thumbValue, index) =>
-              new RangeSliderThumbView(this._toThumbOptions(index), this._toThumbState(index))
+              new ThumbView(this._toThumbOptions(index), this._toThumbState(index))
           )
           .map((thumbView, index) =>
             thumbView.template(
@@ -105,7 +105,7 @@ class RangeSliderView
                 attributes: { '@pointerdown': this._thumbEventListenerObject },
               },
               {
-                innerHTML: new RangeSliderTooltipView(
+                innerHTML: new TooltipView(
                   this._toTooltipOptions(index),
                   this._toTooltipState(index)
                 ).template(),
@@ -115,7 +115,7 @@ class RangeSliderView
           ),
       ]
     )}
-    ${new RangeSliderPipsView(this._toPipsOptions()).template({
+    ${new PipsView(this._toPipsOptions()).template({
       attributes: { '@click': this._pipsEventListenerObject },
     })}
   </div>`;
@@ -352,7 +352,7 @@ class RangeSliderView
       this._options.pips.values.sort(ascending);
     }
 
-    this._options.pips.density = new RangeSliderPipsView(this._toPipsOptions()).getDensityOption();
+    this._options.pips.density = new PipsView(this._toPipsOptions()).getDensityOption();
 
     return this;
   }
@@ -1084,7 +1084,8 @@ class RangeSliderView
     },
 
     handleTrackClick: (event: MouseEvent) => {
-      const trackBoundingClientRect = this._trackEventListenerObject.cache.trackElem.getBoundingClientRect();
+      const trackBoundingClientRect =
+        this._trackEventListenerObject.cache.trackElem.getBoundingClientRect();
       const linearPercentTrackBorder = this._getLinearPercentBorderOfTrack();
 
       let clickedLinearPercent =

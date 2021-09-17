@@ -304,12 +304,16 @@ const runMethodOfInstanceWithDifferentArguments = <
   propsToSet?: PropsToSet<number | string>;
   // eslint-disable-next-line sonarjs/cognitive-complexity
 }) => {
-  const requiredConstructorArgs = (differentConstructorArgs.validRequiredArguments
-    ? differentConstructorArgs.validRequiredArguments[0]
-    : []) as TCreatorArgs;
-  const requiredMethodArgs = (methodOfInstanceToTest?.differentArguments?.validRequiredArguments
-    ? methodOfInstanceToTest.differentArguments.validRequiredArguments[0]
-    : []) as TMethodArgs;
+  const requiredConstructorArgs = (
+    differentConstructorArgs.validRequiredArguments
+      ? differentConstructorArgs.validRequiredArguments[0]
+      : []
+  ) as TCreatorArgs;
+  const requiredMethodArgs = (
+    methodOfInstanceToTest?.differentArguments?.validRequiredArguments
+      ? methodOfInstanceToTest.differentArguments.validRequiredArguments[0]
+      : []
+  ) as TMethodArgs;
 
   let constructorArgs = requiredConstructorArgs;
   let differentArguments: DifferentArguments<TCreatorArgs | TMethodArgs> = differentConstructorArgs;
@@ -439,26 +443,28 @@ const testGetter = <
   instancePropsExpecter: InstancePropsExpecter<TCreatorArgs, TInstance>;
   methodOfInstanceToTest: MethodOfInstanceToTest<Parameters<TMethod>, TMethod, TInstance>;
 }) => {
-  const makeDefaultGetterExpecter = (
-    expecter: InstanceMethodExpecter<Parameters<TMethod>, TInstance>
-  ): InstanceMethodExpecter<Parameters<TMethod>, TInstance> => ({ mock, passedArgs, instance }) => {
-    if (methodOfInstanceToTest.returns) {
-      expect(mock).toHaveReturnedWith(
-        resolveLongBracketNotation(methodOfInstanceToTest.returns, instance)
-      );
-    }
+  const makeDefaultGetterExpecter =
+    (
+      expecter: InstanceMethodExpecter<Parameters<TMethod>, TInstance>
+    ): InstanceMethodExpecter<Parameters<TMethod>, TInstance> =>
+    ({ mock, passedArgs, instance }) => {
+      if (methodOfInstanceToTest.returns) {
+        expect(mock).toHaveReturnedWith(
+          resolveLongBracketNotation(methodOfInstanceToTest.returns, instance)
+        );
+      }
 
-    expecter({ mock, passedArgs, instance });
-  };
+      expecter({ mock, passedArgs, instance });
+    };
 
   // eslint-disable-next-line no-param-reassign
   methodOfInstanceToTest.expecter = makeDefaultGetterExpecter(methodOfInstanceToTest.expecter);
 
   runMethodOfInstanceWithDifferentArguments({
     Creator,
-    differentConstructorArgs: { validRequiredArguments: [constructorArgs] } as DifferentArguments<
-      TCreatorArgs
-    >,
+    differentConstructorArgs: {
+      validRequiredArguments: [constructorArgs],
+    } as DifferentArguments<TCreatorArgs>,
     instancePropsExpecter: instancePropsExpecter as InstancePropsExpecter<
       TCreatorArgs | Parameters<TMethod>,
       TInstance
@@ -501,28 +507,30 @@ const testSetter = <
       ? methodOfInstanceToTest.differentArguments.validRequiredArguments[0]
       : [];
 
-  const makeDefaultSetterExpecter = (
-    expecter: InstanceMethodExpecter<Parameters<TMethod>, TInstance>
-  ): InstanceMethodExpecter<Parameters<TMethod>, TInstance> => ({ mock, passedArgs, instance }) => {
-    expect(mock).toHaveReturnedWith(instance);
+  const makeDefaultSetterExpecter =
+    (
+      expecter: InstanceMethodExpecter<Parameters<TMethod>, TInstance>
+    ): InstanceMethodExpecter<Parameters<TMethod>, TInstance> =>
+    ({ mock, passedArgs, instance }) => {
+      expect(mock).toHaveReturnedWith(instance);
 
-    // reset when undefined is passed
-    if (Object.is(passedArgs, argsToReset)) {
-      resetPropsTo.forEach((defaultValue, pathToPropInInstance) => {
-        expect(instance[pathToPropInInstance]).toEqual(defaultValue);
-      });
-    }
+      // reset when undefined is passed
+      if (Object.is(passedArgs, argsToReset)) {
+        resetPropsTo.forEach((defaultValue, pathToPropInInstance) => {
+          expect(instance[pathToPropInInstance]).toEqual(defaultValue);
+        });
+      }
 
-    expecter({ mock, passedArgs, instance });
-  };
+      expecter({ mock, passedArgs, instance });
+    };
 
   // eslint-disable-next-line no-param-reassign
   methodOfInstanceToTest.expecter = makeDefaultSetterExpecter(methodOfInstanceToTest.expecter);
   runMethodOfInstanceWithDifferentArguments({
     Creator,
-    differentConstructorArgs: { validRequiredArguments: [constructorArgs] } as DifferentArguments<
-      TCreatorArgs
-    >,
+    differentConstructorArgs: {
+      validRequiredArguments: [constructorArgs],
+    } as DifferentArguments<TCreatorArgs>,
     instancePropsExpecter: instancePropsExpecter as InstancePropsExpecter<
       TCreatorArgs | Parameters<TMethod>,
       TInstance
@@ -534,7 +542,7 @@ const testSetter = <
   // reset when undefined is passed
   const methodOfInstanceToRun = {
     methodReference: methodOfInstanceToTest.methodReference,
-    argsToPass: (argsToReset as unknown) as Parameters<TMethod>,
+    argsToPass: argsToReset as unknown as Parameters<TMethod>,
     expecter: methodOfInstanceToTest.expecter,
   } as MethodOfInstanceToRun<Parameters<TMethod>, TMethod, TInstance>;
   describe(`${

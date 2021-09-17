@@ -11,11 +11,11 @@ import {
 } from '@utils/devTools/scripts/UnitTestingHelper';
 import { collapsingParseInt } from '@utils/devTools/scripts/ParserHelper';
 
-import RangeSliderPipsView, { DEFAULT_OPTIONS } from './range-slider__pips.view';
+import PipsView, { DEFAULT_OPTIONS } from './PipsView';
 
 const viewPropertiesExpecter: InstancePropsExpecter<
-  ConstructorParameters<typeof RangeSliderPipsView>,
-  RangeSliderPipsView
+  ConstructorParameters<typeof PipsView>,
+  PipsView
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 > = function viewPropertiesExpecter({ instance, passedArgs }) {
   instance['_options'].values.forEach((value, index, self) => {
@@ -33,9 +33,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   );
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<
-  typeof RangeSliderPipsView
->> = {
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof PipsView>> = {
   invalidOptionalArguments: [
     [
       {
@@ -89,10 +87,10 @@ const differentConstructorArgs: DifferentArguments<ConstructorParameters<
   ],
 };
 
-testDefaultOptions(RangeSliderPipsView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
+testDefaultOptions(PipsView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
-  Creator: RangeSliderPipsView,
+  Creator: PipsView,
   differentConstructorArgs,
   instancePropsExpecter: viewPropertiesExpecter,
   propsToSet: new Map().set('_options', 0).set('_state', 1),
@@ -100,7 +98,7 @@ testInit({
 describe('init', () => {
   describe('with default options', () => {
     test("the instance's func options should be to have returned", () => {
-      const instance = new RangeSliderPipsView();
+      const instance = new PipsView();
 
       const formatterMock = jest.fn(instance['_options'].formatter);
       formatterMock(1);
@@ -115,11 +113,11 @@ describe('init', () => {
 });
 
 testGetter({
-  Creator: RangeSliderPipsView,
+  Creator: PipsView,
   constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
-    methodReference: RangeSliderPipsView.prototype.getOptions,
+    methodReference: PipsView.prototype.getOptions,
     expecter: () => {
       // some expect calls
     },
@@ -127,16 +125,16 @@ testGetter({
   },
 });
 testSetter({
-  Creator: RangeSliderPipsView,
+  Creator: PipsView,
   constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
-    methodReference: RangeSliderPipsView.prototype.setOptions,
+    methodReference: PipsView.prototype.setOptions,
     expecter: () => {
       // some expect calls
     },
     differentArguments: differentConstructorArgs as DifferentArguments<
-      [ConstructorParameters<typeof RangeSliderPipsView>[0]]
+      [ConstructorParameters<typeof PipsView>[0]]
     >,
   },
   propsToSet: new Map().set('_options', 0),
@@ -144,7 +142,7 @@ testSetter({
 });
 
 testDOM({
-  Creator: RangeSliderPipsView,
+  Creator: PipsView,
   constructorsArgs: [],
   templatesArgs: [],
   callbacksWithTest: [],

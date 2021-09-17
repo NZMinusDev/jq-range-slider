@@ -5,11 +5,8 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
-import IRangeSliderThumbView, {
-  ThumbOptions,
-  ThumbState,
-} from './range-slider__thumb.view.coupling';
-import './range-slider__thumb.scss';
+import IThumbView, { ThumbOptions, ThumbState } from './IThumbView';
+import './ThumbView.scss';
 
 const DEFAULT_OPTIONS: Required<ThumbOptions> = {};
 
@@ -21,9 +18,10 @@ const DEFAULT_STATE: ThumbState = {
   ariaValueText: '-1',
 };
 
-class RangeSliderThumbView
+class ThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
-  implements IRangeSliderThumbView {
+  implements IThumbView
+{
   protected static ariaAttributePrecision = 2;
 
   readonly template = (
@@ -37,6 +35,7 @@ class RangeSliderThumbView
       class=${classMap({
         'range-slider__thumb-origin': true,
         'js-range-slider__thumb-origin': true,
+        // eslint-disable-next-line sonarjs/no-nested-template-literals
         [`range-slider__thumb-origin_orientation_${this._state.ariaOrientation}`]: true,
         'range-slider__thumb-origin_active': isActive,
         ...classInfo,
@@ -49,15 +48,9 @@ class RangeSliderThumbView
         role="slider"
         tabindex="0"
         aria-orientation="${this._state.ariaOrientation}"
-        aria-valuemin="${this._state.ariaValueMin.toFixed(
-          RangeSliderThumbView.ariaAttributePrecision
-        )}"
-        aria-valuemax="${this._state.ariaValueMax.toFixed(
-          RangeSliderThumbView.ariaAttributePrecision
-        )}"
-        aria-valuenow="${this._state.ariaValueNow.toFixed(
-          RangeSliderThumbView.ariaAttributePrecision
-        )}"
+        aria-valuemin="${this._state.ariaValueMin.toFixed(ThumbView.ariaAttributePrecision)}"
+        aria-valuemax="${this._state.ariaValueMax.toFixed(ThumbView.ariaAttributePrecision)}"
+        aria-valuenow="${this._state.ariaValueNow.toFixed(ThumbView.ariaAttributePrecision)}"
         aria-valuetext="${this._state.ariaValueText}"
         @dragstart=${this}
       >
@@ -75,4 +68,4 @@ class RangeSliderThumbView
   }
 }
 
-export { RangeSliderThumbView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { ThumbView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

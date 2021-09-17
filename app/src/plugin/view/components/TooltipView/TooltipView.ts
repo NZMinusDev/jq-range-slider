@@ -5,11 +5,8 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
-import IRangeSliderTooltipView, {
-  TooltipOptions,
-  TooltipState,
-} from './range-slider__tooltip.view.coupling';
-import './range-slider__tooltip.scss';
+import ITooltipView, { TooltipOptions, TooltipState } from './ITooltipView';
+import './TooltipView.scss';
 
 const DEFAULT_OPTIONS: Required<TooltipOptions> = {
   orientation: 'top',
@@ -21,12 +18,14 @@ const DEFAULT_STATE: TooltipState = {
   value: -1,
 };
 
-class RangeSliderTooltipView
+class TooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState>
-  implements IRangeSliderTooltipView {
+  implements ITooltipView
+{
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
     class=${classMap({
       'range-slider__tooltip': true,
+      // eslint-disable-next-line sonarjs/no-nested-template-literals
       [`range-slider__tooltip_orientation_${this._options.orientation}`]: true,
       'range-slider__tooltip_hidden': this._options.isHidden,
       ...classInfo,
@@ -70,4 +69,4 @@ class RangeSliderTooltipView
   }
 }
 
-export { RangeSliderTooltipView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { TooltipView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

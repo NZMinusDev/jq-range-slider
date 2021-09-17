@@ -17,7 +17,7 @@ type FixedTrackOptions = {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type TrackState = {};
 
-interface IRangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
+interface ITrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
   getIntervalsOption(): FixedTrackOptions['intervals'];
   getStepsOption(): FixedTrackOptions['steps'];
   getPaddingOption(): FixedTrackOptions['padding'];
@@ -26,4 +26,4 @@ interface IRangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions,
   setPaddingOption(padding?: TrackOptions['padding']): this;
 }
 
-export { IRangeSliderTrackView as default, TrackOptions, FixedTrackOptions, TrackState };
+export { ITrackView as default, TrackOptions, FixedTrackOptions, TrackState };

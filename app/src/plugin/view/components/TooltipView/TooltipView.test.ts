@@ -10,19 +10,17 @@ import {
   testDOM,
 } from '@utils/devTools/scripts/UnitTestingHelper';
 
-import RangeSliderTooltipView, { DEFAULT_OPTIONS } from './range-slider__tooltip.view';
+import TooltipView, { DEFAULT_OPTIONS } from './TooltipView';
 
 const viewPropertiesExpecter: InstancePropsExpecter<
-  ConstructorParameters<typeof RangeSliderTooltipView>,
-  RangeSliderTooltipView
+  ConstructorParameters<typeof TooltipView>,
+  TooltipView
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 > = function viewPropertiesExpecter({ instance, passedArgs }) {
   // some expect calls
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<
-  typeof RangeSliderTooltipView
->> = {
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof TooltipView>> = {
   partialOptionalArguments: [[{ isHidden: true }]],
   fullOptionalArguments: [
     [
@@ -36,10 +34,10 @@ const differentConstructorArgs: DifferentArguments<ConstructorParameters<
   ],
 };
 
-testDefaultOptions(RangeSliderTooltipView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
+testDefaultOptions(TooltipView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
 testInit({
-  Creator: RangeSliderTooltipView,
+  Creator: TooltipView,
   differentConstructorArgs,
   instancePropsExpecter: viewPropertiesExpecter,
   propsToSet: new Map().set('_options', 0).set('_state', 1),
@@ -47,7 +45,7 @@ testInit({
 describe('init', () => {
   describe('with default options', () => {
     test("the instance's func options should be to have returned", () => {
-      const instance = new RangeSliderTooltipView();
+      const instance = new TooltipView();
 
       const formatterMock = jest.fn(instance['_options'].formatter);
       formatterMock(12.345);
@@ -62,11 +60,11 @@ describe('init', () => {
 });
 
 testGetter({
-  Creator: RangeSliderTooltipView,
+  Creator: TooltipView,
   constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
-    methodReference: RangeSliderTooltipView.prototype.getOptions,
+    methodReference: TooltipView.prototype.getOptions,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     expecter: ({ mock, passedArgs, instance }) => {
       // some expect calls
@@ -75,17 +73,17 @@ testGetter({
   },
 });
 testSetter({
-  Creator: RangeSliderTooltipView,
+  Creator: TooltipView,
   constructorArgs: [],
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
-    methodReference: RangeSliderTooltipView.prototype.setOptions,
+    methodReference: TooltipView.prototype.setOptions,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     expecter: ({ mock, passedArgs, instance }) => {
       // some expect calls
     },
     differentArguments: differentConstructorArgs as DifferentArguments<
-      [ConstructorParameters<typeof RangeSliderTooltipView>['0']]
+      [ConstructorParameters<typeof TooltipView>['0']]
     >,
   },
   propsToSet: new Map().set('_options', 0),
@@ -93,7 +91,7 @@ testSetter({
 });
 
 testDOM({
-  Creator: RangeSliderTooltipView,
+  Creator: TooltipView,
   constructorsArgs: [],
   templatesArgs: [],
   callbacksWithTest: [],

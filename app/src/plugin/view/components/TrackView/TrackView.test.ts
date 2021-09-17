@@ -11,7 +11,7 @@ import {
 } from '@utils/devTools/scripts/UnitTestingHelper';
 import { collapsingParseFloat } from '@utils/devTools/scripts/ParserHelper';
 
-import RangeSliderTrackView, { DEFAULT_OPTIONS } from './range-slider__track.view';
+import RangeSliderTrackView, { DEFAULT_OPTIONS } from './TrackView';
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderTrackView>,
@@ -77,9 +77,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   });
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<
-  typeof RangeSliderTrackView
->> = {
+const differentConstructorArgs: DifferentArguments<
+  ConstructorParameters<typeof RangeSliderTrackView>
+> = {
   invalidOptionalArguments: [
     [{ intervals: { min: 100, max: 100 } }],
     [{ intervals: { min: 100, max: 99 } }],

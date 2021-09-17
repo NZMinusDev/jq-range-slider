@@ -7,8 +7,8 @@ import { spread } from '@open-wc/lit-helpers';
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 import { collapsingParseInt } from '@utils/devTools/scripts/ParserHelper';
 
-import IRangeSliderPipsView, { PipsOptions, PipsState } from './range-slider__pips.view.coupling';
-import './range-slider__pips.scss';
+import IPipsView, { PipsOptions, PipsState } from './IPipsView';
+import './PipsView.scss';
 
 const DEFAULT_OPTIONS: Required<PipsOptions> = {
   orientation: 'horizontal',
@@ -20,14 +20,13 @@ const DEFAULT_OPTIONS: Required<PipsOptions> = {
 
 const DEFAULT_STATE: PipsState = {};
 
-class RangeSliderPipsView
-  extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
-  implements IRangeSliderPipsView {
+class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> implements IPipsView {
   readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
     html`<div
       class=${classMap({
         'range-slider__pips': true,
         'js-range-slider__pips': true,
+        // eslint-disable-next-line sonarjs/no-nested-template-literals
         [`range-slider__pips_orientation_${this._options.orientation}`]: true,
         'range-slider__pips_hidden': this._options.isHidden,
         ...classInfo,
@@ -179,4 +178,4 @@ class RangeSliderPipsView
   }
 }
 
-export { RangeSliderPipsView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { PipsView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

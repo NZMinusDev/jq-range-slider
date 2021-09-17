@@ -10,7 +10,7 @@ import {
   testDOM,
 } from '@utils/devTools/scripts/UnitTestingHelper';
 
-import RangeSliderView, { DEFAULT_OPTIONS, DEFAULT_STATE } from './range-slider.view';
+import RangeSliderView, { DEFAULT_OPTIONS, DEFAULT_STATE } from './RangeSliderView';
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderView>,
@@ -59,92 +59,91 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   }
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<
-  typeof RangeSliderView
->> = {
-  invalidOptionalArguments: [
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], connect: [] }],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], connect: [true] }],
-    [
-      {
-        intervals: { min: -100, max: 100, '50%': 50 },
-        start: [-50, 0, 75],
-        connect: [true, false, true, true, true, false],
-      },
+const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof RangeSliderView>> =
+  {
+    invalidOptionalArguments: [
+      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], connect: [] }],
+      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], connect: [true] }],
+      [
+        {
+          intervals: { min: -100, max: 100, '50%': 50 },
+          start: [-50, 0, 75],
+          connect: [true, false, true, true, true, false],
+        },
+      ],
+      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], tooltips: [] }],
+      [
+        {
+          intervals: { min: -100, max: 100, '50%': 50 },
+          start: [-50, 0, 75],
+          tooltips: [true, false],
+        },
+      ],
+      [
+        {
+          intervals: { min: -100, max: 100, '50%': 50 },
+          start: [-50, 0, 75],
+          tooltips: [(val: number) => `${val}`, false, true, true, true, false],
+        },
+      ],
+      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [] }],
+      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-101] }],
+      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [101] }],
+      [
+        {
+          intervals: { min: -100, max: 100, '50%': 50 },
+          start: [-100, -90, 0, 100],
+          padding: 5,
+        },
+      ],
+      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [50, -50, -75, 0, 10] }],
+      [{ pips: { mode: 'intervals', values: 5 } }],
+      [{ pips: { mode: 'intervals', values: [0, 0, -10, 50, -99] } }],
+      [{ pips: { mode: 'count', values: -3 } }],
+      [{ pips: { mode: 'count', values: [0, 50, 100] } }],
+      [{ pips: { mode: 'positions', values: 10 } }],
+      [{ pips: { mode: 'positions', values: [-50, -1, 0, 99, 100, 101] } }],
+      [{ pips: { mode: 'values', values: 2 } }],
+      [
+        {
+          intervals: { min: -100, max: 100, '50%': 50 },
+          pips: { mode: 'values', values: [-101, -100, 50, 99, 101] },
+        },
+      ],
+      [{ steps: 5 }],
+      [{ pips: { values: [] } }],
+      [{ pips: { values: [50] } }],
+      [{ pips: { mode: 'positions', values: 0 } }],
     ],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], tooltips: [] }],
-    [
-      {
-        intervals: { min: -100, max: 100, '50%': 50 },
-        start: [-50, 0, 75],
-        tooltips: [true, false],
-      },
+    partialOptionalArguments: [
+      [
+        {
+          intervals: { min: -100, max: 100, '50%': 25 },
+          start: [0, 75],
+          steps: [10, 5],
+          connect: [true, false, true],
+          padding: [10, 5],
+          tooltips: [true, false],
+        },
+      ],
     ],
-    [
-      {
-        intervals: { min: -100, max: 100, '50%': 50 },
-        start: [-50, 0, 75],
-        tooltips: [(val: number) => `${val}`, false, true, true, true, false],
-      },
+    fullOptionalArguments: [
+      [
+        {
+          intervals: { min: -100, max: 100, '50%': 50 },
+          start: [0, 75],
+          steps: [10, 5],
+          connect: [false, true, false],
+          orientation: 'vertical',
+          padding: [10, 5],
+          formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
+          tooltips: [true, (number: number) => `${number.toFixed(4).toLocaleString()}%`],
+          pips: { mode: 'count', values: 4, density: 5 },
+        },
+        { isActiveThumbs: [false, false], value: [0, 75] },
+      ],
     ],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [] }],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-101] }],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [101] }],
-    [
-      {
-        intervals: { min: -100, max: 100, '50%': 50 },
-        start: [-100, -90, 0, 100],
-        padding: 5,
-      },
-    ],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [50, -50, -75, 0, 10] }],
-    [{ pips: { mode: 'intervals', values: 5 } }],
-    [{ pips: { mode: 'intervals', values: [0, 0, -10, 50, -99] } }],
-    [{ pips: { mode: 'count', values: -3 } }],
-    [{ pips: { mode: 'count', values: [0, 50, 100] } }],
-    [{ pips: { mode: 'positions', values: 10 } }],
-    [{ pips: { mode: 'positions', values: [-50, -1, 0, 99, 100, 101] } }],
-    [{ pips: { mode: 'values', values: 2 } }],
-    [
-      {
-        intervals: { min: -100, max: 100, '50%': 50 },
-        pips: { mode: 'values', values: [-101, -100, 50, 99, 101] },
-      },
-    ],
-    [{ steps: 5 }],
-    [{ pips: { values: [] } }],
-    [{ pips: { values: [50] } }],
-    [{ pips: { mode: 'positions', values: 0 } }],
-  ],
-  partialOptionalArguments: [
-    [
-      {
-        intervals: { min: -100, max: 100, '50%': 25 },
-        start: [0, 75],
-        steps: [10, 5],
-        connect: [true, false, true],
-        padding: [10, 5],
-        tooltips: [true, false],
-      },
-    ],
-  ],
-  fullOptionalArguments: [
-    [
-      {
-        intervals: { min: -100, max: 100, '50%': 50 },
-        start: [0, 75],
-        steps: [10, 5],
-        connect: [false, true, false],
-        orientation: 'vertical',
-        padding: [10, 5],
-        formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
-        tooltips: [true, (number: number) => `${number.toFixed(4).toLocaleString()}%`],
-        pips: { mode: 'count', values: 4, density: 5 },
-      },
-      { isActiveThumbs: [false, false], value: [0, 75] },
-    ],
-  ],
-};
+  };
 
 testDefaultOptions(RangeSliderView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
@@ -188,14 +187,14 @@ describe('init', () => {
       templateMock({ classInfo: {}, styleInfo: {}, attributes: {} });
       expect(templateMock).toHaveReturned();
 
-      const _getIntervalInfoByPointMock = jest.spyOn(
+      const getIntervalInfoByPointMock = jest.spyOn(
         Object.getPrototypeOf(instance),
         '_getIntervalInfoByPoint'
       );
       instance['_getIntervalInfoByPoint'](-200);
-      expect(_getIntervalInfoByPointMock).toHaveReturnedWith({ keyOfSupremum: 'min' });
+      expect(getIntervalInfoByPointMock).toHaveReturnedWith({ keyOfSupremum: 'min' });
       instance['_getIntervalInfoByPoint'](200);
-      expect(_getIntervalInfoByPointMock).toHaveReturnedWith({ keyOfInfimum: 'max' });
+      expect(getIntervalInfoByPointMock).toHaveReturnedWith({ keyOfInfimum: 'max' });
     });
   });
 });
@@ -892,78 +891,145 @@ testDOM({
         theMostRightPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
         expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
-          -1150,
-          -1000,
-          1400,
+          -1150, -1000, 1400,
         ]);
       });
 
-      test('cursor movement from exterior of track should not be handled', () => {
+      describe('cursor movement from exterior of track should not be handled', () => {
         instance.set();
 
         const movement = 10;
 
-        infimumThumb.dispatchEvent(
-          new PointerEvent('pointerdown', {
-            pointerId: 1,
-            bubbles: true,
-          })
-        );
-        supremumThumb.dispatchEvent(
-          new PointerEvent('pointerdown', {
-            pointerId: 2,
-            bubbles: true,
-          })
-        );
+        test('with horizontal orientation', () => {
+          infimumThumb.dispatchEvent(
+            new PointerEvent('pointerdown', {
+              pointerId: 1,
+              bubbles: true,
+            })
+          );
+          supremumThumb.dispatchEvent(
+            new PointerEvent('pointerdown', {
+              pointerId: 2,
+              bubbles: true,
+            })
+          );
 
-        infimumThumb.dispatchEvent(
-          new PointerEvent('pointermove', {
-            pointerId: 1,
-            movementX: -movement,
-            clientX: -movement,
-            bubbles: true,
-          })
-        );
-        infimumThumb.dispatchEvent(
-          new PointerEvent('pointermove', {
-            pointerId: 1,
-            movementX: movement,
-            clientX: 0,
-            bubbles: true,
-          })
-        );
+          infimumThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 1,
+              movementX: -movement,
+              clientX: -movement,
+              bubbles: true,
+            })
+          );
+          infimumThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 1,
+              movementX: movement,
+              clientX: 0,
+              bubbles: true,
+            })
+          );
 
-        supremumThumb.dispatchEvent(
-          new PointerEvent('pointermove', {
-            pointerId: 2,
-            movementX: movement,
-            clientX: trackPXSize + movement,
-            bubbles: true,
-          })
-        );
-        supremumThumb.dispatchEvent(
-          new PointerEvent('pointermove', {
-            pointerId: 2,
-            movementX: -movement,
-            clientX: trackPXSize,
-            bubbles: true,
-          })
-        );
+          supremumThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 2,
+              movementX: movement,
+              clientX: trackPXSize + movement,
+              bubbles: true,
+            })
+          );
+          supremumThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 2,
+              movementX: -movement,
+              clientX: trackPXSize,
+              bubbles: true,
+            })
+          );
 
-        infimumThumb.dispatchEvent(
-          new PointerEvent('lostpointercapture', {
-            pointerId: 1,
-            bubbles: true,
-          })
-        );
-        supremumThumb.dispatchEvent(
-          new PointerEvent('lostpointercapture', {
-            pointerId: 2,
-            bubbles: true,
-          })
-        );
+          infimumThumb.dispatchEvent(
+            new PointerEvent('lostpointercapture', {
+              pointerId: 1,
+              bubbles: true,
+            })
+          );
+          supremumThumb.dispatchEvent(
+            new PointerEvent('lostpointercapture', {
+              pointerId: 2,
+              bubbles: true,
+            })
+          );
 
-        instance.set();
+          instance.set();
+        });
+
+        test('with vertical orientation', () => {
+          instance.setOrientationOption('vertical');
+
+          infimumThumb.dispatchEvent(
+            new PointerEvent('pointerdown', {
+              pointerId: 1,
+              bubbles: true,
+            })
+          );
+          supremumThumb.dispatchEvent(
+            new PointerEvent('pointerdown', {
+              pointerId: 2,
+              bubbles: true,
+            })
+          );
+
+          infimumThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 1,
+              movementY: -movement,
+              clientY: -movement,
+              bubbles: true,
+            })
+          );
+          infimumThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 1,
+              movementY: movement,
+              clientY: 0,
+              bubbles: true,
+            })
+          );
+
+          supremumThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 2,
+              movementY: movement,
+              clientY: trackPXSize + movement,
+              bubbles: true,
+            })
+          );
+          supremumThumb.dispatchEvent(
+            new PointerEvent('pointermove', {
+              pointerId: 2,
+              movementY: -movement,
+              clientY: trackPXSize,
+              bubbles: true,
+            })
+          );
+
+          infimumThumb.dispatchEvent(
+            new PointerEvent('lostpointercapture', {
+              pointerId: 1,
+              bubbles: true,
+            })
+          );
+          supremumThumb.dispatchEvent(
+            new PointerEvent('lostpointercapture', {
+              pointerId: 2,
+              bubbles: true,
+            })
+          );
+
+          instance.set();
+          instance.setOrientationOption('horizontal');
+        });
       });
 
       test('after options updated value calculating should be properly(with new arguments in formula)', () => {

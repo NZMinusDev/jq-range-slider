@@ -2,7 +2,7 @@ import {
   BEMComponent,
   HTMLElementWithComponent,
 } from '@utils/devTools/scripts/ComponentCreationHelper';
-import { FixedRangeSliderOptions } from '@plugin/view/range-slider.view.coupling';
+import { FixedRangeSliderOptions } from '@plugin/view/IRangeSliderView';
 
 import sliderConfigElements, { SliderConfigElement } from './slider-config-elements';
 
@@ -46,9 +46,11 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
   set(options: FixedRangeSliderOptions) {
     const { configItems } = this._DOM;
 
-    (configItems.orientation.elements.namedItem(
-      `${configItems.orientation.id}-${options.orientation}`
-    ) as HTMLInputElement).checked = true;
+    (
+      configItems.orientation.elements.namedItem(
+        `${configItems.orientation.id}-${options.orientation}`
+      ) as HTMLInputElement
+    ).checked = true;
     configItems.min.value = options.intervals.min.toString();
     configItems.max.value = options.intervals.max.toString();
     [configItems.padLeft.value, configItems.padRight.value] = options.padding.map((pad) =>
@@ -59,9 +61,11 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     configItems.connect.value = `[${options.connect}]`;
     configItems.intervals.value = JSON.stringify(options.intervals);
     configItems.tooltips.value = `[${options.tooltips}]`;
-    (configItems.mode.elements.namedItem(
-      `${configItems.mode.id}-${options.pips.mode}`
-    ) as HTMLInputElement).checked = true;
+    (
+      configItems.mode.elements.namedItem(
+        `${configItems.mode.id}-${options.pips.mode}`
+      ) as HTMLInputElement
+    ).checked = true;
     configItems.pipsDensity.value = options.pips.density.toString();
     configItems.pipsValues.value =
       options.pips.mode === 'count' ? `${options.pips.values}` : `[${options.pips.values}]`;
@@ -71,9 +75,9 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
   }
 
   protected _initDOM() {
-    const orientation = (this.element.elements.namedItem(
+    const orientation = this.element.elements.namedItem(
       'orientation'
-    ) as unknown) as SliderConfigDOM['configItems']['orientation'];
+    ) as unknown as SliderConfigDOM['configItems']['orientation'];
     const min = this.element.elements.namedItem('min') as SliderConfigDOM['configItems']['min'];
     const max = this.element.elements.namedItem('max') as SliderConfigDOM['configItems']['max'];
     const padLeft = this.element.elements.namedItem(
@@ -97,9 +101,9 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     const tooltips = this.element.elements.namedItem(
       'tooltips'
     ) as SliderConfigDOM['configItems']['tooltips'];
-    const mode = (this.element.elements.namedItem(
+    const mode = this.element.elements.namedItem(
       'mode'
-    ) as unknown) as SliderConfigDOM['configItems']['mode'];
+    ) as unknown as SliderConfigDOM['configItems']['mode'];
     const pipsDensity = this.element.elements.namedItem(
       'pips-density'
     ) as SliderConfigDOM['configItems']['pipsDensity'];

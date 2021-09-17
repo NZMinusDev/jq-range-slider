@@ -1,8 +1,8 @@
 import '@babel/polyfill';
 import cloneDeep from 'lodash-es/cloneDeep';
 
-import IRangeSliderModel, { RangeSliderState } from '../models/range-slider.model.coupling';
-import RangeSliderPresenter from './range-slider';
+import IRangeSliderModel, { RangeSliderState } from '../models/IRangeSliderModel';
+import RangeSliderPresenter from './RangeSliderPresenter';
 
 describe('plugin presenter', () => {
   jest.useFakeTimers();
@@ -15,6 +15,7 @@ describe('plugin presenter', () => {
   };
 
   const model: IRangeSliderModel = {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async setState(state) {
       return this;
     },
@@ -32,9 +33,8 @@ describe('plugin presenter', () => {
     },
   };
 
-  const defaultErrorCatcher = (reason) => {
-    console.error(reason);
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const defaultErrorCatcher = (reason) => {};
 
   let root: HTMLDivElement;
   let presenter: RangeSliderPresenter;

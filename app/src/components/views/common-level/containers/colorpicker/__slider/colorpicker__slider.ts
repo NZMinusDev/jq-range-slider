@@ -52,9 +52,8 @@ class ColorpickerSlider extends BEMComponent<
     handleSliderUpdate: (event: CustomEvent<SliderCustomEvents['update']>) => {
       const [colorValue] = event.detail.value;
       // eslint-disable-next-line no-param-reassign
-      ((event as unknown) as CustomEvent<
-        ColorpickerSliderCustomEvents['update']
-      >).detail.value = colorValue;
+      (event as unknown as CustomEvent<ColorpickerSliderCustomEvents['update']>).detail.value =
+        colorValue;
     },
   };
 }

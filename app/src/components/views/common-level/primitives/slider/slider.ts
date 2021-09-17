@@ -3,7 +3,7 @@ import {
   HTMLElementWithComponent,
 } from '@utils/devTools/scripts/ComponentCreationHelper';
 import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
-import IRangeSliderView, { RangeSliderOptions } from '@plugin/view/range-slider.view.coupling';
+import IRangeSliderView, { RangeSliderOptions } from '@plugin/view/IRangeSliderView';
 import '@plugin/range-slider-plugin';
 
 import sliderElements, { SliderElement } from './slider-elements';
@@ -65,7 +65,7 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
     // eslint-disable-next-line no-eval
     options.formatter = window.eval(options.formatter);
 
-    return (options as unknown) as RangeSliderOptions;
+    return options as unknown as RangeSliderOptions;
   }
 
   protected _initLibSlider() {

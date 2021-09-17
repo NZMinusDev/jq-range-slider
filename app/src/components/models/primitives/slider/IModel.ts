@@ -1,4 +1,4 @@
-import IRangeSliderModel from '@plugin/models/range-slider.model.coupling';
+import IRangeSliderModel from '@plugin/models/IRangeSliderModel';
 
 type IModel = IRangeSliderModel;
 

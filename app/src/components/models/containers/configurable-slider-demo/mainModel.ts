@@ -33,7 +33,7 @@ const mainModel: MainModel = {
     return result;
   },
   whenStateIsChanged(callback) {
-    this.eventSource.onmessage = function (event) {
+    this.eventSource.onmessage = (event) => {
       callback(JSON.parse(event.data).state);
     };
   },

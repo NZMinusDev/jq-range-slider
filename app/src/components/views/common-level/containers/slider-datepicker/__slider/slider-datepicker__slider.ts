@@ -63,9 +63,8 @@ class SliderDatepickerSlider extends BEMComponent<
     handleSliderUpdate: (event: CustomEvent<SliderCustomEvents['update']>) => {
       const dates = event.detail.value.map((value) => new Date(value));
       // eslint-disable-next-line no-param-reassign
-      ((event as unknown) as CustomEvent<
-        SliderDatepickerSliderCustomEvents['update']
-      >).detail.value = dates as SliderDatepickerSliderCustomEvents['update']['value'];
+      (event as unknown as CustomEvent<SliderDatepickerSliderCustomEvents['update']>).detail.value =
+        dates as SliderDatepickerSliderCustomEvents['update']['value'];
     },
   };
 }

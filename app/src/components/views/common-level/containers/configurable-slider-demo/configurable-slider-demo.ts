@@ -173,6 +173,7 @@ class ConfigurableSliderDemo extends BEMComponent<
       slider.set(JSON.parse(event.detail.value));
     },
     handleSubmitCustomReset: (
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       event: CustomEvent<ConfigurableSliderDemoSubmitCustomEvents['customReset']>
     ) => {
       const slider = this._DOM.slider.component;
@@ -305,6 +306,7 @@ class ConfigurableSliderDemo extends BEMComponent<
       this._displaySliderConfig()._displaySubmit();
     },
     handleSliderConfigCustomReset: (
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       event: CustomEvent<SliderConfigCustomEvents['customReset']>
     ) => {
       this._DOM.slider.component.setOptions();

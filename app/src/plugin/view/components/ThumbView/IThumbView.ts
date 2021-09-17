@@ -12,6 +12,6 @@ type ThumbState = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface IRangeSliderThumbView extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {}
+interface IThumbView extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {}
 
-export { IRangeSliderThumbView as default, ThumbOptions, ThumbState };
+export { IThumbView as default, ThumbOptions, ThumbState };

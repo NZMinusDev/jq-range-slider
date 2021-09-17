@@ -7,12 +7,8 @@ import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 import { collapsingParseFloat } from '@utils/devTools/scripts/ParserHelper';
 import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
 
-import IRangeSliderTrackView, {
-  TrackOptions,
-  FixedTrackOptions,
-  TrackState,
-} from './range-slider__track.view.coupling';
-import './range-slider__track.scss';
+import ITrackView, { TrackOptions, FixedTrackOptions, TrackState } from './ITrackView';
+import './TrackView.scss';
 
 const DEFAULT_OPTIONS: FixedTrackOptions = {
   orientation: 'horizontal',
@@ -25,7 +21,8 @@ const DEFAULT_STATE: TrackState = {};
 
 class RangeSliderTrackView
   extends MVPView<FixedTrackOptions, TrackOptions, TrackState>
-  implements IRangeSliderTrackView {
+  implements ITrackView
+{
   static intervalsKeysCompareFunc(a: string, b: string) {
     if (a === 'min' || b === 'max') {
       return -1;
@@ -46,6 +43,7 @@ class RangeSliderTrackView
       class=${classMap({
         'range-slider__track': true,
         'js-range-slider__track': true,
+        // eslint-disable-next-line sonarjs/no-nested-template-literals
         [`range-slider__track_orientation_${this._options.orientation}`]: true,
         ...classInfo,
       })}

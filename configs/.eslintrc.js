@@ -1,10 +1,8 @@
-module.exports = {
+const config = {
   env: { browser: true },
 
-  /**
-   * Alternative to "Espree" parser that can read Typescript code and produce said ESTree(the language ESLint can understand)
-   */
-  parser: '@typescript-eslint/parser',
+  ignorePatterns: ['jq-range-slider-plugin.js'],
+
   extends: [
     // List of recommended rules by https://github.com/iamturns/eslint-config-airbnb-typescript
     'airbnb-base',
@@ -18,26 +16,23 @@ module.exports = {
     // prevent use of extended native objects
     'plugin:no-use-extend-native/recommended',
 
-    /**
-     * List of recommended rules for TypeScript from "@typescript-eslint" plugin
-     */
-    'plugin:@typescript-eslint/recommended',
     'plugin:lit/recommended',
-
-    /**
-     * Enables (eslint-plugin-prettier), which run Prettier analysis as part of ESLint.
-     * Disable any linting rule that might interfere with an existing Prettier rule using(eslint-config-prettier).
-     * Should be last for override other configs.
-     */
-    'plugin:prettier/recommended',
   ],
-  plugins: ['no-loops', 'promise', 'lit', 'fsd'],
+  plugins: ['sonarjs', 'no-loops', 'promise', 'lit', 'fsd'],
   rules: {
     // FIXME: if you know how to make it works with chaining calls of several methods use['error', { allowAfterThis: true }]
-    'no-underscore-dangle': 0,
+    'no-underscore-dangle': 'off',
 
-    'lines-between-class-members': 0,
-    '@typescript-eslint/explicit-module-boundary-types': 0,
+    'lines-between-class-members': 'off',
+
+    // https://github.com/fullstack-development/front-end-best-practices/blob/master/JS/README.md#1.17
+    'import/order': [
+      'error',
+      {
+        groups: [['builtin', 'external'], 'internal', ['parent', 'sibling'], 'index'],
+        'newlines-between': 'always',
+      },
+    ],
 
     // https://github.com/airbnb/javascript#destructuring--object
     'prefer-destructuring': [
@@ -59,6 +54,11 @@ module.exports = {
 
     // https://github.com/airbnb/javascript#arrows--implicit-return
     'arrow-body-style': ['error', 'as-needed'],
+
+    /*
+     * TODO: here should be rule like as 'method-void-implicit-error'
+     * https://github.com/airbnb/javascript#constructors--chaining
+     */
 
     // https://github.com/airbnb/javascript#comments--multiline
     'multiline-comment-style': ['error', 'starred-block'],
@@ -87,11 +87,11 @@ module.exports = {
       { blankLine: 'always', prev: ['const', 'let'], next: ['block-like'] },
       { blankLine: 'always', prev: '*', next: ['return', 'break', 'debugger'] },
       { blankLine: 'always', prev: '*', next: 'export' },
-      { blankLine: 'any', prev: ['case'], next: 'case' },
+      { blankLine: 'any', prev: ['case'], next: ['case', 'default'] },
     ],
 
     // Disallow use of loops (for, for-in, while, do-while, for-of) - we have forEach, map etc.
-    'no-loops/no-loops': 2,
+    'no-loops/no-loops': 'error',
 
     /**
      * Enforce best practices for JavaScript promises.
@@ -108,18 +108,6 @@ module.exports = {
     'promise/no-new-statics': 'error',
     'promise/no-return-in-finally': 'warn',
     'promise/valid-params': 'warn',
-
-    // https://github.com/airbnb/javascript/blob/master/packages/eslint-config-airbnb-base/rules/imports.js#L139
-    'import/extensions': [
-      'error',
-      'ignorePackages',
-      {
-        js: 'never',
-        jsx: 'never',
-        ts: 'never',
-        tsx: 'never',
-      },
-    ],
   },
   settings: {
     'import/resolver': {
@@ -137,4 +125,47 @@ module.exports = {
       },
     },
   },
+  overrides: [
+    {
+      files: ['**/*.ts'],
+
+      // https://github.com/iamturns/eslint-config-airbnb-typescript
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+
+      extends: [
+        // List of recommended rules by https://github.com/iamturns/eslint-config-airbnb-typescript
+        'airbnb-typescript/base',
+      ],
+
+      rules: {
+        '@typescript-eslint/lines-between-class-members': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+      },
+    },
+    {
+      files: ['**/*.test.ts'],
+      rules: {
+        '@typescript-eslint/dot-notation': [
+          'error',
+          {
+            allowPrivateClassPropertyAccess: true,
+            allowProtectedClassPropertyAccess: true,
+          },
+        ],
+      },
+    },
+  ],
 };
+
+/**
+ * Enables (eslint-plugin-prettier), which run Prettier analysis as part of ESLint.
+ * Disable any linting rule that might interfere with an existing Prettier rule using(eslint-config-prettier).
+ * Should be last for override other configs.
+ */
+const prettierExtending = 'plugin:prettier/recommended';
+config.extends.push(prettierExtending);
+config.overrides[0].extends.push(prettierExtending);
+
+module.exports = config;

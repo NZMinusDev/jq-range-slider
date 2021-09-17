@@ -32,7 +32,7 @@ interface CustomEventListenerObject {
   [key: string]: any;
 }
 
-type handler = CustomEventListener | CustomEventListenerObject;
+type Handler = CustomEventListener | CustomEventListenerObject;
 
 /**
  * Add events processing inside class without inheritances and make child's handlers inside one class
@@ -67,11 +67,11 @@ type handler = CustomEventListener | CustomEventListenerObject;
  */
 class EventManagerMixin<TEvents extends string> {
   protected _eventHandlers: {
-    [key: string]: handler[];
+    [key: string]: Handler[];
   } = {};
 
   // Subscribe to the event
-  on(eventName: TEvents, eventHandler: handler) {
+  on(eventName: TEvents, eventHandler: Handler) {
     if (!this._eventHandlers[eventName]) {
       this._eventHandlers[eventName] = [];
     }
@@ -124,7 +124,7 @@ class EventManagerMixin<TEvents extends string> {
   }
 }
 
-type template = (
+type Template = (
   attributes?: {
     classInfo?: ClassInfo;
     styleInfo?: StyleInfo;
@@ -139,7 +139,7 @@ abstract class MVPView<
   TState extends Record<string, unknown>,
   TEvents extends string = ''
 > extends EventManagerMixin<Exclude<TEvents | 'render' | 'remove', ''>> {
-  readonly template: template = ({ classInfo, styleInfo, attributes } = {}, ...args) => html``;
+  abstract readonly template: Template;
 
   static readonly templateOfRemoving = () => html``;
 
@@ -336,9 +336,9 @@ export {
   handleEvent,
   CustomEventListener,
   CustomEventListenerObject,
-  handler,
+  Handler,
   EventManagerMixin,
-  template,
+  Template,
   MVPView,
   renderMVPView,
   MVPModel,

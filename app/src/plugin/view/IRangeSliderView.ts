@@ -1,9 +1,9 @@
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
-import { TrackOptions, FixedTrackOptions } from './__track/range-slider__track.view.coupling';
-import { RangeOptions } from './__range/range-slider__range.view.coupling';
-import { TooltipOptions } from './__tooltip/range-slider__tooltip.view.coupling';
-import { PipsOptions } from './__pips/range-slider__pips.view.coupling';
+import { TrackOptions, FixedTrackOptions } from './components/TrackView/ITrackView';
+import { RangeOptions } from './components/RangeView/IRangeView';
+import { TooltipOptions } from './components/TooltipView/ITooltipView';
+import { PipsOptions } from './components/PipsView/IPipsView';
 
 type Formatter = (value: number) => string;
 type Mode = 'intervals' | 'count' | 'positions' | 'values';
