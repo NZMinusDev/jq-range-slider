@@ -1,13 +1,13 @@
 @startuml
 class EventManagerMixin<TEvents extends string> {
-    #_eventHandlers: { [key: string]: handler[]; }
-    +on(eventName: TEvents, eventHandler: handler): this
+    #_eventHandlers: { [key: string]: Handler[]; }
+    +on(eventName: TEvents, eventHandler: Handler): this
     +off(eventName: TEvents, eventHandler: (...args: any) => void): this
     +trigger(eventName: TEvents, args: any): this
     +handleEvent(event: Event): this
 }
 abstract class MVPView<TOptionsToGet extends Record<string, unknown>, TOptionsToSet extends Record<string, unknown>, TState extends Record<string, unknown>, TEvents extends string> extends EventManagerMixin {
-    +template: template
+    +{abstract} template: Template
     #_options: TOptionsToGet
     #_state: TState
     #_theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[]
@@ -27,7 +27,8 @@ interface MVPModel<State> {
     +whenStateIsChanged(callback: (state: Required<State>) => void): void
     +closeConnections(): this
 }
-interface IRangeSliderTrackView extends MVPView {
+interface IRangeSliderModel extends MVPModel
+interface ITrackView extends MVPView {
     +getIntervalsOption(): { [key: string]: number; min: number; max: number; }
     +getStepsOption(): (number | "none")[]
     +getPaddingOption(): [number, number]
@@ -35,11 +36,11 @@ interface IRangeSliderTrackView extends MVPView {
     +setStepsOption(steps?: number | "none" | (number | "none")[] | undefined): this
     +setPaddingOption(padding?: number | [number, number] | undefined): this
 }
-interface IRangeSliderRangeView extends MVPView {
+interface IRangeView extends MVPView {
     +getIsConnectedOption(): boolean | undefined
     +setIsConnectedOption(connect?: boolean | undefined): this
 }
-interface IRangeSliderTooltipView extends MVPView {
+interface ITooltipView extends MVPView {
     +getOrientationOption(): "top" | "left" | undefined
     +getIsHiddenOption(): boolean | undefined
     +getFormatterOption(): Formatter | undefined
@@ -47,7 +48,7 @@ interface IRangeSliderTooltipView extends MVPView {
     +setIsHiddenOption(isHidden?: boolean | undefined): this
     +setFormatterOption(formatter?: Formatter | undefined): this
 }
-interface IRangeSliderPipsView extends MVPView {
+interface IPipsView extends MVPView {
     +getOrientationOption(): "horizontal" | "vertical" | undefined
     +getIsHiddenOption(): boolean | undefined
     +getValuesOption(): { percent: number; value: number; }[] | undefined
@@ -81,8 +82,8 @@ interface IRangeSliderView extends MVPView {
     +get(): number[]
     +set(value?: number | number[] | undefined): this
 }
-interface IRangeSliderThumbView extends MVPView
-class RangeSliderTrackView extends MVPView implements IRangeSliderTrackView {
+interface IThumbView extends MVPView
+class TrackView extends MVPView implements ITrackView {
     +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, innerHTML?: TemplateResult | TemplateResult[]) => TemplateResult
     +getOrientationOption(): "horizontal" | "vertical"
     +getIntervalsOption(): { [x: string]: number; min: number; max: number; }
@@ -103,17 +104,17 @@ class RangeSliderTrackView extends MVPView implements IRangeSliderTrackView {
     #_getSortedKeysOfIntervalsOption(): string[]
     +{static} intervalsKeysCompareFunc(a: string, b: string): number
 }
-class RangeSliderRangeView extends MVPView implements IRangeSliderRangeView {
+class RangeView extends MVPView implements IRangeView {
     +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
     +getIsConnectedOption(): boolean
     +setIsConnectedOption(isConnected?: boolean): this
 }
-class RangeSliderThumbView extends MVPView implements IRangeSliderThumbView {
+class ThumbView extends MVPView implements IThumbView {
     +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, { innerHTML, isActive }?: { innerHTML: TemplateResult | TemplateResult[]; isActive: boolean; }) => TemplateResult
     #_onDragstart(): boolean
     #{static} ariaAttributePrecision: number
 }
-class RangeSliderTooltipView extends MVPView implements IRangeSliderTooltipView {
+class TooltipView extends MVPView implements ITooltipView {
     +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
     +getOrientationOption(): "top" | "left"
     +getIsHiddenOption(): boolean
@@ -122,7 +123,7 @@ class RangeSliderTooltipView extends MVPView implements IRangeSliderTooltipView 
     +setIsHiddenOption(isHidden?: boolean | undefined): this
     +setFormatterOption(formatter?: Formatter | undefined): this
 }
-class RangeSliderPipsView extends MVPView implements IRangeSliderPipsView {
+class PipsView extends MVPView implements IPipsView {
     +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
     +getOrientationOption(): "horizontal" | "vertical"
     +getIsHiddenOption(): boolean
@@ -193,8 +194,8 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_getRangeTransform(index: number): string
     #_getThumbTransform(index: number): string
     #_getThumbZIndex(index: number): string
-    #_thumbEventListenerObject: { cache: WeakMap<HTMLElement, { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }>; ... 4 more ...; getOrigin(event: Event): HTMLElement; }
-    #_initThumbCache(origin: HTMLElement): { trackElem: HTMLElement; thumbIndex: number; movementAcc: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; getCalculated: () => { ...; }; }
+    #_thumbEventListenerObject: { cache: WeakMap<HTMLElement, { trackElem: HTMLElement; thumbIndex: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; valuePerPx: number; movementAcc: number; }>; ... 4 more ...; getOrigin(event: Event): HTMLElement; }
+    #_initThumbCache(origin: HTMLElement): { trackElem: HTMLElement; thumbIndex: number; trackValueSize: number; siblingRanges: [HTMLElement, HTMLElement]; valuePerPx: number; movementAcc: number; }
     #_isMoveFromExteriorOfThumb(thumbDOMRect: DOMRect, event: PointerEvent): boolean
     #_fixNonLinearShiftThroughIntervals(currentIntervalInfo: { keyOfInfimum: string; keyOfSupremum: string; magnificationFactor: number; step: number | 'none'; }, thumbValueAfterIncrementation: number, thumbValueIncrementation: number, movement: number, valuePerPx: number): { thumbValueAfterIncrementation: number; theLastIncrement: number; currentIntervalInfo: {    keyOfInfimum: string;    keyOfSupremum: string;    magnificationFactor: number;    step: number | 'none';}; }
     #_thumbValueToPositionOnTrack(thumbIndex: number): { offsetInPercent: number; thumbScaleFactor: number; thumbToCenterOffset: number; }
@@ -204,7 +205,6 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #{static} _getIntervalKeyAsNumber(key: string | number): number
     #{static} _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): { stepped: number; remains: number; }
 }
-interface IRangeSliderModel extends MVPModel
 class RangeSliderPresenter {
     +view: IRangeSliderView
     +model?: IRangeSliderModel | undefined
@@ -213,11 +213,11 @@ class RangeSliderPresenter {
     #_updateViewDisplay(state: Required<RangeSliderState>): this
     #_initModelViewBinding(): this
 }
-RangeSliderView "1" --* "1" RangeSliderTrackView : composes template using template of >
-RangeSliderView "1" --* "*" RangeSliderRangeView : composes template using templates of >
-RangeSliderView "1" --* "*" RangeSliderThumbView : composes template using templates of >
-RangeSliderView "1" --* "*" RangeSliderTooltipView : composes template using templates of >
-RangeSliderView "1" --* "1" RangeSliderPipsView : composes template using template of >
+RangeSliderView "1" --* "1" TrackView : composes template using template of >
+RangeSliderView "1" --* "*" RangeView : composes template using templates of >
+RangeSliderView "1" --* "*" ThumbView : composes template using templates of >
+RangeSliderView "1" --* "*" TooltipView : composes template using templates of >
+RangeSliderView "1" --* "1" PipsView : composes template using template of >
 RangeSliderPresenter "1" --o "1" IRangeSliderModel : get/set state, listen state update 
 RangeSliderPresenter "1" --> "1" IRangeSliderView : supply state (Update)
 IRangeSliderModel "1" ..> "1" RangeSliderPresenter : change notification (calls passed to 'whenStateIsChanged' callback which updates view display)
