@@ -12,7 +12,7 @@ interface CustomEventListenerObject {
     handleEvent(...args: any): void;
     [key: string]: any;
 }
-declare type handler = CustomEventListener | CustomEventListenerObject;
+declare type Handler = CustomEventListener | CustomEventListenerObject;
 /**
  * Add events processing inside class without inheritances and make child's handlers inside one class
  * @example
@@ -46,14 +46,14 @@ declare type handler = CustomEventListener | CustomEventListenerObject;
  */
 declare class EventManagerMixin<TEvents extends string> {
     protected _eventHandlers: {
-        [key: string]: handler[];
+        [key: string]: Handler[];
     };
-    on(eventName: TEvents, eventHandler: handler): this;
+    on(eventName: TEvents, eventHandler: Handler): this;
     off(eventName: TEvents, eventHandler: (...args: any) => void): this;
     trigger(eventName: TEvents, ...args: any): this;
     handleEvent(event: Event): this;
 }
-declare type template = (attributes?: {
+declare type Template = (attributes?: {
     classInfo?: ClassInfo;
     styleInfo?: StyleInfo;
     attributes?: {
@@ -61,7 +61,7 @@ declare type template = (attributes?: {
     };
 }, ...args: any | undefined) => TemplateResult;
 declare abstract class MVPView<TOptionsToGet extends Record<string, unknown>, TOptionsToSet extends Record<string, unknown>, TState extends Record<string, unknown>, TEvents extends string = ''> extends EventManagerMixin<Exclude<TEvents | 'render' | 'remove', ''>> {
-    readonly template: template;
+    abstract readonly template: Template;
     static readonly templateOfRemoving: () => TemplateResult;
     protected _options: TOptionsToGet;
     protected _state: TState;
@@ -86,4 +86,4 @@ interface MVPModel<State> {
     whenStateIsChanged(callback: (state: Required<State>) => void): void;
     closeConnections(): this;
 }
-export { handleEvent, CustomEventListener, CustomEventListenerObject, handler, EventManagerMixin, template, MVPView, renderMVPView, MVPModel, };
+export { handleEvent, CustomEventListener, CustomEventListenerObject, Handler, EventManagerMixin, Template, MVPView, renderMVPView, MVPModel, };

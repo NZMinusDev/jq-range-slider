@@ -1,9 +1,9 @@
-import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
-import IRangeSliderRangeView, { RangeOptions, RangeState } from './range-slider__range.view.coupling';
-import './range-slider__range.scss';
+import { MVPView } from "../../../../utils/devTools/scripts/PluginCreationHelper";
+import IRangeView, { RangeOptions, RangeState } from './IRangeView';
+import './RangeView.scss';
 declare const DEFAULT_OPTIONS: Required<RangeOptions>;
 declare const DEFAULT_STATE: RangeState;
-declare class RangeSliderRangeView extends MVPView<Required<RangeOptions>, RangeOptions, RangeState> implements IRangeSliderRangeView {
+declare class RangeView extends MVPView<Required<RangeOptions>, RangeOptions, RangeState> implements IRangeView {
     readonly template: ({ classInfo, styleInfo, attributes }?: {
         classInfo?: {} | undefined;
         styleInfo?: {} | undefined;
@@ -13,4 +13,4 @@ declare class RangeSliderRangeView extends MVPView<Required<RangeOptions>, Range
     getIsConnectedOption(): boolean;
     setIsConnectedOption(isConnected?: boolean): this;
 }
-export { RangeSliderRangeView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { RangeView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

@@ -1,10 +1,10 @@
 import { StyleInfo } from 'lit-html/directives/style-map';
-import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
-import IRangeSliderPipsView, { PipsOptions, PipsState } from './range-slider__pips.view.coupling';
-import './range-slider__pips.scss';
+import { MVPView } from "../../../../utils/devTools/scripts/PluginCreationHelper";
+import IPipsView, { PipsOptions, PipsState } from './IPipsView';
+import './PipsView.scss';
 declare const DEFAULT_OPTIONS: Required<PipsOptions>;
 declare const DEFAULT_STATE: PipsState;
-declare class RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> implements IRangeSliderPipsView {
+declare class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> implements IPipsView {
     readonly template: ({ classInfo, styleInfo, attributes }?: {
         classInfo?: {} | undefined;
         styleInfo?: {} | undefined;
@@ -18,7 +18,7 @@ declare class RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOpt
         value: number;
     }[];
     getDensityOption(): number;
-    getFormatterOption(): import("./range-slider__pips.view.coupling").Formatter;
+    getFormatterOption(): import("./IPipsView").Formatter;
     setOrientationOption(orientation?: PipsOptions['orientation']): this;
     setIsHiddenOption(isHidden?: PipsOptions['isHidden']): this;
     setValuesOption(values?: PipsOptions['values']): this;
@@ -30,4 +30,4 @@ declare class RangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOpt
     protected _getMarkersRender(end: number, range: number, positionKey: 'left' | 'top'): import("lit-html").TemplateResult[];
     protected _getValueRender(styleInfo: StyleInfo, value: number): import("lit-html").TemplateResult;
 }
-export { RangeSliderPipsView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { PipsView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

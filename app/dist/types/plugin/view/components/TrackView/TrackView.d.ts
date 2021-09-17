@@ -1,10 +1,10 @@
 import { TemplateResult } from 'lit-html';
-import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
-import IRangeSliderTrackView, { TrackOptions, FixedTrackOptions, TrackState } from './range-slider__track.view.coupling';
-import './range-slider__track.scss';
+import { MVPView } from "../../../../utils/devTools/scripts/PluginCreationHelper";
+import ITrackView, { TrackOptions, FixedTrackOptions, TrackState } from './ITrackView';
+import './TrackView.scss';
 declare const DEFAULT_OPTIONS: FixedTrackOptions;
 declare const DEFAULT_STATE: TrackState;
-declare class RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> implements IRangeSliderTrackView {
+declare class RangeSliderTrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> implements ITrackView {
     static intervalsKeysCompareFunc(a: string, b: string): number;
     readonly template: ({ classInfo, styleInfo, attributes }?: {
         classInfo?: {} | undefined;

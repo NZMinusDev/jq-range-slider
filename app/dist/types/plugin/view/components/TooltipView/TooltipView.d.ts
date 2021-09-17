@@ -1,9 +1,9 @@
-import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
-import IRangeSliderTooltipView, { TooltipOptions, TooltipState } from './range-slider__tooltip.view.coupling';
-import './range-slider__tooltip.scss';
+import { MVPView } from "../../../../utils/devTools/scripts/PluginCreationHelper";
+import ITooltipView, { TooltipOptions, TooltipState } from './ITooltipView';
+import './TooltipView.scss';
 declare const DEFAULT_OPTIONS: Required<TooltipOptions>;
 declare const DEFAULT_STATE: TooltipState;
-declare class RangeSliderTooltipView extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> implements IRangeSliderTooltipView {
+declare class TooltipView extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> implements ITooltipView {
     readonly template: ({ classInfo, styleInfo, attributes }?: {
         classInfo?: {} | undefined;
         styleInfo?: {} | undefined;
@@ -12,9 +12,9 @@ declare class RangeSliderTooltipView extends MVPView<Required<TooltipOptions>, T
     constructor(options?: TooltipOptions, state?: TooltipState);
     getOrientationOption(): "left" | "top";
     getIsHiddenOption(): boolean;
-    getFormatterOption(): import("./range-slider__tooltip.view.coupling").Formatter;
+    getFormatterOption(): import("./ITooltipView").Formatter;
     setOrientationOption(orientation?: TooltipOptions['orientation']): this;
     setIsHiddenOption(isHidden?: TooltipOptions['isHidden']): this;
     setFormatterOption(formatter?: TooltipOptions['formatter']): this;
 }
-export { RangeSliderTooltipView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { TooltipView as default, DEFAULT_OPTIONS, DEFAULT_STATE };

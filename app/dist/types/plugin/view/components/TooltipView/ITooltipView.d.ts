@@ -1,4 +1,4 @@
-import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
+import { MVPView } from "../../../../utils/devTools/scripts/PluginCreationHelper";
 declare type Formatter = (value: number) => string;
 declare type TooltipOptions = {
     orientation?: 'top' | 'left';
@@ -8,7 +8,7 @@ declare type TooltipOptions = {
 declare type TooltipState = {
     value: number;
 };
-interface IRangeSliderTooltipView extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> {
+interface ITooltipView extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> {
     getOrientationOption(): TooltipOptions['orientation'];
     getIsHiddenOption(): TooltipOptions['isHidden'];
     getFormatterOption(): TooltipOptions['formatter'];
@@ -16,4 +16,4 @@ interface IRangeSliderTooltipView extends MVPView<Required<TooltipOptions>, Tool
     setIsHiddenOption(isHidden?: TooltipOptions['isHidden']): this;
     setFormatterOption(formatter?: TooltipOptions['formatter']): this;
 }
-export { IRangeSliderTooltipView as default, Formatter, TooltipOptions, TooltipState };
+export { ITooltipView as default, Formatter, TooltipOptions, TooltipState };

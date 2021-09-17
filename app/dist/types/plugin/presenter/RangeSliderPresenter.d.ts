@@ -1,6 +1,6 @@
 import { Unpacked } from "../../utils/devTools/scripts/TypingHelper";
-import IRangeSliderModel from '../models/range-slider.model.coupling';
-import IRangeSliderView, { RangeSliderOptions } from '../view/range-slider.view.coupling';
+import IRangeSliderModel from '../models/IRangeSliderModel';
+import IRangeSliderView, { RangeSliderOptions } from '../view/IRangeSliderView';
 declare type ErrorCatcher = (reason: unknown) => void;
 declare class RangeSliderPresenter {
     readonly view: IRangeSliderView;

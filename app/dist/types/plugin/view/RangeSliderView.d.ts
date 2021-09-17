@@ -1,11 +1,11 @@
 import { MVPView } from "../../utils/devTools/scripts/PluginCreationHelper";
-import { FixedTrackOptions, TrackOptions } from './__track/range-slider__track.view.coupling';
-import { RangeOptions } from './__range/range-slider__range.view.coupling';
-import { ThumbOptions, ThumbState } from './__thumb/range-slider__thumb.view.coupling';
-import { TooltipOptions, TooltipState } from './__tooltip/range-slider__tooltip.view.coupling';
-import { PipsOptions } from './__pips/range-slider__pips.view.coupling';
-import IRangeSliderView, { RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState } from './range-slider.view.coupling';
-import './range-slider.scss';
+import { FixedTrackOptions, TrackOptions } from './components/TrackView/ITrackView';
+import { RangeOptions } from './components/RangeView/IRangeView';
+import { ThumbOptions, ThumbState } from './components/ThumbView/IThumbView';
+import { TooltipOptions, TooltipState } from './components/TooltipView/ITooltipView';
+import { PipsOptions } from './components/PipsView/IPipsView';
+import IRangeSliderView, { RangeSliderOptions, FixedRangeSliderOptions, RangeSliderState } from './IRangeSliderView';
+import './RangeSliderView.scss';
 declare const DEFAULT_OPTIONS: FixedRangeSliderOptions;
 declare const DEFAULT_STATE: RangeSliderState;
 declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSliderOptions, RangeSliderState, 'start' | 'slide' | 'update' | 'change' | 'set' | 'end'> implements IRangeSliderView {
@@ -25,8 +25,8 @@ declare class RangeSliderView extends MVPView<FixedRangeSliderOptions, RangeSlid
     getConnectOption(): boolean[];
     getOrientationOption(): "horizontal" | "vertical";
     getPaddingOption(): [number, number];
-    getFormatterOption(): import("./range-slider.view.coupling").Formatter;
-    getTooltipsOption(): (boolean | import("./__tooltip/range-slider__tooltip.view.coupling").Formatter)[];
+    getFormatterOption(): import("./IRangeSliderView").Formatter;
+    getTooltipsOption(): (boolean | import("./components/TooltipView/ITooltipView").Formatter)[];
     getPipsOption(): any;
     setIntervalsOption(intervals?: RangeSliderOptions['intervals']): this;
     setStartOption(start?: RangeSliderOptions['start']): this;

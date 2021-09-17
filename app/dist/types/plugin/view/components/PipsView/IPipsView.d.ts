@@ -1,4 +1,4 @@
-import { MVPView } from "../../../utils/devTools/scripts/PluginCreationHelper";
+import { MVPView } from "../../../../utils/devTools/scripts/PluginCreationHelper";
 declare type Formatter = (value: number) => string;
 declare type PipsOptions = {
     orientation?: 'horizontal' | 'vertical';
@@ -11,7 +11,7 @@ declare type PipsOptions = {
     formatter?: Formatter;
 };
 declare type PipsState = {};
-interface IRangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
+interface IPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
     getOrientationOption(): PipsOptions['orientation'];
     getIsHiddenOption(): PipsOptions['isHidden'];
     getValuesOption(): PipsOptions['values'];
@@ -23,4 +23,4 @@ interface IRangeSliderPipsView extends MVPView<Required<PipsOptions>, PipsOption
     setDensityOption(density?: PipsOptions['density']): this;
     setFormatterOption(formatter?: PipsOptions['formatter']): this;
 }
-export { IRangeSliderPipsView as default, Formatter, PipsOptions, PipsState };
+export { IPipsView as default, Formatter, PipsOptions, PipsState };
