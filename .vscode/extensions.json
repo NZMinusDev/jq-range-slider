@@ -8,6 +8,7 @@
     "jebbs.plantuml",
     "esbenp.prettier-vscode",
     "streetsidesoftware.code-spell-checker-russian",
-    "wayou.vscode-todo-highlight"
+    "wayou.vscode-todo-highlight",
+    "bierner.lit-html"
   ]
 }
