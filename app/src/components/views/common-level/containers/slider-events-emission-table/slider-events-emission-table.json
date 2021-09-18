@@ -1,0 +1,30 @@
+{
+  "head": {
+    "cells": ["&nbsp;", "Start", "Slide", "Update", "Change", "Set", "End"]
+  },
+  "body": {
+    "cells": [
+      [
+        "A handle is <strong>activated</strong>, starting dragging",
+        "Yes",
+        "No",
+        "No",
+        "No",
+        "No",
+        "No"
+      ],
+      [
+        "A handle is <strong>released</strong> after dragging",
+        "No",
+        "No",
+        "No",
+        "Yes",
+        "Yes",
+        "Yes"
+      ],
+      ["A handle moves while <strong>dragging</strong>", "No", "Yes", "Yes", "No", "No", "No"],
+      ["The <strong>.set()</strong> method is called", "No", "No", "Yes", "No", "Yes", "No"],
+      ["A slider is moved by <strong>tapping</strong> it", "No", "Yes", "Yes", "Yes", "Yes", "No"]
+    ]
+  }
+}

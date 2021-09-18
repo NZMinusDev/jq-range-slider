@@ -11,13 +11,11 @@ mixin colorpicker
       connect: [true, false],
       tooltips: false,
       pips: { isHidden: true },
-    }
+    };
+    const colors = ['red', 'green', 'blue'];
   .colorpicker.js-colorpicker&attributes(attributes)
     .colorpicker__sliders
-      .colorpicker__slider.js-colorpicker__slider(title="red")
-        +slider({ options: sliderOptions, color: 'red', isSwitchableTooltips: true })
-      .colorpicker__slider.js-colorpicker__slider(title="green")
-        +slider({ options: sliderOptions, color: 'green', isSwitchableTooltips: true })
-      .colorpicker__slider.js-colorpicker__slider(title="blue")
-        +slider({ options: sliderOptions, color: 'blue', isSwitchableTooltips: true })
+      each color in colors
+        .colorpicker__slider.js-colorpicker__slider(title=color)
+          +slider({ options: sliderOptions, color, isSwitchableTooltips: true })
     .colorpicker__result.js-colorpicker__result(title="color") Color
