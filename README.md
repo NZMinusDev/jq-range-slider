@@ -309,6 +309,7 @@ git subtree push --prefix app/public origin gh-pages
   - during development, when changing files, the result is immediately visible without manual reboots and builds;
   - during the build, webpack will notify you if: there are circular dependencies, libraries of different versions are connected, there are unused files, there are css properties that browsers do not support. Displays the speed of source processing at each stage of the build;
   - it should work the same on different platforms.
+- [stylelint](https://stylelint.io/) based on [stylelint-config-standard](https://github.com/stylelint/stylelint-config-standard) with [stylelint-order](https://github.com/hudochenkov/stylelint-order) and [stylelint-scss](https://github.com/kristerkari/stylelint-scss);
 - [eslinter](https://eslint.org/) based on [Airbnb standarts](https://github.com/airbnb/javascript) integrated with prettier and typescript which protects your knee from :gun: and your life from wasting :clock2:;
 - [jest](https://jestjs.io/): delightful javascript testing framework with a focus on simplicity, it works fine with typescript;
 - pre-installed libraries:
