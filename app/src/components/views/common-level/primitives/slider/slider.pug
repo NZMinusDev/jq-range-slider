@@ -9,4 +9,7 @@ mixin slider({ options = {}, color = '', isSwitchableTooltips = false } = {})
 
     const colorClass = color === '' ? null : `slider_color_${color}`;
     const colorIsSwitchableTooltips = isSwitchableTooltips === false ? null : 'slider_with-switchable-tooltips';
-  .slider.js-slider(class=[colorClass, colorIsSwitchableTooltips], data-options=options)&attributes(attributes)
+  .slider.js-slider(
+    class=[colorClass, colorIsSwitchableTooltips],
+    data-options=options
+  )&attributes(attributes)

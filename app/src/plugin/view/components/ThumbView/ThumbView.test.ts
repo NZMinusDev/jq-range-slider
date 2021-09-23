@@ -18,7 +18,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   // some expect calls
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof ThumbView>> = {};
+const differentConstructorArgs: DifferentArguments<
+  ConstructorParameters<typeof ThumbView>
+> = {};
 
 testDefaultOptions(ThumbView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
@@ -79,9 +81,14 @@ testDOM({
   callbacksWithTest: [
     ({ container, instance }) => {
       test('ondragstart should be nooped', () => {
-        const target = container.querySelector('.js-range-slider__thumb') as HTMLElement;
+        const target = container.querySelector(
+          '.js-range-slider__thumb'
+        ) as HTMLElement;
         const event = new Event('dragstart');
-        const noopMock = jest.spyOn(Object.getPrototypeOf(instance), '_onDragstart');
+        const noopMock = jest.spyOn(
+          Object.getPrototypeOf(instance),
+          '_onDragstart'
+        );
 
         target.dispatchEvent(event);
 

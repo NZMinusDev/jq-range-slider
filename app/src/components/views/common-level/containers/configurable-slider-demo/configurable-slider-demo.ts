@@ -40,10 +40,11 @@ type ConfigurableSliderDemoDOM = {
   sliderConfig: SliderConfigElementWithComponent;
 };
 
-type ConfigurableSliderDemoCustomEvents = ConfigurableSliderDemoSliderCustomEvents &
-  EventsLoggerCustomEvents &
-  ConfigurableSliderDemoSubmitCustomEvents &
-  SliderConfigCustomEvents;
+type ConfigurableSliderDemoCustomEvents =
+  ConfigurableSliderDemoSliderCustomEvents &
+    EventsLoggerCustomEvents &
+    ConfigurableSliderDemoSubmitCustomEvents &
+    SliderConfigCustomEvents;
 
 class ConfigurableSliderDemo extends BEMComponent<
   ConfigurableSliderDemoElement,
@@ -56,7 +57,9 @@ class ConfigurableSliderDemo extends BEMComponent<
 
     this._DOM = this._initDOM();
 
-    this._bindSliderListeners()._bindSubmitListeners()._bindSliderConfigListeners();
+    this._bindSliderListeners()
+      ._bindSubmitListeners()
+      ._bindSliderConfigListeners();
 
     this._initDisplay();
   }
@@ -64,6 +67,7 @@ class ConfigurableSliderDemo extends BEMComponent<
   getSlider() {
     return this._DOM.slider.component;
   }
+
   addServerResponse(value: string) {
     const currentValue = this._DOM.serverResponse.component.get();
     this._DOM.serverResponse.component.set(`${currentValue}${value}\n`);
@@ -127,6 +131,7 @@ class ConfigurableSliderDemo extends BEMComponent<
 
     return this;
   }
+
   protected _sliderEventListenerObject = {
     handleSliderStart: () => {
       this._DOM.eventsLogger.component.blinkFirefly(0);
@@ -164,9 +169,12 @@ class ConfigurableSliderDemo extends BEMComponent<
 
     return this;
   }
+
   protected _submitEventListenerObject = {
     handleSubmitCustomSubmit: (
-      event: CustomEvent<ConfigurableSliderDemoSubmitCustomEvents['customSubmit']>
+      event: CustomEvent<
+        ConfigurableSliderDemoSubmitCustomEvents['customSubmit']
+      >
     ) => {
       const slider = this._DOM.slider.component;
 
@@ -174,7 +182,9 @@ class ConfigurableSliderDemo extends BEMComponent<
     },
     handleSubmitCustomReset: (
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      event: CustomEvent<ConfigurableSliderDemoSubmitCustomEvents['customReset']>
+      event: CustomEvent<
+        ConfigurableSliderDemoSubmitCustomEvents['customReset']
+      >
     ) => {
       const slider = this._DOM.slider.component;
 
@@ -196,8 +206,11 @@ class ConfigurableSliderDemo extends BEMComponent<
 
     return this;
   }
+
   protected _sliderConfigEventListenerObject = {
-    handleSliderConfigChange: (event: CustomEvent<SliderConfigCustomEvents['change']>) => {
+    handleSliderConfigChange: (
+      event: CustomEvent<SliderConfigCustomEvents['change']>
+    ) => {
       const sliderContainer = this._DOM.slider;
       const slider = this._DOM.slider.component;
       const { name, value } = event.detail;
@@ -207,7 +220,9 @@ class ConfigurableSliderDemo extends BEMComponent<
         case 'orientation': {
           sliderContainer.style.height = value === 'vertical' ? '300px' : '';
 
-          const newOptions = { [name]: value as RangeSliderOptions['orientation'] };
+          const newOptions = {
+            [name]: value as RangeSliderOptions['orientation'],
+          };
 
           slider.setOptions(newOptions);
 
@@ -321,11 +336,13 @@ class ConfigurableSliderDemo extends BEMComponent<
 
     return this;
   }
+
   protected _initSubmitDisplay() {
     this._displaySubmit();
 
     return this;
   }
+
   protected _initSliderConfigDisplay() {
     this._displaySliderConfig();
 
@@ -340,6 +357,7 @@ class ConfigurableSliderDemo extends BEMComponent<
 
     return this;
   }
+
   protected _displaySliderConfig() {
     const slider = this._DOM.slider.component;
     const sliderConfig = this._DOM.sliderConfig.component;
@@ -358,7 +376,8 @@ type ConfigurableSliderDemoElementWithComponent = HTMLElementWithComponent<
 
 const configurableSliderDemos = Array.from(
   configurableSliderDemoHTMLElements,
-  (configurableSliderDemoElement) => new ConfigurableSliderDemo(configurableSliderDemoElement)
+  (configurableSliderDemoElement) =>
+    new ConfigurableSliderDemo(configurableSliderDemoElement)
 );
 
 export type {

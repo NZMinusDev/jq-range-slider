@@ -10,22 +10,35 @@ import {
   testDOM,
 } from '@utils/devTools/scripts/UnitTestingHelper';
 
-import RangeSliderView, { DEFAULT_OPTIONS, DEFAULT_STATE } from './RangeSliderView';
+import RangeSliderView, {
+  DEFAULT_OPTIONS,
+  DEFAULT_STATE,
+} from './RangeSliderView';
 
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeSliderView>,
   RangeSliderView
 > = function viewPropertiesExpecter({ instance }) {
-  expect(instance['_options'].connect.length).toBe(instance['_options'].start.length + 1);
-  expect(instance['_options'].tooltips.length).toBe(instance['_options'].start.length);
+  expect(instance['_options'].connect.length).toBe(
+    instance['_options'].start.length + 1
+  );
+  expect(instance['_options'].tooltips.length).toBe(
+    instance['_options'].start.length
+  );
 
   const [leftPad, rightPad] = instance['_options'].padding;
   instance['_options'].start.forEach((startValue, index) => {
-    expect(startValue).toBeGreaterThanOrEqual(instance['_options'].intervals.min + leftPad);
-    expect(startValue).toBeLessThanOrEqual(instance['_options'].intervals.max - rightPad);
+    expect(startValue).toBeGreaterThanOrEqual(
+      instance['_options'].intervals.min + leftPad
+    );
+    expect(startValue).toBeLessThanOrEqual(
+      instance['_options'].intervals.max - rightPad
+    );
 
     if (index > 0) {
-      expect(startValue).toBeGreaterThanOrEqual(instance['_options'].start[index - 1]);
+      expect(startValue).toBeGreaterThanOrEqual(
+        instance['_options'].start[index - 1]
+      );
     }
   });
 
@@ -38,7 +51,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
     }
     case 'positions': {
       expect(instance['_options'].pips.values).toStrictEqual(
-        (instance['_options'].pips.values as number[]).filter((value) => value >= 0 && value <= 100)
+        (instance['_options'].pips.values as number[]).filter(
+          (value) => value >= 0 && value <= 100
+        )
       );
 
       break;
@@ -59,91 +74,118 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   }
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof RangeSliderView>> =
-  {
-    invalidOptionalArguments: [
-      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], connect: [] }],
-      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], connect: [true] }],
-      [
-        {
-          intervals: { min: -100, max: 100, '50%': 50 },
-          start: [-50, 0, 75],
-          connect: [true, false, true, true, true, false],
-        },
-      ],
-      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-50, 0, 75], tooltips: [] }],
-      [
-        {
-          intervals: { min: -100, max: 100, '50%': 50 },
-          start: [-50, 0, 75],
-          tooltips: [true, false],
-        },
-      ],
-      [
-        {
-          intervals: { min: -100, max: 100, '50%': 50 },
-          start: [-50, 0, 75],
-          tooltips: [(val: number) => `${val}`, false, true, true, true, false],
-        },
-      ],
-      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [] }],
-      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-101] }],
-      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [101] }],
-      [
-        {
-          intervals: { min: -100, max: 100, '50%': 50 },
-          start: [-100, -90, 0, 100],
-          padding: 5,
-        },
-      ],
-      [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [50, -50, -75, 0, 10] }],
-      [{ pips: { mode: 'intervals', values: 5 } }],
-      [{ pips: { mode: 'intervals', values: [0, 0, -10, 50, -99] } }],
-      [{ pips: { mode: 'count', values: -3 } }],
-      [{ pips: { mode: 'count', values: [0, 50, 100] } }],
-      [{ pips: { mode: 'positions', values: 10 } }],
-      [{ pips: { mode: 'positions', values: [-50, -1, 0, 99, 100, 101] } }],
-      [{ pips: { mode: 'values', values: 2 } }],
-      [
-        {
-          intervals: { min: -100, max: 100, '50%': 50 },
-          pips: { mode: 'values', values: [-101, -100, 50, 99, 101] },
-        },
-      ],
-      [{ steps: 5 }],
-      [{ pips: { values: [] } }],
-      [{ pips: { values: [50] } }],
-      [{ pips: { mode: 'positions', values: 0 } }],
+const differentConstructorArgs: DifferentArguments<
+  ConstructorParameters<typeof RangeSliderView>
+> = {
+  invalidOptionalArguments: [
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [-50, 0, 75],
+        connect: [],
+      },
     ],
-    partialOptionalArguments: [
-      [
-        {
-          intervals: { min: -100, max: 100, '50%': 25 },
-          start: [0, 75],
-          steps: [10, 5],
-          connect: [true, false, true],
-          padding: [10, 5],
-          tooltips: [true, false],
-        },
-      ],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [-50, 0, 75],
+        connect: [true],
+      },
     ],
-    fullOptionalArguments: [
-      [
-        {
-          intervals: { min: -100, max: 100, '50%': 50 },
-          start: [0, 75],
-          steps: [10, 5],
-          connect: [false, true, false],
-          orientation: 'vertical',
-          padding: [10, 5],
-          formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
-          tooltips: [true, (number: number) => `${number.toFixed(4).toLocaleString()}%`],
-          pips: { mode: 'count', values: 4, density: 5 },
-        },
-        { isActiveThumbs: [false, false], value: [0, 75] },
-      ],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [-50, 0, 75],
+        connect: [true, false, true, true, true, false],
+      },
     ],
-  };
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [-50, 0, 75],
+        tooltips: [],
+      },
+    ],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [-50, 0, 75],
+        tooltips: [true, false],
+      },
+    ],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [-50, 0, 75],
+        tooltips: [(val: number) => `${val}`, false, true, true, true, false],
+      },
+    ],
+    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [] }],
+    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [-101] }],
+    [{ intervals: { min: -100, max: 100, '50%': 50 }, start: [101] }],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [-100, -90, 0, 100],
+        padding: 5,
+      },
+    ],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [50, -50, -75, 0, 10],
+      },
+    ],
+    [{ pips: { mode: 'intervals', values: 5 } }],
+    [{ pips: { mode: 'intervals', values: [0, 0, -10, 50, -99] } }],
+    [{ pips: { mode: 'count', values: -3 } }],
+    [{ pips: { mode: 'count', values: [0, 50, 100] } }],
+    [{ pips: { mode: 'positions', values: 10 } }],
+    [{ pips: { mode: 'positions', values: [-50, -1, 0, 99, 100, 101] } }],
+    [{ pips: { mode: 'values', values: 2 } }],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        pips: { mode: 'values', values: [-101, -100, 50, 99, 101] },
+      },
+    ],
+    [{ steps: 5 }],
+    [{ pips: { values: [] } }],
+    [{ pips: { values: [50] } }],
+    [{ pips: { mode: 'positions', values: 0 } }],
+  ],
+  partialOptionalArguments: [
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 25 },
+        start: [0, 75],
+        steps: [10, 5],
+        connect: [true, false, true],
+        padding: [10, 5],
+        tooltips: [true, false],
+      },
+    ],
+  ],
+  fullOptionalArguments: [
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        start: [0, 75],
+        steps: [10, 5],
+        connect: [false, true, false],
+        orientation: 'vertical',
+        padding: [10, 5],
+        formatter: (number: number) => `${number.toFixed(2).toLocaleString()}$`,
+        tooltips: [
+          true,
+          (number: number) => `${number.toFixed(4).toLocaleString()}%`,
+        ],
+        pips: { mode: 'count', values: 4, density: 5 },
+      },
+      { isActiveThumbs: [false, false], value: [0, 75] },
+    ],
+  ],
+};
 
 testDefaultOptions(RangeSliderView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
 
@@ -192,9 +234,13 @@ describe('init', () => {
         '_getIntervalInfoByPoint'
       );
       instance['_getIntervalInfoByPoint'](-200);
-      expect(getIntervalInfoByPointMock).toHaveReturnedWith({ keyOfSupremum: 'min' });
+      expect(getIntervalInfoByPointMock).toHaveReturnedWith({
+        keyOfSupremum: 'min',
+      });
       instance['_getIntervalInfoByPoint'](200);
-      expect(getIntervalInfoByPointMock).toHaveReturnedWith({ keyOfInfimum: 'max' });
+      expect(getIntervalInfoByPointMock).toHaveReturnedWith({
+        keyOfInfimum: 'max',
+      });
     });
   });
 });
@@ -287,11 +333,15 @@ describe('_setState', () => {
         { value: [-5, 0, 5], isActiveThumbs: [false, false, false, false] }
       );
 
-      expect(instance['_state'].value.length).toBe(instance['_state'].isActiveThumbs.length);
+      expect(instance['_state'].value.length).toBe(
+        instance['_state'].isActiveThumbs.length
+      );
 
       instance['_setState']({ value: [-15, 0, 15], isActiveThumbs: [true] });
 
-      expect(instance['_state'].value.length).toBe(instance['_state'].isActiveThumbs.length);
+      expect(instance['_state'].value.length).toBe(
+        instance['_state'].isActiveThumbs.length
+      );
     });
   });
 });
@@ -339,25 +389,35 @@ testDOM({
       const trackElem = container.querySelector<HTMLElement>(
         '.js-range-slider__track'
       ) as HTMLElement;
-      const pipsElement = container.querySelector('.js-range-slider__pips') as HTMLElement;
+      const pipsElement = container.querySelector(
+        '.js-range-slider__pips'
+      ) as HTMLElement;
       const pipsValueElements = pipsElement.querySelectorAll<HTMLElement>(
         '.js-range-slider__pips-value'
       );
       const theMostLeftPipValue = pipsValueElements.item(0);
       const theMostRightPipValue = pipsValueElements.item(3);
 
-      const thumbsElements = container.querySelectorAll<HTMLElement>('.js-range-slider__thumb');
-      const originsElements = Array.from<HTMLElement>(thumbsElements).map((thumbElem) => {
-        const originElem = thumbElem.closest('.js-range-slider__thumb-origin') as HTMLElement;
+      const thumbsElements = container.querySelectorAll<HTMLElement>(
+        '.js-range-slider__thumb'
+      );
+      const originsElements = Array.from<HTMLElement>(thumbsElements).map(
+        (thumbElem) => {
+          const originElem = thumbElem.closest(
+            '.js-range-slider__thumb-origin'
+          ) as HTMLElement;
 
-        // https://github.com/jsdom/jsdom/pull/2666
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        originElem.setPointerCapture = function setPointerCapture(pointerId: number) {
-          // it's noop
-        };
+          // https://github.com/jsdom/jsdom/pull/2666
+          originElem.setPointerCapture = function setPointerCapture(
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            pointerId: number
+          ) {
+            // it's noop
+          };
 
-        return originElem;
-      });
+          return originElem;
+        }
+      );
       const infimumThumb = thumbsElements.item(0);
       const innerThumb = thumbsElements.item(1);
       const supremumThumb = thumbsElements.item(2);
@@ -371,10 +431,17 @@ testDOM({
         end = movementToIncludeAllIntervalsForInnerThumb
       ) => {
         if (Math.abs(movementAcc) < end - 1) {
-          runThroughAllIntervals(movementAcc + increment, increment, expecters, end);
+          runThroughAllIntervals(
+            movementAcc + increment,
+            increment,
+            expecters,
+            end
+          );
         }
 
-        const valueBefore = +(innerThumb.getAttribute(valueNowQualifiedName) as string);
+        const valueBefore = +(innerThumb.getAttribute(
+          valueNowQualifiedName
+        ) as string);
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
@@ -382,7 +449,9 @@ testDOM({
             bubbles: true,
           })
         );
-        const newValue = +(innerThumb.getAttribute(valueNowQualifiedName) as string);
+        const newValue = +(innerThumb.getAttribute(
+          valueNowQualifiedName
+        ) as string);
 
         let lowerValue = valueBefore;
         let greaterValue = newValue;
@@ -424,7 +493,10 @@ testDOM({
       });
 
       test('should be only one render for each pointermove where abs(movement) > 0', () => {
-        const renderMock = jest.spyOn(Object.getPrototypeOf(instance), '_render');
+        const renderMock = jest.spyOn(
+          Object.getPrototypeOf(instance),
+          '_render'
+        );
 
         innerThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
@@ -574,7 +646,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(innerThumb.getAttribute(valueNowQualifiedName) as string)).toBe(-600);
+        expect(
+          +(innerThumb.getAttribute(valueNowQualifiedName) as string)
+        ).toBe(-600);
 
         innerThumb.dispatchEvent(
           new PointerEvent('lostpointercapture', {
@@ -596,13 +670,19 @@ testDOM({
 
         const expecters = [
           (newValue, valueBefore) => {
-            expect(Number.isInteger((newValue - valueBefore) / steps[0])).toBe(true);
+            expect(Number.isInteger((newValue - valueBefore) / steps[0])).toBe(
+              true
+            );
           },
           (newValue, valueBefore) => {
-            expect(Number.isInteger((newValue - valueBefore) / steps[1])).toBe(true);
+            expect(Number.isInteger((newValue - valueBefore) / steps[1])).toBe(
+              true
+            );
           },
           (newValue, valueBefore) => {
-            expect(Number.isInteger(Math.round(newValue - valueBefore) / steps[2])).toBe(true);
+            expect(
+              Number.isInteger(Math.round(newValue - valueBefore) / steps[2])
+            ).toBe(true);
           },
         ];
 
@@ -737,9 +817,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(innerThumb.getAttribute(valueNowQualifiedName) as string)).toBe(
-          +(supremumThumb.getAttribute(valueNowQualifiedName) as string)
-        );
+        expect(
+          +(innerThumb.getAttribute(valueNowQualifiedName) as string)
+        ).toBe(+(supremumThumb.getAttribute(valueNowQualifiedName) as string));
         innerThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 1,
@@ -747,9 +827,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(innerThumb.getAttribute(valueNowQualifiedName) as string)).toBe(
-          +(infimumThumb.getAttribute(valueNowQualifiedName) as string)
-        );
+        expect(
+          +(innerThumb.getAttribute(valueNowQualifiedName) as string)
+        ).toBe(+(infimumThumb.getAttribute(valueNowQualifiedName) as string));
 
         infimumThumb.dispatchEvent(
           new PointerEvent('pointermove', {
@@ -758,7 +838,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(infimumThumb.getAttribute(valueNowQualifiedName) as string)).toBe(minTrackValue);
+        expect(
+          +(infimumThumb.getAttribute(valueNowQualifiedName) as string)
+        ).toBe(minTrackValue);
 
         supremumThumb.dispatchEvent(
           new PointerEvent('pointermove', {
@@ -767,7 +849,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(supremumThumb.getAttribute(valueNowQualifiedName) as string)).toBe(maxTrackValue);
+        expect(
+          +(supremumThumb.getAttribute(valueNowQualifiedName) as string)
+        ).toBe(maxTrackValue);
 
         instance.setPaddingOption(0);
         infimumThumb.dispatchEvent(
@@ -784,9 +868,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(infimumThumb.getAttribute(valueNowQualifiedName) as string)).toBe(
-          minTrackValue - padding
-        );
+        expect(
+          +(infimumThumb.getAttribute(valueNowQualifiedName) as string)
+        ).toBe(minTrackValue - padding);
         supremumThumb.dispatchEvent(
           new PointerEvent('pointermove', {
             pointerId: 3,
@@ -801,9 +885,9 @@ testDOM({
             bubbles: true,
           })
         );
-        expect(+(supremumThumb.getAttribute(valueNowQualifiedName) as string)).toBe(
-          maxTrackValue + padding
-        );
+        expect(
+          +(supremumThumb.getAttribute(valueNowQualifiedName) as string)
+        ).toBe(maxTrackValue + padding);
         instance.set();
         instance.setPaddingOption(padding);
 
@@ -839,12 +923,12 @@ testDOM({
             clientX: trackPXSize * 0.5,
           })
         );
-        trackElem.dispatchEvent(new MouseEvent('click', { clientX: trackPXSize + 1 }));
-        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
-          start[0],
-          expect.any(Number),
-          start[2],
-        ]);
+        trackElem.dispatchEvent(
+          new MouseEvent('click', { clientX: trackPXSize + 1 })
+        );
+        expect(
+          instance['_state'].value.map((val) => Number(val.toFixed(2)))
+        ).toMatchObject([start[0], expect.any(Number), start[2]]);
 
         instance.setOrientationOption('vertical');
         trackElem.dispatchEvent(new MouseEvent('click', { clientY: -1 }));
@@ -853,11 +937,9 @@ testDOM({
             clientY: trackPXSize * 0.5,
           })
         );
-        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
-          start[0],
-          expect.any(Number),
-          start[2],
-        ]);
+        expect(
+          instance['_state'].value.map((val) => Number(val.toFixed(2)))
+        ).toMatchObject([start[0], expect.any(Number), start[2]]);
         instance.setOrientationOption('horizontal');
 
         instance.set();
@@ -866,10 +948,16 @@ testDOM({
       test('click on text of "valuable pip" should be handled', () => {
         instance.set([-1000, -600, 1300]);
 
-        theMostLeftPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        theMostRightPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        theMostLeftPipValue.dispatchEvent(
+          new MouseEvent('click', { bubbles: true })
+        );
+        theMostRightPipValue.dispatchEvent(
+          new MouseEvent('click', { bubbles: true })
+        );
 
-        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject(start);
+        expect(
+          instance['_state'].value.map((val) => Number(val.toFixed(2)))
+        ).toMatchObject(start);
       });
 
       test('click on marker of pips should not be handled', () => {
@@ -877,9 +965,11 @@ testDOM({
 
         instance.set(values);
 
-        (pipsElement.querySelector('.js-range-slider__pips-marker') as HTMLElement).dispatchEvent(
-          new MouseEvent('click', { bubbles: true })
-        );
+        (
+          pipsElement.querySelector(
+            '.js-range-slider__pips-marker'
+          ) as HTMLElement
+        ).dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
         expect(instance['_state'].value).toStrictEqual(values);
       });
@@ -887,12 +977,16 @@ testDOM({
       test('nearest thumb should be calculated by ordered distance', () => {
         instance.set([-1000, -1000, -1000]);
 
-        theMostLeftPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        theMostRightPipValue.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        theMostLeftPipValue.dispatchEvent(
+          new MouseEvent('click', { bubbles: true })
+        );
+        theMostRightPipValue.dispatchEvent(
+          new MouseEvent('click', { bubbles: true })
+        );
 
-        expect(instance['_state'].value.map((val) => Number(val.toFixed(2)))).toMatchObject([
-          -1150, -1000, 1400,
-        ]);
+        expect(
+          instance['_state'].value.map((val) => Number(val.toFixed(2)))
+        ).toMatchObject([-1150, -1000, 1400]);
       });
 
       describe('cursor movement from exterior of track should not be handled', () => {
@@ -1033,7 +1127,9 @@ testDOM({
       });
 
       test('after options updated value calculating should be properly(with new arguments in formula)', () => {
-        instance.setOptions({ intervals: { min: intervals.min, max: intervals.max * 10 } });
+        instance.setOptions({
+          intervals: { min: intervals.min, max: intervals.max * 10 },
+        });
 
         supremumThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
@@ -1061,7 +1157,9 @@ testDOM({
         desiredValues[2] = intervals.max * 10 - padding;
         expect(instance.get()).toStrictEqual(desiredValues);
 
-        instance.setOptions({ intervals: { min: intervals.min, max: intervals.max } });
+        instance.setOptions({
+          intervals: { min: intervals.min, max: intervals.max },
+        });
       });
     },
   ],

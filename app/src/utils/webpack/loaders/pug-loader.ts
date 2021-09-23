@@ -5,7 +5,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const loaderUtils = require('loader-utils');
 
-const _interopRequireDefault = (obj) => (obj && obj.__esModule ? obj : { default: obj });
+const _interopRequireDefault = (obj) =>
+  obj && obj.__esModule ? obj : { default: obj };
 
 const _module = _interopRequireDefault(require('module'));
 

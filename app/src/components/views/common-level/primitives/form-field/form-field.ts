@@ -24,6 +24,7 @@ class FormField extends BEMComponent<FormFieldElement, FormFieldCustomEvents> {
   get() {
     return this._DOM.input.value;
   }
+
   set(value: string) {
     this._DOM.input.value = value;
 
@@ -31,7 +32,9 @@ class FormField extends BEMComponent<FormFieldElement, FormFieldCustomEvents> {
   }
 
   protected _initDOM() {
-    const input = this.element.querySelector('.js-form-field__input') as FormFieldDOM['input'];
+    const input = this.element.querySelector(
+      '.js-form-field__input'
+    ) as FormFieldDOM['input'];
 
     return { input };
   }

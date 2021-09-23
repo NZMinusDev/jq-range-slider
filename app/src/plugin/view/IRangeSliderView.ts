@@ -1,6 +1,9 @@
 import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 
-import { TrackOptions, FixedTrackOptions } from './components/TrackView/ITrackView';
+import {
+  TrackOptions,
+  FixedTrackOptions,
+} from './components/TrackView/ITrackView';
 import { RangeOptions } from './components/RangeView/IRangeView';
 import { TooltipOptions } from './components/TooltipView/ITooltipView';
 import { PipsOptions } from './components/PipsView/IPipsView';
@@ -12,7 +15,9 @@ type RangeSliderOptions = {
   intervals?: TrackOptions['intervals'];
   start?: number | number[];
   steps?: TrackOptions['steps'];
-  connect?: NonNullable<RangeOptions['isConnected']> | Required<RangeOptions>['isConnected'][];
+  connect?:
+    | NonNullable<RangeOptions['isConnected']>
+    | Required<RangeOptions>['isConnected'][];
   orientation?: 'horizontal' | 'vertical';
   padding?: TrackOptions['padding'];
   formatter?: Formatter;

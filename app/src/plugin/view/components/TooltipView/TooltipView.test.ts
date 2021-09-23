@@ -20,7 +20,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   // some expect calls
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof TooltipView>> = {
+const differentConstructorArgs: DifferentArguments<
+  ConstructorParameters<typeof TooltipView>
+> = {
   partialOptionalArguments: [[{ isHidden: true }]],
   fullOptionalArguments: [
     [

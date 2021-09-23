@@ -4,14 +4,23 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { classMap } from 'lit-html/directives/class-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { handleEvent, MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
+import {
+  handleEvent,
+  MVPView,
+} from '@utils/devTools/scripts/PluginCreationHelper';
 import { ascending } from '@utils/devTools/scripts/ProcessingOfPrimitiveDataHelper';
 import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
 
-import { FixedTrackOptions, TrackOptions } from './components/TrackView/ITrackView';
+import {
+  FixedTrackOptions,
+  TrackOptions,
+} from './components/TrackView/ITrackView';
 import { RangeOptions } from './components/RangeView/IRangeView';
 import { ThumbOptions, ThumbState } from './components/ThumbView/IThumbView';
-import { TooltipOptions, TooltipState } from './components/TooltipView/ITooltipView';
+import {
+  TooltipOptions,
+  TooltipState,
+} from './components/TooltipView/ITooltipView';
 import { PipsOptions } from './components/PipsView/IPipsView';
 import TrackView, {
   DEFAULT_OPTIONS as TRACK_DEFAULT_OPTIONS,
@@ -21,7 +30,9 @@ import RangeView, {
 } from './components/RangeView/RangeView';
 import ThumbView from './components/ThumbView/ThumbView';
 import TooltipView from './components/TooltipView/TooltipView';
-import PipsView, { DEFAULT_OPTIONS as PIPS_DEFAULT_OPTIONS } from './components/PipsView/PipsView';
+import PipsView, {
+  DEFAULT_OPTIONS as PIPS_DEFAULT_OPTIONS,
+} from './components/PipsView/PipsView';
 import IRangeSliderView, {
   RangeSliderOptions,
   FixedRangeSliderOptions,
@@ -33,7 +44,10 @@ const DEFAULT_OPTIONS: FixedRangeSliderOptions = {
   intervals: TRACK_DEFAULT_OPTIONS.intervals,
   start: [0],
   steps: TRACK_DEFAULT_OPTIONS.steps,
-  connect: [RANGE_DEFAULT_OPTIONS.isConnected, RANGE_DEFAULT_OPTIONS.isConnected],
+  connect: [
+    RANGE_DEFAULT_OPTIONS.isConnected,
+    RANGE_DEFAULT_OPTIONS.isConnected,
+  ],
   orientation: 'horizontal',
   padding: TRACK_DEFAULT_OPTIONS.padding,
   formatter: (value: number) => value.toFixed(2).toLocaleString(),
@@ -60,7 +74,11 @@ class RangeSliderView
   >
   implements IRangeSliderView
 {
-  readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
+  readonly template = ({
+    classInfo = {},
+    styleInfo = {},
+    attributes = {},
+  } = {}) => html`<div
     class=${classMap({
       'range-slider': true,
       // eslint-disable-next-line sonarjs/no-nested-template-literals
@@ -74,7 +92,9 @@ class RangeSliderView
       { attributes: { '@click': this._trackEventListenerObject } },
       [
         ...this._options.connect
-          .map((isConnected, index) => new RangeView(this._toRangeOptions(index)))
+          .map(
+            (isConnected, index) => new RangeView(this._toRangeOptions(index))
+          )
           .map((rangeView, index) =>
             rangeView.template({
               classInfo: {
@@ -90,13 +110,17 @@ class RangeSliderView
         ...this._state.value
           .map(
             (thumbValue, index) =>
-              new ThumbView(this._toThumbOptions(index), this._toThumbState(index))
+              new ThumbView(
+                this._toThumbOptions(index),
+                this._toThumbState(index)
+              )
           )
           .map((thumbView, index) =>
             thumbView.template(
               {
                 classInfo: {
-                  'range-slider__thumb-origin_animate_tap': !this._state.isActiveThumbs[index],
+                  'range-slider__thumb-origin_animate_tap':
+                    !this._state.isActiveThumbs[index],
                 },
                 styleInfo: {
                   transform: this._getThumbTransform(index),
@@ -150,32 +174,42 @@ class RangeSliderView
   getIntervalsOption() {
     return { ...this._options.intervals };
   }
+
   getStartOption() {
     return [...this._options.start];
   }
+
   getStepsOption() {
     return [...this._options.steps];
   }
+
   getConnectOption() {
     return [...this._options.connect];
   }
+
   getOrientationOption() {
     return this._options.orientation;
   }
+
   getPaddingOption() {
     return [...this._options.padding] as [number, number];
   }
+
   getFormatterOption() {
     return this._options.formatter;
   }
+
   getTooltipsOption() {
     return [...this._options.tooltips];
   }
+
   getPipsOption() {
     return defaultsDeep({}, this._options.pips);
   }
 
-  setIntervalsOption(intervals: RangeSliderOptions['intervals'] = DEFAULT_OPTIONS.intervals) {
+  setIntervalsOption(
+    intervals: RangeSliderOptions['intervals'] = DEFAULT_OPTIONS.intervals
+  ) {
     this._options.intervals = { ...intervals };
 
     this._fixIntervalsOption()
@@ -186,8 +220,11 @@ class RangeSliderView
 
     return this;
   }
+
   setStartOption(start: RangeSliderOptions['start'] = DEFAULT_OPTIONS.start) {
-    this._options.start = Array.isArray(start) ? [...start] : this._options.start.fill(start);
+    this._options.start = Array.isArray(start)
+      ? [...start]
+      : this._options.start.fill(start);
 
     this._fixStartOption()
       ._fixConnectOption()
@@ -197,14 +234,20 @@ class RangeSliderView
 
     return this;
   }
+
   setStepsOption(steps: RangeSliderOptions['steps'] = DEFAULT_OPTIONS.steps) {
-    this._options.steps = Array.isArray(steps) ? [...steps] : this._options.steps.fill(steps);
+    this._options.steps = Array.isArray(steps)
+      ? [...steps]
+      : this._options.steps.fill(steps);
 
     this._fixStepsOption();
 
     return this;
   }
-  setConnectOption(connect: RangeSliderOptions['connect'] = DEFAULT_OPTIONS.connect) {
+
+  setConnectOption(
+    connect: RangeSliderOptions['connect'] = DEFAULT_OPTIONS.connect
+  ) {
     this._options.connect = Array.isArray(connect)
       ? [...connect]
       : this._options.connect.fill(connect);
@@ -213,6 +256,7 @@ class RangeSliderView
 
     return this;
   }
+
   setOrientationOption(
     orientation: RangeSliderOptions['orientation'] = DEFAULT_OPTIONS.orientation
   ) {
@@ -220,7 +264,10 @@ class RangeSliderView
 
     return this;
   }
-  setPaddingOption(padding: RangeSliderOptions['padding'] = DEFAULT_OPTIONS.padding) {
+
+  setPaddingOption(
+    padding: RangeSliderOptions['padding'] = DEFAULT_OPTIONS.padding
+  ) {
     this._options.padding = Array.isArray(padding)
       ? ([...padding] as FixedRangeSliderOptions['padding'])
       : this._options.padding.fill(padding);
@@ -229,14 +276,20 @@ class RangeSliderView
 
     return this;
   }
-  setFormatterOption(formatter: RangeSliderOptions['formatter'] = DEFAULT_OPTIONS.formatter) {
+
+  setFormatterOption(
+    formatter: RangeSliderOptions['formatter'] = DEFAULT_OPTIONS.formatter
+  ) {
     this._options.formatter = formatter;
 
     this._fixTooltipsOption();
 
     return this;
   }
-  setTooltipsOption(tooltips: RangeSliderOptions['tooltips'] = DEFAULT_OPTIONS.tooltips) {
+
+  setTooltipsOption(
+    tooltips: RangeSliderOptions['tooltips'] = DEFAULT_OPTIONS.tooltips
+  ) {
     this._options.tooltips = Array.isArray(tooltips)
       ? [...tooltips]
       : this._options.tooltips.fill(tooltips);
@@ -245,6 +298,7 @@ class RangeSliderView
 
     return this;
   }
+
   setPipsOption(pips: RangeSliderOptions['pips'] = DEFAULT_OPTIONS.pips) {
     this._options.pips = defaultsDeep({}, pips, this._options.pips);
 
@@ -252,13 +306,15 @@ class RangeSliderView
 
     return this;
   }
+
   setOptions(options?: RangeSliderOptions) {
     const copy = [...this._state.isActiveThumbs];
 
     // transition off
     this._state.isActiveThumbs.fill(true);
     super.setOptions(options);
-    this._state.isActiveThumbs = options?.start !== undefined ? this._state.isActiveThumbs : copy;
+    this._state.isActiveThumbs =
+      options?.start !== undefined ? this._state.isActiveThumbs : copy;
 
     return this;
   }
@@ -266,8 +322,11 @@ class RangeSliderView
   get() {
     return [...this._state.value];
   }
+
   set(value: RangeSliderOptions['start'] = this._options.start) {
-    this._setValueState(Array.isArray(value) ? [...value] : this._state.value.fill(value));
+    this._setValueState(
+      Array.isArray(value) ? [...value] : this._state.value.fill(value)
+    );
 
     this._render();
 
@@ -276,7 +335,9 @@ class RangeSliderView
     return this;
   }
 
-  protected _setValueState(value: RangeSliderState['value'] = DEFAULT_STATE.value) {
+  protected _setValueState(
+    value: RangeSliderState['value'] = DEFAULT_STATE.value
+  ) {
     this._state.value = [...value];
 
     this._fixValueState();
@@ -294,6 +355,7 @@ class RangeSliderView
 
     return this;
   }
+
   protected _fixPaddingOption() {
     this._options.padding = new TrackView({
       orientation: this._options.orientation,
@@ -304,6 +366,7 @@ class RangeSliderView
 
     return this;
   }
+
   protected _fixStartOption() {
     this._options.start = Array.isArray(this._options.start)
       ? this._options.start
@@ -329,6 +392,7 @@ class RangeSliderView
 
     return this;
   }
+
   protected _fixStepsOption() {
     this._options.steps = new TrackView({
       orientation: this._options.orientation,
@@ -343,7 +407,9 @@ class RangeSliderView
   protected _fixPipsOption() {
     if (!Array.isArray(this._options.pips.values)) {
       this._options.pips.values =
-        this._options.pips.values < 1 ? 0 : Math.floor(this._options.pips.values);
+        this._options.pips.values < 1
+          ? 0
+          : Math.floor(this._options.pips.values);
     }
 
     this._fixPipsOptionDependOnMode();
@@ -352,10 +418,13 @@ class RangeSliderView
       this._options.pips.values.sort(ascending);
     }
 
-    this._options.pips.density = new PipsView(this._toPipsOptions()).getDensityOption();
+    this._options.pips.density = new PipsView(
+      this._toPipsOptions()
+    ).getDensityOption();
 
     return this;
   }
+
   protected _fixPipsOptionDependOnMode() {
     switch (this._options.pips.mode) {
       case 'intervals': {
@@ -382,14 +451,17 @@ class RangeSliderView
       // no default
     }
   }
+
   protected _fixPipsOptionWithIntervalsMode() {
     this._options.pips.values = Object.values(this._options.intervals);
   }
+
   protected _fixPipsOptionWithCountMode() {
     this._options.pips.values = Array.isArray(this._options.pips.values)
       ? this._options.pips.values.length
       : this._options.pips.values;
   }
+
   protected _fixPipsOptionWithPositionsMode() {
     if (Array.isArray(this._options.pips.values)) {
       this._options.pips.values = this._options.pips.values.filter(
@@ -401,18 +473,22 @@ class RangeSliderView
       const shiftInPercent = amountOfValues < 1 ? 0 : 100 / amountOfValues;
 
       let accumulator = -shiftInPercent;
-      this._options.pips.values = new Array(amountOfValues + 1).fill(-1).map(() => {
-        accumulator += shiftInPercent;
+      this._options.pips.values = new Array(amountOfValues + 1)
+        .fill(-1)
+        .map(() => {
+          accumulator += shiftInPercent;
 
-        return accumulator;
-      });
+          return accumulator;
+        });
     }
   }
+
   protected _fixPipsOptionWithValuesMode() {
     const valueBorderOfTrack = this._getValueBorderOfTrack();
     this._options.pips.values = Array.isArray(this._options.pips.values)
       ? this._options.pips.values.filter(
-          (value) => value >= valueBorderOfTrack.min && value <= valueBorderOfTrack.max
+          (value) =>
+            value >= valueBorderOfTrack.min && value <= valueBorderOfTrack.max
         )
       : [];
   }
@@ -428,6 +504,7 @@ class RangeSliderView
 
     return this;
   }
+
   protected _fixTooltipsOption() {
     const desiredLength = this._options.start.length;
 
@@ -435,7 +512,11 @@ class RangeSliderView
       ? this._options.tooltips
       : new Array(desiredLength).fill(this._options.tooltips);
 
-    fixLength(this._options.tooltips, desiredLength, DEFAULT_OPTIONS.tooltips[0]);
+    fixLength(
+      this._options.tooltips,
+      desiredLength,
+      DEFAULT_OPTIONS.tooltips[0]
+    );
 
     return this;
   }
@@ -463,6 +544,7 @@ class RangeSliderView
 
     return this;
   }
+
   protected _fixIsActiveThumbsState() {
     fixLength(this._state.isActiveThumbs, this._state.value.length, false);
   }
@@ -475,6 +557,7 @@ class RangeSliderView
       max: this._options.intervals.max - rightPad,
     };
   }
+
   protected _getLinearPercentBorderOfTrack() {
     const valueBorderOfTrack = this._getValueBorderOfTrack();
 
@@ -483,7 +566,11 @@ class RangeSliderView
       max: this._toTrackPercent(valueBorderOfTrack.max),
     };
   }
-  protected _getIntervalInfoByPoint(value: number, { isIncludedInSupremum = false } = {}) {
+
+  protected _getIntervalInfoByPoint(
+    value: number,
+    { isIncludedInSupremum = false } = {}
+  ) {
     const intervalsKeys = Object.keys(this._options.intervals).sort(
       TrackView.intervalsKeysCompareFunc
     );
@@ -508,13 +595,15 @@ class RangeSliderView
     const keyOfSupremum = intervalsKeys[indexOfSupremum];
 
     const valueSize =
-      this._options.intervals[keyOfSupremum] - this._options.intervals[keyOfInfimum];
+      this._options.intervals[keyOfSupremum] -
+      this._options.intervals[keyOfInfimum];
     const percentSize =
       RangeSliderView._getIntervalKeyAsNumber(keyOfSupremum) -
       RangeSliderView._getIntervalKeyAsNumber(keyOfInfimum);
 
     const intervalRatio = valueSize / percentSize;
-    const fullRatio = (this._options.intervals.max - this._options.intervals.min) / 100;
+    const fullRatio =
+      (this._options.intervals.max - this._options.intervals.min) / 100;
 
     const magnificationFactor = intervalRatio / fullRatio;
 
@@ -529,7 +618,10 @@ class RangeSliderView
       step,
     };
   }
-  protected static _getIntervalKeyAsNumber(key: keyof Required<TrackOptions>['intervals']) {
+
+  protected static _getIntervalKeyAsNumber(
+    key: keyof Required<TrackOptions>['intervals']
+  ) {
     if (key === 'min') {
       return 0;
     }
@@ -540,6 +632,7 @@ class RangeSliderView
 
     return Number.parseFloat(`${key}`);
   }
+
   protected _toTrackPercent(valueOnTrack: number) {
     const intervalsKeys = Object.keys(this._options.intervals).sort(
       TrackView.intervalsKeysCompareFunc
@@ -550,18 +643,21 @@ class RangeSliderView
     intervalsKeys.forEach((intervalKey, index) => {
       if (!isStopOffset && intervalsKeys[index + 1] !== undefined) {
         const intervalValueSize =
-          this._options.intervals[intervalsKeys[index + 1]] - this._options.intervals[intervalKey];
+          this._options.intervals[intervalsKeys[index + 1]] -
+          this._options.intervals[intervalKey];
         const intervalPercentSize =
           RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index + 1]) -
           RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index]);
-        const valuePerPercentInInterval = intervalValueSize / intervalPercentSize;
+        const valuePerPercentInInterval =
+          intervalValueSize / intervalPercentSize;
 
         if (
           valueOnTrack >= this._options.intervals[intervalKey] &&
           valueOnTrack < this._options.intervals[intervalsKeys[index + 1]]
         ) {
           offsetInPercent +=
-            (valueOnTrack - this._options.intervals[intervalKey]) / valuePerPercentInInterval;
+            (valueOnTrack - this._options.intervals[intervalKey]) /
+            valuePerPercentInInterval;
           isStopOffset = true;
         } else {
           offsetInPercent += intervalPercentSize;
@@ -571,6 +667,7 @@ class RangeSliderView
 
     return offsetInPercent;
   }
+
   protected _toTrackValue(linearPercentOnTrack: number) {
     const intervalsKeys = Object.keys(this._options.intervals).sort(
       TrackView.intervalsKeysCompareFunc
@@ -581,18 +678,23 @@ class RangeSliderView
     intervalsKeys.forEach((intervalKey, index) => {
       if (!isStopOffset && intervalsKeys[index + 1] !== undefined) {
         const intervalValueSize =
-          this._options.intervals[intervalsKeys[index + 1]] - this._options.intervals[intervalKey];
+          this._options.intervals[intervalsKeys[index + 1]] -
+          this._options.intervals[intervalKey];
         const intervalPercentSize =
           RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index + 1]) -
           RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index]);
-        const valuePerPercentInInterval = intervalValueSize / intervalPercentSize;
+        const valuePerPercentInInterval =
+          intervalValueSize / intervalPercentSize;
 
         if (
-          linearPercentOnTrack >= RangeSliderView._getIntervalKeyAsNumber(intervalKey) &&
-          linearPercentOnTrack < RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index + 1])
+          linearPercentOnTrack >=
+            RangeSliderView._getIntervalKeyAsNumber(intervalKey) &&
+          linearPercentOnTrack <
+            RangeSliderView._getIntervalKeyAsNumber(intervalsKeys[index + 1])
         ) {
           trackValue +=
-            (linearPercentOnTrack - RangeSliderView._getIntervalKeyAsNumber(intervalKey)) *
+            (linearPercentOnTrack -
+              RangeSliderView._getIntervalKeyAsNumber(intervalKey)) *
             valuePerPercentInInterval;
           isStopOffset = true;
         } else {
@@ -612,25 +714,32 @@ class RangeSliderView
       padding: this._options.padding,
     };
   }
+
   protected _toRangeOptions(index: number): Required<RangeOptions> {
     return { isConnected: this._options.connect[index] };
   }
+
   protected _toThumbOptions(index: number): Required<ThumbOptions> {
     return { start: this._options.start[index] };
   }
+
   protected _toTooltipOptions(index: number): Required<TooltipOptions> {
     const tooltip = this._options.tooltips[index];
 
     return {
       orientation: this._options.orientation === 'horizontal' ? 'top' : 'left',
-      formatter: typeof tooltip === 'boolean' ? this._options.formatter : tooltip,
+      formatter:
+        typeof tooltip === 'boolean' ? this._options.formatter : tooltip,
       isHidden: !tooltip,
     };
   }
+
   protected _toPipsOptions(): Required<PipsOptions> {
     const { formatter } = this._options;
     const { isHidden, density } = this._options.pips;
-    const values = Array.isArray(this._options.pips.values) ? [...this._options.pips.values] : [];
+    const values = Array.isArray(this._options.pips.values)
+      ? [...this._options.pips.values]
+      : [];
 
     const valueBorderOfTrack = this._getValueBorderOfTrack();
 
@@ -640,8 +749,12 @@ class RangeSliderView
       case 'intervals': {
         const [leftPad, rightPad] = this._options.padding;
 
-        const minPercent = this._toTrackPercent(this._options.intervals.min + leftPad);
-        const manPercent = this._toTrackPercent(this._options.intervals.max - rightPad);
+        const minPercent = this._toTrackPercent(
+          this._options.intervals.min + leftPad
+        );
+        const manPercent = this._toTrackPercent(
+          this._options.intervals.max - rightPad
+        );
 
         values[0] = valueBorderOfTrack.min;
         values[values.length - 1] = valueBorderOfTrack.max;
@@ -667,32 +780,43 @@ class RangeSliderView
 
         if (amountOfPipsValues > 0) {
           const shift =
-            (valueBorderOfTrack.max - valueBorderOfTrack.min) / (amountOfPipsValues - 1);
+            (valueBorderOfTrack.max - valueBorderOfTrack.min) /
+            (amountOfPipsValues - 1);
 
           let value = valueBorderOfTrack.min;
-          pipsValues = new Array(amountOfPipsValues).fill({ percent: NaN, value: NaN }).map(() => {
-            const pip = { percent: this._toTrackPercent(value), value };
+          pipsValues = new Array(amountOfPipsValues)
+            .fill({ percent: NaN, value: NaN })
+            .map(() => {
+              const pip = { percent: this._toTrackPercent(value), value };
 
-            value += shift;
+              value += shift;
 
-            return pip;
-          });
+              return pip;
+            });
         }
 
         break;
       }
       case 'positions': {
-        const perPercent = (valueBorderOfTrack.max - valueBorderOfTrack.min) / 100;
+        const perPercent =
+          (valueBorderOfTrack.max - valueBorderOfTrack.min) / 100;
         pipsValues = values.map((value) => {
-          const positionValue = value * perPercent - Math.abs(valueBorderOfTrack.min);
+          const positionValue =
+            value * perPercent - Math.abs(valueBorderOfTrack.min);
 
-          return { percent: this._toTrackPercent(positionValue), value: positionValue };
+          return {
+            percent: this._toTrackPercent(positionValue),
+            value: positionValue,
+          };
         });
 
         break;
       }
       case 'values': {
-        pipsValues = values.map((value) => ({ percent: this._toTrackPercent(value), value }));
+        pipsValues = values.map((value) => ({
+          percent: this._toTrackPercent(value),
+          value,
+        }));
 
         break;
       }
@@ -724,6 +848,7 @@ class RangeSliderView
       ariaValueText: tooltipOptions.formatter(value),
     };
   }
+
   protected _toTooltipState(index: number): TooltipState {
     return {
       value: this._state.value[index],
@@ -732,28 +857,38 @@ class RangeSliderView
 
   protected _getRangeTransform(index: number) {
     const lowerOffset =
-      index === 0 ? 0 : this._thumbValueToPositionOnTrack(index - 1).offsetInPercent;
-    const greaterOffset = this._thumbValueToPositionOnTrack(index).offsetInPercent;
+      index === 0
+        ? 0
+        : this._thumbValueToPositionOnTrack(index - 1).offsetInPercent;
+    const greaterOffset =
+      this._thumbValueToPositionOnTrack(index).offsetInPercent;
 
     return this._options.orientation === 'horizontal'
-      ? `translate(${lowerOffset}%, 0) scale(${(greaterOffset - lowerOffset) / 100}, 1)`
-      : `translate(0, ${lowerOffset}%) scale(1, ${(greaterOffset - lowerOffset) / 100})`;
+      ? `translate(${lowerOffset}%, 0) scale(${
+          (greaterOffset - lowerOffset) / 100
+        }, 1)`
+      : `translate(0, ${lowerOffset}%) scale(1, ${
+          (greaterOffset - lowerOffset) / 100
+        })`;
   }
 
   protected _getThumbTransform(index: number) {
     const thumbOffset = this._thumbValueToPositionOnTrack(index);
     const thumbTranslate =
-      thumbOffset.offsetInPercent * thumbOffset.thumbScaleFactor - thumbOffset.thumbToCenterOffset;
+      thumbOffset.offsetInPercent * thumbOffset.thumbScaleFactor -
+      thumbOffset.thumbToCenterOffset;
 
     return this._options.orientation === 'horizontal'
       ? `translate(${thumbTranslate}%, 0)`
       : `translate(0, ${thumbTranslate}%)`;
   }
+
   protected _getThumbZIndex(index: number) {
     const baseZ = 2;
     const nextIndex = index + 1;
     const previousIndex = index - 1;
-    const epsilon = (this._options.intervals.max - this._options.intervals.min) * 0.02;
+    const epsilon =
+      (this._options.intervals.max - this._options.intervals.min) * 0.02;
     const trackBorder = this._getValueBorderOfTrack();
     const infimum = this._state.value[previousIndex] ?? trackBorder.min;
     const supremum = this._state.value[nextIndex] ?? trackBorder.max;
@@ -765,12 +900,18 @@ class RangeSliderView
   }
 
   protected _thumbEventListenerObject = {
-    cache: new WeakMap() as WeakMap<HTMLElement, ReturnType<RangeSliderView['_initThumbCache']>>,
+    cache: new WeakMap() as WeakMap<
+      HTMLElement,
+      ReturnType<RangeSliderView['_initThumbCache']>
+    >,
 
     handleEvent: (event: Event) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
-      this._thumbEventListenerObject.cache.set(origin, this._initThumbCache(origin));
+      this._thumbEventListenerObject.cache.set(
+        origin,
+        this._initThumbCache(origin)
+      );
 
       handleEvent.apply(this._thumbEventListenerObject, [event, 'thumb']);
     },
@@ -778,9 +919,9 @@ class RangeSliderView
     handleThumbPointerdown: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
-      const cache = this._thumbEventListenerObject.cache.get(origin) as ReturnType<
-        RangeSliderView['_initThumbCache']
-      >;
+      const cache = this._thumbEventListenerObject.cache.get(
+        origin
+      ) as ReturnType<RangeSliderView['_initThumbCache']>;
 
       origin.setPointerCapture(event.pointerId);
 
@@ -788,7 +929,10 @@ class RangeSliderView
 
       this.trigger('start');
 
-      origin.addEventListener('pointermove', this._thumbEventListenerObject.handleThumbPointermove);
+      origin.addEventListener(
+        'pointermove',
+        this._thumbEventListenerObject.handleThumbPointermove
+      );
       origin.addEventListener(
         'lostpointercapture',
         this._thumbEventListenerObject.handleThumbLostpointercapture,
@@ -797,19 +941,25 @@ class RangeSliderView
     },
     handleThumbPointermove: (event: PointerEvent) => {
       if (
-        this._options.orientation === 'horizontal' ? event.movementX === 0 : event.movementY === 0
+        this._options.orientation === 'horizontal'
+          ? event.movementX === 0
+          : event.movementY === 0
       ) {
         return;
       }
 
       const origin = this._thumbEventListenerObject.getOrigin(event);
-      const thumb = origin.querySelector('.js-range-slider__thumb') as HTMLDivElement;
+      const thumb = origin.querySelector(
+        '.js-range-slider__thumb'
+      ) as HTMLDivElement;
 
-      const cache = this._thumbEventListenerObject.cache.get(origin) as ReturnType<
-        RangeSliderView['_initThumbCache']
-      >;
+      const cache = this._thumbEventListenerObject.cache.get(
+        origin
+      ) as ReturnType<RangeSliderView['_initThumbCache']>;
 
-      if (this._isMoveFromExteriorOfThumb(thumb.getBoundingClientRect(), event)) {
+      if (
+        this._isMoveFromExteriorOfThumb(thumb.getBoundingClientRect(), event)
+      ) {
         return;
       }
 
@@ -824,11 +974,15 @@ class RangeSliderView
       };
 
       const trackBorder = this._getValueBorderOfTrack();
-      const ariaValueMin = this._state.value[cache.thumbIndex - 1] ?? trackBorder.min;
-      const ariaValueMax = this._state.value[cache.thumbIndex + 1] ?? trackBorder.max;
+      const ariaValueMin =
+        this._state.value[cache.thumbIndex - 1] ?? trackBorder.min;
+      const ariaValueMax =
+        this._state.value[cache.thumbIndex + 1] ?? trackBorder.max;
 
       const currentMovement =
-        this._options.orientation === 'horizontal' ? event.movementX : event.movementY;
+        this._options.orientation === 'horizontal'
+          ? event.movementX
+          : event.movementY;
       cache.movementAcc += currentMovement;
 
       const thumbValueIncrementation =
@@ -846,10 +1000,11 @@ class RangeSliderView
       );
 
       if (currentIntervalInfo.step !== 'none') {
-        const steppedIncrementation = RangeSliderView._toThumbSteppedIncrementation(
-          shiftThroughIntervals.theLastIncrement,
-          shiftThroughIntervals.currentIntervalInfo.step
-        );
+        const steppedIncrementation =
+          RangeSliderView._toThumbSteppedIncrementation(
+            shiftThroughIntervals.theLastIncrement,
+            shiftThroughIntervals.currentIntervalInfo.step
+          );
 
         thumbValue =
           shiftThroughIntervals.thumbValueAfterIncrementation -
@@ -859,7 +1014,8 @@ class RangeSliderView
           thumbValue += steppedIncrementation.stepped;
 
           const remainsFactor =
-            steppedIncrementation.remains / shiftThroughIntervals.theLastIncrement;
+            steppedIncrementation.remains /
+            shiftThroughIntervals.theLastIncrement;
           cache.movementAcc *= remainsFactor;
         }
       } else {
@@ -881,9 +1037,9 @@ class RangeSliderView
     handleThumbLostpointercapture: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
 
-      const cache = this._thumbEventListenerObject.cache.get(origin) as ReturnType<
-        RangeSliderView['_initThumbCache']
-      >;
+      const cache = this._thumbEventListenerObject.cache.get(
+        origin
+      ) as ReturnType<RangeSliderView['_initThumbCache']>;
 
       origin.removeEventListener(
         'pointermove',
@@ -896,22 +1052,28 @@ class RangeSliderView
     },
 
     getOrigin(event: Event) {
-      // eslint-disable-next-line sonarjs/no-duplicate-string
-      return (event.target as HTMLElement).closest('.js-range-slider__thumb-origin') as HTMLElement;
+      return (event.target as HTMLElement).closest(
+        // eslint-disable-next-line sonarjs/no-duplicate-string
+        '.js-range-slider__thumb-origin'
+      ) as HTMLElement;
     },
   };
+
   protected _initThumbCache(origin: HTMLElement) {
     const trackElem = origin.closest('.js-range-slider__track') as HTMLElement;
-    const ranges = trackElem.querySelectorAll<HTMLElement>('.js-range-slider__range');
+    const ranges = trackElem.querySelectorAll<HTMLElement>(
+      '.js-range-slider__range'
+    );
 
-    const trackValueSize = this._options.intervals.max - this._options.intervals.min;
+    const trackValueSize =
+      this._options.intervals.max - this._options.intervals.min;
     const thumbIndex = Array.from(
       trackElem.querySelectorAll<HTMLElement>('.js-range-slider__thumb-origin')
     ).indexOf(origin);
-    const siblingRanges = [ranges.item(thumbIndex), ranges.item(thumbIndex + 1)] as [
-      HTMLElement,
-      HTMLElement
-    ];
+    const siblingRanges = [
+      ranges.item(thumbIndex),
+      ranges.item(thumbIndex + 1),
+    ] as [HTMLElement, HTMLElement];
     const valuePerPx =
       this._options.orientation === 'horizontal'
         ? trackValueSize / trackElem.getBoundingClientRect().width
@@ -926,7 +1088,11 @@ class RangeSliderView
       movementAcc: 0,
     };
   }
-  protected _isMoveFromExteriorOfThumb(thumbDOMRect: DOMRect, event: PointerEvent) {
+
+  protected _isMoveFromExteriorOfThumb(
+    thumbDOMRect: DOMRect,
+    event: PointerEvent
+  ) {
     let isCursorMore: boolean;
     let isCursorLess: boolean;
     let isReverseMovement: boolean;
@@ -959,6 +1125,7 @@ class RangeSliderView
 
     return isNotOnTrack && isReverseMovement;
   }
+
   protected _fixNonLinearShiftThroughIntervals(
     currentIntervalInfo: {
       keyOfInfimum: string;
@@ -982,25 +1149,30 @@ class RangeSliderView
   } {
     const isMoreThanSupremum =
       currentIntervalInfo.keyOfSupremum !== undefined &&
-      thumbValueAfterIncrementation > this._options.intervals[currentIntervalInfo.keyOfSupremum];
+      thumbValueAfterIncrementation >
+        this._options.intervals[currentIntervalInfo.keyOfSupremum];
     const isLessThanInfimum =
       currentIntervalInfo.keyOfInfimum !== undefined &&
-      thumbValueAfterIncrementation < this._options.intervals[currentIntervalInfo.keyOfInfimum];
+      thumbValueAfterIncrementation <
+        this._options.intervals[currentIntervalInfo.keyOfInfimum];
     const keyOfCrossedInterval = isMoreThanSupremum
       ? currentIntervalInfo.keyOfSupremum
       : currentIntervalInfo.keyOfInfimum;
 
     const shouldFix = isMoreThanSupremum || isLessThanInfimum;
-    const isEnd = keyOfCrossedInterval === 'max' || keyOfCrossedInterval === 'min';
+    const isEnd =
+      keyOfCrossedInterval === 'max' || keyOfCrossedInterval === 'min';
 
     if (shouldFix && !isEnd) {
       const thumbValueBeforeIncrementation =
         thumbValueAfterIncrementation - thumbValueIncrementation;
 
       const complementToWholeIntervalValue =
-        this._options.intervals[keyOfCrossedInterval] - thumbValueBeforeIncrementation;
+        this._options.intervals[keyOfCrossedInterval] -
+        thumbValueBeforeIncrementation;
 
-      const toWholeIntervalFactor = complementToWholeIntervalValue / thumbValueIncrementation;
+      const toWholeIntervalFactor =
+        complementToWholeIntervalValue / thumbValueIncrementation;
       const toNewValueFactor = 1 - toWholeIntervalFactor;
 
       const nextIntervalInfo = this._getIntervalInfoByPoint(
@@ -1023,7 +1195,8 @@ class RangeSliderView
         thumbValueBeforeIncrementation + correctedThumbValueIncrementation;
 
       const remainingThumbValueIncrementation =
-        remainingThumbValueAfterIncrementation - this._options.intervals[keyOfCrossedInterval];
+        remainingThumbValueAfterIncrementation -
+        this._options.intervals[keyOfCrossedInterval];
       const remainingMovement = movement - movement * toWholeIntervalFactor;
 
       return this._fixNonLinearShiftThroughIntervals(
@@ -1041,6 +1214,7 @@ class RangeSliderView
       currentIntervalInfo,
     };
   }
+
   protected static _toThumbSteppedIncrementation(
     thumbIncrementationOfLastInterval: number,
     step: number | 'none'
@@ -1051,15 +1225,19 @@ class RangeSliderView
 
     const signFactor = thumbIncrementationOfLastInterval >= 0 ? 1 : -1;
     const stepped =
-      signFactor * Math.floor(Math.abs(thumbIncrementationOfLastInterval) / step) * step;
+      signFactor *
+      Math.floor(Math.abs(thumbIncrementationOfLastInterval) / step) *
+      step;
     const remains = thumbIncrementationOfLastInterval - stepped;
 
     return { stepped, remains };
   }
+
   protected _thumbValueToPositionOnTrack(thumbIndex: number) {
     const trackRelativeSizeInPercent = 100;
     const originThumbRelativeSizeInPercent = 10;
-    const thumbScaleFactor = trackRelativeSizeInPercent / originThumbRelativeSizeInPercent;
+    const thumbScaleFactor =
+      trackRelativeSizeInPercent / originThumbRelativeSizeInPercent;
 
     const thumbToCenterOffset = 50;
 
@@ -1072,13 +1250,17 @@ class RangeSliderView
     cache: {} as { trackElem: HTMLElement },
 
     handleEvent: (event: Event) => {
-      if ((event.target as HTMLElement).closest('.js-range-slider__thumb-origin') !== null) {
+      if (
+        (event.target as HTMLElement).closest(
+          '.js-range-slider__thumb-origin'
+        ) !== null
+      ) {
         return;
       }
 
-      this._trackEventListenerObject.cache.trackElem = (event.target as HTMLElement).closest(
-        '.js-range-slider__track'
-      ) as HTMLElement;
+      this._trackEventListenerObject.cache.trackElem = (
+        event.target as HTMLElement
+      ).closest('.js-range-slider__track') as HTMLElement;
 
       handleEvent.apply(this._trackEventListenerObject, [event, 'track']);
     },
@@ -1090,8 +1272,12 @@ class RangeSliderView
 
       let clickedLinearPercent =
         this._options.orientation === 'horizontal'
-          ? ((event.clientX - trackBoundingClientRect.left) / trackBoundingClientRect.width) * 100
-          : ((event.clientY - trackBoundingClientRect.top) / trackBoundingClientRect.height) * 100;
+          ? ((event.clientX - trackBoundingClientRect.left) /
+              trackBoundingClientRect.width) *
+            100
+          : ((event.clientY - trackBoundingClientRect.top) /
+              trackBoundingClientRect.height) *
+            100;
 
       if (clickedLinearPercent < linearPercentTrackBorder.min) {
         clickedLinearPercent = linearPercentTrackBorder.min;
@@ -1107,14 +1293,21 @@ class RangeSliderView
       this.trigger('slide').trigger('update').trigger('change').trigger('set');
     },
   };
+
   protected _getNearestThumb(value: number) {
-    const distances = this._state.value.map((thumbValue) => Math.abs(thumbValue - value));
+    const distances = this._state.value.map((thumbValue) =>
+      Math.abs(thumbValue - value)
+    );
 
     const minDistance = Math.min(...distances);
-    const theLeastIndexOfNearestThumb = distances.indexOf(Math.min(...distances));
+    const theLeastIndexOfNearestThumb = distances.indexOf(
+      Math.min(...distances)
+    );
     const nearestValue = this._state.value[theLeastIndexOfNearestThumb];
 
-    return value < nearestValue ? theLeastIndexOfNearestThumb : distances.lastIndexOf(minDistance);
+    return value < nearestValue
+      ? theLeastIndexOfNearestThumb
+      : distances.lastIndexOf(minDistance);
   }
 
   protected _pipsEventListenerObject = {
@@ -1133,7 +1326,8 @@ class RangeSliderView
 
       const pipValue = pipValueElem.dataset.value as string;
 
-      this._state.value[this._getNearestThumb(Number(pipValue))] = Number(pipValue);
+      this._state.value[this._getNearestThumb(Number(pipValue))] =
+        Number(pipValue);
       this._setState({});
 
       this.trigger('slide').trigger('update').trigger('change').trigger('set');

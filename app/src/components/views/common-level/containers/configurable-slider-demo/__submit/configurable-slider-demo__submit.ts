@@ -24,7 +24,9 @@ class ConfigurableSliderDemoSubmit extends BEMComponent<
 > {
   protected readonly _DOM: Readonly<ConfigurableSliderDemoSubmitDOM>;
 
-  constructor(configurableSliderDemoSubmitElement: ConfigurableSliderDemoSubmitElement) {
+  constructor(
+    configurableSliderDemoSubmitElement: ConfigurableSliderDemoSubmitElement
+  ) {
     super(configurableSliderDemoSubmitElement);
 
     this._DOM = this._initDOM();
@@ -60,6 +62,7 @@ class ConfigurableSliderDemoSubmit extends BEMComponent<
 
     return this;
   }
+
   protected onSubmit = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -71,6 +74,7 @@ class ConfigurableSliderDemoSubmit extends BEMComponent<
       })
     );
   };
+
   protected onReset = (event: Event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -84,20 +88,24 @@ class ConfigurableSliderDemoSubmit extends BEMComponent<
   };
 }
 
-type ConfigurableSliderDemoSubmitElementWithComponent = HTMLElementWithComponent<
-  ConfigurableSliderDemoSubmitElement,
-  ConfigurableSliderDemoSubmitCustomEvents,
-  ConfigurableSliderDemoSubmit
->;
+type ConfigurableSliderDemoSubmitElementWithComponent =
+  HTMLElementWithComponent<
+    ConfigurableSliderDemoSubmitElement,
+    ConfigurableSliderDemoSubmitCustomEvents,
+    ConfigurableSliderDemoSubmit
+  >;
 
 const configurableSliderDemoSubmits = Array.from(
   configurableSliderDemoElements,
   (configurableSliderDemoElement) => {
-    const configurableSliderDemoSubmitElement = configurableSliderDemoElement.querySelector(
-      '.js-configurable-slider-demo__submit'
-    ) as ConfigurableSliderDemoSubmitElement;
+    const configurableSliderDemoSubmitElement =
+      configurableSliderDemoElement.querySelector(
+        '.js-configurable-slider-demo__submit'
+      ) as ConfigurableSliderDemoSubmitElement;
 
-    return new ConfigurableSliderDemoSubmit(configurableSliderDemoSubmitElement);
+    return new ConfigurableSliderDemoSubmit(
+      configurableSliderDemoSubmitElement
+    );
   }
 );
 

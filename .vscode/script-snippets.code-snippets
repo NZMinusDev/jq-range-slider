@@ -9,7 +9,7 @@
    *   $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
    * Placeholders with the same ids are connected.
    */
-   "BEM single block defination": {
+  "BEM single block defination": {
     "prefix": "bem:sb",
     "scope": "typescript",
     "body": [

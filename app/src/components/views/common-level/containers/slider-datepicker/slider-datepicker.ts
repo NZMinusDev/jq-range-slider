@@ -10,18 +10,26 @@ import type {
   SliderDatepickerSliderElementWithComponent,
 } from './__slider/slider-datepicker__slider';
 import './__slider/slider-datepicker__slider';
-import sliderDatepickerElements, { SliderDatepickerElement } from './slider-datepicker-elements';
+import sliderDatepickerElements, {
+  SliderDatepickerElement,
+} from './slider-datepicker-elements';
 
 type SliderDatepickerDOM = {
   slider: SliderDatepickerSliderElementWithComponent;
-  resultTextFields: [FormFieldElementWithComponent, FormFieldElementWithComponent];
+  resultTextFields: [
+    FormFieldElementWithComponent,
+    FormFieldElementWithComponent
+  ];
 };
 
 type SliderDatepickerState = { value: [Date, Date] };
 
 type SliderDatepickerCustomEvents = SliderDatepickerSliderCustomEvents;
 
-class SliderDatepicker extends BEMComponent<SliderDatepickerElement, SliderDatepickerCustomEvents> {
+class SliderDatepicker extends BEMComponent<
+  SliderDatepickerElement,
+  SliderDatepickerCustomEvents
+> {
   protected readonly _DOM: Readonly<SliderDatepickerDOM>;
 
   protected readonly _state: SliderDatepickerState;
@@ -43,7 +51,9 @@ class SliderDatepicker extends BEMComponent<SliderDatepickerElement, SliderDatep
       '.js-slider-datepicker__slider'
     ) as SliderDatepickerDOM['slider'];
     const resultTextFields = [
-      ...this.element.querySelectorAll('.js-slider-datepicker__text-field .js-form-field'),
+      ...this.element.querySelectorAll(
+        '.js-slider-datepicker__text-field .js-form-field'
+      ),
     ] as SliderDatepickerDOM['resultTextFields'];
 
     return { slider, resultTextFields };
@@ -66,8 +76,11 @@ class SliderDatepicker extends BEMComponent<SliderDatepickerElement, SliderDatep
 
     return this;
   }
+
   protected _sliderEventListenerObject = {
-    handleSliderUpdate: (event: CustomEvent<SliderDatepickerCustomEvents['update']>) => {
+    handleSliderUpdate: (
+      event: CustomEvent<SliderDatepickerCustomEvents['update']>
+    ) => {
       this._state.value = [...event.detail.value];
 
       this._displayResult();
@@ -81,7 +94,8 @@ class SliderDatepicker extends BEMComponent<SliderDatepickerElement, SliderDatep
   }
 
   protected _displayResult() {
-    const [lowerValueResultTextField, greaterValueResultTextField] = this._DOM.resultTextFields;
+    const [lowerValueResultTextField, greaterValueResultTextField] =
+      this._DOM.resultTextFields;
     const [lowerValue, greaterValue] = this._state.value;
 
     lowerValueResultTextField.component.set(lowerValue.toString());

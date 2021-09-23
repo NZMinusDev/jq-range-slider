@@ -18,7 +18,11 @@ class RangeView
   extends MVPView<Required<RangeOptions>, RangeOptions, RangeState>
   implements IRangeView
 {
-  readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
+  readonly template = ({
+    classInfo = {},
+    styleInfo = {},
+    attributes = {},
+  } = {}) =>
     html`<div
       class=${classMap({
         'range-slider__range': true,
@@ -30,7 +34,10 @@ class RangeView
       style=${styleMap({ ...styleInfo })}
     ></div>`;
 
-  constructor(options: RangeOptions = DEFAULT_OPTIONS, state: RangeState = DEFAULT_STATE) {
+  constructor(
+    options: RangeOptions = DEFAULT_OPTIONS,
+    state: RangeState = DEFAULT_STATE
+  ) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: ['isConnected'],
     });

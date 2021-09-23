@@ -28,7 +28,9 @@ class ConfigurableSliderDemoSlider extends BEMComponent<
 > {
   protected readonly _DOM: Readonly<ConfigurableSliderDemoSliderDOM>;
 
-  constructor(configurableSliderDemoSliderElement: ConfigurableSliderDemoSliderElement) {
+  constructor(
+    configurableSliderDemoSliderElement: ConfigurableSliderDemoSliderElement
+  ) {
     super(configurableSliderDemoSliderElement);
 
     this._DOM = this._initDOM();
@@ -37,6 +39,7 @@ class ConfigurableSliderDemoSlider extends BEMComponent<
   getOptions() {
     return this._DOM.slider.component.getOptions();
   }
+
   setOptions(options?: Unpacked<Parameters<Slider['setOptions']>>) {
     this._DOM.slider.component.setOptions(options);
 
@@ -46,6 +49,7 @@ class ConfigurableSliderDemoSlider extends BEMComponent<
   get() {
     return this._DOM.slider.component.get();
   }
+
   set(value?: Unpacked<Parameters<Slider['set']>>) {
     this._DOM.slider.component.set(value);
 
@@ -61,20 +65,24 @@ class ConfigurableSliderDemoSlider extends BEMComponent<
   }
 }
 
-type ConfigurableSliderDemoSliderElementWithComponent = HTMLElementWithComponent<
-  ConfigurableSliderDemoSliderElement,
-  ConfigurableSliderDemoSliderCustomEvents,
-  ConfigurableSliderDemoSlider
->;
+type ConfigurableSliderDemoSliderElementWithComponent =
+  HTMLElementWithComponent<
+    ConfigurableSliderDemoSliderElement,
+    ConfigurableSliderDemoSliderCustomEvents,
+    ConfigurableSliderDemoSlider
+  >;
 
 const configurableSliderDemoSliders = Array.from(
   configurableSliderDemoElements,
   (configurableSliderDemoElement) => {
-    const configurableSliderDemoSliderElement = configurableSliderDemoElement.querySelector(
-      '.js-configurable-slider-demo__slider'
-    ) as ConfigurableSliderDemoSliderElement;
+    const configurableSliderDemoSliderElement =
+      configurableSliderDemoElement.querySelector(
+        '.js-configurable-slider-demo__slider'
+      ) as ConfigurableSliderDemoSliderElement;
 
-    return new ConfigurableSliderDemoSlider(configurableSliderDemoSliderElement);
+    return new ConfigurableSliderDemoSlider(
+      configurableSliderDemoSliderElement
+    );
   }
 );
 

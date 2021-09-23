@@ -65,7 +65,9 @@ app.use('/stateChanger', (req, res, next) => {
 
   timerId = setInterval(() => {
     if (!isEqual(sentState, state)) {
-      res.write(`data: {"state": ${JSON.stringify(state)}}\nid: ${Date.now()}\n\n`);
+      res.write(
+        `data: {"state": ${JSON.stringify(state)}}\nid: ${Date.now()}\n\n`
+      );
       console.log('whenStateIsChanged: ', state);
     }
 

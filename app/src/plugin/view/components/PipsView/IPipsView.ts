@@ -13,7 +13,8 @@ type PipsOptions = {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type PipsState = {};
 
-interface IPipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
+interface IPipsView
+  extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
   getOrientationOption(): PipsOptions['orientation'];
   getIsHiddenOption(): PipsOptions['isHidden'];
   getValuesOption(): PipsOptions['values'];

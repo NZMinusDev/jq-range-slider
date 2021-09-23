@@ -26,11 +26,13 @@ class EventsLoggerFirefly extends BEMComponent<
 
     return this;
   }
+
   turnOff() {
     this.element.classList.remove('events-logger__firefly_active');
 
     return this;
   }
+
   blink() {
     this.turnOn();
 
@@ -48,11 +50,16 @@ type EventsLoggerFireflyElementWithComponent = HTMLElementWithComponent<
   EventsLoggerFirefly
 >;
 
-const eventsLoggerFireflies = Array.from(eventsLoggerElements, (eventsLoggerElement) =>
-  Array.from(
-    eventsLoggerElement.querySelectorAll<EventsLoggerFireflyElement>('.js-events-logger__firefly'),
-    (eventsLoggerFireflyElement) => new EventsLoggerFirefly(eventsLoggerFireflyElement)
-  )
+const eventsLoggerFireflies = Array.from(
+  eventsLoggerElements,
+  (eventsLoggerElement) =>
+    Array.from(
+      eventsLoggerElement.querySelectorAll<EventsLoggerFireflyElement>(
+        '.js-events-logger__firefly'
+      ),
+      (eventsLoggerFireflyElement) =>
+        new EventsLoggerFirefly(eventsLoggerFireflyElement)
+    )
 ).flat();
 
 export type {

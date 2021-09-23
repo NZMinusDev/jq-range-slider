@@ -18,23 +18,31 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   TrackView
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 > = function viewPropertiesExpecter({ instance, passedArgs }) {
-  const keysOfIntervals = Object.keys(instance['_options'].intervals).sort((a, b) => {
-    if (a === 'min' || b === 'max') {
-      return -1;
-    }
+  const keysOfIntervals = Object.keys(instance['_options'].intervals).sort(
+    (a, b) => {
+      if (a === 'min' || b === 'max') {
+        return -1;
+      }
 
-    if (a === 'max' || b === 'min') {
-      return 1;
-    }
+      if (a === 'max' || b === 'min') {
+        return 1;
+      }
 
-    return collapsingParseFloat(a) - collapsingParseFloat(b);
-  });
+      return collapsingParseFloat(a) - collapsingParseFloat(b);
+    }
+  );
 
   expect(instance['_options'].steps.length).toBe(keysOfIntervals.length - 1);
 
-  expect(instance['_options'].intervals.min).toBeLessThan(instance['_options'].intervals.max);
-  expect(instance['_options'].intervals.min).toBeGreaterThanOrEqual(Number.MIN_SAFE_INTEGER);
-  expect(instance['_options'].intervals.max).toBeLessThanOrEqual(Number.MAX_SAFE_INTEGER);
+  expect(instance['_options'].intervals.min).toBeLessThan(
+    instance['_options'].intervals.max
+  );
+  expect(instance['_options'].intervals.min).toBeGreaterThanOrEqual(
+    Number.MIN_SAFE_INTEGER
+  );
+  expect(instance['_options'].intervals.max).toBeLessThanOrEqual(
+    Number.MAX_SAFE_INTEGER
+  );
 
   const [leftPad, rightPad] = instance['_options'].padding;
   keysOfIntervals.forEach((key, index, keys) => {
@@ -52,7 +60,10 @@ const viewPropertiesExpecter: InstancePropsExpecter<
       );
     }
 
-    if (index < instance['_options'].steps.length && instance['_options'].steps[index] !== 'none') {
+    if (
+      index < instance['_options'].steps.length &&
+      instance['_options'].steps[index] !== 'none'
+    ) {
       expect(instance['_options'].steps[index]).toBeGreaterThan(0);
 
       expect(instance['_options'].steps[index]).toBeLessThanOrEqual(
@@ -69,7 +80,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   instance['_options'].padding.forEach((pad) => {
     expect(pad).toBeLessThanOrEqual(
       Math.abs(
-        (instance['_options'].intervals[keysOfIntervals[keysOfIntervals.length - 1]] -
+        (instance['_options'].intervals[
+          keysOfIntervals[keysOfIntervals.length - 1]
+        ] -
           instance['_options'].intervals[keysOfIntervals[0]]) /
           2
       )
@@ -77,12 +90,21 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   });
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof TrackView>> = {
+const differentConstructorArgs: DifferentArguments<
+  ConstructorParameters<typeof TrackView>
+> = {
   invalidOptionalArguments: [
     [{ intervals: { min: 100, max: 100 } }],
     [{ intervals: { min: 100, max: 99 } }],
     [{ intervals: { min: -100, max: -110 } }],
-    [{ intervals: { min: Number.MIN_SAFE_INTEGER - 1, max: Number.MAX_SAFE_INTEGER + 1 } }],
+    [
+      {
+        intervals: {
+          min: Number.MIN_SAFE_INTEGER - 1,
+          max: Number.MAX_SAFE_INTEGER + 1,
+        },
+      },
+    ],
     [{ intervals: { min: -100, max: 100, 50: 50 } }],
     [{ intervals: { min: -100, max: 100, '0%': 50 } }],
     [{ intervals: { min: -100, max: 100, '-1%': 50 } }],
@@ -94,11 +116,27 @@ const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof 
     [{ intervals: { min: 100, max: -100, '25%': 50, '50%': 10, '75%': -50 } }],
     [{ intervals: { min: -100, max: 100, '50%': 50 }, steps: [] }],
     [{ intervals: { min: -100, max: 100, '50%': 50 }, steps: [10] }],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, steps: [10, 15, 20, 1, 5] }],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        steps: [10, 15, 20, 1, 5],
+      },
+    ],
     [{ intervals: { min: -100, max: 100, '50%': 50 }, steps: [-10, 0] }],
     [{ intervals: { min: -100, max: 100, '50%': 50 }, steps: [300, 500] }],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, steps: [5.543543, 10.54876] }],
-    [{ intervals: { min: -100, max: 100, '50%': 50 }, padding: 10, steps: [150, 50] }],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        steps: [5.543543, 10.54876],
+      },
+    ],
+    [
+      {
+        intervals: { min: -100, max: 100, '50%': 50 },
+        padding: 10,
+        steps: [150, 50],
+      },
+    ],
     [{ intervals: { min: -100, max: 100, '50%': 50 }, padding: -10 }],
     [{ intervals: { min: -100, max: 100, '50%': 50 }, padding: 249 }],
     [{ intervals: { min: -100, max: 100, '50%': 50 }, padding: 10.76589645 }],

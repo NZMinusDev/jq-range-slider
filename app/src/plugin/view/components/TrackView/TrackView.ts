@@ -7,7 +7,11 @@ import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
 import { collapsingParseFloat } from '@utils/devTools/scripts/ParserHelper';
 import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
 
-import ITrackView, { TrackOptions, FixedTrackOptions, TrackState } from './ITrackView';
+import ITrackView, {
+  TrackOptions,
+  FixedTrackOptions,
+  TrackState,
+} from './ITrackView';
 import './TrackView.scss';
 
 const DEFAULT_OPTIONS: FixedTrackOptions = {
@@ -19,7 +23,10 @@ const DEFAULT_OPTIONS: FixedTrackOptions = {
 
 const DEFAULT_STATE: TrackState = {};
 
-class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> implements ITrackView {
+class TrackView
+  extends MVPView<FixedTrackOptions, TrackOptions, TrackState>
+  implements ITrackView
+{
   static intervalsKeysCompareFunc(a: string, b: string) {
     if (a === 'min' || b === 'max') {
       return -1;
@@ -50,7 +57,10 @@ class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> imp
       ${innerHTML}
     </div>`;
 
-  constructor(options: TrackOptions = DEFAULT_OPTIONS, state: TrackState = DEFAULT_STATE) {
+  constructor(
+    options: TrackOptions = DEFAULT_OPTIONS,
+    state: TrackState = DEFAULT_STATE
+  ) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: ['intervals', 'padding', 'steps'],
     });
@@ -59,35 +69,47 @@ class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> imp
   getOrientationOption() {
     return this._options.orientation;
   }
+
   getIntervalsOption() {
     return { ...this._options.intervals };
   }
+
   getStepsOption() {
     return [...this._options.steps];
   }
+
   getPaddingOption() {
     return [...this._options.padding] as FixedTrackOptions['padding'];
   }
 
-  setOrientationOption(orientation: TrackOptions['orientation'] = DEFAULT_OPTIONS.orientation) {
+  setOrientationOption(
+    orientation: TrackOptions['orientation'] = DEFAULT_OPTIONS.orientation
+  ) {
     this._options.orientation = orientation;
 
     return this;
   }
-  setIntervalsOption(intervals: TrackOptions['intervals'] = DEFAULT_OPTIONS.intervals) {
+
+  setIntervalsOption(
+    intervals: TrackOptions['intervals'] = DEFAULT_OPTIONS.intervals
+  ) {
     this._options.intervals = { ...intervals };
 
     this._fixIntervalsOption()._fixStepsOption()._fixPaddingOption();
 
     return this;
   }
+
   setStepsOption(steps: TrackOptions['steps'] = DEFAULT_OPTIONS.steps) {
-    this._options.steps = Array.isArray(steps) ? [...steps] : this._options.steps.fill(steps);
+    this._options.steps = Array.isArray(steps)
+      ? [...steps]
+      : this._options.steps.fill(steps);
 
     this._fixStepsOption();
 
     return this;
   }
+
   setPaddingOption(padding: TrackOptions['padding'] = DEFAULT_OPTIONS.padding) {
     this._options.padding = Array.isArray(padding)
       ? [...padding]
@@ -99,10 +121,13 @@ class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> imp
   }
 
   protected _fixIntervalsOption() {
-    this._fixOrderOfIntervalsOption()._fixKeysOfIntervalsOption()._fixValuesOfIntervalsOption();
+    this._fixOrderOfIntervalsOption()
+      ._fixKeysOfIntervalsOption()
+      ._fixValuesOfIntervalsOption();
 
     return this;
   }
+
   protected _fixOrderOfIntervalsOption() {
     const keys = this._getSortedKeysOfIntervalsOption();
     const values = Object.values(this._options.intervals);
@@ -112,10 +137,13 @@ class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> imp
     keys.forEach((key, index) => {
       entries[index] = [key, values[index]];
     });
-    this._options.intervals = Object.fromEntries(entries) as FixedTrackOptions['intervals'];
+    this._options.intervals = Object.fromEntries(
+      entries
+    ) as FixedTrackOptions['intervals'];
 
     return this;
   }
+
   protected _fixKeysOfIntervalsOption() {
     Object.entries(this._options.intervals).forEach(([key, val]) => {
       let validKey: string;
@@ -135,6 +163,7 @@ class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> imp
 
     return this;
   }
+
   protected _fixValuesOfIntervalsOption() {
     Object.entries(this._options.intervals).forEach(([key, val]) => {
       if (val > Number.MAX_SAFE_INTEGER) {
@@ -158,6 +187,7 @@ class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> imp
 
     return this;
   }
+
   protected _fixLengthOfStepsOption() {
     if (Array.isArray(this._options.steps)) {
       fixLength(
@@ -172,6 +202,7 @@ class TrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> imp
 
     return this;
   }
+
   protected _fixValuesOfStepsOption() {
     const intervalsKeys = this._getSortedKeysOfIntervalsOption();
     const [leftPad, rightPad] = this._options.padding;

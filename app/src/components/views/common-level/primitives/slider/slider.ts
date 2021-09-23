@@ -3,12 +3,16 @@ import {
   HTMLElementWithComponent,
 } from '@utils/devTools/scripts/ComponentCreationHelper';
 import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
-import IRangeSliderView, { RangeSliderOptions } from '@plugin/view/IRangeSliderView';
+import IRangeSliderView, {
+  RangeSliderOptions,
+} from '@plugin/view/IRangeSliderView';
 import '@plugin/range-slider-plugin';
 
 import sliderElements, { SliderElement } from './slider-elements';
 
-type SliderHTMLOptions = Omit<RangeSliderOptions, 'formatter'> & { formatter: string };
+type SliderHTMLOptions = Omit<RangeSliderOptions, 'formatter'> & {
+  formatter: string;
+};
 
 type SliderCustomEvents = {
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -42,10 +46,14 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
   getOptions() {
     return this._libSlider.getOptions();
   }
+
   setOptions(options?: RangeSliderOptions) {
     this._libSlider.setOptions(options);
     this.element.dispatchEvent(
-      new CustomEvent('set', { bubbles: true, detail: { value: this._libSlider.get() } })
+      new CustomEvent('set', {
+        bubbles: true,
+        detail: { value: this._libSlider.get() },
+      })
     );
 
     return this;
@@ -54,6 +62,7 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
   get() {
     return this._libSlider.get();
   }
+
   set(value: Unpacked<Parameters<IRangeSliderView['set']>>) {
     this._libSlider.set(value);
 
@@ -61,7 +70,9 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
   }
 
   protected _initOptionsFromHTML() {
-    const options = JSON.parse(this.element.dataset.options as string) as SliderHTMLOptions;
+    const options = JSON.parse(
+      this.element.dataset.options as string
+    ) as SliderHTMLOptions;
     // eslint-disable-next-line no-eval
     options.formatter = window.eval(options.formatter);
 
@@ -70,20 +81,46 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
 
   protected _initLibSlider() {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return new window.RangeSliderPresenter(this.element, () => {}, this._options).view;
+    return new window.RangeSliderPresenter(
+      this.element,
+      () => {},
+      this._options
+    ).view;
   }
 
   protected _bindLibSliderListeners() {
-    this._libSlider.on('start', this._libSliderEventListenerObject.handleLibSliderStart);
-    this._libSlider.on('slide', this._libSliderEventListenerObject.handleLibSliderSlide);
-    this._libSlider.on('update', this._libSliderEventListenerObject.handleLibSliderUpdate);
-    this._libSlider.on('change', this._libSliderEventListenerObject.handleLibSliderChange);
-    this._libSlider.on('set', this._libSliderEventListenerObject.handleLibSliderSet);
-    this._libSlider.on('end', this._libSliderEventListenerObject.handleLibSliderEnd);
-    this._libSlider.on('render', this._libSliderEventListenerObject.handleLibSliderRender);
+    this._libSlider.on(
+      'start',
+      this._libSliderEventListenerObject.handleLibSliderStart
+    );
+    this._libSlider.on(
+      'slide',
+      this._libSliderEventListenerObject.handleLibSliderSlide
+    );
+    this._libSlider.on(
+      'update',
+      this._libSliderEventListenerObject.handleLibSliderUpdate
+    );
+    this._libSlider.on(
+      'change',
+      this._libSliderEventListenerObject.handleLibSliderChange
+    );
+    this._libSlider.on(
+      'set',
+      this._libSliderEventListenerObject.handleLibSliderSet
+    );
+    this._libSlider.on(
+      'end',
+      this._libSliderEventListenerObject.handleLibSliderEnd
+    );
+    this._libSlider.on(
+      'render',
+      this._libSliderEventListenerObject.handleLibSliderRender
+    );
 
     return this;
   }
+
   protected _libSliderEventListenerObject = {
     handleLibSliderStart: () => {
       this.element.dispatchEvent(new CustomEvent('start', { bubbles: true }));
@@ -93,17 +130,26 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
     },
     handleLibSliderUpdate: () => {
       this.element.dispatchEvent(
-        new CustomEvent('update', { bubbles: true, detail: { value: this._libSlider.get() } })
+        new CustomEvent('update', {
+          bubbles: true,
+          detail: { value: this._libSlider.get() },
+        })
       );
     },
     handleLibSliderChange: () => {
       this.element.dispatchEvent(
-        new CustomEvent('change', { bubbles: true, detail: { value: this._libSlider.get() } })
+        new CustomEvent('change', {
+          bubbles: true,
+          detail: { value: this._libSlider.get() },
+        })
       );
     },
     handleLibSliderSet: () => {
       this.element.dispatchEvent(
-        new CustomEvent('set', { bubbles: true, detail: { value: this._libSlider.get() } })
+        new CustomEvent('set', {
+          bubbles: true,
+          detail: { value: this._libSlider.get() },
+        })
       );
     },
     handleLibSliderEnd: () => {
@@ -121,8 +167,16 @@ type SliderElementWithComponent = HTMLElementWithComponent<
   Slider
 >;
 
-const sliders = Array.from(sliderElements, (sliderElement) => new Slider(sliderElement));
+const sliders = Array.from(
+  sliderElements,
+  (sliderElement) => new Slider(sliderElement)
+);
 
-export type { SliderCustomEvents, Slider, SliderElementWithComponent, RangeSliderOptions };
+export type {
+  SliderCustomEvents,
+  Slider,
+  SliderElementWithComponent,
+  RangeSliderOptions,
+};
 
 export { sliders as default };

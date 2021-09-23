@@ -1,7 +1,9 @@
 import '@babel/polyfill';
 import cloneDeep from 'lodash-es/cloneDeep';
 
-import IRangeSliderModel, { RangeSliderState } from '../models/IRangeSliderModel';
+import IRangeSliderModel, {
+  RangeSliderState,
+} from '../models/IRangeSliderModel';
 import RangeSliderPresenter from './RangeSliderPresenter';
 
 describe('plugin presenter', () => {
@@ -62,7 +64,12 @@ describe('plugin presenter', () => {
 
   describe('init with defined optional args', () => {
     beforeEach(() => {
-      presenter = new RangeSliderPresenter(root, defaultErrorCatcher, {}, model);
+      presenter = new RangeSliderPresenter(
+        root,
+        defaultErrorCatcher,
+        {},
+        model
+      );
     });
 
     test('view and model are set', () => {
@@ -81,7 +88,10 @@ describe('plugin presenter', () => {
         });
 
         test('old model should call closeConnections()', () => {
-          const closeConnectionsSpy = jest.spyOn(assignedModel, 'closeConnections');
+          const closeConnectionsSpy = jest.spyOn(
+            assignedModel,
+            'closeConnections'
+          );
 
           presenter.setModel(newModel, defaultErrorCatcher);
 
@@ -101,7 +111,10 @@ describe('plugin presenter', () => {
         });
 
         test('after view change state model should get this value for updating', () => {
-          const modelSetStateSpy = jest.spyOn(presenter.model as IRangeSliderModel, 'setState');
+          const modelSetStateSpy = jest.spyOn(
+            presenter.model as IRangeSliderModel,
+            'setState'
+          );
           const newState: RangeSliderState = { value: [-10] };
 
           presenter.view.set(newState.value);

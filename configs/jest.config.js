@@ -6,7 +6,9 @@ module.exports = {
   coverageDirectory: '<rootDir>/../coverage',
 
   // FIXME: should be replaced after ts-jest v27 release(ESM support)
-  transformIgnorePatterns: ['node_modules/(?!(lodash-es|lit-html|@open-wc/lit-helpers))'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(lodash-es|lit-html|@open-wc/lit-helpers))',
+  ],
 
   // https://github.com/kulshekhar/ts-jest/issues/1035#issuecomment-486442977 and https://github.com/jsdom/jsdom/pull/2666#issuecomment-691216178
   setupFilesAfterEnv: ['<rootDir>/../../configs/setupEventsToJest.ts'],

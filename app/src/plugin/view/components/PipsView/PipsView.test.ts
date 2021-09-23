@@ -33,7 +33,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   );
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof PipsView>> = {
+const differentConstructorArgs: DifferentArguments<
+  ConstructorParameters<typeof PipsView>
+> = {
   invalidOptionalArguments: [
     [
       {

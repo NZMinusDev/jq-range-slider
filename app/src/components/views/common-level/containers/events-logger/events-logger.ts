@@ -7,7 +7,9 @@ import {
   EventsLoggerFireflyCustomEvents,
   EventsLoggerFireflyElementWithComponent,
 } from './__firefly/events-logger__firefly';
-import eventsLoggerElements, { EventsLoggerElement } from './events-logger-elements';
+import eventsLoggerElements, {
+  EventsLoggerElement,
+} from './events-logger-elements';
 
 type EventsLoggerDOM = {
   fireflies: EventsLoggerFireflyElementWithComponent[];
@@ -15,7 +17,10 @@ type EventsLoggerDOM = {
 
 type EventsLoggerCustomEvents = EventsLoggerFireflyCustomEvents;
 
-class EventsLogger extends BEMComponent<EventsLoggerElement, EventsLoggerCustomEvents> {
+class EventsLogger extends BEMComponent<
+  EventsLoggerElement,
+  EventsLoggerCustomEvents
+> {
   protected readonly _DOM: Readonly<EventsLoggerDOM>;
 
   constructor(eventsLoggerElement: EventsLoggerElement) {
@@ -50,6 +55,10 @@ const eventsLoggers = Array.from(
   (eventsLoggerElement) => new EventsLogger(eventsLoggerElement)
 );
 
-export type { EventsLoggerCustomEvents, EventsLogger, EventsLoggerElementWithComponent };
+export type {
+  EventsLoggerCustomEvents,
+  EventsLogger,
+  EventsLoggerElementWithComponent,
+};
 
 export { eventsLoggers as default };

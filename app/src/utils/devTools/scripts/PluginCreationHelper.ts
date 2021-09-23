@@ -117,7 +117,9 @@ class EventManagerMixin<TEvents extends string> {
 
   handleEvent(event: Event) {
     // mousedown -> onMousedown
-    const methodName = `_on${event.type[0].toUpperCase()}${event.type.slice(1)}`;
+    const methodName = `_on${event.type[0].toUpperCase()}${event.type.slice(
+      1
+    )}`;
     if (this[methodName]) this[methodName](event);
 
     return this;
@@ -147,9 +149,15 @@ abstract class MVPView<
 
   protected _state: TState;
 
-  protected readonly _theOrderOfIteratingThroughTheOptions: Extract<keyof TOptionsToGet, string>[];
+  protected readonly _theOrderOfIteratingThroughTheOptions: Extract<
+    keyof TOptionsToGet,
+    string
+  >[];
 
-  protected readonly _theOrderOfIteratingThroughTheState: Extract<keyof TState, string>[];
+  protected readonly _theOrderOfIteratingThroughTheState: Extract<
+    keyof TState,
+    string
+  >[];
 
   constructor(
     DEFAULT_OPTIONS: TOptionsToGet,
@@ -160,7 +168,10 @@ abstract class MVPView<
       theOrderOfIteratingThroughTheOptions = [],
       theOrderOfIteratingThroughTheState = [],
     }: {
-      theOrderOfIteratingThroughTheOptions?: Extract<keyof TOptionsToGet, string>[];
+      theOrderOfIteratingThroughTheOptions?: Extract<
+        keyof TOptionsToGet,
+        string
+      >[];
       theOrderOfIteratingThroughTheState?: Extract<keyof TState, string>[];
     }
   ) {
@@ -206,8 +217,11 @@ abstract class MVPView<
 
     let getOptionMethodName;
     this._theOrderOfIteratingThroughTheOptions.forEach((optionKey) => {
-      getOptionMethodName = `get${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
-      if (this[getOptionMethodName]) options[optionKey] = this[getOptionMethodName]();
+      getOptionMethodName = `get${
+        optionKey[0].toUpperCase() + optionKey.slice(1)
+      }Option`;
+      if (this[getOptionMethodName])
+        options[optionKey] = this[getOptionMethodName]();
     });
 
     return options as TOptionsToGet;
@@ -229,7 +243,9 @@ abstract class MVPView<
           )
       )
       .forEach(([optionKey, optionValue]) => {
-        setOptionMethodName = `set${optionKey[0].toUpperCase() + optionKey.slice(1)}Option`;
+        setOptionMethodName = `set${
+          optionKey[0].toUpperCase() + optionKey.slice(1)
+        }Option`;
         valueToPass = options === undefined ? undefined : optionValue;
 
         if (this[setOptionMethodName]) {
@@ -256,11 +272,17 @@ abstract class MVPView<
     Object.entries(keyOfStateToForEach)
       .sort(
         ([a], [b]) =>
-          this._theOrderOfIteratingThroughTheState.indexOf(a as Extract<keyof TState, string>) -
-          this._theOrderOfIteratingThroughTheState.indexOf(b as Extract<keyof TState, string>)
+          this._theOrderOfIteratingThroughTheState.indexOf(
+            a as Extract<keyof TState, string>
+          ) -
+          this._theOrderOfIteratingThroughTheState.indexOf(
+            b as Extract<keyof TState, string>
+          )
       )
       .forEach(([stateKey, stateValue]) => {
-        setStateMethodName = `_set${stateKey[0].toUpperCase() + stateKey.slice(1)}State`;
+        setStateMethodName = `_set${
+          stateKey[0].toUpperCase() + stateKey.slice(1)
+        }State`;
         valueToPass = state === undefined ? undefined : stateValue;
 
         if (this[setStateMethodName]) {
@@ -276,7 +298,9 @@ abstract class MVPView<
   protected _fixOptions() {
     let fixOptionMethodName;
     this._theOrderOfIteratingThroughTheOptions.forEach((option) => {
-      fixOptionMethodName = `_fix${option[0].toUpperCase() + option.slice(1)}Option`;
+      fixOptionMethodName = `_fix${
+        option[0].toUpperCase() + option.slice(1)
+      }Option`;
       if (this[fixOptionMethodName]) this[fixOptionMethodName]();
     });
 
@@ -286,7 +310,9 @@ abstract class MVPView<
   protected _fixState() {
     let fixStateMethodName;
     this._theOrderOfIteratingThroughTheState.forEach((state) => {
-      fixStateMethodName = `_fix${state[0].toUpperCase() + state.slice(1)}State`;
+      fixStateMethodName = `_fix${
+        state[0].toUpperCase() + state.slice(1)
+      }State`;
       if (this[fixStateMethodName]) this[fixStateMethodName]();
     });
 

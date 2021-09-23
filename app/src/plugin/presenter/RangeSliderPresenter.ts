@@ -11,6 +11,7 @@ type ErrorCatcher = (reason: unknown) => void;
 
 class RangeSliderPresenter {
   readonly view: IRangeSliderView;
+
   model?: IRangeSliderModel;
 
   constructor(
@@ -19,7 +20,11 @@ class RangeSliderPresenter {
     viewOptions?: RangeSliderOptions,
     model?: IRangeSliderModel
   ) {
-    this.view = renderMVPView(RangeSliderView, [viewOptions] as [RangeSliderOptions], container);
+    this.view = renderMVPView(
+      RangeSliderView,
+      [viewOptions] as [RangeSliderOptions],
+      container
+    );
 
     if (model !== undefined) {
       this.setModel(model, errorCatcher);
@@ -50,7 +55,9 @@ class RangeSliderPresenter {
     this.model?.setState({ value: this.view.get() });
   };
 
-  protected _updateViewDisplay(state: Unpacked<ReturnType<IRangeSliderModel['getState']>>) {
+  protected _updateViewDisplay(
+    state: Unpacked<ReturnType<IRangeSliderModel['getState']>>
+  ) {
     this.view.set(state.value);
 
     return this;
@@ -75,4 +82,8 @@ interface RangeSliderPresenterConstructor {
   ): RangeSliderPresenter;
 }
 
-export { RangeSliderPresenter as default, RangeSliderPresenterConstructor, ErrorCatcher };
+export {
+  RangeSliderPresenter as default,
+  RangeSliderPresenterConstructor,
+  ErrorCatcher,
+};

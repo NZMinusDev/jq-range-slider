@@ -8,7 +8,9 @@ import type {
   ColorpickerSliderElementWithComponent,
 } from './__slider/colorpicker__slider';
 import './__slider/colorpicker__slider';
-import colorpickerElements, { ColorpickerElement } from './colorpicker-elements';
+import colorpickerElements, {
+  ColorpickerElement,
+} from './colorpicker-elements';
 
 type ColorpickerDOM = {
   sliders: ColorpickerSliderElementWithComponent[];
@@ -19,7 +21,10 @@ type ColorpickerState = { value: [number, number, number] };
 
 type ColorpickerCustomEvents = ColorpickerSliderCustomEvents;
 
-class Colorpicker extends BEMComponent<ColorpickerElement, ColorpickerCustomEvents> {
+class Colorpicker extends BEMComponent<
+  ColorpickerElement,
+  ColorpickerCustomEvents
+> {
   protected readonly _DOM: Readonly<ColorpickerDOM>;
 
   protected readonly _state: ColorpickerState;
@@ -64,10 +69,15 @@ class Colorpicker extends BEMComponent<ColorpickerElement, ColorpickerCustomEven
 
     return this;
   }
+
   protected _sliderEventListenerObject = {
-    handleSliderUpdate: (event: CustomEvent<ColorpickerCustomEvents['update']>) => {
+    handleSliderUpdate: (
+      event: CustomEvent<ColorpickerCustomEvents['update']>
+    ) => {
       const target = event.target as Node;
-      const sliderIndex = this._DOM.sliders.findIndex((slider) => slider.contains(target));
+      const sliderIndex = this._DOM.sliders.findIndex((slider) =>
+        slider.contains(target)
+      );
       const sliderValue = event.detail.value;
 
       this._state.value[sliderIndex] = sliderValue;
@@ -103,6 +113,10 @@ const colorpickers = Array.from(
   (colorpickerElement) => new Colorpicker(colorpickerElement)
 );
 
-export type { ColorpickerCustomEvents, Colorpicker, ColorpickerElementWithComponent };
+export type {
+  ColorpickerCustomEvents,
+  Colorpicker,
+  ColorpickerElementWithComponent,
+};
 
 export { colorpickers as default };

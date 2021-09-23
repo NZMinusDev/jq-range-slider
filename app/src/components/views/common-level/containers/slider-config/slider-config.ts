@@ -4,7 +4,9 @@ import {
 } from '@utils/devTools/scripts/ComponentCreationHelper';
 import { FixedRangeSliderOptions } from '@plugin/view/IRangeSliderView';
 
-import sliderConfigElements, { SliderConfigElement } from './slider-config-elements';
+import sliderConfigElements, {
+  SliderConfigElement,
+} from './slider-config-elements';
 
 type SliderConfigDOM = {
   configItems: {
@@ -32,7 +34,10 @@ type SliderConfigCustomEvents = {
   customReset: {};
 };
 
-class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomEvents> {
+class SliderConfig extends BEMComponent<
+  SliderConfigElement,
+  SliderConfigCustomEvents
+> {
   protected readonly _DOM: Readonly<SliderConfigDOM>;
 
   constructor(sliderConfigElement: SliderConfigElement) {
@@ -53,9 +58,8 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     ).checked = true;
     configItems.min.value = options.intervals.min.toString();
     configItems.max.value = options.intervals.max.toString();
-    [configItems.padLeft.value, configItems.padRight.value] = options.padding.map((pad) =>
-      pad.toString()
-    );
+    [configItems.padLeft.value, configItems.padRight.value] =
+      options.padding.map((pad) => pad.toString());
     configItems.start.value = `[${options.start}]`;
     configItems.steps.value = `[${options.steps}]`;
     configItems.connect.value = `[${options.connect}]`;
@@ -68,7 +72,9 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     ).checked = true;
     configItems.pipsDensity.value = options.pips.density.toString();
     configItems.pipsValues.value =
-      options.pips.mode === 'count' ? `${options.pips.values}` : `[${options.pips.values}]`;
+      options.pips.mode === 'count'
+        ? `${options.pips.values}`
+        : `[${options.pips.values}]`;
     configItems.pipsIsHidden.checked = options.pips.isHidden;
 
     return this;
@@ -78,8 +84,12 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     const orientation = this.element.elements.namedItem(
       'orientation'
     ) as unknown as SliderConfigDOM['configItems']['orientation'];
-    const min = this.element.elements.namedItem('min') as SliderConfigDOM['configItems']['min'];
-    const max = this.element.elements.namedItem('max') as SliderConfigDOM['configItems']['max'];
+    const min = this.element.elements.namedItem(
+      'min'
+    ) as SliderConfigDOM['configItems']['min'];
+    const max = this.element.elements.namedItem(
+      'max'
+    ) as SliderConfigDOM['configItems']['max'];
     const padLeft = this.element.elements.namedItem(
       'pad-left'
     ) as SliderConfigDOM['configItems']['padLeft'];
@@ -113,7 +123,9 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
     const pipsIsHidden = this.element.elements.namedItem(
       'pips-is-hidden'
     ) as SliderConfigDOM['configItems']['pipsIsHidden'];
-    const reset = this.element.elements.namedItem('reset') as SliderConfigDOM['reset'];
+    const reset = this.element.elements.namedItem(
+      'reset'
+    ) as SliderConfigDOM['reset'];
 
     return {
       configItems: {
@@ -146,6 +158,7 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
 
     return this;
   }
+
   protected _configItemsEventListenerObject = {
     handleConfigItemChange: (event: Event) => {
       event.stopPropagation();
@@ -155,22 +168,31 @@ class SliderConfig extends BEMComponent<SliderConfigElement, SliderConfigCustomE
       const changedValue = input.type === 'checkbox' ? `${checked}` : value;
 
       this.element.dispatchEvent(
-        new CustomEvent('change', { bubbles: true, detail: { name, value: changedValue } })
+        new CustomEvent('change', {
+          bubbles: true,
+          detail: { name, value: changedValue },
+        })
       );
     },
   };
 
   protected _bindResetListeners() {
-    this._DOM.reset.addEventListener('click', this._resetEventListenerObject.handleResetClick);
+    this._DOM.reset.addEventListener(
+      'click',
+      this._resetEventListenerObject.handleResetClick
+    );
 
     return this;
   }
+
   protected _resetEventListenerObject = {
     handleResetClick: (event: MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
 
-      this.element.dispatchEvent(new CustomEvent('customReset', { bubbles: true }));
+      this.element.dispatchEvent(
+        new CustomEvent('customReset', { bubbles: true })
+      );
     },
   };
 }
@@ -186,6 +208,10 @@ const sliderConfigs = Array.from(
   (sliderConfigElement) => new SliderConfig(sliderConfigElement)
 );
 
-export type { SliderConfigCustomEvents, SliderConfig, SliderConfigElementWithComponent };
+export type {
+  SliderConfigCustomEvents,
+  SliderConfig,
+  SliderConfigElementWithComponent,
+};
 
 export { sliderConfigs as default };

@@ -20,8 +20,15 @@ const DEFAULT_OPTIONS: Required<PipsOptions> = {
 
 const DEFAULT_STATE: PipsState = {};
 
-class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> implements IPipsView {
-  readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) =>
+class PipsView
+  extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
+  implements IPipsView
+{
+  readonly template = ({
+    classInfo = {},
+    styleInfo = {},
+    attributes = {},
+  } = {}) =>
     html`<div
       class=${classMap({
         'range-slider__pips': true,
@@ -37,51 +44,73 @@ class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> im
       ${this._getPipsRender()}
     </div>`;
 
-  constructor(options: PipsOptions = DEFAULT_OPTIONS, state: PipsState = DEFAULT_STATE) {
+  constructor(
+    options: PipsOptions = DEFAULT_OPTIONS,
+    state: PipsState = DEFAULT_STATE
+  ) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
-      theOrderOfIteratingThroughTheOptions: ['isHidden', 'values', 'density', 'formatter'],
+      theOrderOfIteratingThroughTheOptions: [
+        'isHidden',
+        'values',
+        'density',
+        'formatter',
+      ],
     });
   }
 
   getOrientationOption() {
     return this._options.orientation;
   }
+
   getIsHiddenOption() {
     return this._options.isHidden;
   }
+
   getValuesOption() {
     return [...this._options.values];
   }
+
   getDensityOption() {
     return this._options.density;
   }
+
   getFormatterOption() {
     return this._options.formatter;
   }
 
-  setOrientationOption(orientation: PipsOptions['orientation'] = DEFAULT_OPTIONS.orientation) {
+  setOrientationOption(
+    orientation: PipsOptions['orientation'] = DEFAULT_OPTIONS.orientation
+  ) {
     this._options.orientation = orientation;
 
     return this;
   }
-  setIsHiddenOption(isHidden: PipsOptions['isHidden'] = DEFAULT_OPTIONS.isHidden) {
+
+  setIsHiddenOption(
+    isHidden: PipsOptions['isHidden'] = DEFAULT_OPTIONS.isHidden
+  ) {
     this._options.isHidden = isHidden;
 
     return this;
   }
+
   setValuesOption(values: PipsOptions['values'] = DEFAULT_OPTIONS.values) {
     this._options.values = defaultsDeep([], values);
     this._fixValuesOption();
 
     return this;
   }
+
   setDensityOption(density: PipsOptions['density'] = DEFAULT_OPTIONS.density) {
     this._options.density = density;
     this._fixDensityOption();
 
     return this;
   }
-  setFormatterOption(formatter: PipsOptions['formatter'] = DEFAULT_OPTIONS.formatter) {
+
+  setFormatterOption(
+    formatter: PipsOptions['formatter'] = DEFAULT_OPTIONS.formatter
+  ) {
     this._options.formatter = formatter;
 
     return this;
@@ -94,9 +123,12 @@ class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> im
 
     return this;
   }
+
   protected _fixDensityOption() {
     this._options.density =
-      this._options.density < 0 ? DEFAULT_OPTIONS.density : this._options.density;
+      this._options.density < 0
+        ? DEFAULT_OPTIONS.density
+        : this._options.density;
     this._options.density = collapsingParseInt(`${this._options.density}`);
 
     return this;
@@ -113,7 +145,8 @@ class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> im
       'range-slider__pips-marker_size_long': true,
     };
 
-    const positionKey = this._options.orientation === 'horizontal' ? 'left' : 'top';
+    const positionKey =
+      this._options.orientation === 'horizontal' ? 'left' : 'top';
 
     let valuePosition = 0;
     let rangeShift = this._options.values[0].percent;
@@ -130,7 +163,11 @@ class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> im
       let markersTemplate;
 
       if (index > 0) {
-        markersTemplate = this._getMarkersRender(valuePosition, rangeShift, positionKey);
+        markersTemplate = this._getMarkersRender(
+          valuePosition,
+          rangeShift,
+          positionKey
+        );
       }
 
       const valueTemplate = this._getValueRender(longMarkerStyles, value.value);
@@ -142,7 +179,12 @@ class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> im
       return html`${markersTemplate}${longMarkerTemplate}${valueTemplate}`;
     });
   }
-  protected _getMarkersRender(end: number, range: number, positionKey: 'left' | 'top') {
+
+  protected _getMarkersRender(
+    end: number,
+    range: number,
+    positionKey: 'left' | 'top'
+  ) {
     const classes: ClassInfo = {
       'range-slider__pips-marker': true,
       'js-range-slider__pips-marker': true,
@@ -160,9 +202,13 @@ class PipsView extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> im
         [positionKey]: `${position}%`,
       };
 
-      return html`<div class=${classMap(classes)} style=${styleMap(markerStyles)}></div>`;
+      return html`<div
+        class=${classMap(classes)}
+        style=${styleMap(markerStyles)}
+      ></div>`;
     });
   }
+
   protected _getValueRender(styleInfo: StyleInfo, value: number) {
     const valueClasses: ClassInfo = {
       'range-slider__pips-value': true,

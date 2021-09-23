@@ -3,13 +3,15 @@
 interface CustomEventListener<TEventDetail extends Record<string, unknown>> {
   (event: CustomEvent<TEventDetail>): void;
 }
-interface CustomEventListenerObject<TEventDetail extends Record<string, unknown>> {
+interface CustomEventListenerObject<
+  TEventDetail extends Record<string, unknown>
+> {
   handleEvent(event: CustomEvent<TEventDetail>): void;
   [key: string]: unknown;
 }
-type CustomEventListenerOrCustomEventListenerObject<TEventDetail extends Record<string, unknown>> =
-  | CustomEventListener<TEventDetail>
-  | CustomEventListenerObject<TEventDetail>;
+type CustomEventListenerOrCustomEventListenerObject<
+  TEventDetail extends Record<string, unknown>
+> = CustomEventListener<TEventDetail> | CustomEventListenerObject<TEventDetail>;
 
 type HTMLElementWithComponent<
   THTMLElement extends HTMLElement,
@@ -29,13 +31,19 @@ abstract class BEMComponent<
   readonly element: HTMLElementWithComponent<THTMLElement, TCustomEvents, this>;
 
   constructor(element: THTMLElement) {
-    this.element = element as HTMLElementWithComponent<THTMLElement, TCustomEvents, this>;
+    this.element = element as HTMLElementWithComponent<
+      THTMLElement,
+      TCustomEvents,
+      this
+    >;
     this.element.component = this;
   }
 
   addCustomEventListener<TCustomEventType extends keyof TCustomEvents>(
     type: TCustomEventType,
-    listener: CustomEventListenerOrCustomEventListenerObject<TCustomEvents[TCustomEventType]>,
+    listener: CustomEventListenerOrCustomEventListenerObject<
+      TCustomEvents[TCustomEventType]
+    >,
     options?: boolean | AddEventListenerOptions
   ) {
     this.element.addEventListener(
@@ -50,7 +58,10 @@ abstract class BEMComponent<
  * BEM modifier class
  */
 abstract class BEMModifier<
-  TBEMComponent extends BEMComponent<HTMLElement, Record<string, Record<string, unknown>>>
+  TBEMComponent extends BEMComponent<
+    HTMLElement,
+    Record<string, Record<string, unknown>>
+  >
 > {
   protected component: TBEMComponent;
 
@@ -65,7 +76,10 @@ abstract class BEMModifier<
  *  Switchable BEM modifier class
  */
 abstract class CancelableBEMModifier<
-  TBEMComponent extends BEMComponent<HTMLElement, Record<string, Record<string, unknown>>>
+  TBEMComponent extends BEMComponent<
+    HTMLElement,
+    Record<string, Record<string, unknown>>
+  >
 > {
   protected component: TBEMComponent;
 
@@ -82,4 +96,9 @@ abstract class CancelableBEMModifier<
   abstract cancel(): this;
 }
 
-export { HTMLElementWithComponent, BEMComponent, BEMModifier, CancelableBEMModifier };
+export {
+  HTMLElementWithComponent,
+  BEMComponent,
+  BEMModifier,
+  CancelableBEMModifier,
+};

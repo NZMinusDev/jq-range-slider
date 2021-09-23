@@ -26,7 +26,10 @@ class ThumbView
 
   readonly template = (
     { classInfo = {}, styleInfo = {}, attributes = {} } = {},
-    { innerHTML, isActive }: { innerHTML: TemplateResult | TemplateResult[]; isActive: boolean } = {
+    {
+      innerHTML,
+      isActive,
+    }: { innerHTML: TemplateResult | TemplateResult[]; isActive: boolean } = {
       innerHTML: html``,
       isActive: false,
     }
@@ -36,7 +39,8 @@ class ThumbView
         'range-slider__thumb-origin': true,
         'js-range-slider__thumb-origin': true,
         // eslint-disable-next-line sonarjs/no-nested-template-literals
-        [`range-slider__thumb-origin_orientation_${this._state.ariaOrientation}`]: true,
+        [`range-slider__thumb-origin_orientation_${this._state.ariaOrientation}`]:
+          true,
         'range-slider__thumb-origin_active': isActive,
         ...classInfo,
       })}
@@ -44,13 +48,22 @@ class ThumbView
       style=${styleMap({ ...styleInfo })}
     >
       <div
-        class=${classMap({ 'range-slider__thumb': true, 'js-range-slider__thumb': true })}
+        class=${classMap({
+          'range-slider__thumb': true,
+          'js-range-slider__thumb': true,
+        })}
         role="slider"
         tabindex="0"
         aria-orientation="${this._state.ariaOrientation}"
-        aria-valuemin="${this._state.ariaValueMin.toFixed(ThumbView.ariaAttributePrecision)}"
-        aria-valuemax="${this._state.ariaValueMax.toFixed(ThumbView.ariaAttributePrecision)}"
-        aria-valuenow="${this._state.ariaValueNow.toFixed(ThumbView.ariaAttributePrecision)}"
+        aria-valuemin="${this._state.ariaValueMin.toFixed(
+          ThumbView.ariaAttributePrecision
+        )}"
+        aria-valuemax="${this._state.ariaValueMax.toFixed(
+          ThumbView.ariaAttributePrecision
+        )}"
+        aria-valuenow="${this._state.ariaValueNow.toFixed(
+          ThumbView.ariaAttributePrecision
+        )}"
         aria-valuetext="${this._state.ariaValueText}"
         @dragstart=${this}
       >
@@ -58,7 +71,10 @@ class ThumbView
       </div>
     </div>`;
 
-  constructor(options: ThumbOptions = DEFAULT_OPTIONS, state: ThumbState = DEFAULT_STATE) {
+  constructor(
+    options: ThumbOptions = DEFAULT_OPTIONS,
+    state: ThumbState = DEFAULT_STATE
+  ) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {});
   }
 

@@ -50,20 +50,25 @@ const sharedAliases = {
  * @param { string } ext - extension of output bundle files such as js/webp/png
  * @returns { string } - hashed name in production mode and nohashed in another case
  */
-const hashedFileName = (name, ext) => (isDev ? `${name}.${ext}` : `${name}.[hash].${ext}`);
+const hashedFileName = (name, ext) =>
+  isDev ? `${name}.${ext}` : `${name}.[hash].${ext}`;
 
 /**
  * loop pages folder and create stuff depending on names of pages.
  */
 class ResultOfTemplatesProcessing {
   constructor() {
-    const foldersOfPages = fs.readdirSync(path.resolve(PATHS.src_absolute, './pages/'));
+    const foldersOfPages = fs.readdirSync(
+      path.resolve(PATHS.src_absolute, './pages/')
+    );
 
     // get all pug templates from each page folder
     const namesOfTemplates = [].concat(
       ...foldersOfPages.map((folder) =>
         fs
-          .readdirSync(`${path.resolve(PATHS.src_absolute, './pages/')}\\${folder}\\`)
+          .readdirSync(
+            `${path.resolve(PATHS.src_absolute, './pages/')}\\${folder}\\`
+          )
           .filter((filename) => filename.endsWith(`.pug`))
       )
     );
@@ -136,15 +141,24 @@ const webpackPlugins = () => {
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: path.resolve(PATHS.src_absolute, './plugin/jq-range-slider-plugin.js'),
+            from: path.resolve(
+              PATHS.src_absolute,
+              './plugin/jq-range-slider-plugin.js'
+            ),
             to: path.resolve(PATHS.src_absolute, './../dist'),
           },
           {
-            from: path.resolve(PATHS.src_absolute, './plugin/jq-range-slider-plugin.d.ts'),
+            from: path.resolve(
+              PATHS.src_absolute,
+              './plugin/jq-range-slider-plugin.d.ts'
+            ),
             to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
           },
           {
-            from: path.resolve(PATHS.src_absolute, './plugin/range-slider-plugin.d.ts'),
+            from: path.resolve(
+              PATHS.src_absolute,
+              './plugin/range-slider-plugin.d.ts'
+            ),
             to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
           },
         ],
@@ -154,7 +168,9 @@ const webpackPlugins = () => {
 
   plugins.push(
     new MiniCssExtractPlugin({
-      filename: isProcessFullApp ? hashedFileName('styles/[id]/[name]', 'css') : '[name].css',
+      filename: isProcessFullApp
+        ? hashedFileName('styles/[id]/[name]', 'css')
+        : '[name].css',
     })
   );
 
@@ -186,7 +202,9 @@ const webpackPlugins = () => {
  * Loaders contraction for templates.
  * @param { string[] } includedFilesExtensions - extensions for including into bundles from components' resources; example: ["scss", "ts"].
  */
-const templatesLoaders = (includedFilesExtensions = ['css', 'js', 'scss', 'ts']) => {
+const templatesLoaders = (
+  includedFilesExtensions = ['css', 'js', 'scss', 'ts']
+) => {
   const bemDeclLevels = [];
   redefinitionLevels.forEach((level) => {
     componentGroups.forEach((group) => {
@@ -243,7 +261,12 @@ const cssLoaders = (extraLoader) => {
       loader: 'postcss-loader',
       options: {
         postcssOptions: {
-          plugins: [DoIUse({}), PostcssFlexbugsFixes(), Autoprefixer(), PostCSSPresetEnv()],
+          plugins: [
+            DoIUse({}),
+            PostcssFlexbugsFixes(),
+            Autoprefixer(),
+            PostCSSPresetEnv(),
+          ],
         },
       },
     },
@@ -310,7 +333,10 @@ const optimization = () => {
 
   if (isProd) {
     // minify css and js
-    config.minimizer = [new OptimizeCssAssetWebpackPlugin(), new TerserWebpackPlugin()];
+    config.minimizer = [
+      new OptimizeCssAssetWebpackPlugin(),
+      new TerserWebpackPlugin(),
+    ];
   }
 
   return config;
@@ -320,7 +346,9 @@ const optimization = () => {
  * measures speed of each plugin in bundling
  * writes data in stats.json as plain text, shouldn't be in dev mod
  */
-const smp = new SpeedMeasurePlugin({ disable: process.env.MEASURE === 'false' });
+const smp = new SpeedMeasurePlugin({
+  disable: process.env.MEASURE === 'false',
+});
 module.exports = smp.wrap({
   // The base directory, an absolute path, for resolving entry points and loaders
   context: PATHS.src_absolute,
@@ -335,7 +363,9 @@ module.exports = smp.wrap({
 
   // Where to put bundles for every entry point
   output: {
-    filename: isProcessFullApp ? hashedFileName('bundles/[id]/[name]', 'js') : '[name].js',
+    filename: isProcessFullApp
+      ? hashedFileName('bundles/[id]/[name]', 'js')
+      : '[name].js',
     path: isProcessFullApp ? PATHS.public_absolute : PATHS.dist_absolute,
   },
   resolve: {

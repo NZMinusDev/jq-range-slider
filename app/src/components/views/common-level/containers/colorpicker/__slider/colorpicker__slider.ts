@@ -35,7 +35,9 @@ class ColorpickerSlider extends BEMComponent<
   }
 
   protected _initDOM() {
-    const slider = this.element.querySelector('.js-slider') as ColorpickerSliderDOM['slider'];
+    const slider = this.element.querySelector(
+      '.js-slider'
+    ) as ColorpickerSliderDOM['slider'];
 
     return { slider };
   }
@@ -48,12 +50,15 @@ class ColorpickerSlider extends BEMComponent<
 
     return this;
   }
+
   protected _sliderEventListenerObject = {
     handleSliderUpdate: (event: CustomEvent<SliderCustomEvents['update']>) => {
+      const reassignedEvent = event as unknown as CustomEvent<
+        ColorpickerSliderCustomEvents['update']
+      >;
       const [colorValue] = event.detail.value;
-      // eslint-disable-next-line no-param-reassign
-      (event as unknown as CustomEvent<ColorpickerSliderCustomEvents['update']>).detail.value =
-        colorValue;
+
+      reassignedEvent.detail.value = colorValue;
     },
   };
 }
@@ -64,11 +69,16 @@ type ColorpickerSliderElementWithComponent = HTMLElementWithComponent<
   ColorpickerSlider
 >;
 
-const colorpickerSliders = Array.from(colorpickerElements, (colorpickerElement) =>
-  Array.from(
-    colorpickerElement.querySelectorAll<ColorpickerSliderElement>('.js-colorpicker__slider'),
-    (colorpickerSliderElement) => new ColorpickerSlider(colorpickerSliderElement)
-  )
+const colorpickerSliders = Array.from(
+  colorpickerElements,
+  (colorpickerElement) =>
+    Array.from(
+      colorpickerElement.querySelectorAll<ColorpickerSliderElement>(
+        '.js-colorpicker__slider'
+      ),
+      (colorpickerSliderElement) =>
+        new ColorpickerSlider(colorpickerSliderElement)
+    )
 ).flat();
 
 export type {

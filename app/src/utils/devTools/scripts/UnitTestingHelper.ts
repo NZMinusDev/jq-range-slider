@@ -50,7 +50,11 @@ const testDefaultOptions = <
   instancePropsExpecter: InstancePropsExpecter<TCreatorArgs, TInstance>
 ) => {
   describe('DEFAULT_OPTIONS', () => {
-    expectValidInstanceProps(argsOfCreator, instancePropsExpecter, new Creator(...argsOfCreator));
+    expectValidInstanceProps(
+      argsOfCreator,
+      instancePropsExpecter,
+      new Creator(...argsOfCreator)
+    );
   });
 };
 
@@ -105,23 +109,26 @@ const eachOfDifferentArguments = <TArgs extends unknown[]>(
 ) => {
   let counter = 0;
 
-  Object.entries(differentArguments).forEach(([key, arrayOfConcreteDifferentArgs]) => {
-    (arrayOfConcreteDifferentArgs as TArgs[][] | undefined)?.forEach(
-      (concreteDifferentArgs, index) => {
-        callbackEach(
-          key,
-          concreteDifferentArgs,
-          index,
-          key === 'validRequiredArguments' || key === 'invalidRequiredArguments',
-          key === 'validRequiredArguments' ||
-            key === 'partialOptionalArguments' ||
-            key === 'fullOptionalArguments'
-        );
+  Object.entries(differentArguments).forEach(
+    ([key, arrayOfConcreteDifferentArgs]) => {
+      (arrayOfConcreteDifferentArgs as TArgs[][] | undefined)?.forEach(
+        (concreteDifferentArgs, index) => {
+          callbackEach(
+            key,
+            concreteDifferentArgs,
+            index,
+            key === 'validRequiredArguments' ||
+              key === 'invalidRequiredArguments',
+            key === 'validRequiredArguments' ||
+              key === 'partialOptionalArguments' ||
+              key === 'fullOptionalArguments'
+          );
 
-        counter += 1;
-      }
-    );
-  });
+          counter += 1;
+        }
+      );
+    }
+  );
 
   return counter;
 };
@@ -154,10 +161,12 @@ const expectReturnedAreImmutable = <TInstance>(
 
       eachDeep(returned, ({ value, path }) => {
         if (isReferenceType(value) && typeof value !== 'function') {
-          expect(resolveLongBracketNotation(`${returns}.${path}`, instance)).not.toBe(value);
-          expect(resolveLongBracketNotation(`${returns}.${path}`, instance)).toMatchObject(
-            value as any
-          );
+          expect(
+            resolveLongBracketNotation(`${returns}.${path}`, instance)
+          ).not.toBe(value);
+          expect(
+            resolveLongBracketNotation(`${returns}.${path}`, instance)
+          ).toMatchObject(value as any);
         }
       });
     });
@@ -184,11 +193,13 @@ const expectPropsAreApplied = <TInstance>(
     propsToSet.forEach((argValue, pathToPropInInstance) => {
       if (argValue !== undefined) {
         if (isPlainObject(argValue)) {
-          expect(resolveLongBracketNotation(`${pathToPropInInstance}`, instance)).toMatchObject(
-            argValue as any
-          );
+          expect(
+            resolveLongBracketNotation(`${pathToPropInInstance}`, instance)
+          ).toMatchObject(argValue as any);
         } else {
-          expect(resolveLongBracketNotation(`${pathToPropInInstance}`, instance)).toEqual(argValue);
+          expect(
+            resolveLongBracketNotation(`${pathToPropInInstance}`, instance)
+          ).toEqual(argValue);
         }
       }
     });
@@ -197,18 +208,26 @@ const expectPropsAreApplied = <TInstance>(
   propsToSet.forEach((argValue, pathToPropInInstance) => {
     if (isReferenceType(argValue)) {
       test(`passed referenced argument setting ${pathToPropInInstance} instance's property should be cloned deep`, () => {
-        expect(resolveLongBracketNotation(`${pathToPropInInstance}`, instance)).not.toBe(argValue);
-        expect(resolveLongBracketNotation(`${pathToPropInInstance}`, instance)).toMatchObject(
-          argValue as any
-        );
+        expect(
+          resolveLongBracketNotation(`${pathToPropInInstance}`, instance)
+        ).not.toBe(argValue);
+        expect(
+          resolveLongBracketNotation(`${pathToPropInInstance}`, instance)
+        ).toMatchObject(argValue as any);
 
         eachDeep(argValue, ({ value, path }) => {
           if (isReferenceType(value) && typeof value !== 'function') {
             expect(
-              resolveLongBracketNotation(`${pathToPropInInstance}.${path}`, instance)
+              resolveLongBracketNotation(
+                `${pathToPropInInstance}.${path}`,
+                instance
+              )
             ).not.toBe(value);
             expect(
-              resolveLongBracketNotation(`${pathToPropInInstance}.${path}`, instance)
+              resolveLongBracketNotation(
+                `${pathToPropInInstance}.${path}`,
+                instance
+              )
             ).toMatchObject(value as any);
           }
         });
@@ -234,8 +253,15 @@ const testInstance = <
   describeSentence: string;
   Creator: TCreator;
   constructorArgs: TCreatorArgs;
-  instancePropsExpecter: InstancePropsExpecter<TCreatorArgs | TMethodArgs, TInstance>;
-  methodOfInstanceToRun?: MethodOfInstanceToRun<TMethodArgs, TMethod, TInstance>;
+  instancePropsExpecter: InstancePropsExpecter<
+    TCreatorArgs | TMethodArgs,
+    TInstance
+  >;
+  methodOfInstanceToRun?: MethodOfInstanceToRun<
+    TMethodArgs,
+    TMethod,
+    TInstance
+  >;
   propsToSet?: PropsToSet<unknown>;
 }) => {
   describe(describeSentence, () => {
@@ -260,7 +286,11 @@ const testInstance = <
 
       expectPassedArgsAreImmutable(passedArgs, copyOfPassedArgs);
       if (methodOfInstanceToRun.returns) {
-        expectReturnedAreImmutable(mockReturned, methodOfInstanceToRun.returns, instance);
+        expectReturnedAreImmutable(
+          mockReturned,
+          methodOfInstanceToRun.returns,
+          instance
+        );
       }
 
       expectMethodOfInstance(
@@ -299,8 +329,15 @@ const runMethodOfInstanceWithDifferentArguments = <
 }: {
   Creator: TCreator;
   differentConstructorArgs: DifferentArguments<TCreatorArgs>;
-  instancePropsExpecter: InstancePropsExpecter<TCreatorArgs | TMethodArgs, TInstance>;
-  methodOfInstanceToTest?: MethodOfInstanceToTest<TMethodArgs, TMethod, TInstance>;
+  instancePropsExpecter: InstancePropsExpecter<
+    TCreatorArgs | TMethodArgs,
+    TInstance
+  >;
+  methodOfInstanceToTest?: MethodOfInstanceToTest<
+    TMethodArgs,
+    TMethod,
+    TInstance
+  >;
   propsToSet?: PropsToSet<number | string>;
   // eslint-disable-next-line sonarjs/cognitive-complexity
 }) => {
@@ -316,8 +353,11 @@ const runMethodOfInstanceWithDifferentArguments = <
   ) as TMethodArgs;
 
   let constructorArgs = requiredConstructorArgs;
-  let differentArguments: DifferentArguments<TCreatorArgs | TMethodArgs> = differentConstructorArgs;
-  let methodOfInstanceToRun: MethodOfInstanceToRun<TMethodArgs, TMethod, TInstance> | undefined;
+  let differentArguments: DifferentArguments<TCreatorArgs | TMethodArgs> =
+    differentConstructorArgs;
+  let methodOfInstanceToRun:
+    | MethodOfInstanceToRun<TMethodArgs, TMethod, TInstance>
+    | undefined;
 
   describe(`${
     typeof methodOfInstanceToTest?.methodReference === 'string'
@@ -347,7 +387,9 @@ const runMethodOfInstanceWithDifferentArguments = <
         } else {
           constructorArgs = isRequiredArgs
             ? (concreteDifferentArgs as TCreatorArgs)
-            : (requiredConstructorArgs.concat(concreteDifferentArgs) as TCreatorArgs);
+            : (requiredConstructorArgs.concat(
+                concreteDifferentArgs
+              ) as TCreatorArgs);
         }
 
         if (propsToSet !== undefined && isValidArgs) {
@@ -441,7 +483,11 @@ const testGetter = <
   Creator: TCreator;
   constructorArgs: TCreatorArgs;
   instancePropsExpecter: InstancePropsExpecter<TCreatorArgs, TInstance>;
-  methodOfInstanceToTest: MethodOfInstanceToTest<Parameters<TMethod>, TMethod, TInstance>;
+  methodOfInstanceToTest: MethodOfInstanceToTest<
+    Parameters<TMethod>,
+    TMethod,
+    TInstance
+  >;
 }) => {
   const makeDefaultGetterExpecter =
     (
@@ -458,7 +504,9 @@ const testGetter = <
     };
 
   // eslint-disable-next-line no-param-reassign
-  methodOfInstanceToTest.expecter = makeDefaultGetterExpecter(methodOfInstanceToTest.expecter);
+  methodOfInstanceToTest.expecter = makeDefaultGetterExpecter(
+    methodOfInstanceToTest.expecter
+  );
 
   runMethodOfInstanceWithDifferentArguments({
     Creator,
@@ -498,12 +546,17 @@ const testSetter = <
   Creator: TCreator;
   constructorArgs: TCreatorArgs;
   instancePropsExpecter: InstancePropsExpecter<TCreatorArgs, TInstance>;
-  methodOfInstanceToTest: MethodOfInstanceToTest<Parameters<TMethod>, TMethod, TInstance>;
+  methodOfInstanceToTest: MethodOfInstanceToTest<
+    Parameters<TMethod>,
+    TMethod,
+    TInstance
+  >;
   propsToSet: PropsToSet<number | string>;
   resetPropsTo: ResetPropsTo<unknown>;
 }) => {
   const argsToReset =
-    methodOfInstanceToTest.differentArguments?.validRequiredArguments !== undefined
+    methodOfInstanceToTest.differentArguments?.validRequiredArguments !==
+    undefined
       ? methodOfInstanceToTest.differentArguments.validRequiredArguments[0]
       : [];
 
@@ -525,7 +578,9 @@ const testSetter = <
     };
 
   // eslint-disable-next-line no-param-reassign
-  methodOfInstanceToTest.expecter = makeDefaultSetterExpecter(methodOfInstanceToTest.expecter);
+  methodOfInstanceToTest.expecter = makeDefaultSetterExpecter(
+    methodOfInstanceToTest.expecter
+  );
   runMethodOfInstanceWithDifferentArguments({
     Creator,
     differentConstructorArgs: {
@@ -571,7 +626,9 @@ const testSetter = <
  * @param templatesArgs arguments of templates
  * @param callbacksWithTest callback which runs test
  */
-const testDOM = <TCreator extends new (...args: any) => InstanceType<TCreator>>({
+const testDOM = <
+  TCreator extends new (...args: any) => InstanceType<TCreator>
+>({
   Creator,
   constructorsArgs,
   callbacksWithTest,
@@ -595,7 +652,9 @@ const testDOM = <TCreator extends new (...args: any) => InstanceType<TCreator>>(
       container = new DocumentFragment();
       instance = renderMVPView(
         Creator,
-        constructorsArgs[index] === undefined ? [] : (constructorsArgs[index] as any),
+        constructorsArgs[index] === undefined
+          ? []
+          : (constructorsArgs[index] as any),
         container
       );
 

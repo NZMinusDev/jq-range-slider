@@ -18,7 +18,9 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   // some expect calls
 };
 
-const differentConstructorArgs: DifferentArguments<ConstructorParameters<typeof RangeView>> = {
+const differentConstructorArgs: DifferentArguments<
+  ConstructorParameters<typeof RangeView>
+> = {
   fullOptionalArguments: [[{ isConnected: true }, {}]],
 };
 

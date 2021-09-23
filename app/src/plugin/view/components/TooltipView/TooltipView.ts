@@ -22,7 +22,11 @@ class TooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState>
   implements ITooltipView
 {
-  readonly template = ({ classInfo = {}, styleInfo = {}, attributes = {} } = {}) => html`<div
+  readonly template = ({
+    classInfo = {},
+    styleInfo = {},
+    attributes = {},
+  } = {}) => html`<div
     class=${classMap({
       'range-slider__tooltip': true,
       // eslint-disable-next-line sonarjs/no-nested-template-literals
@@ -36,7 +40,10 @@ class TooltipView
     ${this._options.formatter(this._state.value)}
   </div>`;
 
-  constructor(options: TooltipOptions = DEFAULT_OPTIONS, state: TooltipState = DEFAULT_STATE) {
+  constructor(
+    options: TooltipOptions = DEFAULT_OPTIONS,
+    state: TooltipState = DEFAULT_STATE
+  ) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: ['isHidden', 'formatter'],
     });
@@ -45,24 +52,34 @@ class TooltipView
   getOrientationOption() {
     return this._options.orientation;
   }
+
   getIsHiddenOption() {
     return this._options.isHidden;
   }
+
   getFormatterOption() {
     return this._options.formatter;
   }
 
-  setOrientationOption(orientation: TooltipOptions['orientation'] = DEFAULT_OPTIONS.orientation) {
+  setOrientationOption(
+    orientation: TooltipOptions['orientation'] = DEFAULT_OPTIONS.orientation
+  ) {
     this._options.orientation = orientation;
 
     return this;
   }
-  setIsHiddenOption(isHidden: TooltipOptions['isHidden'] = DEFAULT_OPTIONS.isHidden) {
+
+  setIsHiddenOption(
+    isHidden: TooltipOptions['isHidden'] = DEFAULT_OPTIONS.isHidden
+  ) {
     this._options.isHidden = isHidden;
 
     return this;
   }
-  setFormatterOption(formatter: TooltipOptions['formatter'] = DEFAULT_OPTIONS.formatter) {
+
+  setFormatterOption(
+    formatter: TooltipOptions['formatter'] = DEFAULT_OPTIONS.formatter
+  ) {
     this._options.formatter = formatter;
 
     return this;

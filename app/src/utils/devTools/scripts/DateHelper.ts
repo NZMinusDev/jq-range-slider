@@ -10,7 +10,8 @@ const MS_IN_A_WEEK = 7 * MS_IN_A_DAY;
  * @param date2 - large date
  * @returns milliseconds
  */
-const getDatePeriod = (date1: Date, date2: Date) => date2.getTime() - date1.getTime();
+const getDatePeriod = (date1: Date, date2: Date) =>
+  date2.getTime() - date1.getTime();
 
 /**
  * Converts datestring to milliseconds

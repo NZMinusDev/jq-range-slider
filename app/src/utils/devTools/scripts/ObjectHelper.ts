@@ -18,7 +18,8 @@ import isPlainObject from 'lodash-es/isPlainObject';
 const resolveLongBracketNotation = (
   path: string,
   obj: Record<string, any> = globalThis
-): unknown | null => path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj);
+): unknown | null =>
+  path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj);
 
 /**
  * Recursively iterates iterable properties by deep-first algorithm

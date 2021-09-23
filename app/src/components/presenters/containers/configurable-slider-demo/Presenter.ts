@@ -11,6 +11,7 @@ type ErrorCatcher = (reason: unknown) => void;
 
 class Presenter {
   readonly view: ConfigurableSliderDemo;
+
   model?: IModel;
 
   constructor(
@@ -51,7 +52,9 @@ class Presenter {
     this.model?.setState({ value: event.detail.value });
   };
 
-  protected _updateViewDisplay(state: Unpacked<ReturnType<IModel['getState']>>) {
+  protected _updateViewDisplay(
+    state: Unpacked<ReturnType<IModel['getState']>>
+  ) {
     const slider = this.view.getSlider();
 
     slider.set(state.value);

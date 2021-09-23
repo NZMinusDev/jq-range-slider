@@ -39,6 +39,7 @@ class SliderDatepickerSlider extends BEMComponent<
   get() {
     return this._DOM.slider.component.get();
   }
+
   set(value: Unpacked<Parameters<Slider['set']>>) {
     this._DOM.slider.component.set(value);
 
@@ -46,7 +47,9 @@ class SliderDatepickerSlider extends BEMComponent<
   }
 
   protected _initDOM() {
-    const slider = this.element.querySelector('.js-slider') as SliderDatepickerSliderDOM['slider'];
+    const slider = this.element.querySelector(
+      '.js-slider'
+    ) as SliderDatepickerSliderDOM['slider'];
 
     return { slider };
   }
@@ -59,11 +62,15 @@ class SliderDatepickerSlider extends BEMComponent<
 
     return this;
   }
+
   protected _sliderEventListenerObject = {
     handleSliderUpdate: (event: CustomEvent<SliderCustomEvents['update']>) => {
+      const reassignedEvent = event as unknown as CustomEvent<
+        SliderDatepickerSliderCustomEvents['update']
+      >;
       const dates = event.detail.value.map((value) => new Date(value));
-      // eslint-disable-next-line no-param-reassign
-      (event as unknown as CustomEvent<SliderDatepickerSliderCustomEvents['update']>).detail.value =
+
+      reassignedEvent.detail.value =
         dates as SliderDatepickerSliderCustomEvents['update']['value'];
     },
   };
@@ -75,13 +82,16 @@ type SliderDatepickerSliderElementWithComponent = HTMLElementWithComponent<
   SliderDatepickerSlider
 >;
 
-const sliderDatepickerSliders = Array.from(sliderDatepickerElements, (sliderDatepickerElement) => {
-  const sliderDatepickerSliderElement = sliderDatepickerElement.querySelector(
-    '.js-slider-datepicker__slider'
-  ) as SliderDatepickerSliderElement;
+const sliderDatepickerSliders = Array.from(
+  sliderDatepickerElements,
+  (sliderDatepickerElement) => {
+    const sliderDatepickerSliderElement = sliderDatepickerElement.querySelector(
+      '.js-slider-datepicker__slider'
+    ) as SliderDatepickerSliderElement;
 
-  return new SliderDatepickerSlider(sliderDatepickerSliderElement);
-});
+    return new SliderDatepickerSlider(sliderDatepickerSliderElement);
+  }
+);
 
 export type {
   SliderDatepickerSliderCustomEvents,

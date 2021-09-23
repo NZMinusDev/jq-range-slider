@@ -1,7 +1,11 @@
 type ConfigurableSliderDemoElement = HTMLDivElement;
 
-const configurableSliderDemoHTMLElements = document.querySelectorAll<ConfigurableSliderDemoElement>(
-  '.js-configurable-slider-demo'
-);
+const configurableSliderDemoHTMLElements =
+  document.querySelectorAll<ConfigurableSliderDemoElement>(
+    '.js-configurable-slider-demo'
+  );
 
-export { configurableSliderDemoHTMLElements as default, ConfigurableSliderDemoElement };
+export {
+  configurableSliderDemoHTMLElements as default,
+  ConfigurableSliderDemoElement,
+};

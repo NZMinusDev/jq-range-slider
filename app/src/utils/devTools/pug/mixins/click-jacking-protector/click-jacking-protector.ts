@@ -34,8 +34,11 @@ type ClickJackingProtectorElementWithComponent = HTMLElementWithComponent<
 >;
 
 const clickJackingProtectors = Array.from(
-  document.querySelectorAll<ClickJackingProtectorElement>('.js-click-jacking-protector'),
-  (clickJackingProtectorElement) => new ClickJackingProtector(clickJackingProtectorElement)
+  document.querySelectorAll<ClickJackingProtectorElement>(
+    '.js-click-jacking-protector'
+  ),
+  (clickJackingProtectorElement) =>
+    new ClickJackingProtector(clickJackingProtectorElement)
 );
 
 export type {

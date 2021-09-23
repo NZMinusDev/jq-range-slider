@@ -1,6 +1,6 @@
 module.exports = {
   endOfLine: 'auto',
-  printWidth: 100,
+  printWidth: 80,
   singleQuote: true,
   pugSingleQuote: false,
 };

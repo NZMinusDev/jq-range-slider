@@ -5,5 +5,7 @@
 @function get-liquid-size($pc-size: 10, $mob-size: 5, $template-width: 1440) {
   $add-size: $pc-size - $mob-size;
   $max-width: $template-width - 320;
-  @return calc(#{$mob-size + px} + #{$add-size} * ((100vw - 320px) / #{$max-width}));
+  @return calc(
+    #{$mob-size + px} + #{$add-size} * ((100vw - 320px) / #{$max-width})
+  );
 }

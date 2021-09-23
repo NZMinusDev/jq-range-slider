@@ -17,7 +17,8 @@ type FixedTrackOptions = {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type TrackState = {};
 
-interface ITrackView extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
+interface ITrackView
+  extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
   getIntervalsOption(): FixedTrackOptions['intervals'];
   getStepsOption(): FixedTrackOptions['steps'];
   getPaddingOption(): FixedTrackOptions['padding'];
