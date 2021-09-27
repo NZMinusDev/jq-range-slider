@@ -175,7 +175,7 @@ const webpackPlugins = () => {
   );
 
   if (isDev) {
-    plugins.push(new StylelintPlugin({ fix: true }));
+    plugins.push(new StylelintPlugin({}));
   }
 
   if (process.env.MEASURE === 'true') {
