@@ -1,4 +1,4 @@
-import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
+import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
 
 type TrackOptions = {
   orientation?: 'horizontal' | 'vertical';
@@ -14,7 +14,6 @@ type FixedTrackOptions = {
   padding: [number, number];
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type TrackState = {};
 
 interface ITrackView

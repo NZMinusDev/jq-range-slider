@@ -1,7 +1,6 @@
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
 import type {
   Slider,
@@ -19,7 +18,6 @@ type ConfigurableSliderDemoSliderDOM = {
   slider: SliderElementWithComponent;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type ConfigurableSliderDemoSliderCustomEvents = {} & SliderCustomEvents;
 
 class ConfigurableSliderDemoSlider extends BEMComponent<

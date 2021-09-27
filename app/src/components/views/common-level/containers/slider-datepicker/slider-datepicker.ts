@@ -1,7 +1,6 @@
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 import type { FormFieldElementWithComponent } from '@views/common-level/primitives/form-field/form-field';
 import '@views/common-level/primitives/form-field/form-field';
 
@@ -59,7 +58,6 @@ class SliderDatepicker extends BEMComponent<
     return { slider, resultTextFields };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   protected _initState() {
     const value = this._DOM.slider.component
       .get()

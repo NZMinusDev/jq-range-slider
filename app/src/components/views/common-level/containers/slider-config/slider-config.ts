@@ -1,7 +1,6 @@
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 import { FixedRangeSliderOptions } from '@plugin/view/IRangeSliderView';
 
 import sliderConfigElements, {
@@ -30,7 +29,6 @@ type SliderConfigDOM = {
 
 type SliderConfigCustomEvents = {
   change: { name: keyof SliderConfigDOM['configItems']; value: string };
-  // eslint-disable-next-line @typescript-eslint/ban-types
   customReset: {};
 };
 

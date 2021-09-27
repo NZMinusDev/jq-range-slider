@@ -1,6 +1,4 @@
 /* eslint-disable import/extensions */
-/* eslint-disable import/no-extraneous-dependencies */
-
 import express from 'express';
 import path from 'path';
 import isEqual from 'lodash/isEqual.js';

@@ -13,8 +13,7 @@ import ThumbView, { DEFAULT_OPTIONS } from './ThumbView';
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof ThumbView>,
   ThumbView
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-> = function viewPropertiesExpecter({ instance, passedArgs }) {
+> = function viewPropertiesExpecter() {
   // some expect calls
 };
 
@@ -49,8 +48,7 @@ testGetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: ThumbView.prototype.getOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     returns: '_options',
@@ -62,8 +60,7 @@ testSetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: ThumbView.prototype.setOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     differentArguments: differentConstructorArgs as DifferentArguments<

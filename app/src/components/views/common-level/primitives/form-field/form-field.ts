@@ -1,7 +1,6 @@
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 
 import formFieldElements, { FormFieldElement } from './form-field-elements';
 
@@ -9,7 +8,6 @@ type FormFieldDOM = {
   input: HTMLInputElement | HTMLTextAreaElement;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type FormFieldCustomEvents = {};
 
 class FormField extends BEMComponent<FormFieldElement, FormFieldCustomEvents> {

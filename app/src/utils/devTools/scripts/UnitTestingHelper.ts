@@ -4,7 +4,7 @@ import isPlainObject from 'lodash-es/isPlainObject';
 import { OptionalTupleValues, RequiredTupleValues } from './TypingHelper';
 import { eachDeep, resolveLongBracketNotation } from './ObjectHelper';
 import { isReferenceType } from './TypeOf';
-import { renderMVPView } from './PluginCreationHelper';
+import { renderMVPView } from './view/MVPHelper';
 
 type InstancePropsExpecter<TArgs extends unknown[], TInstance> = (parts: {
   passedArgs: TArgs;

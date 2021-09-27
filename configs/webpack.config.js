@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { HashedModuleIdsPlugin, ProvidePlugin } = require('webpack');
 const path = require('path');
 const fs = require('fs');

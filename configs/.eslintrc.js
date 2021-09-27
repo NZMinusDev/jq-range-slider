@@ -13,15 +13,24 @@ const config = {
     // detect bugs and suspicious patterns in your code (huge unreadable blocks of code)
     'plugin:sonarjs/recommended',
 
+    /**
+     * Enforce best practices for JavaScript promises.
+     */
+    'plugin:promise/recommended',
+
     // prevent use of extended native objects
     'plugin:no-use-extend-native/recommended',
 
     'plugin:lit/recommended',
   ],
-  plugins: ['sonarjs', 'no-loops', 'promise', 'lit', 'fsd'],
+  plugins: ['sonarjs', 'promise', 'lit', 'fsd'],
   rules: {
     // FIXME: if you know how to make it works with chaining calls of several methods use['error', { allowAfterThis: true }]
     'no-underscore-dangle': 'off',
+
+    'import/prefer-default-export': 'off',
+
+    'sonarjs/no-nested-template-literals': 'off',
 
     // https://github.com/fullstack-development/front-end-best-practices/blob/master/JS/README.md#1.17
     'import/order': [
@@ -95,25 +104,6 @@ const config = {
       { blankLine: 'always', prev: '*', next: 'export' },
       { blankLine: 'any', prev: ['case'], next: ['case', 'default'] },
     ],
-
-    // Disallow use of loops (for, for-in, while, do-while, for-of) - we have forEach, map etc.
-    'no-loops/no-loops': 'error',
-
-    /**
-     * Enforce best practices for JavaScript promises.
-     */
-    'promise/always-return': 'error',
-    'promise/no-return-wrap': 'error',
-    'promise/param-names': 'error',
-    'promise/catch-or-return': 'error',
-    'promise/no-native': 'off',
-    'promise/no-nesting': 'warn',
-    'promise/no-promise-in-callback': 'warn',
-    'promise/no-callback-in-promise': 'warn',
-    'promise/avoid-new': 'warn',
-    'promise/no-new-statics': 'error',
-    'promise/no-return-in-finally': 'warn',
-    'promise/valid-params': 'warn',
   },
   settings: {
     'import/resolver': {
@@ -146,6 +136,14 @@ const config = {
       ],
 
       rules: {
+        'dot-notation': 'off',
+        '@typescript-eslint/dot-notation': [
+          'error',
+          {
+            allowPrivateClassPropertyAccess: true,
+            allowProtectedClassPropertyAccess: true,
+          },
+        ],
         '@typescript-eslint/explicit-module-boundary-types': 'off',
       },
     },

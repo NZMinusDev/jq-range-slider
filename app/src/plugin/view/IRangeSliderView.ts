@@ -1,4 +1,4 @@
-import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
+import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
 
 import {
   TrackOptions,

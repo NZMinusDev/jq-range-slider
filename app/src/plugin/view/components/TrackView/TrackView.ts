@@ -3,7 +3,7 @@ import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
+import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
 import { collapsingParseFloat } from '@utils/devTools/scripts/ParserHelper';
 import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
 
@@ -47,7 +47,6 @@ class TrackView
       class=${classMap({
         'range-slider__track': true,
         'js-range-slider__track': true,
-        // eslint-disable-next-line sonarjs/no-nested-template-literals
         [`range-slider__track_orientation_${this._options.orientation}`]: true,
         ...classInfo,
       })}
@@ -190,7 +189,7 @@ class TrackView
 
   protected _fixLengthOfStepsOption() {
     if (Array.isArray(this._options.steps)) {
-      fixLength(
+      this._options.steps = fixLength(
         this._options.steps,
         Object.keys(this._options.intervals).length - 1,
         DEFAULT_OPTIONS.steps[0]

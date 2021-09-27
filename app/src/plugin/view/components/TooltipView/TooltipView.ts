@@ -3,7 +3,7 @@ import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
+import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
 
 import ITooltipView, { TooltipOptions, TooltipState } from './ITooltipView';
 import './TooltipView.scss';
@@ -29,7 +29,6 @@ class TooltipView
   } = {}) => html`<div
     class=${classMap({
       'range-slider__tooltip': true,
-      // eslint-disable-next-line sonarjs/no-nested-template-literals
       [`range-slider__tooltip_orientation_${this._options.orientation}`]: true,
       'range-slider__tooltip_hidden': this._options.isHidden,
       ...classInfo,

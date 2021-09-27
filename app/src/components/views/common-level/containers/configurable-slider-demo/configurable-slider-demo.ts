@@ -1,9 +1,8 @@
 import camelCase from 'lodash-es/camelCase';
 
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 import type {
   EventsLoggerCustomEvents,
   EventsLoggerElementWithComponent,
@@ -180,12 +179,7 @@ class ConfigurableSliderDemo extends BEMComponent<
 
       slider.set(JSON.parse(event.detail.value));
     },
-    handleSubmitCustomReset: (
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      event: CustomEvent<
-        ConfigurableSliderDemoSubmitCustomEvents['customReset']
-      >
-    ) => {
+    handleSubmitCustomReset: () => {
       const slider = this._DOM.slider.component;
 
       slider.set();
@@ -320,10 +314,7 @@ class ConfigurableSliderDemo extends BEMComponent<
 
       this._displaySliderConfig()._displaySubmit();
     },
-    handleSliderConfigCustomReset: (
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      event: CustomEvent<SliderConfigCustomEvents['customReset']>
-    ) => {
+    handleSliderConfigCustomReset: () => {
       this._DOM.slider.component.setOptions();
       this._DOM.slider.style.height = '';
 

@@ -1,7 +1,6 @@
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
 import IRangeSliderView, {
   RangeSliderOptions,
@@ -15,16 +14,12 @@ type SliderHTMLOptions = Omit<RangeSliderOptions, 'formatter'> & {
 };
 
 type SliderCustomEvents = {
-  // eslint-disable-next-line @typescript-eslint/ban-types
   start: {};
-  // eslint-disable-next-line @typescript-eslint/ban-types
   slide: {};
   update: { value: number[] };
   change: { value: number[] };
   set: { value: number[] };
-  // eslint-disable-next-line @typescript-eslint/ban-types
   end: {};
-  // eslint-disable-next-line @typescript-eslint/ban-types
   render: {};
 };
 
@@ -80,7 +75,6 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
   }
 
   protected _initLibSlider() {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return new window.RangeSliderPresenter(
       this.element,
       () => {},

@@ -4,10 +4,8 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { classMap } from 'lit-html/directives/class-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import {
-  handleEvent,
-  MVPView,
-} from '@utils/devTools/scripts/PluginCreationHelper';
+import { handleEvent } from '@utils/devTools/scripts/view/ComponentCreationHelper';
+import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
 import { ascending } from '@utils/devTools/scripts/ProcessingOfPrimitiveDataHelper';
 import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
 
@@ -65,6 +63,8 @@ const DEFAULT_STATE: RangeSliderState = {
   isActiveThumbs: new Array(DEFAULT_OPTIONS.start.length).fill(false),
 };
 
+const thumbSelector = '.js-range-slider__thumb-origin';
+
 class RangeSliderView
   extends MVPView<
     FixedRangeSliderOptions,
@@ -81,7 +81,6 @@ class RangeSliderView
   } = {}) => html`<div
     class=${classMap({
       'range-slider': true,
-      // eslint-disable-next-line sonarjs/no-nested-template-literals
       [`range-slider_orientation_${this._options.orientation}`]: true,
       ...classInfo,
     })}
@@ -500,7 +499,11 @@ class RangeSliderView
       ? this._options.connect
       : new Array(desiredLength).fill(this._options.connect);
 
-    fixLength(this._options.connect, desiredLength, DEFAULT_OPTIONS.connect[0]);
+    this._options.connect = fixLength(
+      this._options.connect,
+      desiredLength,
+      DEFAULT_OPTIONS.connect[0]
+    );
 
     return this;
   }
@@ -512,7 +515,7 @@ class RangeSliderView
       ? this._options.tooltips
       : new Array(desiredLength).fill(this._options.tooltips);
 
-    fixLength(
+    this._options.tooltips = fixLength(
       this._options.tooltips,
       desiredLength,
       DEFAULT_OPTIONS.tooltips[0]
@@ -522,7 +525,11 @@ class RangeSliderView
   }
 
   protected _fixValueState() {
-    fixLength(this._state.value, this._options.start.length, NaN);
+    this._state.value = fixLength(
+      this._state.value,
+      this._options.start.length,
+      NaN
+    );
     this._state.value = this._state.value.map((val, index) =>
       Number.isNaN(val) ? this._options.start[index] : val
     );
@@ -546,7 +553,11 @@ class RangeSliderView
   }
 
   protected _fixIsActiveThumbsState() {
-    fixLength(this._state.isActiveThumbs, this._state.value.length, false);
+    this._state.isActiveThumbs = fixLength(
+      this._state.isActiveThumbs,
+      this._state.value.length,
+      false
+    );
   }
 
   protected _getValueBorderOfTrack() {
@@ -1051,8 +1062,7 @@ class RangeSliderView
 
     getOrigin(event: Event) {
       return (event.target as HTMLElement).closest(
-        // eslint-disable-next-line sonarjs/no-duplicate-string
-        '.js-range-slider__thumb-origin'
+        thumbSelector
       ) as HTMLElement;
     },
   };
@@ -1066,7 +1076,7 @@ class RangeSliderView
     const trackValueSize =
       this._options.intervals.max - this._options.intervals.min;
     const thumbIndex = Array.from(
-      trackElem.querySelectorAll<HTMLElement>('.js-range-slider__thumb-origin')
+      trackElem.querySelectorAll<HTMLElement>(thumbSelector)
     ).indexOf(origin);
     const siblingRanges = [
       ranges.item(thumbIndex),
@@ -1248,11 +1258,7 @@ class RangeSliderView
     cache: {} as { trackElem: HTMLElement },
 
     handleEvent: (event: Event) => {
-      if (
-        (event.target as HTMLElement).closest(
-          '.js-range-slider__thumb-origin'
-        ) !== null
-      ) {
+      if ((event.target as HTMLElement).closest(thumbSelector) !== null) {
         return;
       }
 

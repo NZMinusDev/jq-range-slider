@@ -31,11 +31,9 @@ type GenericConstructor<TCreator extends new (...args: any[]) => any> = new (
  */
 type Unpacked<TType> = TType extends (infer TUnpacked)[]
   ? TUnpacked
-  : // eslint-disable-next-line no-shadow
-  TType extends (...args: any[]) => infer TUnpacked
+  : TType extends (...args: any[]) => infer TUnpacked
   ? TUnpacked
-  : // eslint-disable-next-line no-shadow
-  TType extends Promise<infer TUnpacked>
+  : TType extends Promise<infer TUnpacked>
   ? TUnpacked
   : TType;
 
@@ -132,8 +130,7 @@ type RequiredKeys<
     ? never
     : number extends TKey
     ? never
-    : // eslint-disable-next-line @typescript-eslint/ban-types
-    {} extends Pick<TObject, TKey>
+    : {} extends Pick<TObject, TKey>
     ? never
     : TKey;
 } extends { [_ in keyof TObject]-?: infer TInfer }
@@ -147,8 +144,7 @@ type OptionalKeys<TObject extends Record<string, unknown>> = {
     ? never
     : number extends TKey
     ? never
-    : // eslint-disable-next-line @typescript-eslint/ban-types
-    {} extends Pick<TObject, TKey>
+    : {} extends Pick<TObject, TKey>
     ? TKey
     : never;
 } extends { [_ in keyof TObject]-?: infer TInfer }

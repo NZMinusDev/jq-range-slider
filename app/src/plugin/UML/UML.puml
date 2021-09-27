@@ -1,9 +1,9 @@
 @startuml
 class EventManagerMixin<TEvents extends string> {
-    #_eventHandlers: { [key: string]: Handler[]; }
-    +on(eventName: TEvents, eventHandler: Handler): this
-    +off(eventName: TEvents, eventHandler: (...args: any) => void): this
-    +trigger(eventName: TEvents, args: any): this
+    #_eventHandlers: { [key: string]: ListenerOfIsolatedEventOrListenerObjectOfIsolatedEvent[]; }
+    +on(eventName: TEvents, eventHandler: ListenerOfIsolatedEventOrListenerObjectOfIsolatedEvent): this
+    +off(eventName: TEvents, eventHandler: (...args: unknown[]) => void): this
+    +trigger(eventName: TEvents, args: unknown[]): this
     +handleEvent(event: Event): this
 }
 abstract class MVPView<TOptionsToGet extends Record<string, unknown>, TOptionsToSet extends Record<string, unknown>, TState extends Record<string, unknown>, TEvents extends string> extends EventManagerMixin {
@@ -105,17 +105,17 @@ class TrackView extends MVPView implements ITrackView {
     +{static} intervalsKeysCompareFunc(a: string, b: string): number
 }
 class RangeView extends MVPView implements IRangeView {
-    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
+    +template: ({ classInfo, styleInfo, attributes, }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
     +getIsConnectedOption(): boolean
     +setIsConnectedOption(isConnected?: boolean): this
 }
 class ThumbView extends MVPView implements IThumbView {
-    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, { innerHTML, isActive }?: { innerHTML: TemplateResult | TemplateResult[]; isActive: boolean; }) => TemplateResult
+    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, { innerHTML, isActive, }?: { innerHTML: TemplateResult | TemplateResult[]; isActive: boolean; }) => TemplateResult
     #_onDragstart(): boolean
     #{static} ariaAttributePrecision: number
 }
 class TooltipView extends MVPView implements ITooltipView {
-    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
+    +template: ({ classInfo, styleInfo, attributes, }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
     +getOrientationOption(): "top" | "left"
     +getIsHiddenOption(): boolean
     +getFormatterOption(): Formatter
@@ -124,7 +124,7 @@ class TooltipView extends MVPView implements ITooltipView {
     +setFormatterOption(formatter?: Formatter | undefined): this
 }
 class PipsView extends MVPView implements IPipsView {
-    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
+    +template: ({ classInfo, styleInfo, attributes, }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
     +getOrientationOption(): "horizontal" | "vertical"
     +getIsHiddenOption(): boolean
     +getValuesOption(): { percent: number; value: number; }[]
@@ -142,7 +142,7 @@ class PipsView extends MVPView implements IPipsView {
     #_getValueRender(styleInfo: StyleInfo, value: number): TemplateResult
 }
 class RangeSliderView extends MVPView implements IRangeSliderView {
-    +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
+    +template: ({ classInfo, styleInfo, attributes, }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }) => TemplateResult
     +getIntervalsOption(): { [x: string]: number; min: number; max: number; }
     +getStartOption(): number[]
     +getStepsOption(): (number | "none")[]

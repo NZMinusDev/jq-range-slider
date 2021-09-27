@@ -1,7 +1,6 @@
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 
 import type {
   ColorpickerSliderCustomEvents,
@@ -34,7 +33,7 @@ class Colorpicker extends BEMComponent<
 
     this._DOM = this._initDOM();
 
-    this._state = this._initState();
+    this._state = Colorpicker._initState();
 
     this._bindSlidersListeners();
 
@@ -52,8 +51,7 @@ class Colorpicker extends BEMComponent<
     return { sliders, result };
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  protected _initState() {
+  protected static _initState() {
     const value = [127, 127, 127] as ColorpickerState['value'];
 
     return { value };

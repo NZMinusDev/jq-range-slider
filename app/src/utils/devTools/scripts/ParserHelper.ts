@@ -13,6 +13,6 @@ const collapsingParseInt = (str: string, radix = 10): number =>
  * @returns
  */
 const collapsingParseFloat = (str: string, precision = 2): number =>
-  Number(parseFloat(str.replace(/[^0-9-.]/g, '')).toFixed(precision));
+  Number(Number(str.replace(/[^0-9-.]/g, '')).toFixed(precision));
 
 export { collapsingParseInt, collapsingParseFloat };

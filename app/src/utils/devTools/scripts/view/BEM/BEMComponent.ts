@@ -1,14 +1,14 @@
-/* eslint-disable max-classes-per-file */
-
 interface CustomEventListener<TEventDetail extends Record<string, unknown>> {
   (event: CustomEvent<TEventDetail>): void;
 }
+
 interface CustomEventListenerObject<
   TEventDetail extends Record<string, unknown>
 > {
   handleEvent(event: CustomEvent<TEventDetail>): void;
   [key: string]: unknown;
 }
+
 type CustomEventListenerOrCustomEventListenerObject<
   TEventDetail extends Record<string, unknown>
 > = CustomEventListener<TEventDetail> | CustomEventListenerObject<TEventDetail>;
@@ -16,7 +16,6 @@ type CustomEventListenerOrCustomEventListenerObject<
 type HTMLElementWithComponent<
   THTMLElement extends HTMLElement,
   TCustomEvents extends Record<string, Record<string, unknown>>,
-  // eslint-disable-next-line no-use-before-define
   TBEMComponent extends BEMComponent<THTMLElement, TCustomEvents>
 > = THTMLElement & { component: TBEMComponent };
 
@@ -54,51 +53,4 @@ abstract class BEMComponent<
   }
 }
 
-/**
- * BEM modifier class
- */
-abstract class BEMModifier<
-  TBEMComponent extends BEMComponent<
-    HTMLElement,
-    Record<string, Record<string, unknown>>
-  >
-> {
-  protected component: TBEMComponent;
-
-  constructor(component: TBEMComponent, modifierName: string) {
-    this.component = component;
-
-    this.component[modifierName] = this;
-  }
-}
-
-/**
- *  Switchable BEM modifier class
- */
-abstract class CancelableBEMModifier<
-  TBEMComponent extends BEMComponent<
-    HTMLElement,
-    Record<string, Record<string, unknown>>
-  >
-> {
-  protected component: TBEMComponent;
-
-  constructor(component: TBEMComponent, modifierName: string) {
-    this.component = component;
-
-    if (this.component[modifierName] !== undefined) {
-      this.component[modifierName].cancel();
-    }
-
-    this.component[modifierName] = this;
-  }
-
-  abstract cancel(): this;
-}
-
-export {
-  HTMLElementWithComponent,
-  BEMComponent,
-  BEMModifier,
-  CancelableBEMModifier,
-};
+export { BEMComponent as default, HTMLElementWithComponent };

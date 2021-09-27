@@ -13,8 +13,7 @@ import RangeView, { DEFAULT_OPTIONS } from './RangeView';
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof RangeView>,
   RangeView
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-> = function viewPropertiesExpecter({ instance, passedArgs }) {
+> = function viewPropertiesExpecter() {
   // some expect calls
 };
 
@@ -51,8 +50,7 @@ testGetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeView.prototype.getOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     returns: '_options',
@@ -64,8 +62,7 @@ testSetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeView.prototype.setOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     differentArguments: differentConstructorArgs as DifferentArguments<

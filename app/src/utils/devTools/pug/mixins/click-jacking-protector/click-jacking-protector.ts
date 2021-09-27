@@ -1,11 +1,9 @@
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 
 type ClickJackingProtectorElement = HTMLDivElement;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type ClickJackingProtectorCustomEvents = {};
 
 class ClickJackingProtector extends BEMComponent<

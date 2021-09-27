@@ -1,6 +1,5 @@
-import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
+import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type ThumbOptions = {};
 
 type ThumbState = {
@@ -11,7 +10,6 @@ type ThumbState = {
   ariaValueText: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {}
 

@@ -1,5 +1,3 @@
-/* eslint-disable dot-notation */
-
 import {
   InstancePropsExpecter,
   testInit,
@@ -251,8 +249,7 @@ testGetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderView.prototype.getOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     returns: '_options',
@@ -264,8 +261,7 @@ testGetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderView.prototype.get,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     returns: '_state.value',
@@ -277,8 +273,7 @@ testSetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderView.prototype.setOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     differentArguments: differentConstructorArgs as DifferentArguments<
@@ -314,8 +309,7 @@ testSetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderView.prototype['_setState'],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     differentArguments: { invalidOptionalArguments: [[{ value: undefined }]] },
@@ -351,8 +345,7 @@ testSetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: RangeSliderView.prototype.set,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     differentArguments: { fullOptionalArguments: [[50], [[-10, 0, 10]]] },
@@ -408,10 +401,7 @@ testDOM({
           ) as HTMLElement;
 
           // https://github.com/jsdom/jsdom/pull/2666
-          originElem.setPointerCapture = function setPointerCapture(
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            pointerId: number
-          ) {
+          originElem.setPointerCapture = function setPointerCapture() {
             // it's noop
           };
 

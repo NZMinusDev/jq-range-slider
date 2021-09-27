@@ -27,10 +27,7 @@ const mainModel: MainModel = {
       body: JSON.stringify({ mode: 'get' }),
     });
 
-    // eslint-disable-next-line sonarjs/prefer-immediate-return
-    const result = await response.json();
-
-    return result;
+    return response.json();
   },
   whenStateIsChanged(callback) {
     this.eventSource.onmessage = (event) => {

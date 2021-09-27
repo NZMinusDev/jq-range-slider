@@ -1,10 +1,9 @@
-import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
+import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
 
 type RangeOptions = {
   isConnected?: boolean;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type RangeState = {};
 
 interface IRangeView

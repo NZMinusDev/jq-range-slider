@@ -5,10 +5,10 @@ import ConfigurableSliderDemoPresenter from '@presenters/containers/configurable
 import './index.pug';
 import './index.scss';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-const configurableSliderDemoErrorCatcher = (reason) => {};
+const configurableSliderDemoErrorCatcher = () => {};
 
 const [configurableSliderDemo] = configurableSliderDemos;
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const configurableSliderDemoPresenter = new ConfigurableSliderDemoPresenter(
   configurableSliderDemo,

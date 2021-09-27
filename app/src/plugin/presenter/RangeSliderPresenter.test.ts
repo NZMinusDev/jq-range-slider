@@ -17,8 +17,7 @@ describe('plugin presenter', () => {
   };
 
   const model: IRangeSliderModel = {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async setState(state) {
+    async setState() {
       return this;
     },
     async getState() {
@@ -35,8 +34,7 @@ describe('plugin presenter', () => {
     },
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const defaultErrorCatcher = (reason) => {};
+  const defaultErrorCatcher = () => {};
 
   let root: HTMLDivElement;
   let presenter: RangeSliderPresenter;

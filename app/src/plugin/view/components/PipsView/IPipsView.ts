@@ -1,4 +1,4 @@
-import { MVPView } from '@utils/devTools/scripts/PluginCreationHelper';
+import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
 
 type Formatter = (value: number) => string;
 
@@ -10,7 +10,6 @@ type PipsOptions = {
   formatter?: Formatter;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type PipsState = {};
 
 interface IPipsView

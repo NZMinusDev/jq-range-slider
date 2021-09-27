@@ -1,13 +1,11 @@
-import {
-  BEMComponent,
+import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/ComponentCreationHelper';
+} from '@utils/devTools/scripts/view/BEM/BEMComponent';
 
 import eventsLoggerElements from '../events-logger-elements';
 
 type EventsLoggerFireflyElement = HTMLDivElement;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type EventsLoggerFireflyCustomEvents = {};
 
 class EventsLoggerFirefly extends BEMComponent<
@@ -15,11 +13,6 @@ class EventsLoggerFirefly extends BEMComponent<
   EventsLoggerFireflyCustomEvents
 > {
   static blinkAnimationDuration = 250;
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(eventsLoggerFireflyElement: EventsLoggerFireflyElement) {
-    super(eventsLoggerFireflyElement);
-  }
 
   turnOn() {
     this.element.classList.add('events-logger__firefly_active');

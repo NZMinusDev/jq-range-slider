@@ -1,5 +1,3 @@
-/* eslint-disable dot-notation */
-
 import {
   InstancePropsExpecter,
   testInit,
@@ -16,8 +14,7 @@ import TrackView, { DEFAULT_OPTIONS } from './TrackView';
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof TrackView>,
   TrackView
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-> = function viewPropertiesExpecter({ instance, passedArgs }) {
+> = function viewPropertiesExpecter({ instance }) {
   const keysOfIntervals = Object.keys(instance['_options'].intervals).sort(
     (a, b) => {
       if (a === 'min' || b === 'max') {
@@ -196,8 +193,7 @@ testGetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: TrackView.prototype.getOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     returns: '_options',
@@ -209,8 +205,7 @@ testSetter({
   instancePropsExpecter: viewPropertiesExpecter,
   methodOfInstanceToTest: {
     methodReference: TrackView.prototype.setOptions,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expecter: ({ mock, passedArgs, instance }) => {
+    expecter: () => {
       // some expect calls
     },
     differentArguments: differentConstructorArgs as DifferentArguments<

@@ -1,5 +1,3 @@
-/* eslint-disable dot-notation */
-
 import {
   InstancePropsExpecter,
   testInit,
@@ -16,8 +14,7 @@ import PipsView, { DEFAULT_OPTIONS } from './PipsView';
 const viewPropertiesExpecter: InstancePropsExpecter<
   ConstructorParameters<typeof PipsView>,
   PipsView
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-> = function viewPropertiesExpecter({ instance, passedArgs }) {
+> = function viewPropertiesExpecter({ instance }) {
   instance['_options'].values.forEach((value, index, self) => {
     if (index > 0) {
       expect(value.percent > self[index - 1].percent);
