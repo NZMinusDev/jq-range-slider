@@ -1,14 +1,14 @@
 //- 
   options?: see /readme.md
   color?: 'red' | 'green' | 'blue' - color of slider bar
-  isSwitchableTooltips: boolean - should tooltips be switchable
+  isSwitchableTooltips?: boolean - should tooltips be switchable
   Tip: mixin also uses 'and attributes'(&attributes)
-mixin slider({ options = {}, color = '', isSwitchableTooltips = false } = {})
+mixin slider({ options = {}, color = undefined, isSwitchableTooltips = false } = {})
   -
-    options.formatter = options.formatter !== undefined ? `${options.formatter}` : undefined;
+    options.formatter = options.formatter && `${options.formatter}`;
 
-    const colorClass = color === '' ? null : `slider_color_${color}`;
-    const colorIsSwitchableTooltips = isSwitchableTooltips === false ? null : 'slider_with-switchable-tooltips';
+    const colorClass = color && `slider_color_${color}`;
+    const colorIsSwitchableTooltips = isSwitchableTooltips && 'slider_with-switchable-tooltips';
   .slider.js-slider(
     class=[colorClass, colorIsSwitchableTooltips],
     data-options=options

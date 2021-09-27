@@ -857,9 +857,7 @@ class RangeSliderView
 
   protected _getRangeTransform(index: number) {
     const lowerOffset =
-      index === 0
-        ? 0
-        : this._thumbValueToPositionOnTrack(index - 1).offsetInPercent;
+      index && this._thumbValueToPositionOnTrack(index - 1).offsetInPercent;
     const greaterOffset =
       this._thumbValueToPositionOnTrack(index).offsetInPercent;
 

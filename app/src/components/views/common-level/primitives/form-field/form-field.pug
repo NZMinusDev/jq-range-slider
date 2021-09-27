@@ -13,9 +13,9 @@ include ~@views/common-level/primitives/heading/heading.pug
   inputTextAlign?: 'center' - text align of input
   readonly?: boolean - makes input readonly
   Tip: mixin also uses 'and attributes'(&attributes)
-mixin form-field({ label = '', description = '', name = 'form-field', id = name, type = 'text', value = undefined, orientation = '', placeItems = '', inputTextAlign = '', readonly = false, inputResize = '' } = {})
+mixin form-field({ label = undefined, description = '', name = 'form-field', id = name, type = 'text', value = undefined, orientation = undefined, placeItems = undefined, inputTextAlign = undefined, readonly = false, inputResize = undefined } = {})
   -
-    const withLabelClass = label === '' ? null : 'form-field_with-label';
+    const withLabelClass = label && 'form-field_with-label';
     let inputTag;
     let inputType = type;
     let inputTypeClass;
@@ -26,10 +26,10 @@ mixin form-field({ label = '', description = '', name = 'form-field', id = name,
       default: { inputTag = 'input'; }
     }
 
-    const orientationClass = orientation === '' ? null : `form-field_direction_${orientation}`;
-    const placeItemsClass = placeItems === '' ? null : `form-field_place-items_${placeItems}`;
-    const inputTextAlignClass = inputTextAlign === '' ? null : `form-field__input_text-align_${inputTextAlign}`;
-    const inputResizeClass = inputResize === '' ? null : `form-field__input_resize_${inputResize}`;
+    const orientationClass = orientation && `form-field_direction_${orientation}`;
+    const placeItemsClass = placeItems && `form-field_place-items_${placeItems}`;
+    const inputTextAlignClass = inputTextAlign && `form-field__input_text-align_${inputTextAlign}`;
+    const inputResizeClass = inputResize && `form-field__input_resize_${inputResize}`;
   .form-field.js-form-field(class=[withLabelClass, orientationClass, placeItemsClass])&attributes(attributes)
     if label !== ''
       +heading({ h3: label }, { isLabel: true, description })(for=id)
