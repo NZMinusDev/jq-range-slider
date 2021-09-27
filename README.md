@@ -252,7 +252,7 @@ Script-names:
 
 - **start** - builds bundles and runs servers: webpack-dev-server and server with express;
 - **dev** - just builds bundles and place it into [public](./app/public) directory;
-- **build** - build minify bundles and place it into [public](./app/public) directory;
+- **build** - build minify bundles and place it into [public](./app/public) directory, also copies [server package.json](./app/src/server/package.json) and [server index.mjs](./app/src/server/index.mjs) files;
 - **build:plugin** - build minify bundles for plugin only and place it into [dist](./app/dist) directory + run _types_ script;
 - **types** - generate d.ts files and place it into [dist/types](./app/dist/types) directory;
 - **UML** - generate .puml files and place it into [src](./app/src/plugin/UML/) directory. P.S.: you should work [with your hands](https://plantuml.com/en/class-diagram) a little cause of the [tool](https://github.com/bafolts/tplant) has bugs(["default" isn't keyword](https://github.com/bafolts/tplant/issues/66), [error when output directory doesn't exist](https://github.com/bafolts/tplant/issues/51), [Missing Aggregation/Composition](https://github.com/bafolts/tplant/issues/48), etc). Tip: you should manually copy tsconfig.json into root folder with appropriate edits of paths for each run cause of aliases and stuff don't work properly like as [-p flag](https://github.com/bafolts/tplant#-p---project-) doesn't;
@@ -260,12 +260,7 @@ Script-names:
 - **analyze** - visualize size of webpack output files with an interactive zoomable treemap using webpack-bundle-analyzer;
 - **lint** - lint styles and scripts, show result;
 - **lint:fix** - use prettier for all known files, lint styles and scripts, auto fix files with errors if it is possible, show result.
-
-Deploy
-
-```bash
-git subtree push --prefix app/public origin gh-pages
-```
+- **deploy** - pushes [public](./app/public/) to origin/gh-pages which is hooked by heroku.
 
 ### Technologies
 
