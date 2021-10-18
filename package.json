@@ -21,9 +21,7 @@
     "slider"
   ],
   "browserslist": [
-    "> 0.2%",
-    "not dead",
-    "not op_mini all"
+    "last 2 Chrome versions"
   ],
   "scripts": {
     "start": "npm-run-all --parallel watch:client watch:server",
