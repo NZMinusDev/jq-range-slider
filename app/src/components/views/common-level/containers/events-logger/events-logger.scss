@@ -1,10 +1,7 @@
 .events-logger {
   display: grid;
-
-  @media (min-width: 0) {
-    grid-auto-flow: row;
-    grid-row-gap: 1em;
-  }
+  grid-auto-flow: row;
+  grid-row-gap: 1em;
 
   @media (min-width: 768px) {
     grid-auto-flow: column;

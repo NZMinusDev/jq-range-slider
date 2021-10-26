@@ -4,9 +4,7 @@
   justify-items: center;
 
   &__slider {
-    @media (min-width: 0) {
-      width: 75%;
-    }
+    width: 75%;
 
     @media (min-width: 768px) {
       width: 100%;
@@ -15,11 +13,8 @@
 
   &__submit {
     display: grid;
-
-    @media (min-width: 0) {
-      grid-auto-flow: row;
-      grid-row-gap: 1em;
-    }
+    grid-auto-flow: row;
+    grid-row-gap: 1em;
 
     @media (min-width: 768px) {
       grid-auto-flow: column;

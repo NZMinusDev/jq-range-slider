@@ -1,12 +1,9 @@
 .colorpicker {
   display: grid;
-
-  @media (min-width: 0) {
-    grid:
-      'sliders' 200px
-      '.' 2em
-      'result' 200px;
-  }
+  grid:
+    'sliders' 200px
+    '.' 2em
+    'result' 200px;
 
   @media (min-width: 768px) {
     grid: 'sliders . result' 200px / 1fr 2em 200px;

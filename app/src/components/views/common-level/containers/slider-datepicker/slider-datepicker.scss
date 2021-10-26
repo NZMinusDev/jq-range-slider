@@ -4,9 +4,7 @@
   justify-items: center;
 
   &__slider {
-    @media (min-width: 0) {
-      width: 75%;
-    }
+    width: 75%;
 
     @media (min-width: 768px) {
       width: 100%;
