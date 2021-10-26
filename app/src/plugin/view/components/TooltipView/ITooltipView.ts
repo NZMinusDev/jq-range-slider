@@ -1,4 +1,4 @@
-import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
+import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
 
 type Formatter = (value: number) => string;
 

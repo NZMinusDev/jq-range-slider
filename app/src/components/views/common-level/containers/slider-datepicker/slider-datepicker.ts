@@ -1,6 +1,6 @@
 import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/view/BEM/BEMComponent';
+} from '@shared/utils/scripts/view/BEM/BEMComponent';
 import type { FormFieldElementWithComponent } from '@views/common-level/primitives/form-field/form-field';
 import '@views/common-level/primitives/form-field/form-field';
 

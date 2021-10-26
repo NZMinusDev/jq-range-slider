@@ -1,9 +1,11 @@
+@use '@shared/styles/media.scss';
+
 .events-logger {
   display: grid;
   grid-auto-flow: row;
   grid-row-gap: 1em;
 
-  @media (min-width: 768px) {
+  @media print, screen and (min-width: media.$sm) {
     grid-auto-flow: column;
     grid-column-gap: 1em;
   }

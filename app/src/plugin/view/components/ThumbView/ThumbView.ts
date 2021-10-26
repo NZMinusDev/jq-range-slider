@@ -3,7 +3,7 @@ import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
+import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
 
 import IThumbView, { ThumbOptions, ThumbState } from './IThumbView';
 import './ThumbView.scss';

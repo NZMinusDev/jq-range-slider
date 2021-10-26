@@ -1,5 +1,5 @@
 module.exports = {
-  rootDir: './../app/src/',
+  rootDir: './../../app/src/',
   preset: 'ts-jest/presets/js-with-ts',
   verbose: true,
   collectCoverage: true,
@@ -11,8 +11,8 @@ module.exports = {
   ],
 
   // https://github.com/kulshekhar/ts-jest/issues/1035#issuecomment-486442977 and https://github.com/jsdom/jsdom/pull/2666#issuecomment-691216178
-  setupFilesAfterEnv: ['<rootDir>/../../configs/setupEventsToJest.ts'],
-  coveragePathIgnorePatterns: ['<rootDir>/utils/'],
+  setupFilesAfterEnv: ['<rootDir>/../../configs/jest/setupEvents.ts'],
+  coveragePathIgnorePatterns: ['<rootDir>/shared/'],
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/../tests/__mocks__/fileMock.js',
@@ -22,7 +22,7 @@ module.exports = {
     '@views(.*)$': '<rootDir>/components/views/$1',
     '@models(.*)$': '<rootDir>/components/models/$1',
     '@presenters(.*)$': '<rootDir>/components/presenters/$1',
-    '@utils(.*)$': '<rootDir>/utils/$1',
+    '@shared(.*)$': '<rootDir>/shared/$1',
     '@assets(.*)$': '<rootDir>/assets/$1',
   },
 

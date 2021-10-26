@@ -1,7 +1,7 @@
 import defaultsDeep from 'lodash-es/defaultsDeep';
 
-import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
-import { renderMVPView } from '@utils/devTools/scripts/view/MVPHelper';
+import { Unpacked } from '@shared/utils/scripts/TypingHelper';
+import { renderMVPView } from '@shared/utils/scripts/view/MVPHelper';
 
 import IRangeSliderModel from '../models/IRangeSliderModel';
 import IRangeSliderView, { RangeSliderOptions } from '../view/IRangeSliderView';

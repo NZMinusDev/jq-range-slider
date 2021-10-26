@@ -252,7 +252,7 @@ Script-names:
 
 - **start** - builds bundles and runs servers: webpack-dev-server and server with express;
 - **dev** - just builds bundles and place it into [public](./app/public) directory;
-- **build** - build minify bundles and place it into [public](./app/public) directory, also copies [server package.json](./app/src/server/package.json) and [server index.mjs](./app/src/server/index.mjs) files;
+- **build** - build minify bundles and place it into [public](./app/public) directory, also copies [server package.json](./server/package.json) and [server index.mjs](./server/index.mjs) files;
 - **build:plugin** - build minify bundles for plugin only and place it into [dist](./app/dist) directory + run _types_ script;
 - **types** - generate d.ts files and place it into [dist/types](./app/dist/types) directory;
 - **UML** - generate .puml files and place it into [src](./app/src/plugin/UML/) directory. P.S.: you should work [with your hands](https://plantuml.com/en/class-diagram) a little cause of the [tool](https://github.com/bafolts/tplant) has bugs(["default" isn't keyword](https://github.com/bafolts/tplant/issues/66), [error when output directory doesn't exist](https://github.com/bafolts/tplant/issues/51), [Missing Aggregation/Composition](https://github.com/bafolts/tplant/issues/48), etc). Tip: you should manually copy tsconfig.json into root folder with appropriate edits of paths for each run cause of aliases and stuff don't work properly like as [-p flag](https://github.com/bafolts/tplant#-p---project-) doesn't;
@@ -300,7 +300,7 @@ Script-names:
   - [pages](./app/src/pages/) only need to be created, and the collector can determine the entry points on its own;
   - no need to remember a bunch of css prefixes and what properties are supported thanks to [postCSS preset env](https://github.com/csstools/postcss-preset-env) and [autoprefixer](https://www.npmjs.com/package/autoprefixer);
   - output files is minified in production mode;
-  - there is no need to write relative paths for import when there are [excellent aliases](./configs/webpack.config.js) for the most popular paths in development;
+  - there is no need to write relative paths for import when there are [excellent aliases](./configs/webpack/webpack.config.js) for the most popular paths in development;
   - during development, when changing files, the result is immediately visible without manual reboots and builds;
   - during the build, webpack will notify you if: there are circular dependencies, libraries of different versions are connected, there are unused files, there are css properties that browsers do not support. Displays the speed of source processing at each stage of the build;
   - it should work the same on different platforms.
@@ -311,7 +311,7 @@ Script-names:
   - [JQuery](https://jquery.com/);
   - [lodash-es](https://lodash.com/) to supplement the js standard. Tip: you should use only import of lodash-es(moreover, when importing, only care about the readability and strictness of the code, and not the optimization of the weight) instead of common lodash because ES6+ module syntax is supported by terser for optimization;
   - [lit-html](https://lit-html.polymer-project.org/guide) to highlight html inside js/ts and only update the parts of the template that have changed since the last render.
-- custom tools: [ts shortcuts](./app/src/utils/devTools/).
+- custom tools: pug, scss, ts [shortcuts](./app/src/shared/utils/);.
 
 ### How it works
 

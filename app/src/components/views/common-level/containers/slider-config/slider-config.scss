@@ -1,10 +1,12 @@
+@use '@shared/styles/media.scss';
+
 .slider-config {
   position: relative;
   display: grid;
   border: 1px solid tomato;
   grid-gap: 1em;
 
-  @media (min-width: 768px) {
+  @media print, screen and (min-width: media.$sm) {
     grid-template: none / repeat(3, 1fr);
   }
 
@@ -35,7 +37,7 @@
     border: inherit;
     place-items: center;
 
-    @media (min-width: 768px) {
+    @media print, screen and (min-width: media.$sm) {
       grid-column: span 3;
       grid: 1fr / 50% 50%;
     }

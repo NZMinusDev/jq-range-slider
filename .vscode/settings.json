@@ -58,7 +58,7 @@
     "@views": "${folder}/app/src/components/views/",
     "@models": "${folder}/app/src/components/models/",
     "@presenters": "${folder}/app/src/components/presenters/",
-    "@utils": "${folder}/app/src/utils/",
+    "@shared": "${folder}/app/src/shared/",
     "@assets": "${folder}/app/src/assets/"
   },
   "path-autocomplete.triggerOutsideStrings": true,

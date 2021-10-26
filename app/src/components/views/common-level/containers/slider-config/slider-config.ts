@@ -1,6 +1,6 @@
 import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/view/BEM/BEMComponent';
+} from '@shared/utils/scripts/view/BEM/BEMComponent';
 import { FixedRangeSliderOptions } from '@plugin/view/IRangeSliderView';
 
 import sliderConfigElements, {

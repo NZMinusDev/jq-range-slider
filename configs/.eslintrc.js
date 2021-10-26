@@ -114,7 +114,7 @@ const config = {
           ['@views', './app/src/components/views/'],
           ['@models', './app/src/components/models/'],
           ['@presenters', './app/src/components/presenters/'],
-          ['@utils', './app/src/utils/'],
+          ['@shared', './app/src/shared/'],
           ['@assets', './app/src/assets/'],
         ],
         extensions: ['.js', '.ts', '.jsx', '.tsx', '.json'],

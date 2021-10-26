@@ -2,7 +2,7 @@ import camelCase from 'lodash-es/camelCase';
 
 import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/view/BEM/BEMComponent';
+} from '@shared/utils/scripts/view/BEM/BEMComponent';
 import type {
   EventsLoggerCustomEvents,
   EventsLoggerElementWithComponent,

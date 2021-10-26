@@ -6,8 +6,8 @@ import {
   testSetter,
   DifferentArguments,
   testDOM,
-} from '@utils/devTools/scripts/UnitTestingHelper';
-import { collapsingParseInt } from '@utils/devTools/scripts/ParserHelper';
+} from '@shared/utils/scripts/UnitTestingHelper';
+import { collapsingParseInt } from '@shared/utils/scripts/ParserHelper';
 
 import PipsView, { DEFAULT_OPTIONS } from './PipsView';
 

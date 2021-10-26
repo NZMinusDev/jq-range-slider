@@ -6,7 +6,7 @@ import {
   testSetter,
   DifferentArguments,
   testDOM,
-} from '@utils/devTools/scripts/UnitTestingHelper';
+} from '@shared/utils/scripts/UnitTestingHelper';
 
 import ThumbView, { DEFAULT_OPTIONS } from './ThumbView';
 

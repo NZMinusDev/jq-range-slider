@@ -3,9 +3,9 @@ import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
-import { collapsingParseFloat } from '@utils/devTools/scripts/ParserHelper';
-import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
+import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import { collapsingParseFloat } from '@shared/utils/scripts/ParserHelper';
+import { fixLength } from '@shared/utils/scripts/ArrayHelper';
 
 import ITrackView, {
   TrackOptions,

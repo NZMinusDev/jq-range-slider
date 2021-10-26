@@ -4,10 +4,10 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { classMap } from 'lit-html/directives/class-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { handleEvent } from '@utils/devTools/scripts/view/ComponentCreationHelper';
-import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
-import { ascending } from '@utils/devTools/scripts/ProcessingOfPrimitiveDataHelper';
-import { fixLength } from '@utils/devTools/scripts/ArrayHelper';
+import { handleEvent } from '@shared/utils/scripts/view/ComponentCreationHelper';
+import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import { ascending } from '@shared/utils/scripts/ProcessingOfPrimitiveDataHelper';
+import { fixLength } from '@shared/utils/scripts/ArrayHelper';
 
 import {
   FixedTrackOptions,
@@ -145,14 +145,7 @@ class RangeSliderView
 
   constructor(
     options: RangeSliderOptions = DEFAULT_OPTIONS,
-    state: RangeSliderState = {
-      value: Array.isArray(options.start)
-        ? options.start
-        : [options.start ?? DEFAULT_STATE.value[0]],
-      isActiveThumbs: Array.isArray(options.start)
-        ? new Array(options.start.length).fill(false)
-        : DEFAULT_STATE.isActiveThumbs,
-    }
+    state: RangeSliderState = RangeSliderView._initState(options)
   ) {
     super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
       theOrderOfIteratingThroughTheOptions: [
@@ -332,6 +325,26 @@ class RangeSliderView
     this.trigger('update').trigger('set');
 
     return this;
+  }
+
+  protected static _initState(options: RangeSliderOptions) {
+    const isActiveThumbs: RangeSliderState['isActiveThumbs'] = Array.isArray(
+      options.start
+    )
+      ? new Array(options.start.length).fill(false)
+      : DEFAULT_STATE.isActiveThumbs;
+
+    let value: RangeSliderState['value'];
+
+    if (Array.isArray(options.start)) {
+      value = [...options.start];
+    } else if (options.start !== undefined) {
+      value = [options.start];
+    } else {
+      value = [...DEFAULT_STATE.value];
+    }
+
+    return { value, isActiveThumbs };
   }
 
   protected _setValueState(

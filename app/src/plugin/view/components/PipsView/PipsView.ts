@@ -4,8 +4,8 @@ import { ClassInfo, classMap } from 'lit-html/directives/class-map';
 import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { MVPView } from '@utils/devTools/scripts/view/MVPHelper';
-import { collapsingParseInt } from '@utils/devTools/scripts/ParserHelper';
+import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import { collapsingParseInt } from '@shared/utils/scripts/ParserHelper';
 
 import IPipsView, { PipsOptions, PipsState } from './IPipsView';
 import './PipsView.scss';

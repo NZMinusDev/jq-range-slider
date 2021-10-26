@@ -25,22 +25,23 @@ const isProd = !isDev;
 const isProcessFullApp = process.env.PLUGIN_ONLY !== 'true';
 
 const PATHS = {
-  src_absolute: path.resolve(__dirname, '../app/src/'),
-  dist_absolute: path.resolve(__dirname, '../app/dist/'),
-  public_absolute: path.resolve(__dirname, '../app/public/'),
+  SRC_ABSOLUTE: path.resolve(__dirname, '../../app/src/'),
+  SERVER_ABSOLUTE: path.resolve(__dirname, '../../server/'),
+  DIST_ABSOLUTE: path.resolve(__dirname, '../../app/dist/'),
+  PUBLIC_ABSOLUTE: path.resolve(__dirname, '../../app/public/'),
 };
 
 const redefinitionLevels = ['layouts', 'components/views/common-level'];
 const componentGroups = ['basic', 'containers', 'primitives', 'specific'];
 
 const sharedAliases = {
-  '@layouts': path.resolve(PATHS.src_absolute, './layouts/'),
-  '@plugin': path.resolve(PATHS.src_absolute, './plugin/'),
-  '@views': path.resolve(PATHS.src_absolute, './components/views/'),
-  '@models': path.resolve(PATHS.src_absolute, './components/models/'),
-  '@presenters': path.resolve(PATHS.src_absolute, './components/presenters/'),
-  '@utils': path.resolve(PATHS.src_absolute, './utils/'),
-  '@assets': path.resolve(PATHS.src_absolute, './assets/'),
+  '@layouts': path.resolve(PATHS.SRC_ABSOLUTE, './layouts/'),
+  '@plugin': path.resolve(PATHS.SRC_ABSOLUTE, './plugin/'),
+  '@views': path.resolve(PATHS.SRC_ABSOLUTE, './components/views/'),
+  '@models': path.resolve(PATHS.SRC_ABSOLUTE, './components/models/'),
+  '@presenters': path.resolve(PATHS.SRC_ABSOLUTE, './components/presenters/'),
+  '@shared': path.resolve(PATHS.SRC_ABSOLUTE, './shared/'),
+  '@assets': path.resolve(PATHS.SRC_ABSOLUTE, './assets/'),
 };
 
 /**
@@ -58,7 +59,7 @@ const hashedFileName = (name, ext) =>
 class ResultOfTemplatesProcessing {
   constructor() {
     const foldersOfPages = fs.readdirSync(
-      path.resolve(PATHS.src_absolute, './pages/')
+      path.resolve(PATHS.SRC_ABSOLUTE, './pages/')
     );
 
     // get all pug templates from each page folder
@@ -66,7 +67,7 @@ class ResultOfTemplatesProcessing {
       ...foldersOfPages.map((folder) =>
         fs
           .readdirSync(
-            `${path.resolve(PATHS.src_absolute, './pages/')}\\${folder}\\`
+            `${path.resolve(PATHS.SRC_ABSOLUTE, './pages/')}\\${folder}\\`
           )
           .filter((filename) => filename.endsWith(`.pug`))
       )
@@ -121,16 +122,16 @@ const webpackPlugins = () => {
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: path.resolve(PATHS.src_absolute, './assets/ico/'),
-            to: path.resolve(PATHS.public_absolute, './assets/ico/'),
+            from: path.resolve(PATHS.SRC_ABSOLUTE, './assets/ico/'),
+            to: path.resolve(PATHS.PUBLIC_ABSOLUTE, './assets/ico/'),
           },
           {
-            from: path.resolve(PATHS.src_absolute, './server/package.json'),
-            to: path.resolve(PATHS.public_absolute),
+            from: PATHS.SERVER_ABSOLUTE,
+            to: PATHS.PUBLIC_ABSOLUTE,
           },
           {
-            from: path.resolve(PATHS.src_absolute, './server/index.mjs'),
-            to: path.resolve(PATHS.public_absolute),
+            from: PATHS.SERVER_ABSOLUTE,
+            to: PATHS.PUBLIC_ABSOLUTE,
           },
         ],
       })
@@ -141,24 +142,24 @@ const webpackPlugins = () => {
         patterns: [
           {
             from: path.resolve(
-              PATHS.src_absolute,
+              PATHS.SRC_ABSOLUTE,
               './plugin/jq-range-slider-plugin.js'
             ),
-            to: path.resolve(PATHS.src_absolute, './../dist'),
+            to: path.resolve(PATHS.SRC_ABSOLUTE, './../dist'),
           },
           {
             from: path.resolve(
-              PATHS.src_absolute,
+              PATHS.SRC_ABSOLUTE,
               './plugin/jq-range-slider-plugin.d.ts'
             ),
-            to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
+            to: path.resolve(PATHS.SRC_ABSOLUTE, './../dist/types/plugin'),
           },
           {
             from: path.resolve(
-              PATHS.src_absolute,
+              PATHS.SRC_ABSOLUTE,
               './plugin/range-slider-plugin.d.ts'
             ),
-            to: path.resolve(PATHS.src_absolute, './../dist/types/plugin'),
+            to: path.resolve(PATHS.SRC_ABSOLUTE, './../dist/types/plugin'),
           },
         ],
       })
@@ -184,7 +185,12 @@ const webpackPlugins = () => {
 
   plugins.push(
     new CircularDependencyPlugin(),
-    new UnusedFilesWebpackPlugin({ patterns: ['**/*.scss', '**/*.ts'] }),
+    new UnusedFilesWebpackPlugin({
+      patterns: ['**/*.scss', '**/*.ts'],
+      globOptions: {
+        ignore: ['node_modules/**/*', 'shared/**/*', '**/*.d.ts'],
+      },
+    }),
     new HashedModuleIdsPlugin({
       hashFunction: 'md4',
       hashDigest: 'base64',
@@ -226,7 +232,7 @@ const templatesLoaders = (
     },
     {
       // convert template function to html
-      loader: './utils/webpack/loaders/pug-loader.ts',
+      loader: '../../configs/webpack/loaders/pug-loader.ts',
     },
     {
       // convert pug to template function
@@ -286,7 +292,11 @@ const cssLoaders = (extraLoader) => {
 const jsLoaders = (extraPreset) => {
   const babelOptions = {
     presets: ['@babel/preset-env'],
-    plugins: ['@babel/plugin-proposal-class-properties'],
+    plugins: [
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-proposal-optional-chaining',
+      '@babel/plugin-proposal-nullish-coalescing-operator',
+    ],
     cacheDirectory: './app/cache/webpack__babel',
   };
 
@@ -350,7 +360,7 @@ const smp = new SpeedMeasurePlugin({
 });
 module.exports = smp.wrap({
   // The base directory, an absolute path, for resolving entry points and loaders
-  context: PATHS.src_absolute,
+  context: PATHS.SRC_ABSOLUTE,
   mode: 'development',
 
   // Declarations of used files in bundles
@@ -365,7 +375,7 @@ module.exports = smp.wrap({
     filename: isProcessFullApp
       ? hashedFileName('bundles/[id]/[name]', 'js')
       : '[name].js',
-    path: isProcessFullApp ? PATHS.public_absolute : PATHS.dist_absolute,
+    path: isProcessFullApp ? PATHS.PUBLIC_ABSOLUTE : PATHS.DIST_ABSOLUTE,
   },
   resolve: {
     // You can use it while using import in css and js

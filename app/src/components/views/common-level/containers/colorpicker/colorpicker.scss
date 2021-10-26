@@ -1,3 +1,5 @@
+@use '@shared/styles/media.scss';
+
 .colorpicker {
   display: grid;
   grid:
@@ -5,7 +7,7 @@
     '.' 2em
     'result' 200px;
 
-  @media (min-width: 768px) {
+  @media print, screen and (min-width: media.$sm) {
     grid: 'sliders . result' 200px / 1fr 2em 200px;
   }
 

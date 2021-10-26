@@ -1,4 +1,4 @@
-import type { MVPModel } from '@utils/devTools/scripts/view/MVPHelper';
+import type { MVPModel } from '@shared/utils/scripts/view/MVPHelper';
 
 type RangeSliderState = {
   value: number[];

@@ -1,3 +1,5 @@
+@use '@shared/styles/media.scss';
+
 .configurable-slider-demo {
   display: grid;
   grid-row-gap: 1em;
@@ -6,7 +8,7 @@
   &__slider {
     width: 75%;
 
-    @media (min-width: 768px) {
+    @media print, screen and (min-width: media.$sm) {
       width: 100%;
     }
   }
@@ -16,7 +18,7 @@
     grid-auto-flow: row;
     grid-row-gap: 1em;
 
-    @media (min-width: 768px) {
+    @media print, screen and (min-width: media.$sm) {
       grid-auto-flow: column;
       grid-column-gap: 1em;
     }

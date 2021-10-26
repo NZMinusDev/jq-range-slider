@@ -17,7 +17,7 @@
       "@views/*": ["app/src/components/views/*"],
       "@models/*": ["app/src/components/models/*"],
       "@presenters/*": ["app/src/components/presenters/*"],
-      "@utils/*": ["app/src/utils/*"],
+      "@shared/*": ["app/src/shared/*"],
       "@assets/*": ["app/src/assets/*"]
     },
     "plugins": [
@@ -27,6 +27,6 @@
       }
     ]
   },
-  "include": ["../app/src"],
+  "include": ["../app/src", "../configs/**/*.ts"],
   "exclude": ["../app/src/plugin/jq-range-slider-plugin.js"]
 }

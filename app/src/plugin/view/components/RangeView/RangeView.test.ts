@@ -6,7 +6,7 @@ import {
   testSetter,
   DifferentArguments,
   testDOM,
-} from '@utils/devTools/scripts/UnitTestingHelper';
+} from '@shared/utils/scripts/UnitTestingHelper';
 
 import RangeView, { DEFAULT_OPTIONS } from './RangeView';
 

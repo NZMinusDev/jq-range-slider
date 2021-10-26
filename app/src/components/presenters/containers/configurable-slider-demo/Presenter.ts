@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash-es/cloneDeep';
 
-import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
+import { Unpacked } from '@shared/utils/scripts/TypingHelper';
 import IModel from '@models/containers/configurable-slider-demo/IModel';
 import {
   ConfigurableSliderDemo,

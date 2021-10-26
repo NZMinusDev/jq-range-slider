@@ -1,3 +1,5 @@
+@use '@shared/styles/media.scss';
+
 .slider-datepicker {
   display: grid;
   width: 100%;
@@ -6,7 +8,7 @@
   &__slider {
     width: 75%;
 
-    @media (min-width: 768px) {
+    @media print, screen and (min-width: media.$sm) {
       width: 100%;
     }
   }

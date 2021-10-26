@@ -1,7 +1,7 @@
 import BEMComponent, {
   HTMLElementWithComponent,
-} from '@utils/devTools/scripts/view/BEM/BEMComponent';
-import { Unpacked } from '@utils/devTools/scripts/TypingHelper';
+} from '@shared/utils/scripts/view/BEM/BEMComponent';
+import { Unpacked } from '@shared/utils/scripts/TypingHelper';
 import type {
   Slider,
   SliderCustomEvents,

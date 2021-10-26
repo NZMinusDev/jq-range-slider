@@ -6,8 +6,8 @@ import {
   testSetter,
   DifferentArguments,
   testDOM,
-} from '@utils/devTools/scripts/UnitTestingHelper';
-import { collapsingParseFloat } from '@utils/devTools/scripts/ParserHelper';
+} from '@shared/utils/scripts/UnitTestingHelper';
+import { collapsingParseFloat } from '@shared/utils/scripts/ParserHelper';
 
 import TrackView, { DEFAULT_OPTIONS } from './TrackView';
 
