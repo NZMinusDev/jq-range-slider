@@ -202,6 +202,7 @@ class RangeSliderView extends MVPView implements IRangeSliderView {
     #_trackEventListenerObject: { cache: { trackElem: HTMLElement; }; handleEvent: (event: Event) => void; handleTrackClick: (event: MouseEvent) => void; }
     #_getNearestThumb(value: number): number
     #_pipsEventListenerObject: { handleEvent: (event: Event) => void; handlePipsClick: (event: MouseEvent) => void; }
+    #{static} _initState(options: RangeSliderOptions): { value: number[]; isActiveThumbs: boolean[]; }
     #{static} _getIntervalKeyAsNumber(key: string | number): number
     #{static} _toThumbSteppedIncrementation(thumbIncrementationOfLastInterval: number, step: number | "none"): { stepped: number; remains: number; }
 }
