@@ -33,6 +33,7 @@ $long-pip-length: 1em;
       }
     }
   }
+
   &_orientation_vertical {
     display: inline-block;
     height: 100%;
@@ -70,6 +71,7 @@ $long-pip-length: 1em;
     position: absolute;
     background: burlywood;
   }
+
   &-value {
     position: relative;
     cursor: pointer;

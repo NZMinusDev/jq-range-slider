@@ -11,6 +11,7 @@
     "source.fixAll.eslint": true,
     "source.fixAll.stylelint": true
   },
+  "stylelint.validate": ["css", "scss"],
   "eslint.validate": [
     "javascript",
     "javascriptreact",

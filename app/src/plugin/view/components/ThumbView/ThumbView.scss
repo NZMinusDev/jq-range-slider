@@ -31,6 +31,7 @@ $thumb-size: 2em;
       }
     }
   }
+
   &_orientation_vertical {
     left: #{$origin-offset};
     width: 0;
@@ -54,18 +55,18 @@ $thumb-size: 2em;
     transition: transform 0.3s;
   }
 }
-.range-slider__thumb {
-  $bg-color: black;
 
-  background-color: $bg-color;
+.range-slider__thumb {
+  background-color: black;
   transition: box-shadow 0.25s ease-in-out;
 
   &:hover {
-    box-shadow: 0 0 0 0.5em rgba($color: $bg-color, $alpha: 0.1);
+    box-shadow: 0 0 0 0.5em rgb(0 0 0 / 0.1);
   }
+
   &:active,
   &:focus {
-    box-shadow: 0 0 0 0.75em rgba($color: $bg-color, $alpha: 0.2);
+    box-shadow: 0 0 0 0.75em rgb(0 0 0 / 0.2);
   }
 
   &::before,

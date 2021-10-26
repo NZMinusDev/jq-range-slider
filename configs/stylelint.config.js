@@ -1,12 +1,18 @@
-// TODO: options such as https://stylelint.io/user-guide/ignore-code#files-entirely don't work - wait https://github.com/stylelint/stylelint/issues/3627
+/*
+ * TODO: options such as https://stylelint.io/user-guide/ignore-code#files-entirely don't work - wait https://github.com/stylelint/stylelint/issues/3627
+ * TODO: add CSS-in-JS, HTML-like and markdown support: markdown needs maintainer https://github.com/stylelint/stylelint/issues/5583, CSS-in-JS: https://github.com/stylelint/stylelint/issues/4574 and https://github.com/stylelint/postcss-css-in-js/issues/225, be sure update extension rule - see "/.vscode/settings.json" "stylelint.validate"
+ */
 module.exports = {
   extends: ['stylelint-config-standard', 'stylelint-prettier/recommended'],
 
-  plugins: ['stylelint-scss', 'stylelint-order'],
+  plugins: ['stylelint-order'],
 
   rules: {
-    // this rule hasn't sense for scss with bem nesting
-    'no-descending-specificity': null,
+    // when webpack builds values are cut
+    'alpha-value-notation': 'number',
+
+    // TODO: should be BEM
+    'selector-class-pattern': null,
 
     // disable errors for icon font
     'font-family-no-missing-generic-family-keyword': [
@@ -14,22 +20,7 @@ module.exports = {
       { ignoreFontFamilies: ['Material Icons', 'Font Awesome 5 Brands'] },
     ],
 
-    'scss/at-each-key-value-single-line': true,
-    'scss/at-mixin-argumentless-call-parentheses': 'always',
-    'scss/dollar-variable-no-missing-interpolation': true,
-    'scss/dimension-no-non-numeric-values': true,
-    'scss/function-color-relative': true,
-    'scss/function-quote-no-quoted-strings-inside': true,
-    'scss/function-unquote-no-unquoted-strings-inside': true,
-    'scss/no-duplicate-mixins': true,
-    'scss/no-global-function-names': true,
-    'scss/at-function-pattern': /^[a-z_]+([a-z0-9-]+[a-z0-9]+)?$/,
-    'scss/at-mixin-pattern': /^[a-z_]+([a-z0-9-]+[a-z0-9]+)?$/,
-    'scss/dollar-variable-pattern': /^[a-z_]+([a-z0-9-]+[a-z0-9]+)?$/,
-
     // https://github.com/fullstack-development/react-redux-starter-kit/blob/master/.stylelintrc
-    'at-rule-no-unknown': null,
-    'scss/at-rule-no-unknown': true,
     'order/order': [
       'dollar-variables',
       'at-rules',
@@ -274,4 +265,34 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['**/*.scss'],
+      customSyntax: 'postcss-scss',
+      plugins: ['stylelint-scss'],
+      rules: {
+        // hasn't sense for bem nesting
+        'no-descending-specificity': null,
+
+        // works bad with string concatenation
+        'function-url-quotes': null,
+
+        'scss/at-each-key-value-single-line': true,
+        'scss/at-mixin-argumentless-call-parentheses': 'always',
+        'scss/dollar-variable-no-missing-interpolation': true,
+        'scss/dimension-no-non-numeric-values': true,
+        'scss/function-color-relative': true,
+        'scss/function-quote-no-quoted-strings-inside': true,
+        'scss/function-unquote-no-unquoted-strings-inside': true,
+        'scss/no-duplicate-mixins': true,
+        'scss/no-global-function-names': true,
+        'scss/at-function-pattern': /^[a-z_]+([a-z0-9-]+[a-z0-9]+)?$/,
+        'scss/at-mixin-pattern': /^[a-z_]+([a-z0-9-]+[a-z0-9]+)?$/,
+        'scss/dollar-variable-pattern': /^[a-z_]+([a-z0-9-]+[a-z0-9]+)?$/,
+
+        'at-rule-no-unknown': null,
+        'scss/at-rule-no-unknown': true,
+      },
+    },
+  ],
 };

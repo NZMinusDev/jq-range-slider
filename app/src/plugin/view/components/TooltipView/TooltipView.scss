@@ -24,10 +24,11 @@ $triangle-size: 5px;
     &::before {
       top: 100%;
       left: 50%;
-      border-color: black transparent transparent transparent;
+      border-color: black transparent transparent;
       transform: translate(-50%, 0);
     }
   }
+
   &_orientation_left {
     right: calc(100% + #{$triangle-size * 2});
 
