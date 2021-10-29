@@ -128,6 +128,10 @@ class PipsView
       this._options.density < 0
         ? DEFAULT_OPTIONS.density
         : this._options.density;
+
+    this._options.density =
+      this._options.density > 3 ? 3 : this._options.density;
+
     this._options.density = collapsingParseInt(`${this._options.density}`);
 
     return this;

@@ -178,7 +178,7 @@ const differentConstructorArgs: DifferentArguments<
           true,
           (number: number) => `${number.toFixed(4).toLocaleString()}%`,
         ],
-        pips: { mode: 'count', values: 4, density: 5 },
+        pips: { mode: 'count', values: 4, density: 3 },
       },
       { isActiveThumbs: [false, false], value: [0, 75] },
     ],

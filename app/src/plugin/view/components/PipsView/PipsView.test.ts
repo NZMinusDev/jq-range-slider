@@ -25,6 +25,7 @@ const viewPropertiesExpecter: InstancePropsExpecter<
   });
 
   expect(instance['_options'].density).toBeGreaterThanOrEqual(0);
+  expect(instance['_options'].density).toBeLessThanOrEqual(3);
   expect(instance['_options'].density).toEqual(
     collapsingParseInt(`${instance['_options'].density}`)
   );
@@ -54,7 +55,8 @@ const differentConstructorArgs: DifferentArguments<
       },
     ],
     [{ density: -5 }],
-    [{ density: 5.5543 }],
+    [{ density: 4 }],
+    [{ density: 2.5543 }],
   ],
   partialOptionalArguments: [
     [
