@@ -58,7 +58,9 @@ class Presenter {
     const slider = this.view.getSlider();
 
     slider.set(state.value);
-    this.view.addServerResponse(state.value.toString());
+    this.view.addServerResponse(
+      state.value.map((val) => val.toFixed(2)).toString()
+    );
 
     return this;
   }

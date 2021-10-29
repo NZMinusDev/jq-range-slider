@@ -344,7 +344,7 @@ class ConfigurableSliderDemo extends BEMComponent<
     const slider = this._DOM.slider.component;
     const submit = this._DOM.submit.component;
 
-    submit.set(`[${slider.get()}]`);
+    submit.set(`[${slider.get().map((value) => value.toFixed(2))}]`);
 
     return this;
   }
