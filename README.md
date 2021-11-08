@@ -43,7 +43,7 @@ const RANGE_SLIDER_OPTIONS = {
      // "values"    - pips.values assign track values
      mode?: "intervals" | "count" | "positions" | "values"; // default is "intervals"
      values?: number | number[];
-     density?: number; // density of pips between values (amount of pips for each css %), default is 1
+     density?: number; // density of pips between values (amount of pips for each css %), default is 1, max is 3
      isHidden?: boolean; // default is false
   }
 };
@@ -314,6 +314,20 @@ Script-names:
 - custom tools: pug, scss, ts [shortcuts](./app/src/shared/utils/);.
 
 ### How it works
+
+#### Architecture
+
+The project does not rely on external dependencies. But if you need to use jQuery, then you must connect it higher in the code.
+
+Project is builded on Model-View-Presenter pattern with Passive View. This pattern allows you to get functionally meaningful modules loosely connected to each other and useful in themselves. The architecture is loosely coupled due to the interfaces for model and view.
+
+Modules:
+
+- _model_: it's _facade_ for getting and setting data from your _domain model_(models the subject area and implements business logic). It knows nothing about either _view_ or _controller_ but can emits event about updated data for subscribes - active model. Also _model_ is thin(data only without business logic);
+- _view_: GUI - it displays model data and responds to user actions also it contains the display logic and local state. _View_ is passive here - the data in the _view_ is supplied by the _controller_ (_view_ and _model_ are independent of each other). The main slider display consists of subviews that make up the general display template and gets the pieces of the general state necessary for operation when it is updated;
+- _presenter_: the logic of translating user actions into model methods and model actions to view methods. It knows about _view_ and _model_ thanks to their interfaces.
+
+#### Class diagram
 
 ![UML View Class Diagram](./app/src/plugin/UML/UML.svg)
 
