@@ -12,7 +12,7 @@ type TooltipState = {
   value: number;
 };
 
-interface ITooltipView
+interface TooltipView
   extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> {
   getOrientationOption(): TooltipOptions['orientation'];
   getIsHiddenOption(): TooltipOptions['isHidden'];
@@ -22,4 +22,4 @@ interface ITooltipView
   setFormatterOption(formatter?: TooltipOptions['formatter']): this;
 }
 
-export { ITooltipView as default, Formatter, TooltipOptions, TooltipState };
+export { TooltipView as default, Formatter, TooltipOptions, TooltipState };

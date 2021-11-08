@@ -3,8 +3,8 @@ import defaultsDeep from 'lodash-es/defaultsDeep';
 import { Unpacked } from '@shared/utils/scripts/TypingHelper';
 import { renderMVPView } from '@shared/utils/scripts/view/MVPHelper';
 
-import IRangeSliderModel from '../models/IRangeSliderModel';
-import IRangeSliderView, { RangeSliderOptions } from '../view/IRangeSliderView';
+import IRangeSliderModel from '../models/types';
+import IRangeSliderView, { RangeSliderOptions } from '../view/types';
 import RangeSliderView from '../view/RangeSliderView';
 
 type ErrorCatcher = (reason: unknown) => void;

@@ -5,7 +5,7 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
 
-import IThumbView, { ThumbOptions, ThumbState } from './IThumbView';
+import IThumbView, { ThumbOptions, ThumbState } from './types';
 import './ThumbView.scss';
 
 const DEFAULT_OPTIONS: Required<ThumbOptions> = {};

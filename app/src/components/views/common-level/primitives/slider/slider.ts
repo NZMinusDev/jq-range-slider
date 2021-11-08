@@ -2,9 +2,7 @@ import BEMComponent, {
   HTMLElementWithComponent,
 } from '@shared/utils/scripts/view/BEM/BEMComponent';
 import { Unpacked } from '@shared/utils/scripts/TypingHelper';
-import IRangeSliderView, {
-  RangeSliderOptions,
-} from '@plugin/view/IRangeSliderView';
+import RangeSliderView, { RangeSliderOptions } from '@plugin/view/types';
 import '@plugin/range-slider-plugin';
 
 import sliderElements, { SliderElement } from './slider-elements';
@@ -26,7 +24,7 @@ type SliderCustomEvents = {
 class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
   protected readonly _options: RangeSliderOptions;
 
-  protected readonly _libSlider: IRangeSliderView;
+  protected readonly _libSlider: RangeSliderView;
 
   constructor(sliderElement: SliderElement) {
     super(sliderElement);
@@ -58,7 +56,7 @@ class Slider extends BEMComponent<SliderElement, SliderCustomEvents> {
     return this._libSlider.get();
   }
 
-  set(value: Unpacked<Parameters<IRangeSliderView['set']>>) {
+  set(value: Unpacked<Parameters<RangeSliderView['set']>>) {
     this._libSlider.set(value);
 
     return this;

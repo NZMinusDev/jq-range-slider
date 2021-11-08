@@ -5,7 +5,7 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
 
-import IRangeView, { RangeOptions, RangeState } from './IRangeView';
+import IRangeView, { RangeOptions, RangeState } from './types';
 import './RangeView.scss';
 
 const DEFAULT_OPTIONS: Required<RangeOptions> = {

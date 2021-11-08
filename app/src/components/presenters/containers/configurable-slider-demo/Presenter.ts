@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash-es/cloneDeep';
 
 import { Unpacked } from '@shared/utils/scripts/TypingHelper';
-import IModel from '@models/containers/configurable-slider-demo/IModel';
+import ConfigurableSliderDemoModel from '@models/containers/configurable-slider-demo/types';
 import {
   ConfigurableSliderDemo,
   ConfigurableSliderDemoCustomEvents,
@@ -12,12 +12,12 @@ type ErrorCatcher = (reason: unknown) => void;
 class Presenter {
   readonly view: ConfigurableSliderDemo;
 
-  model?: IModel;
+  model?: ConfigurableSliderDemoModel;
 
   constructor(
     configurableSliderDemo: ConfigurableSliderDemo,
     errorCatcher: ErrorCatcher,
-    model?: IModel
+    model?: ConfigurableSliderDemoModel
   ) {
     this.view = configurableSliderDemo;
 
@@ -26,7 +26,7 @@ class Presenter {
     }
   }
 
-  setModel(model: IModel, errorCatcher: ErrorCatcher) {
+  setModel(model: ConfigurableSliderDemoModel, errorCatcher: ErrorCatcher) {
     if (this.model !== undefined) {
       this.model.closeConnections();
     }
@@ -53,7 +53,7 @@ class Presenter {
   };
 
   protected _updateViewDisplay(
-    state: Unpacked<ReturnType<IModel['getState']>>
+    state: Unpacked<ReturnType<ConfigurableSliderDemoModel['getState']>>
   ) {
     const slider = this.view.getSlider();
 
@@ -75,4 +75,4 @@ class Presenter {
   }
 }
 
-export default Presenter;
+export { Presenter as default };

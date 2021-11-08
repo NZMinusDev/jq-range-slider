@@ -1,4 +1,4 @@
-import configurableSliderDemoMainModel from '@models/containers/configurable-slider-demo/mainModel';
+import ConfigurableSliderDemoMainModel from '@models/containers/configurable-slider-demo/MainModel';
 import configurableSliderDemos from '@views/common-level/containers/configurable-slider-demo/configurable-slider-demo';
 import ConfigurableSliderDemoPresenter from '@presenters/containers/configurable-slider-demo/Presenter';
 
@@ -13,5 +13,5 @@ const [configurableSliderDemo] = configurableSliderDemos;
 const configurableSliderDemoPresenter = new ConfigurableSliderDemoPresenter(
   configurableSliderDemo,
   configurableSliderDemoErrorCatcher,
-  configurableSliderDemoMainModel
+  new ConfigurableSliderDemoMainModel()
 );

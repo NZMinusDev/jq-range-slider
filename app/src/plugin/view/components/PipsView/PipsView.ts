@@ -7,7 +7,7 @@ import { spread } from '@open-wc/lit-helpers';
 import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
 import { collapsingParseInt } from '@shared/utils/scripts/ParserHelper';
 
-import IPipsView, { PipsOptions, PipsState } from './IPipsView';
+import IPipsView, { PipsOptions, PipsState } from './types';
 import './PipsView.scss';
 
 const DEFAULT_OPTIONS: Required<PipsOptions> = {

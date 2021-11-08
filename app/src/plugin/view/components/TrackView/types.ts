@@ -16,7 +16,7 @@ type FixedTrackOptions = {
 
 type TrackState = {};
 
-interface ITrackView
+interface TrackView
   extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
   getIntervalsOption(): FixedTrackOptions['intervals'];
   getStepsOption(): FixedTrackOptions['steps'];
@@ -26,4 +26,4 @@ interface ITrackView
   setPaddingOption(padding?: TrackOptions['padding']): this;
 }
 
-export { ITrackView as default, TrackOptions, FixedTrackOptions, TrackState };
+export { TrackView as default, TrackOptions, FixedTrackOptions, TrackState };

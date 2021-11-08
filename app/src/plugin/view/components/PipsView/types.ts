@@ -12,7 +12,7 @@ type PipsOptions = {
 
 type PipsState = {};
 
-interface IPipsView
+interface PipsView
   extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
   getOrientationOption(): PipsOptions['orientation'];
   getIsHiddenOption(): PipsOptions['isHidden'];
@@ -26,4 +26,4 @@ interface IPipsView
   setFormatterOption(formatter?: PipsOptions['formatter']): this;
 }
 
-export { IPipsView as default, Formatter, PipsOptions, PipsState };
+export { PipsView as default, Formatter, PipsOptions, PipsState };

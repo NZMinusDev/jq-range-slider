@@ -1,11 +1,7 @@
-import IModel from './IModel';
+import ConfigurableSliderDemoModel from './types';
 
-interface MainModel extends IModel {
-  eventSource: EventSource;
-}
-
-const mainModel: MainModel = {
-  eventSource: new EventSource('/stateChanger'),
+class MainModel implements ConfigurableSliderDemoModel {
+  protected eventSource = new EventSource('/stateChanger');
 
   async setState(state) {
     await fetch('/fetch/post/state', {
@@ -17,7 +13,9 @@ const mainModel: MainModel = {
     });
 
     return this;
-  },
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   async getState() {
     const response = await fetch('/fetch/post/state', {
       method: 'POST',
@@ -28,17 +26,19 @@ const mainModel: MainModel = {
     });
 
     return response.json();
-  },
+  }
+
   whenStateIsChanged(callback) {
     this.eventSource.onmessage = (event) => {
       callback(JSON.parse(event.data).state);
     };
-  },
+  }
+
   closeConnections() {
     this.eventSource.onmessage = null;
 
     return this;
-  },
-};
+  }
+}
 
-export default mainModel;
+export { MainModel as default };

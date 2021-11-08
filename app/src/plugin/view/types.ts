@@ -1,12 +1,9 @@
 import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
 
-import {
-  TrackOptions,
-  FixedTrackOptions,
-} from './components/TrackView/ITrackView';
-import { RangeOptions } from './components/RangeView/IRangeView';
-import { TooltipOptions } from './components/TooltipView/ITooltipView';
-import { PipsOptions } from './components/PipsView/IPipsView';
+import { TrackOptions, FixedTrackOptions } from './components/TrackView/types';
+import { RangeOptions } from './components/RangeView/types';
+import { TooltipOptions } from './components/TooltipView/types';
+import { PipsOptions } from './components/PipsView/types';
 
 type Formatter = (value: number) => string;
 type Mode = 'intervals' | 'count' | 'positions' | 'values';
@@ -44,7 +41,7 @@ type RangeSliderState = {
   isActiveThumbs: boolean[];
 };
 
-interface IRangeSliderView
+interface RangeSliderView
   extends MVPView<
     FixedRangeSliderOptions,
     RangeSliderOptions,
@@ -75,7 +72,7 @@ interface IRangeSliderView
 }
 
 export {
-  IRangeSliderView as default,
+  RangeSliderView as default,
   Formatter,
   Mode,
   RangeSliderOptions,

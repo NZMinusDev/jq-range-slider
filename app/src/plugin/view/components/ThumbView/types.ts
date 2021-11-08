@@ -10,7 +10,7 @@ type ThumbState = {
   ariaValueText: string;
 };
 
-interface IThumbView
+interface ThumbView
   extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {}
 
-export { IThumbView as default, ThumbOptions, ThumbState };
+export { ThumbView as default, ThumbOptions, ThumbState };

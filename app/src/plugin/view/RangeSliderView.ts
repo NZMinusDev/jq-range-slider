@@ -9,17 +9,11 @@ import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
 import { ascending } from '@shared/utils/scripts/ProcessingOfPrimitiveDataHelper';
 import { fixLength } from '@shared/utils/scripts/ArrayHelper';
 
-import {
-  FixedTrackOptions,
-  TrackOptions,
-} from './components/TrackView/ITrackView';
-import { RangeOptions } from './components/RangeView/IRangeView';
-import { ThumbOptions, ThumbState } from './components/ThumbView/IThumbView';
-import {
-  TooltipOptions,
-  TooltipState,
-} from './components/TooltipView/ITooltipView';
-import { PipsOptions } from './components/PipsView/IPipsView';
+import { FixedTrackOptions, TrackOptions } from './components/TrackView/types';
+import { RangeOptions } from './components/RangeView/types';
+import { ThumbOptions, ThumbState } from './components/ThumbView/types';
+import { TooltipOptions, TooltipState } from './components/TooltipView/types';
+import { PipsOptions } from './components/PipsView/types';
 import TrackView, {
   DEFAULT_OPTIONS as TRACK_DEFAULT_OPTIONS,
 } from './components/TrackView/TrackView';
@@ -35,7 +29,7 @@ import IRangeSliderView, {
   RangeSliderOptions,
   FixedRangeSliderOptions,
   RangeSliderState,
-} from './IRangeSliderView';
+} from './types';
 import './RangeSliderView.scss';
 
 const DEFAULT_OPTIONS: FixedRangeSliderOptions = {

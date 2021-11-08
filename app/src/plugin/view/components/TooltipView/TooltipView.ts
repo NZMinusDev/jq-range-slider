@@ -5,7 +5,7 @@ import { spread } from '@open-wc/lit-helpers';
 
 import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
 
-import ITooltipView, { TooltipOptions, TooltipState } from './ITooltipView';
+import ITooltipView, { TooltipOptions, TooltipState } from './types';
 import './TooltipView.scss';
 
 const DEFAULT_OPTIONS: Required<TooltipOptions> = {

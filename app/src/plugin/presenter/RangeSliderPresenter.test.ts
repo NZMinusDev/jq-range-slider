@@ -1,9 +1,7 @@
 import '@babel/polyfill';
 import cloneDeep from 'lodash-es/cloneDeep';
 
-import IRangeSliderModel, {
-  RangeSliderState,
-} from '../models/IRangeSliderModel';
+import RangeSliderModel, { RangeSliderState } from '../models/types';
 import RangeSliderPresenter from './RangeSliderPresenter';
 
 describe('plugin presenter', () => {
@@ -16,7 +14,7 @@ describe('plugin presenter', () => {
     serverState.value[0] = Math.random() * 100;
   };
 
-  const model: IRangeSliderModel = {
+  const model: RangeSliderModel = {
     async setState() {
       return this;
     },
@@ -77,11 +75,11 @@ describe('plugin presenter', () => {
 
     describe('methods', () => {
       describe('setModel', () => {
-        let assignedModel: IRangeSliderModel;
-        let newModel: IRangeSliderModel;
+        let assignedModel: RangeSliderModel;
+        let newModel: RangeSliderModel;
 
         beforeEach(() => {
-          assignedModel = presenter.model as IRangeSliderModel;
+          assignedModel = presenter.model as RangeSliderModel;
           newModel = cloneDeep(model);
         });
 
@@ -110,7 +108,7 @@ describe('plugin presenter', () => {
 
         test('after view change state model should get this value for updating', () => {
           const modelSetStateSpy = jest.spyOn(
-            presenter.model as IRangeSliderModel,
+            presenter.model as RangeSliderModel,
             'setState'
           );
           const newState: RangeSliderState = { value: [-10] };

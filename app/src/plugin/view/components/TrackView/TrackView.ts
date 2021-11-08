@@ -11,7 +11,7 @@ import ITrackView, {
   TrackOptions,
   FixedTrackOptions,
   TrackState,
-} from './ITrackView';
+} from './types';
 import './TrackView.scss';
 
 const DEFAULT_OPTIONS: FixedTrackOptions = {
