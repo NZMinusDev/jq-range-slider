@@ -27,8 +27,8 @@ interface MVPModel<State> {
     +whenStateIsChanged(callback: (state: Required<State>) => void): void
     +closeConnections(): this
 }
-interface IRangeSliderModel extends MVPModel
-interface ITrackView extends MVPView {
+interface "RangeSliderModel" as IRangeSliderModel extends MVPModel
+interface "TrackView" as ITrackView extends MVPView {
     +getIntervalsOption(): { [key: string]: number; min: number; max: number; }
     +getStepsOption(): (number | "none")[]
     +getPaddingOption(): [number, number]
@@ -36,11 +36,11 @@ interface ITrackView extends MVPView {
     +setStepsOption(steps?: number | "none" | (number | "none")[] | undefined): this
     +setPaddingOption(padding?: number | [number, number] | undefined): this
 }
-interface IRangeView extends MVPView {
+interface "RangeView" as IRangeView extends MVPView {
     +getIsConnectedOption(): boolean | undefined
     +setIsConnectedOption(connect?: boolean | undefined): this
 }
-interface ITooltipView extends MVPView {
+interface "TooltipView" as ITooltipView extends MVPView {
     +getOrientationOption(): "top" | "left" | undefined
     +getIsHiddenOption(): boolean | undefined
     +getFormatterOption(): Formatter | undefined
@@ -48,7 +48,7 @@ interface ITooltipView extends MVPView {
     +setIsHiddenOption(isHidden?: boolean | undefined): this
     +setFormatterOption(formatter?: Formatter | undefined): this
 }
-interface IPipsView extends MVPView {
+interface "PipsView" as IPipsView extends MVPView {
     +getOrientationOption(): "horizontal" | "vertical" | undefined
     +getIsHiddenOption(): boolean | undefined
     +getValuesOption(): { percent: number; value: number; }[] | undefined
@@ -60,7 +60,7 @@ interface IPipsView extends MVPView {
     +setDensityOption(density?: number | undefined): this
     +setFormatterOption(formatter?: Formatter | undefined): this
 }
-interface IRangeSliderView extends MVPView {
+interface "RangeSliderView" as IRangeSliderView extends MVPView {
     +getIntervalsOption(): { [key: string]: number; min: number; max: number; }
     +getStartOption(): number[]
     +getStepsOption(): (number | "none")[]
@@ -82,7 +82,7 @@ interface IRangeSliderView extends MVPView {
     +get(): number[]
     +set(value?: number | number[] | undefined): this
 }
-interface IThumbView extends MVPView
+interface "ThumbView" as IThumbView extends MVPView
 class TrackView extends MVPView implements ITrackView {
     +template: ({ classInfo, styleInfo, attributes }?: { classInfo?: {} | undefined; styleInfo?: {} | undefined; attributes?: {} | undefined; }, innerHTML?: TemplateResult | TemplateResult[]) => TemplateResult
     +getOrientationOption(): "horizontal" | "vertical"
