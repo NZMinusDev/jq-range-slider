@@ -1,0 +1,15 @@
+include ~@components/common-level/primitives/heading/heading.pug
+include ~@components/common-level/primitives/form-field/form-field.pug
+
+//- 
+  items: { label: string, value: string }[] - radio button items
+  label?: string - text of label
+  name?: string - name of radio group
+  Tip: mixin also uses 'and attributes'(&attributes)
+mixin radio-group(items, { label = '', name = 'radio-group' })
+  .radio-group&attributes(attributes)
+    if label !== ''
+      +heading({ h3: label })
+    fieldset.radio-group__group(id=name, role="radiogroup")
+      each item, index in items
+        +form-field({ label: item.label, name, id: `${name}-${item.value}`, type: 'radio', value: item.value })

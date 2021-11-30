@@ -55,9 +55,8 @@
   "path-autocomplete.pathMappings": {
     "@layouts": "${folder}/app/src/layouts",
     "@plugin": "${folder}/app/src/plugin/",
-    "@views": "${folder}/app/src/components/views/",
-    "@models": "${folder}/app/src/components/models/",
-    "@presenters": "${folder}/app/src/components/presenters/",
+    "@components": "${folder}/app/src/components/",
+    "@features": "${folder}/app/src/features/",
     "@shared": "${folder}/app/src/shared/",
     "@assets": "${folder}/app/src/assets/"
   },

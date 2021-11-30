@@ -1,0 +1,40 @@
+include ~@components/common-level/primitives/form-field/form-field.pug
+include ~@components/common-level/containers/radio-group/radio-group.pug
+include ~@components/common-level/primitives/button/button.pug
+
+//- 
+  Tip: mixin also uses 'and attributes'(&attributes)
+mixin slider-config
+  fieldset.slider-config.js-slider-config&attributes(attributes)
+    legend.slider-config__legend Configuration
+    .slider-config__item
+      +radio-group([{ label: 'horizontal', value: 'horizontal' }, { label: 'vertical', value: 'vertical' }], { label: 'orientation', name: 'orientation' })
+    .slider-config__item
+      +form-field({ label: 'min', name: 'min', type: 'number', placeItems: 'center', inputTextAlign: 'center' })
+    .slider-config__item
+      +form-field({ label: 'max', name: 'max', type: 'number', placeItems: 'center', inputTextAlign: 'center' })
+    .slider-config__item
+      +form-field({ label: 'left padding', name: 'pad-left', type: 'number', placeItems: 'center', inputTextAlign: 'center' })
+    .slider-config__item
+      +form-field({ label: 'right padding', name: 'pad-right', type: 'number', placeItems: 'center', inputTextAlign: 'center' })
+    .slider-config__item
+      +form-field({ label: 'start', description: 'number | number[]', name: 'start', placeItems: 'center', inputTextAlign: 'center' })
+    .slider-config__item
+      +form-field({ label: 'steps', description: 'number | "none" | (number | "none")[]', name: 'steps', placeItems: 'center', inputTextAlign: 'center' })
+    .slider-config__item
+      +form-field({ label: 'connect', description: 'boolean | boolean[]', name: 'connect', placeItems: 'center', inputTextAlign: 'center' })
+    .slider-config__item
+      +form-field({ label: 'intervals', description: '{ [`${number}%`]: number }', name: 'intervals', type: 'textarea', placeItems: 'center', inputTextAlign: 'center', inputResize: 'none' })
+    .slider-config__item
+      +form-field({ label: 'tooltips', description: 'boolean | (boolean | Formatter)[]', name: 'tooltips', placeItems: 'center', inputTextAlign: 'center' })
+    fieldset.slider-config__control-panel-item
+      legend.slider-config__legend pips
+      .slider-config__item
+        +radio-group([{ label: 'intervals', value: 'intervals' }, { label: 'count', value:'count' }, { label: 'positions', value: 'positions' }, { label: 'values', value: 'values'}], { label: 'mode of intervals', name: 'mode' })
+      .slider-config__item
+        +form-field({ label: 'pips density', name: 'pips-density', type: 'number', placeItems: 'center',inputTextAlign: 'center' })
+      .slider-config__item
+        +form-field({ label: 'pips values', description: 'number | number[]', name:'pips-values', placeItems: 'center', inputTextAlign: 'center' })
+      .slider-config__item
+        +form-field({ label: 'hide pips', name: 'pips-is-hidden', type: 'toggle', placeItems: 'center' })
+    +button(type="button", name="reset", value="reset slider config")

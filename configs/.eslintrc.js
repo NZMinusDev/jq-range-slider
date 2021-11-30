@@ -111,9 +111,8 @@ const config = {
         map: [
           ['@layouts', './app/src/layouts/'],
           ['@plugin', './app/src/plugin/'],
-          ['@views', './app/src/components/views/'],
-          ['@models', './app/src/components/models/'],
-          ['@presenters', './app/src/components/presenters/'],
+          ['@components', './app/src/components/'],
+          ['@features', './app/src/features/'],
           ['@shared', './app/src/shared/'],
           ['@assets', './app/src/assets/'],
         ],

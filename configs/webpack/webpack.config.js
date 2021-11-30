@@ -31,15 +31,14 @@ const PATHS = {
   PUBLIC_ABSOLUTE: path.resolve(__dirname, '../../app/public/'),
 };
 
-const redefinitionLevels = ['layouts', 'components/views/common-level'];
+const redefinitionLevels = ['layouts', 'components/common-level'];
 const componentGroups = ['basic', 'containers', 'primitives', 'specific'];
 
 const sharedAliases = {
   '@layouts': path.resolve(PATHS.SRC_ABSOLUTE, './layouts/'),
   '@plugin': path.resolve(PATHS.SRC_ABSOLUTE, './plugin/'),
-  '@views': path.resolve(PATHS.SRC_ABSOLUTE, './components/views/'),
-  '@models': path.resolve(PATHS.SRC_ABSOLUTE, './components/models/'),
-  '@presenters': path.resolve(PATHS.SRC_ABSOLUTE, './components/presenters/'),
+  '@components': path.resolve(PATHS.SRC_ABSOLUTE, './components/'),
+  '@features': path.resolve(PATHS.SRC_ABSOLUTE, './features/'),
   '@shared': path.resolve(PATHS.SRC_ABSOLUTE, './shared/'),
   '@assets': path.resolve(PATHS.SRC_ABSOLUTE, './assets/'),
 };

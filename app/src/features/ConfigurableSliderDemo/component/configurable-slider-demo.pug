@@ -1,0 +1,33 @@
+include ~@components/common-level/primitives/slider/slider.pug
+include ~@components/common-level/containers/events-logger/events-logger.pug
+include ~@components/common-level/primitives/form-field/form-field.pug
+include ~@components/common-level/primitives/button/button.pug
+include ~@components/common-level/containers/slider-events-emission-table/slider-events-emission-table.pug
+include ~@components/common-level/containers/slider-config/slider-config.pug
+
+//- 
+  action?: string - form action
+  name?: string - name of <form>, also it is used such prefix for names of inner forms
+  method?: 'get' | 'post' - form method
+  Tip: mixin also uses 'and attributes'(&attributes)
+mixin configurable-slider-demo({ action = undefined, name = 'configurable-slider-demo', method = 'post' } = {})
+  .configurable-slider-demo.js-configurable-slider-demo&attributes(attributes)
+    .configurable-slider-demo__slider.js-configurable-slider-demo__slider
+      +slider
+    +events-logger(['Start', 'Slide', 'Update', 'Change', 'Set', 'End', 'Render'])
+    form.configurable-slider-demo__submit.js-configurable-slider-demo__submit(
+      action=action,
+      name=name,
+      method=method
+    )
+      +form-field({ name: `${name}-setter`, type: 'text' })
+      +button(type="submit", name=`${name}-set`, value=".set(...values)")
+      +button(
+        type="reset",
+        name=`${name}-reset`,
+        value="reset slider value"
+      )
+    .configurable-slider-demo__server-response.js-configurable-slider-demo__server-response
+      +form-field({ label: 'Server response', name: `${name}-server-response`, type: 'textarea', inputResize: 'none', orientation: 'column', inputTextAlign: 'center', readonly: true })
+    +slider-events-emission-table
+    +slider-config
