@@ -23,7 +23,7 @@ It's slider plugin using MVP pattern. It also contains script for connecting to 
 ### Options
 
 ```ts
-const RANGE_SLIDER_OPTIONS = {
+const options = {
   intervals?: { // min, max and intermediate values, default is { min: -100, max: 100 }
      [key: string]: number; // only "<number>%" key is accepted, number should be > 0 && < 100
         min: number;
@@ -47,7 +47,9 @@ const RANGE_SLIDER_OPTIONS = {
      isHidden?: boolean; // default is false
   }
 };
-const RANGE_SLIDER_MODEL = {
+
+// should to be created by yourself for your needs if you want slider with server connecting out of box
+const facadeModel = {
    eventSource: new EventSource('/stateChanger'),
   //to be executed on "set" event of slider
   async setState(state) {
@@ -111,22 +113,7 @@ getOptions(): {
     isHidden: boolean;
   }
 };
-getIntervalsOption(): { [key: string]: number; min: number; max: number; };
-getStartOption(): number[];
-getStepsOption(): (number | "none")[];
-getConnectOption(): boolean[];
-getOrientationOption(): "horizontal" | "vertical"
-getPaddingOption(): [number, number];
-getFormatterOption(): (value: number) => string;
-getTooltipsOption(): (boolean | Formatter)[];
-getPipsOption(): {
-  mode: "intervals" | "count" | "positions" | "values";
-  values: number | number[];
-  density: number;
-  isHidden: boolean;
-}
 
-// runs render, tip: call with empty object if you need just emit render
 // to do reset pass undefined
 setOptions(options?: {
   intervals: { [key: string]: number; min: number; max: number; }
@@ -144,30 +131,25 @@ setOptions(options?: {
     isHidden: boolean;
   }
 }): this;
-// don't run render
-// to do reset pass undefined
-setIntervalsOption(intervals?: { [key: string]: number; min: number; max: number; }): this;
-setStartOption(start?: number | number[]): this;
-setStepsOption(steps?: number | "none" | (number | "none")[]): this;
-setConnectOption(connect?: boolean | boolean[]): this;
-setOrientationOption(orientation?: "horizontal" | "vertical"): this;
-setPaddingOption(padding?: number | [number, number]): this;
-setFormatterOption(formatter?: (value: number) => string): this;
-setTooltipsOption(tooltips?: boolean | (boolean | Formatter)[]): this;
-setPipsOption(pips?: {
-  mode: "intervals" | "count" | "positions" | "values";
-  values: number | number[];
-  density: number;
-  isHidden: boolean;
-}): this;
+
+// see options
+setFacadeModel(facadeModel): Promise<{ value: number[] }>;
 
 get(): number[];
 // to do reset pass undefined
 set(value?: number | number[]): this;
 
-on(eventName: "start" | "slide" | "update" | "change" | "set" | "end" | "render" | "remove", handler: ((..args: any) => void) | { handleEvent(...args: any): void; }): this;
-off(eventName: "start" | "slide" | "update" | "change" | "set" | "end" | "render" | "remove", handler: (...args: any) => void): this;
-trigger(eventName: "start" | "slide" | "update" | "change" | "set" | "end" | "render" | "remove", ...args: any): this;
+// eventName -> handler args:
+// start: { thumbIndex: number };
+// slide: { thumbIndex: number; newValue: number }; // newValue isn't validated
+// update: {};
+// change: {};
+// set: {};
+// end: { thumbIndex: number };
+// render: {};
+// response: { value: number[] };
+on(eventName: "start" | "slide" | "update" | "change" | "set" | "end" | "render" | "response", handler: ((...args:any) => void) | { handleEvent(...args:any): void; }): this;
+off(eventName: "start" | "slide" | "update" | "change" | "set" | "end" | "render" | "response", handler: ((...args:any) => void) | { handleEvent(...args:any): void; }): this;
 
 remove(): this;
 ```
@@ -186,11 +168,7 @@ Init:
 ```js
 new window.RangeSliderPresenter(
   document.querySelector('.slider-container'),
-  (reason) => {
-    console.error(reason);
-  }, // errorCatcher
-  RANGE_SLIDER_OPTIONS, // it's optional
-  RANGE_SLIDER_MODEL // it's optional
+  { options, facadeModel } // it's optional
 );
 ```
 
@@ -214,11 +192,8 @@ init:
 
 ```js
 const sliders = $('.slider-container').initRangeSlider(
-  (reason) => {
-    console.error(reason);
-  }, // errorCatcher
-  RANGE_SLIDER_OPTIONS, // it's optional
-  RANGE_SLIDER_MODEL // it's optional
+  options, // it's optional
+  facadeModel // it's optional
 );
 ```
 
@@ -317,15 +292,21 @@ Script-names:
 
 #### Architecture
 
-The project does not rely on external dependencies. But if you need to use jQuery, then you must connect it higher in the code.
+The project does not rely on external global dependencies. But if you need to use jQuery, then you must connect it higher in the code.
 
-Project is builded on Model-View-Presenter pattern with Passive View. This pattern allows you to get functionally meaningful modules loosely connected to each other and useful in themselves. The architecture is loosely coupled due to the interfaces for model and view.
+Project is builded on Model-View-Presenter pattern. This pattern allows you to get functionally meaningful modules loosely connected to each other and useful in themselves. The architecture is loosely coupled due to the abstract classes for model and view modules.
 
 Modules:
 
-- _model_: it's _facade_ for getting and setting data from your _domain model_(models the subject area and implements business logic). It knows nothing about either _view_ or _controller_ but can emits event about updated data for subscribes - active model. Also _model_ is thin(data only without business logic);
-- _view_: GUI - it displays model data and responds to user actions also it contains the display logic and local state. _View_ is passive here - the data in the _view_ is supplied by the _controller_ (_view_ and _model_ are independent of each other). The main slider display consists of subviews that make up the general display template and gets the pieces of the general state necessary for operation when it is updated;
-- _presenter_: the logic of translating user actions into model methods and model actions to view methods. It knows about _view_ and _model_ thanks to their interfaces.
+- _model_: it knows nothing about either _view_ or _controller_ but can emits event with updated data for subscribers. It consists of _presentation model_ and _facade model_:
+  - _presentation model_: it serves presentation options with local state and validates them(thick model with imperative code). Provides getter/setter methods for manipulation of options and state. It can accept _facade model_ and binds with this. It emits 'set'(if options/state is updated - actually by a user interaction) and 'response'(if _facade model_ received state) events;
+  - _facade model_: it's for getting and setting data from your _domain model_(models the subject area and implements business logic).
+- _view_: template of GUI - it converts data to display template and catches user actions when template is rendered. _View_ is passive(_controller_ provides data to _view_) and dumb(also known as thin: declarative presentation logic). The main display template consists of subviews templates that make up the general display template and gets the pieces of the general data necessary for operation when it is updated;
+- _controller_(also known as _presenter_ here): the logic of translating _view_ events (user interactions) into _model_ methods and _model_ events (after validation, server response, manual calls from code) to the rendering of _view_ - if necessary it converts view data to model data and model data to view data. It knows about _view_ and _model_ thanks to their abstract classes.
+
+The loop of the simplest data exchange:
+
+user interacts -> view emit event with desired data of state to display -> presenter gets view's event and calls model setState method, also model can be updated from code -> model updates it's state with validation and emits event with new state -> presenter gets model's event (after manual model updating or after server's state changing) and supplies data to view and gets view's template to rerendering.
 
 #### Class diagram
 

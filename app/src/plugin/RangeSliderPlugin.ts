@@ -53,8 +53,17 @@ class RangeSliderPlugin {
     return [...this.model.getState().value];
   }
 
-  set(value?: number[]) {
-    this.model.setState({ value });
+  set(value?: number | number[]) {
+    const { start } = this.model.getOptions();
+    let values: number[];
+
+    if (value !== undefined) {
+      values = Array.isArray(value) ? [...value] : start.fill(value);
+    } else {
+      values = start;
+    }
+
+    this.model.setState({ value: values });
 
     this.view.trigger('update', {}).trigger('set', {});
 

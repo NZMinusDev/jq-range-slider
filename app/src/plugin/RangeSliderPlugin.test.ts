@@ -47,6 +47,15 @@ describe('RangeSliderPlugin', () => {
     expect(plugin.get()).not.toBe(value);
   });
 
+  test('set method should set all values to passed number', () => {
+    const values = plugin.get();
+    const [valueToPass] = values;
+
+    plugin.set(valueToPass);
+
+    expect(plugin.get()).toStrictEqual(values.fill(valueToPass));
+  });
+
   test('when set method have been called update and set events have been emitted', () => {
     plugin.on('update', callbackMock);
     plugin.on('set', callbackMock);

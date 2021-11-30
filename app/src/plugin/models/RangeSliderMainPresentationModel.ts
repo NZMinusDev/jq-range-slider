@@ -34,8 +34,15 @@ class RangeSliderMainPresentationModel extends RangeSliderAbstractPresentationMo
     facadeModel?: IRangeSliderFacadeModel;
   } = {}) {
     const start = options?.start;
+
+    let value: number[] | undefined;
+
+    if (start !== undefined) {
+      value = Array.isArray(start) ? [...start] : [start];
+    }
+
     const state = {
-      value: Array.isArray(start) ? [...start] : DEFAULT_STATE.value,
+      value,
     };
 
     super(DEFAULT_OPTIONS, DEFAULT_STATE, {
