@@ -1,89 +1,65 @@
-import defaultsDeep from 'lodash-es/defaultsDeep';
+import AbstractPresenter from '@shared/utils/scripts/components/MVP/AbstractPresenter';
 
-import { Unpacked } from '@shared/utils/scripts/TypingHelper';
-import { renderMVPView } from '@shared/utils/scripts/view/MVPHelper';
+import RangeSliderAbstractPresentationModel from '../models/RangeSliderAbstractPresentationModel';
+import RangeSliderAbstractView from '../view/RangeSliderAbstractView';
+import { RangeSliderAbstractViewEvents } from '../view/types';
 
-import IRangeSliderModel from '../models/types';
-import IRangeSliderView, { RangeSliderOptions } from '../view/types';
-import RangeSliderView from '../view/RangeSliderView';
-
-type ErrorCatcher = (reason: unknown) => void;
-
-class RangeSliderPresenter {
-  readonly view: IRangeSliderView;
-
-  model?: IRangeSliderModel;
-
-  constructor(
-    container: HTMLElement,
-    errorCatcher: ErrorCatcher,
-    viewOptions?: RangeSliderOptions,
-    model?: IRangeSliderModel
-  ) {
-    this.view = renderMVPView(
-      RangeSliderView,
-      [viewOptions] as [RangeSliderOptions],
-      container
-    );
-
-    if (model !== undefined) {
-      this.setModel(model, errorCatcher);
-    }
-  }
-
-  setModel(model: IRangeSliderModel, errorCatcher: ErrorCatcher) {
-    if (this.model !== undefined) {
-      this.model.closeConnections();
-    }
-
-    this.model = defaultsDeep({}, model);
-
-    this.model
-      ?.getState()
-      .then((state) => {
-        this._initModelViewBinding();
-        this._updateViewDisplay(state);
-
-        return this;
-      })
-      .catch(errorCatcher);
-
-    return this;
-  }
-
-  protected handleViewSet = () => {
-    this.model?.setState({ value: this.view.get() });
-  };
-
-  protected _updateViewDisplay(
-    state: Unpacked<ReturnType<IRangeSliderModel['getState']>>
-  ) {
-    this.view.set(state.value);
-
-    return this;
-  }
-
+class RangeSliderPresenter extends AbstractPresenter<
+  RangeSliderAbstractView,
+  RangeSliderAbstractPresentationModel
+> {
   protected _initModelViewBinding() {
-    this.view.on('set', this.handleViewSet);
-    this.model?.whenStateIsChanged((state) => {
-      this._updateViewDisplay(state);
-    });
+    super._initModelViewBinding();
+
+    this._view.on('start', this.handleViewStart.bind(this));
+    this._view.on('slide', this.handleViewSlide.bind(this));
+    this._view.on('end', this.handleViewEnd.bind(this));
+    this._view.on('set', this.handelViewSet.bind(this));
 
     return this;
   }
+
+  protected _removeModelViewBinding() {
+    super._removeModelViewBinding();
+
+    this._view.off('start', this.handleViewStart.bind(this));
+    this._view.off('slide', this.handleViewSlide.bind(this));
+    this._view.off('end', this.handleViewEnd.bind(this));
+    this._view.off('set', this.handelViewSet.bind(this));
+
+    return this;
+  }
+
+  protected handleViewStart(details: RangeSliderAbstractViewEvents['start']) {
+    const { thumbIndex } = details;
+    const { thumbs } = this._model.getState();
+
+    thumbs[thumbIndex].isActive = true;
+
+    this._model.setState({ thumbs });
+  }
+
+  protected handleViewSlide(details: RangeSliderAbstractViewEvents['slide']) {
+    const { thumbIndex, newValue } = details;
+    const { value } = this._model.getState();
+
+    value[thumbIndex] = newValue;
+
+    this._model.setState({ value });
+  }
+
+  protected handleViewEnd(details: RangeSliderAbstractViewEvents['end']) {
+    const { thumbIndex } = details;
+    const { thumbs } = this._model.getState();
+
+    thumbs[thumbIndex].isActive = false;
+
+    this._model.setState({ thumbs });
+  }
+
+  protected handelViewSet() {
+    this._model.sendState();
+  }
 }
 
-interface RangeSliderPresenterConstructor {
-  new (
-    container: HTMLElement,
-    errorCatcher: ErrorCatcher,
-    viewOptions?: RangeSliderOptions,
-    model?: IRangeSliderModel
-  ): RangeSliderPresenter;
-}
-
-export {
-  RangeSliderPresenter as default,
-  RangeSliderPresenterConstructor,
-  ErrorCatcher,
-};
+export { RangeSliderPresenter as default };

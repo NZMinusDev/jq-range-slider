@@ -3,21 +3,20 @@ import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import AbstractView from '@shared/utils/scripts/components/MVP/AbstractView';
 
-import IRangeView, { RangeOptions, RangeState } from './types';
+import {
+  RangeViewOptions,
+  RangeViewState,
+  RangeViewIsolatedEvents,
+} from './types';
 import './RangeView.scss';
 
-const DEFAULT_OPTIONS: Required<RangeOptions> = {
-  isConnected: false,
-};
-
-const DEFAULT_STATE: RangeState = {};
-
-class RangeView
-  extends MVPView<Required<RangeOptions>, RangeOptions, RangeState>
-  implements IRangeView
-{
+class RangeView extends AbstractView<
+  Required<RangeViewOptions>,
+  Required<RangeViewState>,
+  RangeViewIsolatedEvents
+> {
   readonly template = ({
     classInfo = {},
     styleInfo = {},
@@ -33,25 +32,6 @@ class RangeView
       ...=${spread(attributes)}
       style=${styleMap({ ...styleInfo })}
     ></div>`;
-
-  constructor(
-    options: RangeOptions = DEFAULT_OPTIONS,
-    state: RangeState = DEFAULT_STATE
-  ) {
-    super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
-      theOrderOfIteratingThroughTheOptions: ['isConnected'],
-    });
-  }
-
-  getIsConnectedOption() {
-    return this._options.isConnected;
-  }
-
-  setIsConnectedOption(isConnected = DEFAULT_OPTIONS.isConnected) {
-    this._options.isConnected = isConnected;
-
-    return this;
-  }
 }
 
-export { RangeView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { RangeView as default };

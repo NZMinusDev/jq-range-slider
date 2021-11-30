@@ -1,29 +1,25 @@
-import defaultsDeep from 'lodash-es/defaultsDeep';
 import { html } from 'lit-html';
 import { ClassInfo, classMap } from 'lit-html/directives/class-map';
 import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
-import { collapsingParseInt } from '@shared/utils/scripts/ParserHelper';
+import AbstractView from '@shared/utils/scripts/components/MVP/AbstractView';
+import { Unpacked } from '@shared/utils/scripts/TypingHelper';
 
-import IPipsView, { PipsOptions, PipsState } from './types';
+import {
+  PipsViewOptions,
+  PipsViewState,
+  PipsViewIsolatedEvents,
+  PipsViewDOMEvents,
+} from './types';
+
 import './PipsView.scss';
 
-const DEFAULT_OPTIONS: Required<PipsOptions> = {
-  orientation: 'horizontal',
-  isHidden: false,
-  values: [],
-  density: 1,
-  formatter: (value: number) => value.toFixed(2).toLocaleString(),
-};
-
-const DEFAULT_STATE: PipsState = {};
-
-class PipsView
-  extends MVPView<Required<PipsOptions>, PipsOptions, PipsState>
-  implements IPipsView
-{
+class PipsView extends AbstractView<
+  Required<PipsViewOptions>,
+  Required<PipsViewState>,
+  PipsViewIsolatedEvents
+> {
   readonly template = ({
     classInfo = {},
     styleInfo = {},
@@ -42,100 +38,6 @@ class PipsView
     >
       ${this._getPipsRender()}
     </div>`;
-
-  constructor(
-    options: PipsOptions = DEFAULT_OPTIONS,
-    state: PipsState = DEFAULT_STATE
-  ) {
-    super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {
-      theOrderOfIteratingThroughTheOptions: [
-        'isHidden',
-        'values',
-        'density',
-        'formatter',
-      ],
-    });
-  }
-
-  getOrientationOption() {
-    return this._options.orientation;
-  }
-
-  getIsHiddenOption() {
-    return this._options.isHidden;
-  }
-
-  getValuesOption() {
-    return [...this._options.values];
-  }
-
-  getDensityOption() {
-    return this._options.density;
-  }
-
-  getFormatterOption() {
-    return this._options.formatter;
-  }
-
-  setOrientationOption(
-    orientation: PipsOptions['orientation'] = DEFAULT_OPTIONS.orientation
-  ) {
-    this._options.orientation = orientation;
-
-    return this;
-  }
-
-  setIsHiddenOption(
-    isHidden: PipsOptions['isHidden'] = DEFAULT_OPTIONS.isHidden
-  ) {
-    this._options.isHidden = isHidden;
-
-    return this;
-  }
-
-  setValuesOption(values: PipsOptions['values'] = DEFAULT_OPTIONS.values) {
-    this._options.values = defaultsDeep([], values);
-    this._fixValuesOption();
-
-    return this;
-  }
-
-  setDensityOption(density: PipsOptions['density'] = DEFAULT_OPTIONS.density) {
-    this._options.density = density;
-    this._fixDensityOption();
-
-    return this;
-  }
-
-  setFormatterOption(
-    formatter: PipsOptions['formatter'] = DEFAULT_OPTIONS.formatter
-  ) {
-    this._options.formatter = formatter;
-
-    return this;
-  }
-
-  protected _fixValuesOption() {
-    this._options.values = this._options.values
-      .filter((value) => value.percent >= 0 && value.percent <= 100)
-      .sort((a, b) => a.percent - b.percent);
-
-    return this;
-  }
-
-  protected _fixDensityOption() {
-    this._options.density =
-      this._options.density < 0
-        ? DEFAULT_OPTIONS.density
-        : this._options.density;
-
-    this._options.density =
-      this._options.density > 3 ? 3 : this._options.density;
-
-    this._options.density = collapsingParseInt(`${this._options.density}`);
-
-    return this;
-  }
 
   protected _getPipsRender() {
     if (this._options.values.length < 1) {
@@ -173,7 +75,7 @@ class PipsView
         );
       }
 
-      const valueTemplate = this._getValueRender(longMarkerStyles, value.value);
+      const valueTemplate = this._getValueRender(longMarkerStyles, value);
 
       if (values[index + 1] !== undefined) {
         rangeShift = values[index + 1].percent - value.percent;
@@ -212,7 +114,10 @@ class PipsView
     });
   }
 
-  protected _getValueRender(styleInfo: StyleInfo, value: number) {
+  protected _getValueRender(
+    styleInfo: StyleInfo,
+    value: Unpacked<PipsViewOptions['values']>
+  ) {
     const valueClasses: ClassInfo = {
       'range-slider__pips-value': true,
       'js-range-slider__pips-value': true,
@@ -221,10 +126,24 @@ class PipsView
     return html`<div
       class=${classMap(valueClasses)}
       style=${styleMap(styleInfo)}
-      data-value=${value}
-      data-formatted-value=${this._options.formatter(value)}
+      @click=${this._valuePipEventListenerObject.handleValuePipClick.bind(
+        this,
+        value
+      )}
+      data-formatted-value=${this._options.formatter(value.value)}
     ></div>`;
   }
+
+  protected _valuePipEventListenerObject = {
+    handleValuePipClick: (
+      value: Unpacked<PipsViewOptions['values']>,
+      event: PipsViewDOMEvents['click']
+    ) => {
+      const theEvent = event;
+
+      theEvent.data = { ...value };
+    },
+  };
 }
 
-export { PipsView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { PipsView as default };

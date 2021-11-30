@@ -1,25 +1,22 @@
-import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import { AbstractViewEvents } from '@shared/utils/scripts/components/MVP/AbstractView';
 
 type Formatter = (value: number) => string;
 
-type TooltipOptions = {
-  orientation?: 'top' | 'left';
-  isHidden?: boolean;
-  formatter?: Formatter;
+type TooltipViewOptions = {
+  orientation: 'top' | 'left';
+  isHidden: boolean;
+  formatter: Formatter;
 };
 
-type TooltipState = {
+type TooltipViewState = {
   value: number;
 };
 
-interface TooltipView
-  extends MVPView<Required<TooltipOptions>, TooltipOptions, TooltipState> {
-  getOrientationOption(): TooltipOptions['orientation'];
-  getIsHiddenOption(): TooltipOptions['isHidden'];
-  getFormatterOption(): TooltipOptions['formatter'];
-  setOrientationOption(orientation: TooltipOptions['orientation']): this;
-  setIsHiddenOption(isHidden?: TooltipOptions['isHidden']): this;
-  setFormatterOption(formatter?: TooltipOptions['formatter']): this;
-}
+type TooltipViewIsolatedEvents = AbstractViewEvents & {};
 
-export { TooltipView as default, Formatter, TooltipOptions, TooltipState };
+export {
+  Formatter,
+  TooltipViewOptions,
+  TooltipViewState,
+  TooltipViewIsolatedEvents,
+};

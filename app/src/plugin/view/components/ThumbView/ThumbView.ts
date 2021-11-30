@@ -3,25 +3,20 @@ import { classMap } from 'lit-html/directives/class-map';
 import { styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import AbstractView from '@shared/utils/scripts/components/MVP/AbstractView';
 
-import IThumbView, { ThumbOptions, ThumbState } from './types';
+import {
+  ThumbViewOptions,
+  ThumbViewState,
+  ThumbViewIsolatedEvents,
+} from './types';
 import './ThumbView.scss';
 
-const DEFAULT_OPTIONS: Required<ThumbOptions> = {};
-
-const DEFAULT_STATE: ThumbState = {
-  ariaOrientation: 'horizontal',
-  ariaValueMin: -1,
-  ariaValueMax: -1,
-  ariaValueNow: -1,
-  ariaValueText: '-1',
-};
-
-class ThumbView
-  extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState>
-  implements IThumbView
-{
+class ThumbView extends AbstractView<
+  Required<ThumbViewOptions>,
+  Required<ThumbViewState>,
+  ThumbViewIsolatedEvents
+> {
   protected static ariaAttributePrecision = 2;
 
   readonly template = (
@@ -70,17 +65,10 @@ class ThumbView
       </div>
     </div>`;
 
-  constructor(
-    options: ThumbOptions = DEFAULT_OPTIONS,
-    state: ThumbState = DEFAULT_STATE
-  ) {
-    super(DEFAULT_OPTIONS, DEFAULT_STATE, options, state, {});
-  }
-
   // eslint-disable-next-line class-methods-use-this
-  protected _onDragstart() {
+  protected onDragstart() {
     return false;
   }
 }
 
-export { ThumbView as default, DEFAULT_OPTIONS, DEFAULT_STATE };
+export { ThumbView as default };

@@ -1,23 +1,14 @@
 /// <reference path="./jq-range-slider-plugin.d.ts" />
 
 (function ($, window, undefined) {
-  $.fn.initRangeSlider = function (
-    errorCatcher,
-    viewOptions,
-    rangeSliderModel
-  ) {
-    const presenters = [];
+  $.fn.initRangeSlider = function (options, facadeModel) {
+    const rangeSliderPlugins = [];
     this.each(function () {
-      presenters.push(
-        new window.RangeSliderPresenter(
-          this,
-          errorCatcher,
-          viewOptions,
-          rangeSliderModel
-        )
+      rangeSliderPlugins.push(
+        new window.RangeSliderPresenter(this, { options, facadeModel })
       );
     });
 
-    return presenters;
+    return rangeSliderPlugins;
   };
 })(jQuery, window);

@@ -1,5 +1,5 @@
 import './range-slider-plugin.d';
 
-import RangeSliderPresenter from './presenter/RangeSliderPresenter';
+import RangeSliderPlugin from './RangeSliderPlugin';
 
-window.RangeSliderPresenter = RangeSliderPresenter;
+window.RangeSliderPlugin = RangeSliderPlugin;

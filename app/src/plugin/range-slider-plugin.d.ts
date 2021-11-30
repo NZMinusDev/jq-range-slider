@@ -1,9 +1,9 @@
 interface Window {
-  RangeSliderPresenter: {
+  RangeSliderPlugin: {
     new (
       ...args: ConstructorParameters<
-        import('./presenter/RangeSliderPresenter').RangeSliderPresenterConstructor
+        typeof import('./RangeSliderPlugin').default
       >
-    ): import('./presenter/RangeSliderPresenter').default;
+    ): import('./RangeSliderPlugin').default;
   };
 }

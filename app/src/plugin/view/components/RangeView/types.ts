@@ -1,15 +1,11 @@
-import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import { AbstractViewEvents } from '@shared/utils/scripts/components/MVP/AbstractView';
 
-type RangeOptions = {
-  isConnected?: boolean;
+type RangeViewOptions = {
+  isConnected: boolean;
 };
 
-type RangeState = {};
+type RangeViewState = {};
 
-interface RangeView
-  extends MVPView<Required<RangeOptions>, RangeOptions, RangeState> {
-  getIsConnectedOption(): RangeOptions['isConnected'];
-  setIsConnectedOption(connect?: RangeOptions['isConnected']): this;
-}
+type RangeViewIsolatedEvents = AbstractViewEvents & {};
 
-export { RangeView as default, RangeOptions, RangeState };
+export { RangeViewOptions, RangeViewState, RangeViewIsolatedEvents };

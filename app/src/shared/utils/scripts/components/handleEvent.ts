@@ -17,4 +17,4 @@ function handleEvent(event: Event, elementName?: string) {
   return this;
 }
 
-export { handleEvent };
+export { handleEvent as default };

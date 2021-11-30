@@ -1,29 +1,11 @@
-import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import { AbstractViewEvents } from '@shared/utils/scripts/components/MVP/AbstractView';
 
-type TrackOptions = {
-  orientation?: 'horizontal' | 'vertical';
-  intervals?: { min: number; max: number; [key: string]: number };
-  steps?: 'none' | number | ('none' | number)[];
-  padding?: number | [number, number];
+type TrackViewOptions = {
+  orientation: 'horizontal' | 'vertical';
 };
 
-type FixedTrackOptions = {
-  orientation: Required<TrackOptions>['orientation'];
-  intervals: Required<TrackOptions>['intervals'];
-  steps: ('none' | number)[];
-  padding: [number, number];
-};
+type TrackViewState = {};
 
-type TrackState = {};
+type TrackViewIsolatedEvents = AbstractViewEvents & {};
 
-interface TrackView
-  extends MVPView<FixedTrackOptions, TrackOptions, TrackState> {
-  getIntervalsOption(): FixedTrackOptions['intervals'];
-  getStepsOption(): FixedTrackOptions['steps'];
-  getPaddingOption(): FixedTrackOptions['padding'];
-  setIntervalsOption(intervals?: TrackOptions['intervals']): this;
-  setStepsOption(steps?: TrackOptions['steps']): this;
-  setPaddingOption(padding?: TrackOptions['padding']): this;
-}
-
-export { TrackView as default, TrackOptions, FixedTrackOptions, TrackState };
+export { TrackViewOptions, TrackViewState, TrackViewIsolatedEvents };

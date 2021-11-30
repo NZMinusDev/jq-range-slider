@@ -1,8 +1,8 @@
-import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import { AbstractViewEvents } from '@shared/utils/scripts/components/MVP/AbstractView';
 
-type ThumbOptions = {};
+type ThumbViewOptions = {};
 
-type ThumbState = {
+type ThumbViewState = {
   ariaOrientation: 'horizontal' | 'vertical';
   ariaValueMin: number;
   ariaValueMax: number;
@@ -10,7 +10,6 @@ type ThumbState = {
   ariaValueText: string;
 };
 
-interface ThumbView
-  extends MVPView<Required<ThumbOptions>, ThumbOptions, ThumbState> {}
+type ThumbViewIsolatedEvents = AbstractViewEvents & {};
 
-export { ThumbView as default, ThumbOptions, ThumbState };
+export { ThumbViewOptions, ThumbViewState, ThumbViewIsolatedEvents };

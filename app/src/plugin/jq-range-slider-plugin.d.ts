@@ -1,7 +1,16 @@
+import { Unpacked } from '@shared/utils/scripts/TypingHelper';
+
 interface JQuery {
   initRangeSlider(
-    errorCatcher: import('./presenter/RangeSliderPresenter').ErrorCatcher,
-    viewOptions?: Partial<import('./view/types').RangeSliderOptions>,
-    rangeSliderModel?: import('./models/types').default
+    options?: Unpacked<
+      NonNullable<
+        ConstructorParameters<typeof import('./RangeSliderPlugin').default>[1]
+      >['options']
+    >,
+    facadeModel?: Unpacked<
+      NonNullable<
+        ConstructorParameters<typeof import('./RangeSliderPlugin').default>[1]
+      >['facadeModel']
+    >
   ): import('./presenter/RangeSliderPresenter').default[];
 }

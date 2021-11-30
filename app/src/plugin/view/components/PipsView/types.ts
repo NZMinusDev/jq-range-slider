@@ -1,29 +1,28 @@
-import { MVPView } from '@shared/utils/scripts/view/MVPHelper';
+import { AbstractViewEvents } from '@shared/utils/scripts/components/MVP/AbstractView';
+import { Unpacked } from '@shared/utils/scripts/TypingHelper';
 
 type Formatter = (value: number) => string;
 
-type PipsOptions = {
-  orientation?: 'horizontal' | 'vertical';
-  isHidden?: boolean;
-  values?: { percent: number; value: number }[];
-  density?: number;
-  formatter?: Formatter;
+type PipsViewOptions = {
+  orientation: 'horizontal' | 'vertical';
+  isHidden: boolean;
+  values: { percent: number; value: number }[];
+  density: number;
+  formatter: Formatter;
 };
 
-type PipsState = {};
+type PipsViewState = {};
 
-interface PipsView
-  extends MVPView<Required<PipsOptions>, PipsOptions, PipsState> {
-  getOrientationOption(): PipsOptions['orientation'];
-  getIsHiddenOption(): PipsOptions['isHidden'];
-  getValuesOption(): PipsOptions['values'];
-  getDensityOption(): PipsOptions['density'];
-  getFormatterOption(): PipsOptions['formatter'];
-  setOrientationOption(orientation?: PipsOptions['orientation']): this;
-  setIsHiddenOption(isHidden?: PipsOptions['isHidden']): this;
-  setValuesOption(values?: PipsOptions['values']): this;
-  setDensityOption(density?: PipsOptions['density']): this;
-  setFormatterOption(formatter?: PipsOptions['formatter']): this;
-}
+type PipsViewIsolatedEvents = AbstractViewEvents & {};
 
-export { PipsView as default, Formatter, PipsOptions, PipsState };
+type PipsViewDOMEvents = {
+  click: PointerEvent & { data: Unpacked<PipsViewOptions['values']> };
+};
+
+export {
+  Formatter,
+  PipsViewOptions,
+  PipsViewState,
+  PipsViewIsolatedEvents,
+  PipsViewDOMEvents,
+};
