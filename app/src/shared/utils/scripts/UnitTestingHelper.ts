@@ -1,10 +1,10 @@
+import { render, TemplateResult } from 'lit-html';
 import cloneDeep from 'lodash-es/cloneDeep';
 import isPlainObject from 'lodash-es/isPlainObject';
 
 import { OptionalTupleValues, RequiredTupleValues } from './TypingHelper';
 import { eachDeep, resolveLongBracketNotation } from './ObjectHelper';
 import { isReferenceType } from './TypeOf';
-import { renderMVPView } from './view/MVPHelper';
 
 type InstancePropsExpecter<TArgs extends unknown[], TInstance> = (parts: {
   passedArgs: TArgs;
@@ -627,7 +627,8 @@ const testSetter = <
  * @param callbacksWithTest callback which runs test
  */
 const testDOM = <
-  TCreator extends new (...args: any) => InstanceType<TCreator>
+  TCreator extends new (...args: any) => InstanceType<TCreator>,
+  TInstance extends InstanceType<TCreator> & { template(): TemplateResult }
 >({
   Creator,
   constructorsArgs,
@@ -635,7 +636,7 @@ const testDOM = <
 }: {
   Creator: TCreator;
   constructorsArgs: ConstructorParameters<TCreator>[];
-  templatesArgs: any[];
+  templatesArgs: Parameters<TInstance['template']>[];
   callbacksWithTest: (({
     container,
     instance,
@@ -646,24 +647,28 @@ const testDOM = <
 }) => {
   describe('DOM manipulation', () => {
     let container: DocumentFragment;
-    let instance: InstanceType<TCreator>;
+    let instance: TInstance;
 
     callbacksWithTest.forEach((testCallback, index) => {
+      const passedConstructorsArgs: [] =
+        constructorsArgs[index] === undefined ? [] : constructorsArgs[index];
+
       container = new DocumentFragment();
-      instance = renderMVPView(
-        Creator,
-        constructorsArgs[index] === undefined
-          ? []
-          : (constructorsArgs[index] as any),
-        container
-      );
+      instance = new Creator(...passedConstructorsArgs);
+
+      render(instance.template(), container);
 
       testCallback({ container, instance });
     });
 
+    const passedConstructorsArgs: [] = constructorsArgs[0] ?? [];
+
     container = new DocumentFragment();
-    renderMVPView(Creator, [], container);
-    test('renders correctly', () => {
+    instance = new Creator(...passedConstructorsArgs);
+
+    render(instance.template(), container);
+
+    test('can to be rendered correctly', () => {
       expect(container).toMatchSnapshot();
     });
   });

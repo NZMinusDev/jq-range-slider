@@ -1,79 +1,21 @@
-import {
-  InstancePropsExpecter,
-  testInit,
-  testDefaultOptions,
-  testGetter,
-  testSetter,
-  DifferentArguments,
-  testDOM,
-} from '@shared/utils/scripts/UnitTestingHelper';
+import { testDOM } from '@shared/utils/scripts/UnitTestingHelper';
 
-import ThumbView, { DEFAULT_OPTIONS } from './ThumbView';
-
-const viewPropertiesExpecter: InstancePropsExpecter<
-  ConstructorParameters<typeof ThumbView>,
-  ThumbView
-> = function viewPropertiesExpecter() {
-  // some expect calls
-};
-
-const differentConstructorArgs: DifferentArguments<
-  ConstructorParameters<typeof ThumbView>
-> = {};
-
-testDefaultOptions(ThumbView, [DEFAULT_OPTIONS], viewPropertiesExpecter);
-
-testInit({
-  Creator: ThumbView,
-  differentConstructorArgs,
-  instancePropsExpecter: viewPropertiesExpecter,
-  propsToSet: new Map().set('_options', 0).set('_state', 1),
-});
-describe('init', () => {
-  describe('with default options', () => {
-    test("the instance's func options should be to have returned", () => {
-      const instance = new ThumbView();
-
-      const templateMock = jest.fn(instance.template);
-      templateMock();
-      templateMock({ classInfo: {}, styleInfo: {}, attributes: {} });
-      expect(templateMock).toHaveReturned();
-    });
-  });
-});
-
-testGetter({
-  Creator: ThumbView,
-  constructorArgs: [],
-  instancePropsExpecter: viewPropertiesExpecter,
-  methodOfInstanceToTest: {
-    methodReference: ThumbView.prototype.getOptions,
-    expecter: () => {
-      // some expect calls
-    },
-    returns: '_options',
-  },
-});
-testSetter({
-  Creator: ThumbView,
-  constructorArgs: [],
-  instancePropsExpecter: viewPropertiesExpecter,
-  methodOfInstanceToTest: {
-    methodReference: ThumbView.prototype.setOptions,
-    expecter: () => {
-      // some expect calls
-    },
-    differentArguments: differentConstructorArgs as DifferentArguments<
-      [ConstructorParameters<typeof ThumbView>['0']]
-    >,
-  },
-  propsToSet: new Map().set('_options', 0),
-  resetPropsTo: new Map().set('_options', DEFAULT_OPTIONS),
-});
+import ThumbView from './ThumbView';
 
 testDOM({
   Creator: ThumbView,
-  constructorsArgs: [],
+  constructorsArgs: [
+    [
+      {},
+      {
+        ariaOrientation: 'horizontal',
+        ariaValueMin: -1,
+        ariaValueNow: -1,
+        ariaValueMax: -1,
+        ariaValueText: '-1',
+      },
+    ],
+  ],
   templatesArgs: [],
   callbacksWithTest: [
     ({ container, instance }) => {
@@ -82,16 +24,16 @@ testDOM({
           '.js-range-slider__thumb'
         ) as HTMLElement;
         const event = new Event('dragstart');
-        const noopMock = jest.spyOn(
+        const noopSpy = jest.spyOn(
           Object.getPrototypeOf(instance),
-          '_onDragstart'
+          'onDragstart'
         );
 
         target.dispatchEvent(event);
 
-        expect(noopMock).toBeCalled();
+        expect(noopSpy).toBeCalledTimes(1);
 
-        noopMock.mockRestore();
+        noopSpy.mockRestore();
       });
     },
   ],

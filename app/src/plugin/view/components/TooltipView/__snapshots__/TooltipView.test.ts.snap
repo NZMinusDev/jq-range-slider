@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DOM manipulation renders correctly 1`] = `
+exports[`DOM manipulation can to be rendered correctly 1`] = `
 <DocumentFragment>
   <!---->
   <div
@@ -9,7 +9,7 @@ exports[`DOM manipulation renders correctly 1`] = `
   >
     
     
-    -1.00
+    
     
   
   </div>
