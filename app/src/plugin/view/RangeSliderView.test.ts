@@ -1,6 +1,6 @@
 import { render } from 'lit-html';
 
-import { testDOM } from '@shared/utils/scripts/UnitTestingHelper';
+import { testDOM } from '@shared/utils/scripts/testing/unit';
 
 import RangeSliderView from './RangeSliderView';
 import { RangeSliderViewOptions, RangeSliderViewState } from './types';

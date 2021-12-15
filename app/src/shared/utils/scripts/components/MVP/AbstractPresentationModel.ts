@@ -1,6 +1,6 @@
 import defaultsDeep from 'lodash-es/defaultsDeep';
 
-import EventManagerMixin from '../EventManagerMixin';
+import EventManagerMixin from '../EventManagerMixin/EventManagerMixin';
 import IFacadeModel from './IFacadeModel';
 
 type AbstractPresentationModelEvents<
@@ -92,14 +92,15 @@ abstract class AbstractPresentationModel<
   }
 
   getOptions() {
-    const options = {} as Record<string, unknown>;
+    const options: Record<string, unknown> = {};
 
     this._eachSelf(
       this._theOrderOfIteratingThroughTheOptions,
       '_get',
       'Option',
       (key, methodName) => {
-        options[key] = this[methodName]();
+        // just js trick
+        options[key] = (this as any)[methodName]();
       }
     );
 
@@ -114,10 +115,12 @@ abstract class AbstractPresentationModel<
     );
 
     this._eachSelf(sortedKeys, '_set', 'Option', (key, methodName) => {
-      if (this[methodName] !== undefined) {
+      // just js trick
+      if ((this as any)[methodName] !== undefined) {
         const valueToPass = options && options[key];
 
-        this[methodName](valueToPass);
+        // just js trick
+        (this as any)[methodName](valueToPass);
       }
     });
 
@@ -129,15 +132,17 @@ abstract class AbstractPresentationModel<
   }
 
   getState() {
-    const state = {} as Record<string, unknown>;
+    const state: Record<string, unknown> = {};
 
     this._eachSelf(
       this._theOrderOfIteratingThroughTheState,
       '_get',
       'State',
       (key, methodName) => {
-        if (this[methodName] !== undefined) {
-          state[key] = this[methodName]();
+        // just js trick
+        if ((this as any)[methodName] !== undefined) {
+          // just js trick
+          state[key] = (this as any)[methodName]();
         }
       }
     );
@@ -153,10 +158,12 @@ abstract class AbstractPresentationModel<
     );
 
     this._eachSelf(sortedKeys, '_set', 'State', (key, methodName) => {
-      if (this[methodName] !== undefined) {
+      // just js trick
+      if ((this as any)[methodName] !== undefined) {
         const valueToPass = state && state[key];
 
-        this[methodName](valueToPass);
+        // just js trick
+        (this as any)[methodName](valueToPass);
       }
     });
 
@@ -207,7 +214,8 @@ abstract class AbstractPresentationModel<
       '_fix',
       'Option',
       (key, methodName) => {
-        this[methodName]();
+        // just js trick
+        (this as any)[methodName]();
       }
     );
 
@@ -229,7 +237,8 @@ abstract class AbstractPresentationModel<
       '_fix',
       'State',
       (key, methodName) => {
-        this[methodName]();
+        // just js trick
+        (this as any)[methodName]();
       }
     );
 
@@ -270,7 +279,8 @@ abstract class AbstractPresentationModel<
         theFirstLetter.toUpperCase() + theRestLetters
       }${postfix}`;
 
-      if (this[methodName] !== undefined) {
+      // just js trick
+      if ((this as any)[methodName] !== undefined) {
         callback(key, methodName);
       }
     });

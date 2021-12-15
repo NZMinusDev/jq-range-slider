@@ -1,7 +1,7 @@
 import BEMComponent, {
   HTMLElementWithComponent,
 } from '@shared/utils/scripts/components/BEM/BEMComponent';
-import { Unpacked } from '@shared/utils/scripts/TypingHelper';
+import { Unpacked } from '@shared/utils/scripts/types/utility';
 import { RangeSliderPluginOptions } from '@plugin/types';
 import '@plugin/range-slider-plugin';
 

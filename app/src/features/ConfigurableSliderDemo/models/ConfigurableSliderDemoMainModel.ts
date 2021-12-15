@@ -1,9 +1,10 @@
 import IConfigurableSliderDemoModel from './IConfigurableSliderDemoModel';
+import { RangeSliderFacadeModelState } from './types';
 
 class ConfigurableSliderDemoMainModel implements IConfigurableSliderDemoModel {
   protected eventSource = new EventSource('/stateChanger');
 
-  async setState(state) {
+  async setState(state: RangeSliderFacadeModelState) {
     await fetch('/fetch/post/state', {
       method: 'POST',
       headers: {
@@ -28,7 +29,7 @@ class ConfigurableSliderDemoMainModel implements IConfigurableSliderDemoModel {
     return response.json();
   }
 
-  whenStateIsChanged(callback) {
+  whenStateIsChanged(callback: (state: RangeSliderFacadeModelState) => void) {
     this.eventSource.onmessage = (event) => {
       callback(JSON.parse(event.data).state);
     };

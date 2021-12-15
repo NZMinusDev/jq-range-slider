@@ -29,7 +29,7 @@ describe('RangeSliderPresenter', () => {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    whenStateIsChanged(callback) {
+    whenStateIsChanged(callback: (state: RangeSliderFacadeModelState) => void) {
       setInterval(() => {
         changeServerState();
         callback(serverState);

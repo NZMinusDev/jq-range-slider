@@ -1,4 +1,4 @@
-import BEMComponent from './BEMComponent';
+import type BEMComponent from './BEMComponent';
 
 /**
  *  Switchable BEM modifier class
@@ -14,11 +14,13 @@ abstract class CancelableBEMModifier<
   constructor(component: TBEMComponent, modifierName: string) {
     this.component = component;
 
-    if (this.component[modifierName] !== undefined) {
-      this.component[modifierName].cancel();
+    const currentModifier = this.component.getModifier(modifierName);
+
+    if (currentModifier !== undefined && 'cancel' in currentModifier) {
+      currentModifier.cancel();
     }
 
-    this.component[modifierName] = this;
+    this.component.setModifier(modifierName, this);
   }
 
   abstract cancel(): this;

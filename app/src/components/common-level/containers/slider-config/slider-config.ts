@@ -81,7 +81,7 @@ class SliderConfig extends BEMComponent<
   protected _initDOM() {
     const orientation = this.element.elements.namedItem(
       'orientation'
-    ) as unknown as SliderConfigDOM['configItems']['orientation'];
+    ) as SliderConfigDOM['configItems']['orientation'];
     const min = this.element.elements.namedItem(
       'min'
     ) as SliderConfigDOM['configItems']['min'];
@@ -111,7 +111,7 @@ class SliderConfig extends BEMComponent<
     ) as SliderConfigDOM['configItems']['tooltips'];
     const mode = this.element.elements.namedItem(
       'mode'
-    ) as unknown as SliderConfigDOM['configItems']['mode'];
+    ) as SliderConfigDOM['configItems']['mode'];
     const pipsDensity = this.element.elements.namedItem(
       'pips-density'
     ) as SliderConfigDOM['configItems']['pipsDensity'];

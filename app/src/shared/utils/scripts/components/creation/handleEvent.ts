@@ -1,8 +1,13 @@
 /**
  * It's shortcut of default handleEvent in EventListenerObject
  */
+// any cause of Record can have not the function fields
 // eslint-disable-next-line func-style
-function handleEvent(event: Event, elementName?: string) {
+function handleEvent<TTHis extends Record<string, any>>(
+  this: TTHis,
+  event: Event,
+  elementName?: string
+) {
   const handlerName =
     elementName === undefined
       ? `_on${event.type[0].toUpperCase()}${event.type.slice(1)}`

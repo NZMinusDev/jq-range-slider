@@ -4,7 +4,7 @@ import { StyleInfo, styleMap } from 'lit-html/directives/style-map';
 import { spread } from '@open-wc/lit-helpers';
 
 import AbstractView from '@shared/utils/scripts/components/MVP/AbstractView';
-import { Unpacked } from '@shared/utils/scripts/TypingHelper';
+import { Unpacked } from '@shared/utils/scripts/types/utility';
 
 import {
   PipsViewOptions,

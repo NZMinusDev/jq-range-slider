@@ -18,4 +18,4 @@ const fixLength = <TArray extends unknown[]>(
   return copy;
 };
 
-export { fixLength };
+export { fixLength as default };

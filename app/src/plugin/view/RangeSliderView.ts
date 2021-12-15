@@ -3,7 +3,7 @@ import { styleMap } from 'lit-html/directives/style-map';
 import { classMap } from 'lit-html/directives/class-map';
 import { spread } from '@open-wc/lit-helpers';
 
-import handleEvent from '@shared/utils/scripts/components/handleEvent';
+import handleEvent from '@shared/utils/scripts/components/creation/handleEvent';
 
 import { TrackViewOptions } from './components/TrackView/types';
 import { RangeViewOptions } from './components/RangeView/types';
@@ -311,7 +311,11 @@ class RangeSliderView extends RangeSliderAbstractView {
   protected _thumbEventListenerObject = {
     cache: new WeakMap() as WeakMap<
       HTMLElement,
-      ReturnType<RangeSliderView['_thumbEventListenerObject']['initCache']>
+      {
+        trackElem: HTMLElement;
+        thumbElem: HTMLDivElement;
+        thumbIndex: number;
+      }
     >,
 
     handleEvent: (event: Event) => {
@@ -327,7 +331,13 @@ class RangeSliderView extends RangeSliderAbstractView {
 
     handleThumbPointerdown: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
-      const { thumbIndex } = this._thumbEventListenerObject.cache.get(origin);
+      const { thumbIndex } = this._thumbEventListenerObject.cache.get(
+        origin
+      ) as {
+        trackElem: HTMLElement;
+        thumbElem: HTMLDivElement;
+        thumbIndex: number;
+      };
 
       origin.setPointerCapture(event.pointerId);
 
@@ -354,7 +364,11 @@ class RangeSliderView extends RangeSliderAbstractView {
 
       const origin = this._thumbEventListenerObject.getOrigin(event);
       const { trackElem, thumbIndex } =
-        this._thumbEventListenerObject.cache.get(origin);
+        this._thumbEventListenerObject.cache.get(origin) as {
+          trackElem: HTMLElement;
+          thumbElem: HTMLDivElement;
+          thumbIndex: number;
+        };
 
       const currentPercent = this._toPercent(this._state.value[thumbIndex]);
       const newPercent = this._getAllowedThumbMovingPercent(
@@ -372,7 +386,13 @@ class RangeSliderView extends RangeSliderAbstractView {
     },
     handleThumbLostpointercapture: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
-      const { thumbIndex } = this._thumbEventListenerObject.cache.get(origin);
+      const { thumbIndex } = this._thumbEventListenerObject.cache.get(
+        origin
+      ) as {
+        trackElem: HTMLElement;
+        thumbElem: HTMLDivElement;
+        thumbIndex: number;
+      };
 
       origin.removeEventListener(
         'pointermove',

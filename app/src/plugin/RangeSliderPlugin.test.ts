@@ -1,4 +1,5 @@
 import RangeSliderPlugin from './RangeSliderPlugin';
+import { RangeSliderFacadeModelState } from './models/types';
 
 describe('RangeSliderPlugin', () => {
   jest.useFakeTimers();
@@ -11,9 +12,9 @@ describe('RangeSliderPlugin', () => {
     async setState() {
       return this;
     },
-    whenStateIsChanged(callback) {
+    whenStateIsChanged(callback: (state: RangeSliderFacadeModelState) => void) {
       setInterval(() => {
-        callback();
+        callback({ value: [] });
       }, serverStateUpdateDelay);
     },
     closeConnections() {

@@ -5,14 +5,14 @@ import {
   testInit,
   testGetter,
   testSetter,
-} from '@shared/utils/scripts/UnitTestingHelper';
+} from '@shared/utils/scripts/testing/unit';
 import {
   collapsingParseInt,
   collapsingParseFloat,
-} from '@shared/utils/scripts/ParserHelper';
+} from '@shared/utils/scripts/parser';
 
 import RangeSliderMainPresentationModel from './RangeSliderMainPresentationModel';
-import { DEFAULT_OPTIONS } from './constants';
+import { DEFAULT_OPTIONS, DEFAULT_STATE } from './constants';
 
 const instanceIntervalsOptionsExpecter = (
   options: ReturnType<RangeSliderMainPresentationModel['getOptions']>,
@@ -557,6 +557,19 @@ describe('setOptions', () => {
       expect(options.connect).toStrictEqual([true, true, true, true, true]);
     });
   });
+});
+testSetter({
+  Creator: RangeSliderMainPresentationModel,
+  constructorArgs: [],
+  instancePropsExpecter,
+  methodOfInstanceToTest: {
+    methodReference: RangeSliderMainPresentationModel.prototype.setState,
+    expecter: () => {
+      // some expect calls
+    },
+  },
+  propsToSet: new Map().set('_state', 0),
+  resetPropsTo: new Map().set('_state', DEFAULT_STATE),
 });
 describe('setState', () => {
   describe('with different lengths of value and isActiveThumbs', () => {

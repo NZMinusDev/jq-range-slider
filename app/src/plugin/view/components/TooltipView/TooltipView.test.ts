@@ -1,4 +1,4 @@
-import { testDOM } from '@shared/utils/scripts/UnitTestingHelper';
+import { testDOM } from '@shared/utils/scripts/testing/unit';
 
 import TooltipView from './TooltipView';
 

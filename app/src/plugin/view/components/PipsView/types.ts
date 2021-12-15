@@ -1,5 +1,5 @@
 import { AbstractViewEvents } from '@shared/utils/scripts/components/MVP/AbstractView';
-import { Unpacked } from '@shared/utils/scripts/TypingHelper';
+import { Unpacked } from '@shared/utils/scripts/types/utility';
 
 type Formatter = (value: number) => string;
 

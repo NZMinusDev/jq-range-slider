@@ -1,4 +1,4 @@
-import BEMComponent from './BEMComponent';
+import type BEMComponent from './BEMComponent';
 
 /**
  * BEM modifier class
@@ -14,7 +14,7 @@ abstract class BEMModifier<
   constructor(component: TBEMComponent, modifierName: string) {
     this.component = component;
 
-    this.component[modifierName] = this;
+    this.component.setModifier(modifierName, this);
   }
 }
 

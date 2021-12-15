@@ -1,9 +1,9 @@
 import {
   collapsingParseFloat,
   collapsingParseInt,
-} from '@shared/utils/scripts/ParserHelper';
-import { fixLength } from '@shared/utils/scripts/ArrayHelper';
-import { ascending } from '@shared/utils/scripts/ProcessingOfPrimitiveDataHelper';
+} from '@shared/utils/scripts/parser';
+import { fixLength } from '@shared/utils/scripts/array';
+import { ascending } from '@shared/utils/scripts/primitives';
 
 import {
   RangeSliderPresentationModelOptions,
@@ -398,7 +398,7 @@ class RangeSliderMainPresentationModel extends RangeSliderAbstractPresentationMo
     this._state.thumbs = fixLength(
       this._state.thumbs,
       this._state.value.length,
-      DEFAULT_STATE.thumbs[0]
+      { ...DEFAULT_STATE.thumbs[0] }
     );
 
     return this;

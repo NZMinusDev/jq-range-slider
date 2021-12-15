@@ -121,7 +121,10 @@ class EventManagerMixin<TEvents extends IsolatedEvents> {
     return this;
   }
 
-  handleEvent(event: Event) {
+  handleEvent<TThis extends Record<string, (event: Event) => unknown>>(
+    this: TThis,
+    event: Event
+  ) {
     const [theFirstLetterOfEventType] = event.type;
     const theRestLettersOfEventType = event.type.slice(1);
 

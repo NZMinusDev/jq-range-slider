@@ -3,4 +3,4 @@
  */
 const ascending = (a: number, b: number) => a - b;
 
-export { ascending };
+export { ascending as default };

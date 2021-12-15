@@ -22,11 +22,4 @@ const typeOf = (obj: unknown): string => {
   return type.slice(type.indexOf(' ') + 1, type.indexOf(']'));
 };
 
-/**
- * Identify whether the value is a reference
- * @param any A value
- * @returns true if value is Reference, false otherwise
- */
-const isReferenceType = (any: unknown) => any instanceof Object;
-
-export { typeOf as default, isReferenceType };
+export { typeOf as default };

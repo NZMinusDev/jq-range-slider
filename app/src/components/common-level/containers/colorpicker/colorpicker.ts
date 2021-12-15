@@ -52,7 +52,7 @@ class Colorpicker extends BEMComponent<
   }
 
   protected static _initState() {
-    const value = [127, 127, 127] as ColorpickerState['value'];
+    const value: ColorpickerState['value'] = [127, 127, 127];
 
     return { value };
   }

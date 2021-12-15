@@ -15,7 +15,7 @@ import type {
   SliderConfigElementWithComponent,
 } from '@components/common-level/containers/slider-config/slider-config';
 import '@components/common-level/containers/slider-config/slider-config';
-import { Unpacked } from '@shared/utils/scripts/TypingHelper';
+import { Unpacked } from '@shared/utils/scripts/types/utility';
 
 import IConfigurableSliderDemoModel from '../models/IConfigurableSliderDemoModel';
 import type {

@@ -3,7 +3,7 @@ import { ClassInfo } from 'lit-html/directives/class-map';
 import { StyleInfo } from 'lit-html/directives/style-map';
 import defaultsDeep from 'lodash-es/defaultsDeep';
 
-import EventManagerMixin from '../EventManagerMixin';
+import EventManagerMixin from '../EventManagerMixin/EventManagerMixin';
 
 type Template = (
   attributes?: {
