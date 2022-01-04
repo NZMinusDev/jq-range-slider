@@ -315,6 +315,7 @@ class RangeSliderView extends RangeSliderAbstractView {
         trackElem: HTMLElement;
         thumbElem: HTMLDivElement;
         thumbIndex: number;
+        offsetPercent?: number | null;
       }
     >,
 
@@ -331,13 +332,18 @@ class RangeSliderView extends RangeSliderAbstractView {
 
     handleThumbPointerdown: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
-      const { thumbIndex } = this._thumbEventListenerObject.cache.get(
-        origin
-      ) as {
+      const cache = this._thumbEventListenerObject.cache.get(origin) as {
         trackElem: HTMLElement;
         thumbElem: HTMLDivElement;
         thumbIndex: number;
+        offsetPercent?: number | null;
       };
+      const { trackElem, thumbIndex } = cache;
+      const currentPercent = this._toPercent(this._state.value[thumbIndex]);
+      const cursorPercent = this._getCursorPercentOnTrack(trackElem, event);
+
+      cache.offsetPercent = cursorPercent - currentPercent;
+      this._thumbEventListenerObject.cache.set(origin, cache);
 
       origin.setPointerCapture(event.pointerId);
 
@@ -363,16 +369,18 @@ class RangeSliderView extends RangeSliderAbstractView {
       }
 
       const origin = this._thumbEventListenerObject.getOrigin(event);
-      const { trackElem, thumbIndex } =
+      const { trackElem, thumbIndex, offsetPercent } =
         this._thumbEventListenerObject.cache.get(origin) as {
           trackElem: HTMLElement;
           thumbElem: HTMLDivElement;
           thumbIndex: number;
+          offsetPercent: number;
         };
 
       const currentPercent = this._toPercent(this._state.value[thumbIndex]);
+      const cursorPercent = this._getCursorPercentOnTrack(trackElem, event);
       const newPercent = this._getAllowedThumbMovingPercent(
-        this._getCursorPercentOnTrack(trackElem, event),
+        cursorPercent - offsetPercent,
         thumbIndex
       );
       const newValue = this._findExactValue(newPercent, {
@@ -386,13 +394,16 @@ class RangeSliderView extends RangeSliderAbstractView {
     },
     handleThumbLostpointercapture: (event: PointerEvent) => {
       const origin = this._thumbEventListenerObject.getOrigin(event);
-      const { thumbIndex } = this._thumbEventListenerObject.cache.get(
-        origin
-      ) as {
+      const cache = this._thumbEventListenerObject.cache.get(origin) as {
         trackElem: HTMLElement;
         thumbElem: HTMLDivElement;
         thumbIndex: number;
+        offsetPercent?: number | null;
       };
+      const { thumbIndex } = cache;
+
+      cache.offsetPercent = null;
+      this._thumbEventListenerObject.cache.set(origin, cache);
 
       origin.removeEventListener(
         'pointermove',

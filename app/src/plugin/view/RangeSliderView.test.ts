@@ -33,11 +33,12 @@ testDOM({
   callbacksWithTest: [
     ({ container, instance }) => {
       const { intervals, start } = options;
-      const [infimumThumbStart, , supremumThumbStart] = start;
+      const [infimumThumbStart, innerThumbStart, supremumThumbStart] = start;
       const trackValueSize = intervals.max - intervals.min;
       const trackPXSize = 100;
       const trackPercent = 100;
       const trackRatio = trackValueSize / trackPercent;
+      const trackPercentRatio = 1 / trackRatio;
       const valuePerPX = trackValueSize / trackPXSize;
 
       const trackElem = container.querySelector<HTMLElement>(
@@ -83,6 +84,18 @@ testDOM({
         toJSON: () => ``,
       });
 
+      const getClientX = (value: number) => {
+        const { left } = trackElem.getBoundingClientRect();
+
+        return left + Math.abs(value - intervals.min) * trackPercentRatio;
+      };
+
+      const getClientY = (value: number) => {
+        const { top } = trackElem.getBoundingClientRect();
+
+        return top + Math.abs(value - intervals.min) * trackPercentRatio;
+      };
+
       const slideEventCallbackMock = jest.fn();
       const templateMock = jest.fn(instance.template);
 
@@ -98,11 +111,14 @@ testDOM({
       });
 
       test('vertical orientation should be supported', () => {
+        const infimumThumbStartClientY = getClientY(infimumThumbStart);
+
         instance.set({ ...options, orientation: 'vertical' }, state);
 
         infimumThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
             pointerId: 1,
+            clientY: infimumThumbStartClientY,
             bubbles: true,
           })
         );
@@ -110,7 +126,7 @@ testDOM({
           new PointerEvent('pointermove', {
             pointerId: 1,
             movementY: 10,
-            clientY: 10,
+            clientY: infimumThumbStartClientY + 10,
             bubbles: true,
           })
         );
@@ -123,7 +139,7 @@ testDOM({
           new PointerEvent('pointermove', {
             pointerId: 1,
             movementY: -10,
-            clientY: 0,
+            clientY: infimumThumbStartClientY,
             bubbles: true,
           })
         );
@@ -145,15 +161,20 @@ testDOM({
       });
 
       test('value should be calculated with taking into account non linear intervals', () => {
+        const infimumThumbStartClientX = getClientX(infimumThumbStart);
+        const supremumThumbStartClientX = getClientX(supremumThumbStart);
+
         infimumThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
             pointerId: 1,
+            clientX: infimumThumbStartClientX,
             bubbles: true,
           })
         );
         supremumThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
             pointerId: 3,
+            clientX: supremumThumbStartClientX,
             bubbles: true,
           })
         );
@@ -166,7 +187,7 @@ testDOM({
           new PointerEvent('pointermove', {
             pointerId: 1,
             movementX,
-            clientX: movementX,
+            clientX: infimumThumbStartClientX + movementX,
             bubbles: true,
           })
         );
@@ -187,7 +208,7 @@ testDOM({
           new PointerEvent('pointermove', {
             pointerId: 3,
             movementX,
-            clientX: trackPXSize + movementX,
+            clientX: supremumThumbStartClientX + movementX,
             bubbles: true,
           })
         );
@@ -215,9 +236,12 @@ testDOM({
       });
 
       test('thumb move through several intervals should calculated with proper factor for each interval', () => {
+        const startClientX = getClientX(innerThumbStart);
+
         innerThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
             pointerId: 2,
+            clientX: startClientX,
             bubbles: true,
           })
         );
@@ -226,7 +250,7 @@ testDOM({
           new PointerEvent('pointermove', {
             pointerId: 2,
             movementX: trackPXSize,
-            clientX: trackPXSize,
+            clientX: startClientX + trackPXSize,
             bubbles: true,
           })
         );
@@ -234,12 +258,12 @@ testDOM({
           new PointerEvent('pointermove', {
             pointerId: 2,
             movementX: -trackPXSize,
-            clientX: 0,
+            clientX: startClientX,
             bubbles: true,
           })
         );
         expect(slideEventCallbackMock.mock.calls[1][0].newValue).toBe(
-          infimumThumbStart
+          innerThumbStart
         );
 
         innerThumb.dispatchEvent(
@@ -257,12 +281,14 @@ testDOM({
         infimumThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
             pointerId: 1,
+            clientX: getClientX(infimumThumbStart),
             bubbles: true,
           })
         );
         supremumThumb.dispatchEvent(
           new PointerEvent('pointerdown', {
             pointerId: 3,
+            clientX: getClientX(supremumThumbStart),
             bubbles: true,
           })
         );
