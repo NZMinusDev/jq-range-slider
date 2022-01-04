@@ -1,6 +1,7 @@
 import BEMComponent, {
   HTMLElementWithComponent,
 } from '@shared/utils/scripts/components/BEM/BEMComponent';
+import '@components/common-level/primitives/slider/slider';
 
 import type {
   ColorpickerSliderCustomEvents,
@@ -10,6 +11,7 @@ import './__slider/colorpicker__slider';
 import colorpickerElements, {
   ColorpickerElement,
 } from './colorpicker-elements';
+import './colorpicker.scss';
 
 type ColorpickerDOM = {
   sliders: ColorpickerSliderElementWithComponent[];

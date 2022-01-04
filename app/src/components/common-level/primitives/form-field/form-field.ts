@@ -1,8 +1,10 @@
 import BEMComponent, {
   HTMLElementWithComponent,
 } from '@shared/utils/scripts/components/BEM/BEMComponent';
+import '@components/common-level/primitives/heading/heading';
 
 import formFieldElements, { FormFieldElement } from './form-field-elements';
+import './form-field.scss';
 
 type FormFieldDOM = {
   input: HTMLInputElement | HTMLTextAreaElement;

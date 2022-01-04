@@ -2,13 +2,15 @@ import BEMComponent, {
   HTMLElementWithComponent,
 } from '@shared/utils/scripts/components/BEM/BEMComponent';
 
-import {
+import type {
   EventsLoggerFireflyCustomEvents,
   EventsLoggerFireflyElementWithComponent,
 } from './__firefly/events-logger__firefly';
+import './__firefly/events-logger__firefly';
 import eventsLoggerElements, {
   EventsLoggerElement,
 } from './events-logger-elements';
+import './events-logger.scss';
 
 type EventsLoggerDOM = {
   fireflies: EventsLoggerFireflyElementWithComponent[];

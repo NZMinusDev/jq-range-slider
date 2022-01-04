@@ -6,6 +6,7 @@ import { RangeSliderPluginOptions } from '@plugin/types';
 import '@plugin/range-slider-plugin';
 
 import sliderElements, { SliderElement } from './slider-elements';
+import './slider.scss';
 
 type RangeSliderPlugin = InstanceType<typeof window.RangeSliderPlugin>;
 

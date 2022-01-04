@@ -1,11 +1,15 @@
 import BEMComponent, {
   HTMLElementWithComponent,
 } from '@shared/utils/scripts/components/BEM/BEMComponent';
+import '@components/common-level/primitives/form-field/form-field';
+import '@components/common-level/containers/radio-group/radio-group';
+import '@components/common-level/primitives/button/button';
 import { RangeSliderViewOptions } from '@plugin/view/types';
 
 import sliderConfigElements, {
   SliderConfigElement,
 } from './slider-config-elements';
+import './slider-config.scss';
 
 type SliderConfigDOM = {
   configItems: {

@@ -2,6 +2,7 @@ import BEMComponent, {
   HTMLElementWithComponent,
 } from '@shared/utils/scripts/components/BEM/BEMComponent';
 import type { FormFieldElementWithComponent } from '@components/common-level/primitives/form-field/form-field';
+import '@components/common-level/primitives/slider/slider';
 import '@components/common-level/primitives/form-field/form-field';
 
 import type {
@@ -12,6 +13,7 @@ import './__slider/slider-datepicker__slider';
 import sliderDatepickerElements, {
   SliderDatepickerElement,
 } from './slider-datepicker-elements';
+import './slider-datepicker.scss';
 
 type SliderDatepickerDOM = {
   slider: SliderDatepickerSliderElementWithComponent;
