@@ -1,5 +1,0 @@
-{
-  "_comment": "This config is used only for VSCode intellisense. For working with TypeScript uses babel preset into webpack",
-  "extends": "./configs/tsconfig.json",
-  "compilerOptions": {}
-}
