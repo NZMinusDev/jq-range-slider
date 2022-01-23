@@ -101,9 +101,9 @@ abstract class AbstractPresentationModel<
       this._theOrderOfIteratingThroughTheOptions,
       '_get',
       'Option',
-      (key, methodName) => {
+      (key, nameOfExistingMethod) => {
         // just js trick
-        options[key] = (this as any)[methodName]();
+        options[key] = (this as any)[nameOfExistingMethod]();
       }
     );
 
@@ -117,15 +117,17 @@ abstract class AbstractPresentationModel<
       options
     );
 
-    this._eachSelf(sortedKeys, '_set', 'Option', (key, methodName) => {
-      // just js trick
-      if ((this as any)[methodName] !== undefined) {
+    this._eachSelf(
+      sortedKeys,
+      '_set',
+      'Option',
+      (key, nameOfExistingMethod) => {
         const valueToPass = options && options[key];
 
         // just js trick
-        (this as any)[methodName](valueToPass);
+        (this as any)[nameOfExistingMethod](valueToPass);
       }
-    });
+    );
 
     ({ validOptions: this._options, validState: this._state } = this._validate(
       this._options,
@@ -144,12 +146,9 @@ abstract class AbstractPresentationModel<
       this._theOrderOfIteratingThroughTheState,
       '_get',
       'State',
-      (key, methodName) => {
+      (key, nameOfExistingMethod) => {
         // just js trick
-        if ((this as any)[methodName] !== undefined) {
-          // just js trick
-          state[key] = (this as any)[methodName]();
-        }
+        state[key] = (this as any)[nameOfExistingMethod]();
       }
     );
 
@@ -163,14 +162,11 @@ abstract class AbstractPresentationModel<
       state
     );
 
-    this._eachSelf(sortedKeys, '_set', 'State', (key, methodName) => {
-      // just js trick
-      if ((this as any)[methodName] !== undefined) {
-        const valueToPass = state && state[key];
+    this._eachSelf(sortedKeys, '_set', 'State', (key, nameOfExistingMethod) => {
+      const valueToPass = state && state[key];
 
-        // just js trick
-        (this as any)[methodName](valueToPass);
-      }
+      // just js trick
+      (this as any)[nameOfExistingMethod](valueToPass);
     });
 
     ({ validOptions: this._options, validState: this._state } = this._validate(
@@ -225,13 +221,14 @@ abstract class AbstractPresentationModel<
       this._optionsShouldBeFixed,
       '_fix',
       'Option',
-      (key, methodName) => {
-        // just js trick
+      (key, nameOfExistingMethod) => {
         validOptions = {
           ...validOptions,
-          [key]: (this as any)[methodName]({ ...options, ...validOptions })[
-            key
-          ],
+          // just js trick
+          [key]: (this as any)[nameOfExistingMethod]({
+            ...options,
+            ...validOptions,
+          })[key],
         };
       }
     );
@@ -258,11 +255,11 @@ abstract class AbstractPresentationModel<
       this._stateShouldBeFixed,
       '_fix',
       'State',
-      (key, methodName) => {
-        // just js trick
+      (key, nameOfExistingMethod) => {
         validState = {
           ...validState,
-          [key]: (this as any)[methodName](options, {
+          // just js trick
+          [key]: (this as any)[nameOfExistingMethod](options, {
             ...state,
             ...validState,
           })[key],
@@ -298,7 +295,7 @@ abstract class AbstractPresentationModel<
     sortedKeys: TKeys,
     prefix: string,
     postfix: string,
-    callback: (key: TKeys[number], methodName: string) => unknown
+    callback: (key: TKeys[number], nameOfExistingMethod: string) => unknown
   ) {
     sortedKeys.forEach((key) => {
       const [theFirstLetter] = key;
