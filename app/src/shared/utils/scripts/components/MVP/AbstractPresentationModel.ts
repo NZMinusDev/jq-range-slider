@@ -61,21 +61,21 @@ abstract class AbstractPresentationModel<
   ) {
     super();
 
-    this._options = defaultsDeep({}, options, DEFAULT_OPTIONS);
-    this._state = defaultsDeep({}, state, DEFAULT_STATE);
+    const fullOptions = defaultsDeep({}, options, DEFAULT_OPTIONS);
+    const fullState = defaultsDeep({}, state, DEFAULT_STATE);
 
     type OptionsKey = Extract<keyof TOptions, string>;
     type StateKey = Extract<keyof TState, string>;
     this._theOrderOfIteratingThroughTheOptions = [
       ...new Set([
         ...theOrderOfIteratingThroughTheOptions,
-        ...Object.keys(this._options),
+        ...Object.keys(fullOptions),
       ] as OptionsKey[]),
     ];
     this._theOrderOfIteratingThroughTheState = [
       ...new Set([
         ...theOrderOfIteratingThroughTheState,
-        ...Object.keys(this._state),
+        ...Object.keys(fullState),
       ] as StateKey[]),
     ];
 
@@ -83,7 +83,10 @@ abstract class AbstractPresentationModel<
       ...this._theOrderOfIteratingThroughTheOptions,
     ];
     this._stateShouldBeFixed = [...this._theOrderOfIteratingThroughTheState];
-    this._validate();
+    ({ validOptions: this._options, validState: this._state } = this._validate(
+      fullOptions,
+      fullState
+    ));
 
     this._facadeModel = null;
     if (facadeModel !== undefined) {
@@ -124,7 +127,10 @@ abstract class AbstractPresentationModel<
       }
     });
 
-    this._validate();
+    ({ validOptions: this._options, validState: this._state } = this._validate(
+      this._options,
+      this._state
+    ));
 
     this._emitSet();
 
@@ -167,7 +173,10 @@ abstract class AbstractPresentationModel<
       }
     });
 
-    this._validate();
+    ({ validOptions: this._options, validState: this._state } = this._validate(
+      this._options,
+      this._state
+    ));
 
     this._emitSet();
 
@@ -195,16 +204,19 @@ abstract class AbstractPresentationModel<
     return this;
   }
 
-  protected _validate() {
-    this._validateOptions()._validateState();
+  protected _validate(options: TOptions, state: Required<TState>) {
+    const validOptions = this._validateOptions(options);
+    const validState = this._validateState(validOptions, state);
 
-    return this;
+    return { validOptions, validState };
   }
 
-  protected _validateOptions() {
+  protected _validateOptions(options: TOptions) {
+    let validOptions = {} as TNormalizedOptions;
+
     this._optionsShouldBeFixed = [...new Set(this._optionsShouldBeFixed)];
 
-    AbstractPresentationModel._sortKeys(
+    this._optionsShouldBeFixed = AbstractPresentationModel._sortKeys(
       this._optionsShouldBeFixed,
       this._theOrderOfIteratingThroughTheOptions
     );
@@ -215,19 +227,29 @@ abstract class AbstractPresentationModel<
       'Option',
       (key, methodName) => {
         // just js trick
-        (this as any)[methodName]();
+        validOptions = {
+          ...validOptions,
+          [key]: (this as any)[methodName]({ ...options, ...validOptions })[
+            key
+          ],
+        };
       }
     );
 
     this._optionsShouldBeFixed.length = 0;
 
-    return this;
+    return { ...options, ...validOptions };
   }
 
-  protected _validateState() {
+  protected _validateState(
+    options: TNormalizedOptions,
+    state: Required<TState>
+  ) {
+    let validState = {} as Required<TState>;
+
     this._stateShouldBeFixed = [...new Set(this._stateShouldBeFixed)];
 
-    AbstractPresentationModel._sortKeys(
+    this._stateShouldBeFixed = AbstractPresentationModel._sortKeys(
       this._stateShouldBeFixed,
       this._theOrderOfIteratingThroughTheState
     );
@@ -238,13 +260,19 @@ abstract class AbstractPresentationModel<
       'State',
       (key, methodName) => {
         // just js trick
-        (this as any)[methodName]();
+        validState = {
+          ...validState,
+          [key]: (this as any)[methodName](options, {
+            ...state,
+            ...validState,
+          })[key],
+        };
       }
     );
 
     this._stateShouldBeFixed.length = 0;
 
-    return this;
+    return { ...state, ...validState };
   }
 
   protected _emitSet() {
@@ -296,14 +324,18 @@ abstract class AbstractPresentationModel<
     orderProvider: Extract<keyof TRequiredRecord, string>[],
     partial?: TPartialRecord
   ) {
-    return AbstractPresentationModel._sortKeys(
-      Object.keys(partial ?? required),
-      orderProvider
-    );
+    const keys = Object.keys(partial ?? required);
+
+    return AbstractPresentationModel._sortKeys(keys, orderProvider);
   }
 
-  protected static _sortKeys(keys: string[], orderProvider: string[]) {
-    return keys.sort(
+  protected static _sortKeys<TKeys extends string[]>(
+    keys: TKeys,
+    orderProvider: string[]
+  ) {
+    const copy = [...keys];
+
+    return copy.sort(
       (a, b) => orderProvider.indexOf(a) - orderProvider.indexOf(b)
     );
   }
