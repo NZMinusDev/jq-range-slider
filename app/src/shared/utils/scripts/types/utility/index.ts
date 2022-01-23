@@ -26,6 +26,8 @@ export { default as OptionalTupleValues } from './OptionalTupleValues';
 
 export { default as OptionalValues } from './OptionalValues';
 
+export { default as RequiredDeep } from './RequiredDeep';
+
 export { default as RequiredKeys } from './RequiredKeys';
 
 export { default as RequiredTupleValues } from './RequiredTupleValues';

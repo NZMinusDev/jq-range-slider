@@ -1,6 +1,7 @@
 import defaultsDeep from 'lodash-es/defaultsDeep';
 
 import AbstractPresentationModel from '@shared/utils/scripts/components/MVP/AbstractPresentationModel';
+import { RequiredDeep } from '@shared/utils/scripts/types/utility';
 
 import {
   RangeSliderPresentationModelOptions,
@@ -53,16 +54,14 @@ abstract class RangeSliderAbstractPresentationModel extends AbstractPresentation
   }
 
   setOptions(options?: RangeSliderPresentationModelOptions) {
-    const copy = this._state.thumbs.map((thumb) => ({ ...thumb }));
+    const thumbsOptionBackup = this._state.thumbs.map((thumb) => ({
+      ...thumb,
+    }));
 
     // transition off
-    this._state.thumbs.forEach((thumb, index) => {
-      this._state.thumbs[index].isActive = true;
-    });
+    this._state.thumbs = this._state.thumbs.fill({ isActive: true });
     super.setOptions(options);
-    copy.forEach((thumb, index) => {
-      this._state.thumbs[index] = thumb;
-    });
+    this._state.thumbs = thumbsOptionBackup;
 
     return this;
   }
@@ -198,23 +197,43 @@ abstract class RangeSliderAbstractPresentationModel extends AbstractPresentation
     return this;
   }
 
-  protected abstract _fixIntervalsOption(): this;
+  protected abstract _fixIntervalsOption(
+    options: RequiredDeep<RangeSliderPresentationModelOptions>
+  ): RequiredDeep<RangeSliderPresentationModelOptions>;
 
-  protected abstract _fixStartOption(): this;
+  protected abstract _fixStartOption(
+    options: RequiredDeep<RangeSliderPresentationModelOptions>
+  ): RequiredDeep<RangeSliderPresentationModelOptions>;
 
-  protected abstract _fixStepsOption(): this;
+  protected abstract _fixStepsOption(
+    options: RequiredDeep<RangeSliderPresentationModelOptions>
+  ): RequiredDeep<RangeSliderPresentationModelOptions>;
 
-  protected abstract _fixConnectOption(): this;
+  protected abstract _fixConnectOption(
+    options: RequiredDeep<RangeSliderPresentationModelOptions>
+  ): RequiredDeep<RangeSliderPresentationModelOptions>;
 
-  protected abstract _fixPaddingOption(): this;
+  protected abstract _fixPaddingOption(
+    options: RequiredDeep<RangeSliderPresentationModelOptions>
+  ): RequiredDeep<RangeSliderPresentationModelOptions>;
 
-  protected abstract _fixTooltipsOption(): this;
+  protected abstract _fixTooltipsOption(
+    options: RequiredDeep<RangeSliderPresentationModelOptions>
+  ): RequiredDeep<RangeSliderPresentationModelOptions>;
 
-  protected abstract _fixPipsOption(): this;
+  protected abstract _fixPipsOption(
+    options: RequiredDeep<RangeSliderPresentationModelOptions>
+  ): RequiredDeep<RangeSliderPresentationModelOptions>;
 
-  protected abstract _fixValueState(): this;
+  protected abstract _fixValueState(
+    options: RangeSliderPresentationModelNormalizedOptions,
+    state: RequiredDeep<RangeSliderPresentationModelState>
+  ): RequiredDeep<RangeSliderPresentationModelState>;
 
-  protected abstract _fixThumbsState(): this;
+  protected abstract _fixThumbsState(
+    options: RangeSliderPresentationModelNormalizedOptions,
+    state: RequiredDeep<RangeSliderPresentationModelState>
+  ): RequiredDeep<RangeSliderPresentationModelState>;
 }
 
 export { RangeSliderAbstractPresentationModel as default };
