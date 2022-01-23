@@ -179,11 +179,11 @@ class RangeSliderView extends RangeSliderAbstractView {
         values[0] = min;
         values[values.length - 1] = max;
 
-        values.forEach((value) => {
+        pipsValues = values.reduce((acc, value) => {
           const percent = this._toPercent(value);
 
-          pipsValues.push({ percent, value });
-        });
+          return [...acc, { percent, value }];
+        }, [] as PipsViewOptions['values']);
 
         break;
       }

@@ -268,10 +268,12 @@ class ConfigurableSliderDemo extends BEMComponent<
           break;
         }
         case 'intervals': {
-          const { intervals } = slider.getOptions();
-          Object.entries(JSON.parse(value)).forEach(([key, val]) => {
-            intervals[key] = val as number;
-          });
+          const intervals = Object.entries<number>(JSON.parse(value)).reduce(
+            (acc, [key, val]) => {
+              return { ...acc, [key]: val };
+            },
+            {} as { [key: string]: number }
+          );
 
           slider.setOptions({ [name]: intervals });
 
